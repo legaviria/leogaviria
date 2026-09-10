@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      background-color: #0b0e14;
+      color: #e2e8f0;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      margin: 0;
+      padding: 12px;
+      transition: background-color 0.2s, color 0.2s;
+    }
+    /* Light Mode */
+    [data-theme="light"] body {
+      background-color: #ffffff;
+      color: #0f172a;
+    }
+    [data-theme="light"] .card-box {
+      background-color: #f8fafc !important;
+      border-color: #e2e8f0 !important;
+      color: #0f172a !important;
+    }
+    [data-theme="light"] .subcard-box {
+      background-color: #ffffff !important;
+      border-color: #cbd5e1 !important;
+      color: #1e293b !important;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+    [data-theme="light"] .text-muted {
+      color: #64748b !important;
+    }
+    [data-theme="light"] .text-highlight {
+      color: #0f766e !important;
+    }
+    [data-theme="light"] input, [data-theme="light"] select {
+      background-color: #ffffff !important;
+      border-color: #cbd5e1 !important;
+      color: #0f172a !important;
+    }
+    /* Estilos base */
+    .card-box {
+      background-color: #121622;
+      border: 1px solid #1f293d;
+      border-radius: 12px;
+    }
+    .subcard-box {
+      background-color: #090d14;
+      border: 1px solid #1a2233;
+      border-radius: 8px;
+    }
+    .text-muted { color: #94a3b8; }
+    .text-highlight { color: #2dd4bf; }
+  </style>
+  <script>
+    window.addEventListener('message', (event) => {
+      if (event.data && event.data.type === 'THEME_CHANGE') {
+        document.documentElement.setAttribute('data-theme', event.data.theme);
+      }
+    });
+    try {
+      const savedTheme = localStorage.getItem('leogaviria_theme') || 'dark';
+      document.documentElement.setAttribute('data-theme', savedTheme);
+    } catch(e) {}
+  </script>
+
+  <title>Conversor Interactivo de Sistemas Numéricos</title>
+</head>
+<body>
+  <div class="max-w-4xl mx-auto space-y-4">
+    <div class="card-box p-4 sm:p-5">
+      <div class="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-gray-800/80 mb-4">
+        <div>
+          <h2 class="text-base sm:text-lg font-bold flex items-center gap-2 text-highlight">
+            <i class="fas fa-arrows-rotate"></i> Conversor Interactivo con Procedimiento Paso a Paso
+          </h2>
+          <p class="text-xs text-muted">Visualiza el método de divisiones sucesivas y agrupación de bits</p>
+        </div>
+      </div>
+
+      <!-- Selector de Entrada -->
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
+        <div>
+          <label class="text-xs font-semibold text-muted block mb-1">Base de Origen:</label>
+          <select id="conv-from" onchange="convertAll()" class="w-full px-3 py-1.5 rounded-lg text-xs font-semibold bg-[#1a2234] border border-gray-700 text-white">
+            <option value="10" selected>Base 10 (Decimal)</option>
+            <option value="2">Base 2 (Binario)</option>
+            <option value="8">Base 8 (Octal)</option>
+            <option value="16">Base 16 (Hexadecimal)</option>
+          </select>
+        </div>
+        <div class="sm:col-span-2">
+          <label class="text-xs font-semibold text-muted block mb-1">Valor a Convertir:</label>
+          <input type="text" id="conv-val" value="156" oninput="convertAll()" class="w-full px-3 py-1.5 rounded-lg text-xs font-mono bg-[#090d14] border border-gray-700 text-teal-400 font-bold uppercase">
+        </div>
+      </div>
+
+      <!-- Tarjetas de Salida Equivalentes -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-4">
+        <div class="subcard-box p-3 text-center border-teal-500/30">
+          <span class="text-[10px] font-mono text-muted uppercase">Decimal (10)</span>
+          <div id="out-dec" class="text-base font-bold text-white font-mono mt-1">---</div>
+        </div>
+        <div class="subcard-box p-3 text-center border-sky-500/30">
+          <span class="text-[10px] font-mono text-muted uppercase">Binario (2)</span>
+          <div id="out-bin" class="text-base font-bold text-sky-400 font-mono mt-1">---</div>
+        </div>
+        <div class="subcard-box p-3 text-center border-amber-500/30">
+          <span class="text-[10px] font-mono text-muted uppercase">Octal (8)</span>
+          <div id="out-oct" class="text-base font-bold text-amber-400 font-mono mt-1">---</div>
+        </div>
+        <div class="subcard-box p-3 text-center border-purple-500/30">
+          <span class="text-[10px] font-mono text-muted uppercase">Hexadecimal (16)</span>
+          <div id="out-hex" class="text-base font-bold text-purple-400 font-mono mt-1">---</div>
+        </div>
+      </div>
+
+      <!-- Procedimiento Detallado: Divisiones Sucesivas -->
+      <div class="subcard-box p-3 sm:p-4">
+        <h4 class="text-xs font-bold uppercase tracking-wider text-muted mb-2 flex items-center gap-2">
+          <i class="fas fa-list-ol text-teal-400"></i> Procedimiento de Conversión (Divisiones Sucesivas)
+        </h4>
+        <div id="conv-procedure" class="text-xs font-mono leading-relaxed space-y-1.5 overflow-x-auto text-gray-300"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function convertAll() {
+      const fromBase = parseInt(document.getElementById('conv-from').value);
+      const str = document.getElementById('conv-val').value.trim().toUpperCase();
+      const validChars = "0123456789ABCDEF".slice(0, fromBase);
+
+      if (!str || ![...str].every(c => validChars.includes(c))) {
+        document.getElementById('conv-procedure').innerHTML = `<span class="text-rose-400">Introduce un número válido en base ${fromBase}.</span>`;
+        return;
+      }
+
+      const decVal = parseInt(str, fromBase);
+      document.getElementById('out-dec').textContent = decVal.toString(10);
+      document.getElementById('out-bin').textContent = decVal.toString(2);
+      document.getElementById('out-oct').textContent = decVal.toString(8);
+      document.getElementById('out-hex').textContent = decVal.toString(16).toUpperCase();
+
+      // Generar tabla de divisiones sucesivas a Binario y a Hexadecimal
+      let html = `<div class="mb-2 text-teal-400 font-bold">1. Conversión de Decimal (${decVal}) a Binario (Base 2):</div>`;
+      html += `<div class="pl-3 border-l-2 border-teal-500/40 space-y-1 mb-3">`;
+      let temp = decVal;
+      let binRems = [];
+      if (temp === 0) {
+        html += `<div>0 / 2 = 0 (Residuo: <strong>0</strong>)</div>`;
+        binRems.push('0');
+      } else {
+        while (temp > 0) {
+          const q = Math.floor(temp / 2);
+          const r = temp % 2;
+          binRems.push(r);
+          html += `<div>${temp} ÷ 2 = ${q} &rarr; Residuo = <strong class="text-amber-400">${r}</strong></div>`;
+          temp = q;
+        }
+      }
+      html += `<div class="text-emerald-400 font-bold mt-1">&uarr; Leído de abajo hacia arriba: ${binRems.slice().reverse().join('')}<sub>(2)</sub></div></div>`;
+
+      // Si base de destino fuera 16
+      html += `<div class="mb-2 text-purple-400 font-bold">2. Agrupación rápida de bits a Hexadecimal (4 en 4 bits):</div>`;
+      html += `<div class="pl-3 border-l-2 border-purple-500/40 space-y-1">`;
+      const binStr = decVal.toString(2);
+      const paddedBin = binStr.padStart(Math.ceil(binStr.length / 4) * 4, '0');
+      const groups = paddedBin.match(/.{1,4}/g) || [];
+      const hexDigits = groups.map(g => parseInt(g, 2).toString(16).toUpperCase());
+      html += `<div>Binario agrupado: <code>[${groups.join('] [')}]</code></div>`;
+      html += `<div>Dígitos hexadecimales: <code>${hexDigits.join(' ')}</code> &rarr; <strong class="text-purple-300">${hexDigits.join('')}<sub>(16)</sub></strong></div>`;
+      html += `</div>`;
+
+      document.getElementById('conv-procedure').innerHTML = html;
+    }
+    convertAll();
+  </script>
+</body>
+</html>

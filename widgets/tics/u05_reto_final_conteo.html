@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      background-color: #0b0e14;
+      color: #e2e8f0;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      margin: 0;
+      padding: 12px;
+      transition: background-color 0.2s, color 0.2s;
+    }
+    [data-theme="light"] body { background-color: #ffffff; color: #0f172a; }
+    [data-theme="light"] .card-box { background-color: #f8fafc !important; border-color: #e2e8f0 !important; color: #0f172a !important; }
+    [data-theme="light"] .subcard-box { background-color: #ffffff !important; border-color: #cbd5e1 !important; color: #1e293b !important; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+    [data-theme="light"] .text-muted { color: #64748b !important; }
+    [data-theme="light"] .text-highlight { color: #0f766e !important; }
+    [data-theme="light"] input, [data-theme="light"] select { background-color: #ffffff !important; border-color: #cbd5e1 !important; color: #0f172a !important; }
+    .card-box { background-color: #121622; border: 1px solid #1f293d; border-radius: 12px; }
+    .subcard-box { background-color: #090d14; border: 1px solid #1a2233; border-radius: 8px; }
+    .text-muted { color: #94a3b8; }
+    .text-highlight { color: #2dd4bf; }
+  </style>
+  <script>
+    window.addEventListener('message', (event) => {
+      if (event.data && event.data.type === 'THEME_CHANGE') {
+        document.documentElement.setAttribute('data-theme', event.data.theme);
+      }
+    });
+    try {
+      const savedTheme = localStorage.getItem('leogaviria_theme') || 'dark';
+      document.documentElement.setAttribute('data-theme', savedTheme);
+    } catch(e) {}
+  </script>
+
+  <title>Reto Final Integrador: Matemática Discreta y TICS</title>
+</head>
+<body>
+  <div class="max-w-4xl mx-auto space-y-4">
+    <div class="card-box p-4 sm:p-5">
+      <div class="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-gray-800/80 mb-4">
+        <div>
+          <h2 class="text-base sm:text-lg font-bold flex items-center gap-2 text-highlight">
+            <i class="fas fa-crown text-amber-400"></i> Reto Final Integrador: Matemática Discreta y Computación
+          </h2>
+          <p class="text-xs text-muted">Desafío integral que conecta sistemas numéricos, inducción, conjuntos, funciones y combinatoria</p>
+        </div>
+        <div class="flex items-center gap-2">
+          <span id="quiz-score" class="px-3 py-1 rounded-full text-xs font-mono font-bold bg-teal-500/20 text-teal-400 border border-teal-500/30">
+            Puntaje: 0 / 5
+          </span>
+        </div>
+      </div>
+
+      <div class="space-y-4">
+        <!-- Pregunta 1 -->
+        <div class="subcard-box p-4" id="q-box-1">
+          <div class="text-xs font-bold text-muted uppercase mb-1">Desafío 1 • Espacio de Contraseñas (Regla del Producto)</div>
+          <p class="text-xs sm:text-sm font-semibold text-white mb-2">Una clave bancaria consta de <strong>4 dígitos numéricos (0-9) seguidos de 2 letras minúsculas (a-z, 26 letras)</strong>. ¿Cuántas contraseñas distintas se pueden formar?</p>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <button onclick="check(1, 'A', this)" class="q-opt px-3 py-2 rounded-lg bg-gray-800 hover:bg-gray-700 text-xs text-left text-gray-200 transition">A) 10⁴ × 26² = 10,000 × 676 = 6,760,000</button>
+            <button onclick="check(1, 'B', this)" class="q-opt px-3 py-2 rounded-lg bg-gray-800 hover:bg-gray-700 text-xs text-left text-gray-200 transition">B) 10 × 26 = 260</button>
+            <button onclick="check(1, 'C', this)" class="q-opt px-3 py-2 rounded-lg bg-gray-800 hover:bg-gray-700 text-xs text-left text-gray-200 transition">C) 10! / 26!</button>
+            <button onclick="check(1, 'D', this)" class="q-opt px-3 py-2 rounded-lg bg-gray-800 hover:bg-gray-700 text-xs text-left text-gray-200 transition">D) 4! × 2!</button>
+          </div>
+          <div class="feedback hidden text-xs p-2 rounded-lg mt-2 font-mono"></div>
+        </div>
+
+        <!-- Pregunta 2 -->
+        <div class="subcard-box p-4" id="q-box-2">
+          <div class="text-xs font-bold text-muted uppercase mb-1">Desafío 2 • Combinatoria en Subredes IP</div>
+          <p class="text-xs sm:text-sm font-semibold text-white mb-2">Si un bloque de red IPv4 dispone de <strong>6 bits</strong> para identificar hosts dentro de la subred, ¿cuántas direcciones IP de host útiles pueden asignarse (descontando red y broadcast)?</p>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <button onclick="check(2, 'A', this)" class="q-opt px-3 py-2 rounded-lg bg-gray-800 hover:bg-gray-700 text-xs text-left text-gray-200 transition">A) 2^6 - 2 = 64 - 2 = 62 hosts útiles</button>
+            <button onclick="check(2, 'B', this)" class="q-opt px-3 py-2 rounded-lg bg-gray-800 hover:bg-gray-700 text-xs text-left text-gray-200 transition">B) 64 hosts</button>
+            <button onclick="check(2, 'C', this)" class="q-opt px-3 py-2 rounded-lg bg-gray-800 hover:bg-gray-700 text-xs text-left text-gray-200 transition">C) 32 hosts</button>
+            <button onclick="check(2, 'D', this)" class="q-opt px-3 py-2 rounded-lg bg-gray-800 hover:bg-gray-700 text-xs text-left text-gray-200 transition">D) 256 hosts</button>
+          </div>
+          <div class="feedback hidden text-xs p-2 rounded-lg mt-2 font-mono"></div>
+        </div>
+
+        <!-- Pregunta 3 -->
+        <div class="subcard-box p-4" id="q-box-3">
+          <div class="text-xs font-bold text-muted uppercase mb-1">Desafío 3 • Principio de Inclusión-Exclusión</div>
+          <p class="text-xs sm:text-sm font-semibold text-white mb-2">En un curso de 100 estudiantes: 60 programan en Python, 50 programan en C++, y 25 dominan ambos lenguajes. ¿Cuántos estudiantes dominan al menos uno de los dos?</p>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <button onclick="check(3, 'A', this)" class="q-opt px-3 py-2 rounded-lg bg-gray-800 hover:bg-gray-700 text-xs text-left text-gray-200 transition">A) 60 + 50 - 25 = 85 estudiantes</button>
+            <button onclick="check(3, 'B', this)" class="q-opt px-3 py-2 rounded-lg bg-gray-800 hover:bg-gray-700 text-xs text-left text-gray-200 transition">B) 110 estudiantes</button>
+            <button onclick="check(3, 'C', this)" class="q-opt px-3 py-2 rounded-lg bg-gray-800 hover:bg-gray-700 text-xs text-left text-gray-200 transition">C) 75 estudiantes</button>
+            <button onclick="check(3, 'D', this)" class="q-opt px-3 py-2 rounded-lg bg-gray-800 hover:bg-gray-700 text-xs text-left text-gray-200 transition">D) 90 estudiantes</button>
+          </div>
+          <div class="feedback hidden text-xs p-2 rounded-lg mt-2 font-mono"></div>
+        </div>
+
+        <!-- Pregunta 4 -->
+        <div class="subcard-box p-4" id="q-box-4">
+          <div class="text-xs font-bold text-muted uppercase mb-1">Desafío 4 • Combinaciones vs Permutaciones</div>
+          <p class="text-xs sm:text-sm font-semibold text-white mb-2">De un equipo de 8 ingenieros de software, se debe seleccionar un comité de 3 personas sin jerarquía. ¿De cuántas formas puede elegirse?</p>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <button onclick="check(4, 'A', this)" class="q-opt px-3 py-2 rounded-lg bg-gray-800 hover:bg-gray-700 text-xs text-left text-gray-200 transition">A) C(8, 3) = 8! / (3! · 5!) = 56 formas</button>
+            <button onclick="check(4, 'B', this)" class="q-opt px-3 py-2 rounded-lg bg-gray-800 hover:bg-gray-700 text-xs text-left text-gray-200 transition">B) P(8, 3) = 336 formas</button>
+            <button onclick="check(4, 'C', this)" class="q-opt px-3 py-2 rounded-lg bg-gray-800 hover:bg-gray-700 text-xs text-left text-gray-200 transition">C) 24 formas</button>
+            <button onclick="check(4, 'D', this)" class="q-opt px-3 py-2 rounded-lg bg-gray-800 hover:bg-gray-700 text-xs text-left text-gray-200 transition">D) 512 formas</button>
+          </div>
+          <div class="feedback hidden text-xs p-2 rounded-lg mt-2 font-mono"></div>
+        </div>
+
+        <!-- Pregunta 5 -->
+        <div class="subcard-box p-4" id="q-box-5">
+          <div class="text-xs font-bold text-muted uppercase mb-1">Desafío 5 • Conteo de Ciclos en Algoritmos</div>
+          <p class="text-xs sm:text-sm font-semibold text-white mb-2">En un algoritmo con dos bucles anidados donde <code>i</code> va de 1 a n y <code>j</code> va de 1 a i, ¿cuántas veces se ejecuta el cuerpo interno?</p>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <button onclick="check(5, 'A', this)" class="q-opt px-3 py-2 rounded-lg bg-gray-800 hover:bg-gray-700 text-xs text-left text-gray-200 transition">A) ∑_{i=1}^n i = n(n+1)/2 veces (Complejidad O(n²))</button>
+            <button onclick="check(5, 'B', this)" class="q-opt px-3 py-2 rounded-lg bg-gray-800 hover:bg-gray-700 text-xs text-left text-gray-200 transition">B) n veces (O(n))</button>
+            <button onclick="check(5, 'C', this)" class="q-opt px-3 py-2 rounded-lg bg-gray-800 hover:bg-gray-700 text-xs text-left text-gray-200 transition">C) 2^n veces (O(2^n))</button>
+            <button onclick="check(5, 'D', this)" class="q-opt px-3 py-2 rounded-lg bg-gray-800 hover:bg-gray-700 text-xs text-left text-gray-200 transition">D) log(n) veces</button>
+          </div>
+          <div class="feedback hidden text-xs p-2 rounded-lg mt-2 font-mono"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const answers = {
+      1: { correct: 'A', exp: "Por el principio de multiplicación: 10 × 10 × 10 × 10 × 26 × 26 = 10,000 × 676 = 6,760,000 contraseñas." },
+      2: { correct: 'A', exp: "Con 6 bits se tienen 2^6 = 64 combinaciones, restando la dirección de red (todo 0s) y la de difusión (todo 1s) quedan 62 hosts útiles." },
+      3: { correct: 'A', exp: "|P ∪ C| = |P| + |C| - |P ∩ C| = 60 + 50 - 25 = 85 estudiantes." },
+      4: { correct: 'A', exp: "El orden en el comité no importa, por lo que es una combinación: C(8, 3) = (8×7×6)/(3×2×1) = 56." },
+      5: { correct: 'A', exp: "La suma 1 + 2 + ... + n es la suma de Gauss: n(n+1)/2 = n²/2 + n/2 ∈ Θ(n²)." }
+    };
+
+    let answered = {};
+    let score = 0;
+
+    function check(qId, userAns, btn) {
+      if (answered[qId]) return;
+      answered[qId] = true;
+
+      const qBox = document.getElementById(`q-box-${qId}`);
+      const fb = qBox.querySelector('.feedback');
+      const isCorrect = userAns === answers[qId].correct;
+
+      if (isCorrect) {
+        score++;
+        btn.classList.remove('bg-gray-800');
+        btn.classList.add('bg-emerald-600', 'text-white');
+        fb.classList.remove('hidden');
+        fb.classList.add('bg-emerald-500/10', 'text-emerald-400', 'border', 'border-emerald-500/30');
+        fb.innerHTML = `✅ ¡Correcto! ${answers[qId].exp}`;
+      } else {
+        btn.classList.remove('bg-gray-800');
+        btn.classList.add('bg-rose-600', 'text-white');
+        fb.classList.remove('hidden');
+        fb.classList.add('bg-rose-500/10', 'text-rose-400', 'border', 'border-rose-500/30');
+        fb.innerHTML = `❌ Incorrecto. Opción correcta: ${answers[qId].correct}. ${answers[qId].exp}`;
+      }
+
+      document.getElementById('quiz-score').textContent = `Puntaje: ${score} / 5`;
+    }
+  </script>
+</body>
+</html>

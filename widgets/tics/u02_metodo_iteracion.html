@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      background-color: #0b0e14;
+      color: #e2e8f0;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      margin: 0;
+      padding: 12px;
+      transition: background-color 0.2s, color 0.2s;
+    }
+    [data-theme="light"] body { background-color: #ffffff; color: #0f172a; }
+    [data-theme="light"] .card-box { background-color: #f8fafc !important; border-color: #e2e8f0 !important; color: #0f172a !important; }
+    [data-theme="light"] .subcard-box { background-color: #ffffff !important; border-color: #cbd5e1 !important; color: #1e293b !important; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+    [data-theme="light"] .text-muted { color: #64748b !important; }
+    [data-theme="light"] .text-highlight { color: #0f766e !important; }
+    [data-theme="light"] input, [data-theme="light"] select { background-color: #ffffff !important; border-color: #cbd5e1 !important; color: #0f172a !important; }
+    .card-box { background-color: #121622; border: 1px solid #1f293d; border-radius: 12px; }
+    .subcard-box { background-color: #090d14; border: 1px solid #1a2233; border-radius: 8px; }
+    .text-muted { color: #94a3b8; }
+    .text-highlight { color: #2dd4bf; }
+  </style>
+  <script>
+    window.addEventListener('message', (event) => {
+      if (event.data && event.data.type === 'THEME_CHANGE') {
+        document.documentElement.setAttribute('data-theme', event.data.theme);
+      }
+    });
+    try {
+      const savedTheme = localStorage.getItem('leogaviria_theme') || 'dark';
+      document.documentElement.setAttribute('data-theme', savedTheme);
+    } catch(e) {}
+  </script>
+
+  <title>Método de Iteración para Recurrencias</title>
+</head>
+<body>
+  <div class="max-w-4xl mx-auto space-y-4">
+    <div class="card-box p-4 sm:p-5">
+      <div class="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-gray-800/80 mb-4">
+        <div>
+          <h2 class="text-base sm:text-lg font-bold flex items-center gap-2 text-highlight">
+            <i class="fas fa-arrows-split-up-and-left"></i> Método de Iteración (Sustitución Hacia Atrás)
+          </h2>
+          <p class="text-xs text-muted">Despliegue formal paso a paso para resolver recurrencias no homogéneas de primer orden</p>
+        </div>
+      </div>
+
+      <!-- Ejemplo Seleccionable -->
+      <div class="flex flex-wrap items-center gap-3 mb-4">
+        <label class="text-xs font-semibold text-muted">Recurrencia de Estudio:</label>
+        <select id="iter-problem" onchange="renderIter()" class="px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-[#1a2234] border border-gray-700 text-white">
+          <option value="gauss" selected>T(n) = T(n-1) + n,  T(1) = 1 (Suma acumulada)</option>
+          <option value="hanoi">T(n) = 2T(n-1) + 1, T(1) = 1 (Torres de Hanoi)</option>
+          <option value="linear_c">T(n) = T(n-1) + c,  T(1) = c (Búsqueda secuencial)</option>
+        </select>
+      </div>
+
+      <!-- Pasos del Despliegue -->
+      <div class="space-y-3 font-mono text-xs" id="iter-steps-container">
+        <!-- Inyectado por JS -->
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const problemsData = {
+      gauss: {
+        rec: "T(n) = T(n-1) + n, con T(1) = 1",
+        steps: [
+          { title: "Paso 1: Ecuación base", math: "T(n) = T(n-1) + n" },
+          { title: "Paso 2: Sustitución de T(n-1)", math: "Como T(n-1) = T(n-2) + (n-1):<br>T(n) = [T(n-2) + (n-1)] + n = T(n-2) + (n-1) + n" },
+          { title: "Paso 3: Sustitución de T(n-2)", math: "Como T(n-2) = T(n-3) + (n-2):<br>T(n) = [T(n-3) + (n-2)] + (n-1) + n" },
+          { title: "Paso 4: Identificación del patrón en el paso k", math: "T(n) = T(n-k) + (n - k + 1) + ... + (n-1) + n" },
+          { title: "Paso 5: Aplicar condición de parada", math: "Queremos llegar a la base T(1): n - k = 1 &rArr; k = n - 1.<br>Sustituyendo k:<br>T(n) = T(1) + 2 + 3 + ... + n = 1 + 2 + 3 + ... + n" },
+          { title: "Paso 6: Solución analítica cerrada", math: "<strong class='text-teal-400 text-sm'>T(n) = n(n+1)/2 &isin; &Theta;(n²)</strong>" }
+        ]
+      },
+      hanoi: {
+        rec: "T(n) = 2T(n-1) + 1, con T(1) = 1",
+        steps: [
+          { title: "Paso 1: Ecuación base", math: "T(n) = 2·T(n-1) + 1" },
+          { title: "Paso 2: Sustitución de T(n-1)", math: "T(n-1) = 2·T(n-2) + 1<br>T(n) = 2·[2·T(n-2) + 1] + 1 = 2²·T(n-2) + 2 + 1" },
+          { title: "Paso 3: Sustitución de T(n-2)", math: "T(n) = 2²·[2·T(n-3) + 1] + 2 + 1 = 2³·T(n-3) + 2² + 2 + 1" },
+          { title: "Paso 4: Patrón general en el paso k", math: "T(n) = 2^k · T(n-k) + ∑_{i=0}^{k-1} 2^i" },
+          { title: "Paso 5: Condición de parada (n-k = 1 &rArr; k = n-1)", math: "T(n) = 2^{n-1}·T(1) + (2^{n-1} - 1) = 2^{n-1}·(1) + 2^{n-1} - 1 = 2·2^{n-1} - 1" },
+          { title: "Paso 6: Solución analítica cerrada", math: "<strong class='text-teal-400 text-sm'>T(n) = 2^n - 1 &isin; &Theta;(2^n)</strong>" }
+        ]
+      },
+      linear_c: {
+        rec: "T(n) = T(n-1) + c, con T(1) = c",
+        steps: [
+          { title: "Paso 1: Ecuación base", math: "T(n) = T(n-1) + c" },
+          { title: "Paso 2: Sustitución de T(n-1)", math: "T(n) = [T(n-2) + c] + c = T(n-2) + 2c" },
+          { title: "Paso 3: Sustitución de T(n-2)", math: "T(n) = [T(n-3) + c] + 2c = T(n-3) + 3c" },
+          { title: "Paso 4: Patrón general en el paso k", math: "T(n) = T(n-k) + k·c" },
+          { title: "Paso 5: Condición de parada (n-k = 1 &rArr; k = n-1)", math: "T(n) = T(1) + (n-1)·c = c + n·c - c = n·c" },
+          { title: "Paso 6: Solución analítica cerrada", math: "<strong class='text-teal-400 text-sm'>T(n) = c·n &isin; &Theta;(n)</strong>" }
+        ]
+      }
+    };
+
+    function renderIter() {
+      const pKey = document.getElementById('iter-problem').value;
+      const data = problemsData[pKey];
+      const cont = document.getElementById('iter-steps-container');
+      cont.innerHTML = '';
+
+      data.steps.forEach((s, idx) => {
+        const box = document.createElement('div');
+        box.className = 'subcard-box p-3 border-l-4 border-teal-500/80';
+        box.innerHTML = `
+          <div class="text-xs font-bold text-muted uppercase mb-1">${s.title}</div>
+          <div class="text-xs sm:text-sm text-gray-200 leading-relaxed">${s.math}</div>
+        `;
+        cont.appendChild(box);
+      });
+    }
+
+    renderIter();
+  </script>
+</body>
+</html>

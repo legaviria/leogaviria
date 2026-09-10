@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    background-color: #0e0e11 !important;
+    color: #c9d1d9;
+    margin: 0;
+    padding: 6px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  }
+  .quiz-container {
+    background-color: #141419;
+    color: #c9d1d9;
+    padding: 20px 24px;
+    border-radius: 12px;
+    border: 1px solid #232d42;
+    max-width: 100%;
+    margin: 0 auto;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+  }
+
+  .quiz-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #21262d;
+    padding-bottom: 12px;
+    margin-bottom: 20px;
+  }
+
+  .quiz-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #f0f6fc;
+  }
+
+  .quiz-counter {
+    background-color: #21262d;
+    color: #8b949e;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+  }
+
+  .question-text {
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: #ffffff;
+    margin-bottom: 20px;
+    line-height: 1.4;
+  }
+
+  .options-container {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .option-btn {
+    display: flex;
+    align-items: center;
+    background-color: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 8px;
+    padding: 14px 16px;
+    color: #c9d1d9;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: left;
+    font-size: 0.95rem;
+  }
+
+  .option-btn:hover:not(:disabled) {
+    border-color: #8b949e;
+    background-color: #21262d;
+  }
+
+  .option-badge {
+    background-color: #21262d;
+    color: #f0f6fc;
+    font-weight: bold;
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 14px;
+    flex-shrink: 0;
+  }
+
+  /* Estados de respuesta */
+  .option-btn.correct {
+    border-color: #238636 !important;
+    background-color: rgba(46, 160, 67, 0.15) !important;
+    color: #ffffff;
+  }
+  .option-btn.correct .option-badge {
+    background-color: #238636;
+    color: #ffffff;
+  }
+
+  .option-btn.incorrect {
+    border-color: #da3633 !important;
+    background-color: rgba(248, 81, 73, 0.15) !important;
+    color: #ffffff;
+  }
+  .option-btn.incorrect .option-badge {
+    background-color: #da3633;
+    color: #ffffff;
+  }
+
+  .explanation-box {
+    display: none;
+    margin-top: 16px;
+    padding: 12px 16px;
+    background-color: rgba(46, 160, 67, 0.15);
+    border: 1px solid #238636;
+    border-radius: 8px;
+    color: #3fb950;
+    font-size: 0.88rem;
+    line-height: 1.5;
+    animation: fadeInExp 0.2s ease-out;
+  }
+  @keyframes fadeInExp {
+    from { opacity: 0; transform: translateY(-3px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .explanation-box.show {
+    display: block;
+  }
+
+  .quiz-footer {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 24px;
+    padding-top: 16px;
+    border-top: 1px solid #21262d;
+  }
+
+  .nav-btn {
+    background-color: #21262d;
+    color: #c9d1d9;
+    border: 1px solid #30363d;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+  }
+
+  .nav-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .nav-btn.primary {
+    background-color: #238636;
+    color: #ffffff;
+    border: none;
+  }
+  .nav-btn.primary:hover:not(:disabled) {
+    background-color: #2ea043;
+  }
+
+  /* Estilos para la pantalla de Resultados */
+  .results-box {
+    display: none;
+    text-align: center;
+    padding: 20px 10px;
+  }
+
+  .score-badge {
+    font-size: 3rem;
+    font-weight: bold;
+    color: #58a6ff;
+    margin: 15px 0;
+  }
+
+  .score-message {
+    font-size: 1.1rem;
+    color: #c9d1d9;
+    margin-bottom: 25px;
+  }
+
+  /* SOPORTE LIGHT MODE (ALTO CONTRASTE) */
+  [data-theme="light"] html, [data-theme="light"] body {
+    background-color: #ffffff !important;
+    color: #0f172a !important;
+  }
+  [data-theme="light"] .quiz-container {
+    background-color: #ffffff !important;
+    border-color: #cbd5e1 !important;
+    color: #0f172a !important;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.06) !important;
+  }
+  [data-theme="light"] .quiz-header {
+    border-bottom-color: #e2e8f0 !important;
+  }
+  [data-theme="light"] .quiz-title {
+    color: #0f172a !important;
+  }
+  [data-theme="light"] .quiz-counter {
+    background-color: #e2e8f0 !important;
+    color: #475569 !important;
+  }
+  [data-theme="light"] .question-text {
+    color: #0f172a !important;
+  }
+  [data-theme="light"] .option-btn {
+    background-color: #f8fafc !important;
+    border-color: #cbd5e1 !important;
+    color: #1e293b !important;
+  }
+  [data-theme="light"] .option-btn:hover:not(:disabled) {
+    background-color: #f1f5f9 !important;
+    border-color: #059669 !important;
+  }
+  [data-theme="light"] .option-badge {
+    background-color: #e2e8f0 !important;
+    color: #334155 !important;
+  }
+  [data-theme="light"] .option-btn.correct {
+    background-color: #d1fae5 !important;
+    border-color: #059669 !important;
+    color: #065f46 !important;
+  }
+  [data-theme="light"] .option-btn.incorrect {
+    background-color: #fee2e2 !important;
+    border-color: #dc2626 !important;
+    color: #991b1b !important;
+  }
+  [data-theme="light"] .explanation-box {
+    background-color: #ecfdf5 !important;
+    border: 1px solid #a7f3d0 !important;
+    border-left: 4px solid #059669 !important;
+    color: #064e3b !important;
+  }
+  [data-theme="light"] .btn-action, [data-theme="light"] .nav-btn.primary {
+    background-color: #059669 !important;
+    color: #ffffff !important;
+  }
+
+</style>
+</head>
+<body>
+
+<div class="quiz-container">
+  <div class="quiz-header">
+    <div class="quiz-title">Que aprendimos sobre Bubble Sort</div>
+    <div class="quiz-counter" id="counter">1/10</div>
+  </div>
+
+  <!-- Vista del Quiz -->
+  <div id="quiz-view">
+    <div class="question-text" id="question">Cargando pregunta...</div>
+    <div class="options-container" id="options"></div>
+    <div class="explanation-box" id="explanation"></div>
+
+    <div class="quiz-footer">
+      <button class="nav-btn" id="prev-btn" onclick="prevQuestion()" disabled>❮ Anterior</button>
+      <button class="nav-btn primary" id="next-btn" onclick="nextQuestion()" disabled>Próximo ❯</button>
+    </div>
+  </div>
+
+  <!-- Vista de Resultados sin iconos -->
+  <div class="results-box" id="results-view">
+    <h2>Quiz Finalizado</h2>
+    <div class="score-badge" id="score-text">0 / 10</div>
+    <p class="score-message" id="score-msg"></p>
+    <button class="nav-btn primary" onclick="restartQuiz()">Reintentar Quiz</button>
+  </div>
+</div>
+
+<script>
+const questions = [
+  {
+    question: "¿Qué descripción refleja mejor cómo el algoritmo de ordenación de burbuja ordena un array?",
+    options: [
+      "Divide el array, ordena las mitades y luego fusiona las mitades.",
+      "Utiliza un pivote para particionar los elementos alrededor de su posición final.",
+      "Selecciona el objeto más pequeño y colóquelo al frente.",
+      "Compara vecinos e intercámbialos cuando su orden sea incorrecto."
+    ],
+    correct: 3,
+    explanation: "<b>Explicación:</b> El algoritmo de ordenación de burbuja se basa en comparaciones entre elementos adyacentes. Comprueba repetidamente los elementos vecinos y los intercambia si están desordenados, lo que provoca que los valores más grandes se desplacen hacia el final."
+  },
+  {
+    question: "¿Cuál es la complejidad temporal de Bubble Sort en el PEOR de los casos?",
+    options: [
+      "O(n log n)",
+      "O(n²)",
+      "O(n)",
+      "O(1)"
+    ],
+    correct: 1,
+    explanation: "<b>Explicación:</b> Ocurre cuando el arreglo está completamente invertido, requiriendo realizar comparaciones e intercambios para cada par en n(n-1)/2 iteraciones."
+  },
+  {
+    question: "¿Cómo se puede optimizar Bubble Sort para detectar si el arreglo ya está ordenado?",
+    options: [
+      "Usando una bandera (flag) que verifique si hubo intercambios en la pasada.",
+      "Dividiendo el arreglo en subarreglos más pequeños.",
+      "Invirtiendo el sentido de la iteración en cada paso.",
+      "No es posible optimizar Bubble Sort."
+    ],
+    correct: 0,
+    explanation: "<b>Explicación:</b> Si en una pasada completa no ocurre ningún intercambio (swapped = false), el algoritmo concluye prematuramente en tiempo O(n)."
+  },
+  {
+    question: "¿Cuál es la complejidad temporal de Bubble Sort en el MEJOR de los casos (versión optimizada)?",
+    options: [
+      "O(n)",
+      "O(n log n)",
+      "O(n²)",
+      "O(1)"
+    ],
+    correct: 0,
+    explanation: "<b>Explicación:</b> Si el arreglo ya está ordenado y usamos una bandera para detectar intercambios, el algoritmo solo requiere una única iteración sin hacer cambios, resultando en tiempo lineal O(n)."
+  },
+  {
+    question: "¿Cuál es la complejidad espacial (memoria extra) del algoritmo Bubble Sort?",
+    options: [
+      "O(n)",
+      "O(n²)",
+      "O(1)",
+      "O(log n)"
+    ],
+    correct: 2,
+    explanation: "<b>Explicación:</b> Bubble Sort es un algoritmo de ordenamiento 'in-place', lo que significa que solo requiere una cantidad constante de memoria extra O(1) (por ejemplo, una variable temporal para intercambiar valores)."
+  },
+  {
+    question: "¿Se considera Bubble Sort un algoritmo de ordenamiento estable?",
+    options: [
+      "Sí, porque preserva el orden relativo de elementos iguales.",
+      "No, porque intercambia elementos aleatoriamente.",
+      "Sí, pero solo en su variante recursiva.",
+      "No, porque es un ordenamiento 'in-place'."
+    ],
+    correct: 0,
+    explanation: "<b>Explicación:</b> Es un algoritmo estable porque la condición de intercambio suele ser estricta (ej. a > b). Los elementos con el mismo valor no se intercambian, manteniendo así su orden original."
+  },
+  {
+    question: "¿Cuántas pasadas (iteraciones completas) se necesitan como máximo para ordenar un arreglo de tamaño 'n'?",
+    options: [
+      "n",
+      "n - 1",
+      "n / 2",
+      "n²"
+    ],
+    correct: 1,
+    explanation: "<b>Explicación:</b> En el peor de los casos, cada pasada coloca un elemento en su posición final al fondo del arreglo. Por lo tanto, se necesitan n-1 pasadas para ordenar los primeros n-1 elementos, y el último quedará ordenado automáticamente."
+  },
+  {
+    question: "¿Qué resultado específico se garantiza al finalizar la primera pasada completa de Bubble Sort?",
+    options: [
+      "El arreglo queda dividido en dos mitades ordenadas.",
+      "El elemento más pequeño se mueve a la primera posición.",
+      "El elemento más grande se mueve a la última posición.",
+      "El arreglo queda completamente ordenado."
+    ],
+    correct: 2,
+    explanation: "<b>Explicación:</b> Debido a que los intercambios ocurren de izquierda a derecha, el valor máximo 'burbujea' iterativamente hasta llegar a su posición correcta al final del arreglo al terminar la primera pasada."
+  },
+  {
+    question: "¿Qué tipo de estrategia o diseño de algoritmo utiliza principalmente Bubble Sort?",
+    options: [
+      "Divide y vencerás (Divide and Conquer)",
+      "Algoritmo codicioso (Greedy)",
+      "Programación dinámica",
+      "Fuerza bruta (Brute-force)"
+    ],
+    correct: 3,
+    explanation: "<b>Explicación:</b> Bubble Sort es generalmente considerado un algoritmo de fuerza bruta porque su estrategia se basa en comprobar de forma iterativa y exhaustiva los pares adyacentes, sin dividir o simplificar previamente el problema."
+  },
+  {
+    question: "¿Cuál es el número total de comparaciones que realiza el algoritmo Bubble Sort (versión estándar) en un arreglo de tamaño 'n'?",
+    options: [
+      "n",
+      "n log n",
+      "n(n-1)/2",
+      "n² - 1"
+    ],
+    correct: 2,
+    explanation: "<b>Explicación:</b> La primera pasada hace (n-1) comparaciones, la segunda (n-2), y así sucesivamente hasta 1. La suma de esta progresión aritmética es (n-1) + (n-2) + ... + 1 = n(n-1)/2 comparaciones."
+  }
+];
+
+let currentIdx = 0;
+let userAnswers = Array(questions.length).fill(null);
+
+function renderQuestion() {
+  const q = questions[currentIdx];
+  document.getElementById("counter").innerText = `${currentIdx + 1}/${questions.length}`;
+  document.getElementById("question").innerText = q.question;
+
+  const optionsContainer = document.getElementById("options");
+  optionsContainer.innerHTML = "";
+
+  const labels = ["A", "B", "C", "D"];
+  const answered = userAnswers[currentIdx] !== null;
+
+  q.options.forEach((opt, idx) => {
+    const btn = document.createElement("button");
+    btn.className = "option-btn";
+
+    if (answered) {
+      btn.disabled = true;
+      if (idx === q.correct) btn.classList.add("correct");
+      if (idx === userAnswers[currentIdx] && idx !== q.correct) btn.classList.add("incorrect");
+    }
+
+    btn.onclick = () => selectOption(idx);
+    btn.innerHTML = `<span class="option-badge">${labels[idx]}</span> <span>${opt}</span>`;
+    optionsContainer.appendChild(btn);
+  });
+
+  const expBox = document.getElementById("explanation");
+  if (answered) {
+    expBox.innerHTML = q.explanation;
+    expBox.classList.add("show");
+  } else {
+    expBox.classList.remove("show");
+  }
+
+  document.getElementById("prev-btn").disabled = currentIdx === 0;
+
+  const nextBtn = document.getElementById("next-btn");
+  nextBtn.disabled = !answered;
+
+  if (currentIdx === questions.length - 1) {
+    nextBtn.innerText = "Finalizar Quiz";
+  } else {
+    nextBtn.innerText = "Próximo ❯";
+  }
+}
+
+function selectOption(idx) {
+  userAnswers[currentIdx] = idx;
+  renderQuestion();
+}
+
+function nextQuestion() {
+  if (currentIdx < questions.length - 1) {
+    currentIdx++;
+    renderQuestion();
+  } else {
+    finishQuiz();
+  }
+}
+
+function prevQuestion() {
+  if (currentIdx > 0) {
+    currentIdx--;
+    renderQuestion();
+  }
+}
+
+function finishQuiz() {
+  let score = 0;
+  userAnswers.forEach((answer, index) => {
+    if (answer === questions[index].correct) {
+      score++;
+    }
+  });
+
+  const percentage = (score / questions.length) * 100;
+
+  document.getElementById("quiz-view").style.display = "none";
+  document.getElementById("results-view").style.display = "block";
+  document.getElementById("counter").innerText = "Resultado";
+
+  document.getElementById("score-text").innerText = `${score} / ${questions.length}`;
+
+  const scoreMsg = document.getElementById("score-msg");
+  if (percentage === 100) {
+    scoreMsg.innerText = `Excelente. Obtuviste un ${percentage}%. Dominas Bubble Sort a la perfección.`;
+  } else if (percentage >= 70) {
+    scoreMsg.innerText = `Buen trabajo. Obtuviste un ${percentage}%. Tienes un entendimiento sólido de los conceptos.`;
+  } else {
+    scoreMsg.innerText = `Obtuviste un ${percentage}%. Revisa las explicaciones de tus respuestas e inténtalo de nuevo.`;
+  }
+}
+
+function restartQuiz() {
+  currentIdx = 0;
+  userAnswers = Array(questions.length).fill(null);
+  document.getElementById("results-view").style.display = "none";
+  document.getElementById("quiz-view").style.display = "block";
+  renderQuestion();
+}
+
+renderQuestion();
+</script>
+
+<script>
+  (function() {
+    function applyWidgetTheme(t) {
+      if (t) document.documentElement.setAttribute('data-theme', t);
+    }
+    try {
+      var saved = localStorage.getItem('leogaviria_theme') || 'dark';
+      applyWidgetTheme(saved);
+    } catch(e) {}
+    window.addEventListener('message', function(e) {
+      if (e.data && e.data.type === 'THEME_CHANGE') {
+        applyWidgetTheme(e.data.theme);
+      }
+    });
+  })();
+</script>
+
+</body>
+</html>

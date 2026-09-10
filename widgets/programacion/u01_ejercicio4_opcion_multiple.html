@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Opción Múltiple (Concepto de Algoritmo)</title>
+  <style>
+    * { box-sizing: border-box; }
+    html, body {
+      background-color: #0e0e11 !important;
+      color: #ffffff;
+      margin: 0;
+      padding: 10px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+  </style>
+</head>
+<body>
+<style>
+  .mcq-box {
+    background: #0e0e11;
+    color: #ffffff;
+    padding: 20px;
+    border-radius: 12px;
+    border: 1px solid #1f293d;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    max-width: 580px;
+    margin: 0 auto;
+  }
+  .mcq-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #00c8ff;
+    margin-bottom: 6px;
+  }
+  .mcq-question {
+    font-size: 0.88rem;
+    color: #e2e8f0;
+    margin-bottom: 14px;
+  }
+  .mcq-options {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+  .mcq-option {
+    background: #181d28;
+    border: 1px solid #232d42;
+    padding: 10px 14px;
+    border-radius: 6px;
+    font-size: 0.82rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .mcq-option:hover {
+    border-color: #00c8ff;
+    background: #1e2638;
+  }
+  .mcq-option.selected {
+    border-color: #00c8ff;
+    background: rgba(0, 200, 255, 0.1);
+  }
+  .btn-check-mcq {
+    background: #00c8ff;
+    color: #000;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 16px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    cursor: pointer;
+    width: 100%;
+  }
+  .mcq-feedback {
+    margin-top: 12px;
+    padding: 10px;
+    border-radius: 6px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    display: none;
+  }
+  .mcq-feedback.correct { background: rgba(74, 222, 128, 0.15); color: #4ade80; border: 1px solid #4ade80; }
+  .mcq-feedback.incorrect { background: rgba(255, 118, 118, 0.15); color: #ff7676; border: 1px solid #ff7676; }
+</style>
+
+<div class="mcq-box">
+  <div class="mcq-title">Opción Múltiple</div>
+  <div class="mcq-question">¿Cuál de las siguientes características NO pertenece a la definición de un algoritmo?</div>
+
+  <div class="mcq-options" id="options-group">
+    <div class="mcq-option" onclick="selectOpt(this, 'a')">
+      <input type="radio" name="opt" id="opt-a">
+      <label for="opt-a">A) Secuencia finita de pasos.</label>
+    </div>
+    <div class="mcq-option" onclick="selectOpt(this, 'b')">
+      <input type="radio" name="opt" id="opt-b">
+      <label for="opt-b">B) Pasos ambiguos e infinitos.</label>
+    </div>
+    <div class="mcq-option" onclick="selectOpt(this, 'c')">
+      <input type="radio" name="opt" id="opt-c">
+      <label for="opt-c">C) Transformación de entradas en salidas.</label>
+    </div>
+  </div>
+
+  <button class="btn-check-mcq" onclick="checkMCQ()">Comprobar Respuesta</button>
+  <div class="mcq-feedback" id="mcq-fb"></div>
+</div>
+
+<script>
+let selectedVal = null;
+
+function selectOpt(element, val) {
+  document.querySelectorAll('.mcq-option').forEach(el => el.classList.remove('selected'));
+  element.classList.add('selected');
+  selectedVal = val;
+  element.querySelector('input').checked = true;
+}
+
+function checkMCQ() {
+  const fb = document.getElementById('mcq-fb');
+  fb.style.display = 'block';
+  if (selectedVal === 'b') {
+    fb.className = 'mcq-feedback correct';
+    fb.innerText = '¡Correcto! Un algoritmo siempre debe ser FINITO y NO AMBIGUO.';
+  } else if (!selectedVal) {
+    fb.className = 'mcq-feedback incorrect';
+    fb.innerText = 'Por favor, selecciona una opción antes de validar.';
+  } else {
+    fb.className = 'mcq-feedback incorrect';
+    fb.innerText = 'Incorrecto. Recuerda que los algoritmos deben tener reglas precisas e inambiguas.';
+  }
+}
+</script>
+</body>
+</html>

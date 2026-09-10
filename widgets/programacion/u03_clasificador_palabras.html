@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Clasificador de Palabras Reservadas e Identificadores</title>
+  <style>
+    :root {
+      --bg: #0e0e11; --card: #141923; --border: #232d42; --text: #fff;
+      --muted: #94a3b8; --sky: #38bdf8; --purple: #a855f7; --green: #10b981; --red: #ef4444;
+    }
+    body.theme-light {
+      --bg: #f8fafc; --card: #ffffff; --border: #e2e8f0; --text: #0f172a;
+      --muted: #64748b; --sky: #0284c7; --purple: #9333ea; --green: #059669; --red: #dc2626;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { background: var(--bg); color: var(--text); padding: 14px; display: flex; justify-content: center; }
+    .container { width: 100%; max-width: 660px; background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 16px; }
+    .header { text-align: center; margin-bottom: 12px; }
+    .header h3 { font-size: 1.1rem; color: #a78bfa; margin-bottom: 4px; }
+    .card-challenge { background: #080b10; border: 1px solid var(--border); border-radius: 10px; padding: 16px; text-align: center; margin-bottom: 14px; }
+    .token-word { font-family: monospace; font-size: 1.5rem; font-weight: bold; color: #38bdf8; letter-spacing: 1px; margin: 8px 0; }
+    .choice-buttons { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+    @media (max-width: 500px) { .choice-buttons { grid-template-columns: 1fr; } }
+    .cbtn { padding: 10px 6px; font-size: 0.78rem; font-weight: 600; border-radius: 6px; border: 1px solid var(--border); background: rgba(255,255,255,0.04); color: var(--text); cursor: pointer; transition: 0.2s; }
+    .cbtn:hover { background: rgba(255,255,255,0.1); border-color: var(--sky); }
+    .feedback-panel { margin-top: 12px; padding: 10px; border-radius: 6px; font-size: 0.8rem; line-height: 1.4; display: none; }
+    .score-row { display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--muted); margin-top: 10px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h3>🏷️ Clasificador: Palabra Reservada o Identificador</h3>
+      <p style="font-size:0.75rem; color:var(--muted)">¿Es una palabra reservada (keyword), un identificador válido o un nombre inválido?</p>
+    </div>
+
+    <div class="card-challenge">
+      <div style="font-size: 0.75rem; color: var(--muted);">Analiza la siguiente palabra:</div>
+      <div class="token-word" id="tokenDisplay">while</div>
+      <div class="choice-buttons">
+        <button class="cbtn" onclick="check('keyword')">Palabra Reservada</button>
+        <button class="cbtn" onclick="check('valid')">Identificador Válido</button>
+        <button class="cbtn" onclick="check('invalid')">Identificador Inválido</button>
+      </div>
+    </div>
+
+    <div class="feedback-panel" id="fbPanel"></div>
+
+    <div class="score-row">
+      <span id="scoreText">Aciertos: 0 / 0</span>
+      <button class="cbtn" style="padding:4px 8px;" onclick="nextWord()">Siguiente Palabra ➔</button>
+    </div>
+  </div>
+
+  <script>
+    const dataset = [
+      { w: "while", type: "keyword", r: "'while' es una palabra reservada fundamental de Python para crear bucles condicionales. No puede usarse como nombre de variable." },
+      { w: "total_ventas", type: "valid", r: "'total_ventas' es un identificador válido y sigue la convención PEP 8 (snake_case con letras minúsculas y guión bajo)." },
+      { w: "2do_parcial", type: "invalid", r: "'2do_parcial' es INVÁLIDO porque ningún identificador en Python puede iniciar con un dígito numérico." },
+      { w: "def", type: "keyword", r: "'def' es la palabra reservada utilizada para definir funciones." },
+      { w: "precio$", type: "invalid", r: "'precio$' es INVÁLIDO porque contiene el símbolo especial '$', no permitido en nombres de variable de Python." },
+      { w: "None", type: "keyword", r: "'None' es una palabra reservada (con mayúscula inicial) que representa la ausencia de valor o valor nulo." },
+      { w: "mi-variable", type: "invalid", r: "'mi-variable' es INVÁLIDO porque el guión medio '-' es interpretado como operador de resta aritmética." },
+      { w: "_contador_interno", type: "valid", r: "Válido. Los identificadores pueden iniciar con guión bajo (convención para variables internas/privadas)." }
+    ];
+
+    let curIdx = 0;
+    let score = 0;
+    let total = 0;
+
+    function renderWord() {
+      document.getElementById('tokenDisplay').textContent = dataset[curIdx].w;
+      document.getElementById('fbPanel').style.display = 'none';
+      document.querySelectorAll('.cbtn').forEach(b => b.disabled = false);
+    }
+
+    function check(userChoice) {
+      const item = dataset[curIdx];
+      total++;
+      const fb = document.getElementById('fbPanel');
+      fb.style.display = 'block';
+      if (userChoice === item.type) {
+        score++;
+        fb.style.background = 'rgba(16, 185, 129, 0.15)';
+        fb.style.color = '#86efac';
+        fb.innerHTML = '<strong>✅ ¡Correcto!</strong> ' + item.r;
+      } else {
+        fb.style.background = 'rgba(239, 68, 68, 0.15)';
+        fb.style.color = '#fca5a5';
+        fb.innerHTML = '<strong>❌ Incorrecto.</strong> ' + item.r;
+      }
+      document.getElementById('scoreText').textContent = `Aciertos: ${score} / ${total}`;
+    }
+
+    function nextWord() {
+      curIdx = (curIdx + 1) % dataset.length;
+      renderWord();
+    }
+    renderWord();
+  </script>
+</body>
+</html>

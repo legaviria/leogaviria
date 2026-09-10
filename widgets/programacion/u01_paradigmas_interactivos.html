@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Paradigmas de Programación Interactivos</title>
+  <style>
+    * { box-sizing: border-box; }
+    html, body {
+      background-color: #0e0e11 !important;
+      color: #ffffff;
+      margin: 0;
+      padding: 10px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+  </style>
+</head>
+<body>
+<style>
+  .para-container {
+    background-color: #0e0e11;
+    color: #ffffff;
+    padding: 20px;
+    border-radius: 12px;
+    border: 1px solid #1f293d;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    user-select: none;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+    max-width: 580px;
+    margin: 0 auto;
+  }
+
+  .para-header {
+    text-align: center;
+    margin-bottom: 16px;
+  }
+
+  .para-title {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #00c8ff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .para-subtitle {
+    font-size: 0.8rem;
+    color: #94a3b8;
+    margin-top: 2px;
+  }
+
+  /* Selector de Pestañas / Paradigmas */
+  .para-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+    justify-content: center;
+  }
+
+  .tab-btn {
+    background: #181d28;
+    border: 1px solid #232d42;
+    color: #94a3b8;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .tab-btn:hover {
+    background: #1c2332;
+    color: #fff;
+  }
+
+  .tab-btn.active-imperativo {
+    background: rgba(0, 200, 255, 0.15);
+    border-color: #00c8ff;
+    color: #00c8ff;
+    box-shadow: 0 0 10px rgba(0, 200, 255, 0.2);
+  }
+
+  .tab-btn.active-poo {
+    background: rgba(234, 179, 8, 0.15);
+    border-color: #eab308;
+    color: #eab308;
+    box-shadow: 0 0 10px rgba(234, 179, 8, 0.2);
+  }
+
+  .tab-btn.active-funcional {
+    background: rgba(192, 132, 252, 0.15);
+    border-color: #c084fc;
+    color: #c084fc;
+    box-shadow: 0 0 10px rgba(192, 132, 252, 0.2);
+  }
+
+  /* Área de la Animación */
+  .anim-stage {
+    background: #141419;
+    border: 1px solid #1f293d;
+    border-radius: 8px;
+    padding: 16px;
+    min-height: 160px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    margin-bottom: 16px;
+    overflow: hidden;
+  }
+
+  /* Componentes Animados */
+  .anim-box {
+    background: #181d28;
+    border: 2px solid #334155;
+    border-radius: 8px;
+    padding: 10px 16px;
+    font-family: monospace;
+    font-size: 0.8rem;
+    color: #f8fafc;
+    transition: all 0.5s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .anim-flow {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    justify-content: center;
+  }
+
+  .pulse-arrow {
+    stroke: #334155;
+    stroke-width: 2.5;
+    transition: all 0.4s;
+    width: 20px;
+    height: 20px;
+  }
+
+  /* Consola de Salida */
+  .console-out {
+    font-family: monospace;
+    font-size: 0.75rem;
+    color: #4ade80;
+    margin-top: 12px;
+    background: #0f141d;
+    padding: 4px 10px;
+    border-radius: 4px;
+    border: 1px solid #1f293d;
+  }
+
+  /* Botón de Acción */
+  .btn-sim {
+    background: #00c8ff;
+    color: #000000;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 16px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: 0 auto;
+    transition: background 0.2s, transform 0.1s;
+  }
+  .btn-sim:hover { background: #38bdf8; }
+  .btn-sim:active { transform: scale(0.96); }
+
+  /* Explicación Inferior */
+  .para-desc-box {
+    background: #181d28;
+    border-left: 3px solid #00c8ff;
+    border-radius: 0 8px 8px 0;
+    padding: 10px 14px;
+    font-size: 0.78rem;
+    color: #94a3b8;
+    line-height: 1.4;
+  }
+
+  .kw { font-weight: bold; }
+</style>
+
+<div class="para-container">
+  <div class="para-header">
+    <div class="para-title">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#00c8ff" stroke-width="2.2"><path d="M16 18l6-6-6-6"/><path d="M8 6l-6 6 6 6"/></svg>
+      Paradigmas de Programación
+    </div>
+    <div class="para-subtitle">Simulación interactiva de estilos de desarrollo</div>
+  </div>
+
+  <!-- Pestañas de Selección -->
+  <div class="para-tabs">
+    <button id="btn-imp" class="tab-btn active-imperativo" onclick="selectParadigm('imperativo')">
+      ⚡ Imperativo
+    </button>
+    <button id="btn-poo" class="tab-btn" onclick="selectParadigm('poo')">
+      📦 POO
+    </button>
+    <button id="btn-fun" class="tab-btn" onclick="selectParadigm('funcional')">
+      🔄 Funcional
+    </button>
+  </div>
+
+  <!-- Escenario de la Animación -->
+  <div class="anim-stage">
+    <div id="anim-content" class="anim-flow">
+      <!-- Se inyecta dinámicamente con JS -->
+    </div>
+    <div id="console-output" class="console-out">Esperando ejecución...</div>
+  </div>
+
+  <button class="btn-sim" onclick="runParadigmAnimation()">
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="#000"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+    Simular Flujo
+  </button>
+
+  <div style="margin-top: 14px;">
+    <div id="para-desc" class="para-desc-box">
+      <b>Imperativo:</b> Especifica paso a paso las instrucciones y cómo debe cambiar el estado de la memoria para resolver el problema.
+    </div>
+  </div>
+</div>
+
+<script>
+let currentParadigm = 'imperativo';
+
+const paradigmsData = {
+  imperativo: {
+    color: '#00c8ff',
+    desc: '<b>Programación Imperativa:</b> Se enfoca en <i>cómo</i> resolver el problema mediante una secuencia paso a paso de comandos que modifican el estado de las variables.',
+    render: `
+      <div id="n1" class="anim-box">Paso 1: x = 5</div>
+      <svg id="a1" class="pulse-arrow" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      <div id="n2" class="anim-box">Paso 2: x = x + 1</div>
+    `
+  },
+  poo: {
+    color: '#eab308',
+    desc: '<b>Programación Orientada a Objetos (POO):</b> Organiza el código en entidades llamadas <i>Objetos</i> que agrupan datos (atributos) y comportamientos (métodos).',
+    render: `
+      <div id="n1" class="anim-box">Objeto: Usuario</div>
+      <svg id="a1" class="pulse-arrow" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      <div id="n2" class="anim-box">Método: .saludar()</div>
+    `
+  },
+  funcional: {
+    color: '#c084fc',
+    desc: '<b>Programación Funcional:</b> Basa la solución en la evaluación de <i>funciones puras</i> evitándolos cambios de estado y la mutación de datos.',
+    render: `
+      <div id="n1" class="anim-box">Entrada: [1, 2]</div>
+      <svg id="a1" class="pulse-arrow" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      <div id="n2" class="anim-box">map(x => x * 2)</div>
+    `
+  }
+};
+
+function selectParadigm(type) {
+  currentParadigm = type;
+
+  // Actualizar botones
+  document.getElementById('btn-imp').className = 'tab-btn' + (type === 'imperativo' ? ' active-imperativo' : '');
+  document.getElementById('btn-poo').className = 'tab-btn' + (type === 'poo' ? ' active-poo' : '');
+  document.getElementById('btn-fun').className = 'tab-btn' + (type === 'funcional' ? ' active-funcional' : '');
+
+  // Actualizar escenario y descripción
+  const data = paradigmsData[type];
+  document.getElementById('anim-content').innerHTML = data.render;
+  document.getElementById('para-desc').innerHTML = data.desc;
+  document.getElementById('para-desc').style.borderLeftColor = data.color;
+  document.getElementById('console-output').innerText = "Esperando ejecución...";
+  document.getElementById('console-output').style.color = "#94a3b8";
+}
+
+function runParadigmAnimation() {
+  const data = paradigmsData[currentParadigm];
+  const n1 = document.getElementById('n1');
+  const n2 = document.getElementById('n2');
+  const a1 = document.getElementById('a1');
+  const out = document.getElementById('console-output');
+
+  // Reset
+  n1.style.borderColor = '#334155';
+  n1.style.boxShadow = 'none';
+  n2.style.borderColor = '#334155';
+  n2.style.boxShadow = 'none';
+  a1.style.stroke = '#334155';
+  out.innerText = "Ejecutando...";
+  out.style.color = "#eab308";
+
+  // Paso 1
+  setTimeout(() => {
+    n1.style.borderColor = data.color;
+    n1.style.boxShadow = `0 0 12px ${data.color}`;
+  }, 200);
+
+  // Flecha
+  setTimeout(() => {
+    a1.style.stroke = data.color;
+  }, 600);
+
+  // Paso 2
+  setTimeout(() => {
+    n2.style.borderColor = data.color;
+    n2.style.boxShadow = `0 0 12px ${data.color}`;
+  }, 1000);
+
+  // Resultado
+  setTimeout(() => {
+    out.style.color = "#4ade80";
+    if (currentParadigm === 'imperativo') out.innerText = "Estado final: x = 6";
+    if (currentParadigm === 'poo') out.innerText = 'Salida: "Hola, soy Usuario!"';
+    if (currentParadigm === 'funcional') out.innerText = "Resultado: [2, 4]";
+  }, 1400);
+}
+
+// Inicializar la primera vista
+selectParadigm('imperativo');
+</script>
+</body>
+</html>

@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Explorador Interactivo de Tipos de Datos</title>
+  <style>
+    :root {
+      --bg: #0e0e11; --card: #141923; --border: #232d42; --text: #fff;
+      --muted: #94a3b8; --sky: #38bdf8; --green: #10b981; --purple: #a855f7;
+    }
+    body.theme-light {
+      --bg: #f8fafc; --card: #ffffff; --border: #e2e8f0; --text: #0f172a;
+      --muted: #64748b; --sky: #0284c7; --green: #059669; --purple: #9333ea;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { background: var(--bg); color: var(--text); padding: 14px; display: flex; justify-content: center; }
+    .container { width: 100%; max-width: 660px; background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 16px; }
+    .header { text-align: center; margin-bottom: 14px; }
+    .header h3 { font-size: 1.1rem; color: var(--sky); margin-bottom: 4px; }
+    .input-box { display: flex; gap: 8px; margin-bottom: 14px; }
+    input[type="text"] { flex: 1; padding: 8px 12px; background: #080b10; border: 1px solid var(--border); border-radius: 6px; color: #a5f3fc; font-family: monospace; font-size: 0.85rem; outline: none; }
+    input[type="text"]:focus { border-color: var(--sky); }
+    .presets { display: flex; gap: 6px; margin-bottom: 14px; flex-wrap: wrap; }
+    .chip { font-size: 0.72rem; padding: 4px 8px; border-radius: 4px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); cursor: pointer; color: var(--muted); }
+    .chip:hover { border-color: var(--sky); color: var(--text); }
+    .grid-results { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
+    @media (max-width: 500px) { .grid-results { grid-template-columns: 1fr; } }
+    .res-card { background: #080b10; border: 1px solid var(--border); border-radius: 8px; padding: 10px; }
+    .res-card h5 { font-size: 0.75rem; color: var(--muted); margin-bottom: 4px; text-transform: uppercase; }
+    .res-val { font-family: monospace; font-size: 0.88rem; font-weight: bold; color: #fde047; word-break: break-all; }
+    .conv-table { width: 100%; border-collapse: collapse; font-family: monospace; font-size: 0.78rem; margin-top: 10px; }
+    .conv-table th, .conv-table td { padding: 6px 8px; border: 1px solid var(--border); text-align: left; }
+    .conv-table th { background: rgba(255,255,255,0.03); color: var(--muted); }
+    .status-ok { color: #86efac; }
+    .status-err { color: #fca5a5; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h3>🔬 Explorador Interactivo de Tipos de Datos (int, float, str, bool)</h3>
+      <p style="font-size:0.75rem; color:var(--muted)">Escribe un valor o selecciona un ejemplo para inspeccionar su tipo nativo y conversiones (casting).</p>
+    </div>
+
+    <div class="input-box">
+      <input type="text" id="userInput" value="42" placeholder="Introduce un valor o expresión..." oninput="analyzeValue()">
+    </div>
+
+    <div class="presets">
+      <span class="chip" onclick="setVal('42')">42 (int)</span>
+      <span class="chip" onclick="setVal('3.1416')">3.1416 (float)</span>
+      <span class="chip" onclick="setVal('Hola Mundo')">&quot;Hola Mundo&quot; (str)</span>
+      <span class="chip" onclick="setVal('True')">True (bool)</span>
+      <span class="chip" onclick="setVal('0')">0 (falsy)</span>
+      <span class="chip" onclick="setVal('')">&quot;&quot; (cadena vacía)</span>
+    </div>
+
+    <div class="grid-results">
+      <div class="res-card">
+        <h5>Tipo detectado en Python</h5>
+        <div class="res-val" id="typeOut"><code style="color:#38bdf8">&lt;class 'int'&gt;</code></div>
+      </div>
+      <div class="res-card">
+        <h5>Representación en Memoria</h5>
+        <div class="res-val" id="memOut">42 (Binario: 00101010)</div>
+      </div>
+    </div>
+
+    <div style="font-size: 0.75rem; font-weight: bold; color: var(--muted); margin-top: 8px;">TABLA DE CONVERSIONES EXPLÍCITAS (CASTING)</div>
+    <table class="conv-table">
+      <thead>
+        <tr>
+          <th>Función de Conversión</th>
+          <th>Resultado</th>
+          <th>Estado / Comentario</th>
+        </tr>
+      </thead>
+      <tbody id="convBody"></tbody>
+    </table>
+  </div>
+
+  <script>
+    function setVal(v) {
+      document.getElementById('userInput').value = v;
+      analyzeValue();
+    }
+
+    function analyzeValue() {
+      const raw = document.getElementById('userInput').value;
+      let detectedType = "str";
+      let parsed = raw;
+
+      if (raw === "True" || raw === "False") {
+        detectedType = "bool";
+        parsed = raw === "True";
+      } else if (/^-?\d+$/.test(raw)) {
+        detectedType = "int";
+        parsed = parseInt(raw, 10);
+      } else if (/^-?\d*\.\d+$/.test(raw)) {
+        detectedType = "float";
+        parsed = parseFloat(raw);
+      }
+
+      document.getElementById('typeOut').innerHTML = `<code style="color:#38bdf8">&lt;class '${detectedType}'&gt;</code>`;
+      
+      let memStr = "";
+      if (detectedType === "int") {
+        memStr = `${parsed} (Binario: ${parsed.toString(2).padStart(8, '0')})`;
+      } else if (detectedType === "float") {
+        memStr = `${parsed} (IEEE 754 64-bit float)`;
+      } else if (detectedType === "bool") {
+        memStr = parsed ? "1 (Byte booleano verdadero)" : "0 (Byte booleano falso)";
+      } else {
+        memStr = `UTF-8 (${raw.length} caracteres, ${new Blob([raw]).size} bytes)`;
+      }
+      document.getElementById('memOut').textContent = memStr;
+
+      // Conversiones
+      const tbody = document.getElementById('convBody');
+      tbody.innerHTML = '';
+
+      // int()
+      let intRes = "", intStat = "";
+      try {
+        if (detectedType === "bool") {
+          intRes = parsed ? "1" : "0";
+          intStat = "<span class='status-ok'>✓ Correcto</span>";
+        } else if (!isNaN(Number(raw)) && raw.trim() !== '') {
+          intRes = Math.trunc(Number(raw)).toString();
+          intStat = "<span class='status-ok'>✓ Trunca decimales si aplica</span>";
+        } else {
+          intRes = "ValueError";
+          intStat = "<span class='status-err'>✗ No convertible a entero</span>";
+        }
+      } catch(e) { intRes = "ValueError"; intStat = "<span class='status-err'>✗ Fallo</span>"; }
+      addRow(tbody, "int(x)", intRes, intStat);
+
+      // float()
+      let fltRes = "", fltStat = "";
+      try {
+        if (detectedType === "bool") {
+          fltRes = parsed ? "1.0" : "0.0";
+          fltStat = "<span class='status-ok'>✓ Correcto</span>";
+        } else if (!isNaN(Number(raw)) && raw.trim() !== '') {
+          fltRes = Number(raw).toFixed(2);
+          fltStat = "<span class='status-ok'>✓ Convierte a decimal</span>";
+        } else {
+          fltRes = "ValueError";
+          fltStat = "<span class='status-err'>✗ No convertible a float</span>";
+        }
+      } catch(e) { fltRes = "ValueError"; fltStat = "<span class='status-err'>✗ Fallo</span>"; }
+      addRow(tbody, "float(x)", fltRes, fltStat);
+
+      // str()
+      addRow(tbody, "str(x)", `"${raw}"`, "<span class='status-ok'>✓ Siempre legal en Python</span>");
+
+      // bool()
+      let bVal = true;
+      if (raw === "" || raw === "0" || raw === "0.0" || raw === "False") bVal = false;
+      addRow(tbody, "bool(x)", bVal ? "True" : "False", bVal ? "<span class='status-ok'>✓ Truthy (no vacío/no cero)</span>" : "<span class='status-ok'>✓ Falsy (vacío o valor cero)</span>");
+    }
+
+    function addRow(tbody, fn, res, stat) {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `<td><strong>${fn}</strong></td><td><code>${res}</code></td><td>${stat}</td>`;
+      tbody.appendChild(tr);
+    }
+
+    analyzeValue();
+  </script>
+</body>
+</html>

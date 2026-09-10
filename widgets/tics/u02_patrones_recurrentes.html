@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      background-color: #0b0e14;
+      color: #e2e8f0;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      margin: 0;
+      padding: 12px;
+      transition: background-color 0.2s, color 0.2s;
+    }
+    [data-theme="light"] body { background-color: #ffffff; color: #0f172a; }
+    [data-theme="light"] .card-box { background-color: #f8fafc !important; border-color: #e2e8f0 !important; color: #0f172a !important; }
+    [data-theme="light"] .subcard-box { background-color: #ffffff !important; border-color: #cbd5e1 !important; color: #1e293b !important; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+    [data-theme="light"] .text-muted { color: #64748b !important; }
+    [data-theme="light"] .text-highlight { color: #0f766e !important; }
+    [data-theme="light"] input, [data-theme="light"] select { background-color: #ffffff !important; border-color: #cbd5e1 !important; color: #0f172a !important; }
+    .card-box { background-color: #121622; border: 1px solid #1f293d; border-radius: 12px; }
+    .subcard-box { background-color: #090d14; border: 1px solid #1a2233; border-radius: 8px; }
+    .text-muted { color: #94a3b8; }
+    .text-highlight { color: #2dd4bf; }
+  </style>
+  <script>
+    window.addEventListener('message', (event) => {
+      if (event.data && event.data.type === 'THEME_CHANGE') {
+        document.documentElement.setAttribute('data-theme', event.data.theme);
+      }
+    });
+    try {
+      const savedTheme = localStorage.getItem('leogaviria_theme') || 'dark';
+      document.documentElement.setAttribute('data-theme', savedTheme);
+    } catch(e) {}
+  </script>
+
+  <title>Patrones Recurrentes y Torres de Hanoi</title>
+</head>
+<body>
+  <div class="max-w-4xl mx-auto space-y-4">
+    <div class="card-box p-4 sm:p-5">
+      <div class="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-gray-800/80 mb-4">
+        <div>
+          <h2 class="text-base sm:text-lg font-bold flex items-center gap-2 text-highlight">
+            <i class="fas fa-layer-group"></i> Problemas Recurrentes: Las Torres de Hanoi
+          </h2>
+          <p class="text-xs text-muted">Descubre la regla recurrente T(n) = 2T(n-1) + 1 que genera la solución óptima 2^n - 1</p>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="text-xs font-mono text-muted">Discos (n):</span>
+          <select id="hanoi-n" onchange="initHanoi()" class="px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-[#1a2234] border border-gray-700 text-white">
+            <option value="3" selected>3 Discos (7 movs)</option>
+            <option value="4">4 Discos (15 movs)</option>
+            <option value="5">5 Discos (31 movs)</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Lienzo visual de las 3 torres -->
+      <div class="subcard-box p-4 flex flex-col items-center justify-center min-h-[180px] mb-4">
+        <div class="flex justify-around w-full max-w-lg items-end h-36 border-b-4 border-gray-600 relative pb-1">
+          <div id="peg-0" class="flex flex-col-reverse items-center w-1/3 relative h-full justify-start">
+            <div class="w-2 h-28 bg-gray-600 rounded-t absolute bottom-0"></div>
+          </div>
+          <div id="peg-1" class="flex flex-col-reverse items-center w-1/3 relative h-full justify-start">
+            <div class="w-2 h-28 bg-gray-600 rounded-t absolute bottom-0"></div>
+          </div>
+          <div id="peg-2" class="flex flex-col-reverse items-center w-1/3 relative h-full justify-start">
+            <div class="w-2 h-28 bg-gray-600 rounded-t absolute bottom-0"></div>
+          </div>
+        </div>
+        <div class="flex justify-around w-full max-w-lg text-xs font-mono text-muted mt-2">
+          <span>Torre Origen (A)</span>
+          <span>Torre Auxiliar (B)</span>
+          <span>Torre Destino (C)</span>
+        </div>
+      </div>
+
+      <!-- Controles de Simulación -->
+      <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+        <div class="flex gap-2">
+          <button id="btn-play" onclick="toggleAutoPlay()" class="px-3 py-1.5 rounded-lg bg-teal-600 hover:bg-teal-500 text-xs font-semibold text-white transition flex items-center gap-1.5">
+            <i class="fas fa-play" id="play-icon"></i> <span id="play-text">Animar Solución</span>
+          </button>
+          <button onclick="stepHanoi()" class="px-3 py-1.5 rounded-lg bg-gray-800 hover:bg-gray-700 text-xs font-semibold text-white transition">
+            Paso Siguiente <i class="fas fa-step-forward ml-1"></i>
+          </button>
+          <button onclick="initHanoi()" class="px-3 py-1.5 rounded-lg bg-gray-800 hover:bg-gray-700 text-xs text-muted transition">
+            <i class="fas fa-rotate-left"></i>
+          </button>
+        </div>
+        <span id="hanoi-counter" class="text-xs font-mono text-amber-400 font-bold">Movimiento 0 de 7</span>
+      </div>
+
+      <!-- Análisis Recurrente -->
+      <div class="subcard-box p-3 sm:p-4 text-xs leading-relaxed space-y-1 text-gray-300">
+        <div class="font-bold text-teal-400 mb-1 flex items-center gap-1.5">
+          <i class="fas fa-brain"></i> Deducción del Patrón Recurrente:
+        </div>
+        <p>1. Para mover <strong>n</strong> discos de A a C: primero movemos <strong>n-1</strong> discos a B (<code class="text-sky-300">T(n-1)</code>).</p>
+        <p>2. Movemos el disco más grande de A a C (<code class="text-emerald-400">1 movimiento</code>).</p>
+        <p>3. Movemos los <strong>n-1</strong> discos de B a C (<code class="text-sky-300">T(n-1)</code>).</p>
+        <p class="font-mono text-amber-300 pt-1">
+          &rArr; Recurrencia: T(n) = 2 · T(n-1) + 1 con T(1) = 1 &rArr; Solución cerrada: T(n) = 2<sup>n</sup> - 1.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let nDisks = 3;
+    let moves = [];
+    let currentMove = 0;
+    let autoInterval = null;
+    let pegs = [[], [], []];
+
+    const diskColors = ['#f43f5e', '#fbbf24', '#34d399', '#38bdf8', '#a855f7'];
+
+    function generateHanoiMoves(n, from, to, aux) {
+      if (n === 1) {
+        moves.push({ from, to });
+        return;
+      }
+      generateHanoiMoves(n - 1, from, aux, to);
+      moves.push({ from, to });
+      generateHanoiMoves(n - 1, aux, to, from);
+    }
+
+    function initHanoi() {
+      clearInterval(autoInterval);
+      autoInterval = null;
+      document.getElementById('play-text').textContent = 'Animar Solución';
+      document.getElementById('play-icon').className = 'fas fa-play';
+
+      nDisks = parseInt(document.getElementById('hanoi-n').value);
+      moves = [];
+      generateHanoiMoves(nDisks, 0, 2, 1);
+
+      pegs = [[], [], []];
+      for (let i = nDisks; i >= 1; i--) {
+        pegs[0].push(i);
+      }
+      currentMove = 0;
+      renderHanoi();
+    }
+
+    function renderHanoi() {
+      for (let p = 0; p < 3; p++) {
+        const pegEl = document.getElementById(`peg-${p}`);
+        pegEl.innerHTML = '<div class="w-2 h-28 bg-gray-600 rounded-t absolute bottom-0"></div>';
+        pegs[p].forEach(diskSize => {
+          const d = document.createElement('div');
+          const widthPct = 25 + (diskSize / nDisks) * 65;
+          d.className = 'h-5 rounded-md my-0.5 z-10 shadow transition-all duration-300 flex items-center justify-center text-[10px] font-bold text-black font-mono';
+          d.style.width = `${widthPct}%`;
+          d.style.backgroundColor = diskColors[diskSize - 1];
+          d.textContent = diskSize;
+          pegEl.appendChild(d);
+        });
+      }
+      document.getElementById('hanoi-counter').textContent = `Movimiento ${currentMove} de ${moves.length} (Óptimo: 2^${nDisks} - 1 = ${Math.pow(2, nDisks) - 1})`;
+    }
+
+    function stepHanoi() {
+      if (currentMove < moves.length) {
+        const m = moves[currentMove];
+        const disk = pegs[m.from].pop();
+        pegs[m.to].push(disk);
+        currentMove++;
+        renderHanoi();
+      } else {
+        clearInterval(autoInterval);
+        autoInterval = null;
+        document.getElementById('play-text').textContent = 'Animar Solución';
+        document.getElementById('play-icon').className = 'fas fa-play';
+      }
+    }
+
+    function toggleAutoPlay() {
+      if (autoInterval) {
+        clearInterval(autoInterval);
+        autoInterval = null;
+        document.getElementById('play-text').textContent = 'Continuar';
+        document.getElementById('play-icon').className = 'fas fa-play';
+      } else {
+        if (currentMove >= moves.length) initHanoi();
+        document.getElementById('play-text').textContent = 'Pausar';
+        document.getElementById('play-icon').className = 'fas fa-pause';
+        autoInterval = setInterval(stepHanoi, 600);
+      }
+    }
+
+    initHanoi();
+  </script>
+</body>
+</html>

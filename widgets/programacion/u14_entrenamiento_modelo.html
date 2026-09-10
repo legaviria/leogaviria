@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simulación del Entrenamiento de un Modelo: Underfitting vs Overfitting</title>
+  <style>
+    :root {
+      --bg: #0e0e11; --card: #141923; --border: #232d42; --text: #fff;
+      --muted: #94a3b8; --sky: #38bdf8; --purple: #a855f7; --green: #10b981;
+    }
+    body.theme-light {
+      --bg: #f8fafc; --card: #ffffff; --border: #e2e8f0; --text: #0f172a;
+      --muted: #64748b; --sky: #0284c7; --purple: #9333ea; --green: #059669;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { background: var(--bg); color: var(--text); padding: 14px; display: flex; justify-content: center; }
+    .container { width: 100%; max-width: 680px; background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 16px; }
+    .header { text-align: center; margin-bottom: 12px; }
+    .header h3 { font-size: 1.1rem; color: #38bdf8; margin-bottom: 4px; }
+    .controls-row { display: flex; gap: 6px; justify-content: center; margin-bottom: 12px; }
+    .btn { padding: 6px 12px; font-size: 0.75rem; font-weight: 600; border-radius: 6px; cursor: pointer; border: 1px solid var(--border); background: rgba(255,255,255,0.05); color: var(--text); }
+    .btn.active { background: #38bdf8; color: #0f172a; border-color: #38bdf8; }
+    .plot-area { background: #080b10; border: 1px solid var(--border); border-radius: 8px; height: 160px; display: flex; justify-content: center; align-items: center; margin-bottom: 10px; }
+    svg { width: 100%; height: 100%; }
+    .explanation { background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 6px; padding: 10px; font-size: 0.78rem; line-height: 1.4; color: #cbd5e1; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h3>🎯 Ajuste del Modelo: Underfitting vs Ajuste Óptimo vs Overfitting</h3>
+      <p style="font-size:0.75rem; color:var(--muted)">Observa cómo la complejidad del modelo afecta su capacidad de generalización.</p>
+    </div>
+
+    <div class="controls-row">
+      <button class="btn" onclick="setFit('under')">1. Subajuste (Underfitting)</button>
+      <button class="btn active" onclick="setFit('good')">2. Ajuste Óptimo (Generalización)</button>
+      <button class="btn" onclick="setFit('over')">3. Sobreajuste (Overfitting)</button>
+    </div>
+
+    <div class="plot-area">
+      <svg id="fitSvg" viewBox="0 0 360 140">
+        <!-- Puntos de datos -->
+        <circle cx="50" cy="110" r="4" fill="#38bdf8"/>
+        <circle cx="90" cy="80" r="4" fill="#38bdf8"/>
+        <circle cx="130" cy="60" r="4" fill="#38bdf8"/>
+        <circle cx="170" cy="70" r="4" fill="#38bdf8"/>
+        <circle cx="210" cy="40" r="4" fill="#38bdf8"/>
+        <circle cx="250" cy="30" r="4" fill="#38bdf8"/>
+        <circle cx="290" cy="50" r="4" fill="#38bdf8"/>
+        <circle cx="330" cy="20" r="4" fill="#38bdf8"/>
+        <!-- Curva -->
+        <path id="fitCurve" d="" fill="none" stroke="#f87171" stroke-width="2.5"/>
+      </svg>
+    </div>
+
+    <div class="explanation" id="fitExpl"></div>
+  </div>
+
+  <script>
+    function setFit(type) {
+      document.querySelectorAll('.btn').forEach(b => b.classList.remove('active'));
+      event.target.classList.add('active');
+      const c = document.getElementById('fitCurve');
+      const exp = document.getElementById('fitExpl');
+
+      if (type === 'under') {
+        c.setAttribute('d', 'M 40,115 L 340,30');
+        c.setAttribute('stroke', '#f87171');
+        exp.innerHTML = '<strong style="color:#f87171">Subajuste (Alto Sesgo / Underfitting):</strong> Modelo demasiado simple (ej. línea recta para datos curvos). No captura la relación subyacente y tiene alto error tanto en entrenamiento como en prueba.';
+      } else if (type === 'good') {
+        c.setAttribute('d', 'M 40,115 Q 150,60 210,45 T 340,25');
+        c.setAttribute('stroke', '#4ade80');
+        exp.innerHTML = '<strong style="color:#4ade80">Ajuste Óptimo (Buen Balance Sesgo-Varianza):</strong> Captura la tendencia real y generaliza excelentemente con datos nuevos nunca antes vistos.';
+      } else if (type === 'over') {
+        c.setAttribute('d', 'M 40,120 L 50,110 L 90,80 L 130,60 L 170,70 L 210,40 L 250,30 L 290,50 L 330,20 L 340,15');
+        c.setAttribute('stroke', '#fbbf24');
+        exp.innerHTML = '<strong style="color:#fbbf24">Sobreajuste (Alta Varianza / Overfitting):</strong> El modelo memorizó el ruido exacto de los datos de entrenamiento. Error casi cero en entrenamiento, pero fallará estrepitosamente al predecir datos nuevos.';
+      }
+    }
+    setFit('good');
+  </script>
+</body>
+</html>

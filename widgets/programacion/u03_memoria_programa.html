@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>La Memoria del Programa</title>
+  <style>
+    :root {
+      --bg: #0e0e11; --card: #141923; --border: #232d42; --text: #fff;
+      --muted: #94a3b8; --sky: #38bdf8; --purple: #a855f7; --green: #10b981;
+    }
+    body.theme-light {
+      --bg: #f8fafc; --card: #ffffff; --border: #e2e8f0; --text: #0f172a;
+      --muted: #64748b; --sky: #0284c7; --purple: #9333ea; --green: #059669;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { background: var(--bg); color: var(--text); padding: 14px; display: flex; justify-content: center; }
+    .container { width: 100%; max-width: 660px; background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 16px; }
+    .header { text-align: center; margin-bottom: 12px; }
+    .header h3 { font-size: 1.1rem; color: var(--purple); margin-bottom: 4px; }
+    .layout { display: grid; grid-template-columns: 1fr 1.2fr; gap: 12px; }
+    @media (max-width: 550px) { .layout { grid-template-columns: 1fr; } }
+    .code-panel { background: #080b10; border: 1px solid var(--border); border-radius: 8px; padding: 10px; font-family: monospace; font-size: 0.8rem; }
+    .code-line { padding: 4px 6px; border-radius: 4px; transition: background 0.2s; display: flex; gap: 8px; }
+    .code-line.active { background: rgba(168, 85, 247, 0.25); color: #d8b4fe; font-weight: bold; border-left: 3px solid var(--purple); }
+    .line-no { color: #555; width: 16px; text-align: right; }
+    .mem-panel { background: #080b10; border: 1px solid var(--border); border-radius: 8px; padding: 10px; display: flex; flex-direction: column; gap: 8px; }
+    .mem-title { font-size: 0.75rem; font-weight: bold; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
+    .var-card { display: flex; align-items: center; justify-content: space-between; padding: 8px 12px; background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 6px; transition: all 0.3s; }
+    .var-card.updated { border-color: var(--green); background: rgba(16, 185, 129, 0.15); transform: scale(1.02); }
+    .var-name { font-weight: bold; font-family: monospace; color: var(--sky); font-size: 0.85rem; }
+    .var-val { font-family: monospace; background: rgba(0,0,0,0.4); padding: 3px 8px; border-radius: 4px; color: #fde047; font-size: 0.85rem; }
+    .controls { display: flex; gap: 8px; margin-top: 12px; justify-content: center; }
+    .btn { padding: 6px 14px; font-size: 0.78rem; font-weight: 600; border-radius: 6px; cursor: pointer; border: 1px solid var(--border); background: rgba(255,255,255,0.05); color: var(--text); }
+    .btn:hover { background: rgba(255,255,255,0.12); }
+    .btn-next { background: var(--purple); color: white; border: none; }
+    .btn-next:hover { opacity: 0.9; }
+    .expl-box { margin-top: 10px; font-size: 0.76rem; color: var(--muted); line-height: 1.4; padding: 8px; background: rgba(255,255,255,0.02); border-radius: 6px; border: 1px dashed var(--border); text-align: center; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h3>🧠 La Memoria del Programa: Variables y Asignación</h3>
+      <p style="font-size:0.75rem; color:var(--muted)">Observa cómo el intérprete reserva espacio y actualiza valores paso a paso.</p>
+    </div>
+
+    <div class="layout">
+      <div class="code-panel">
+        <div class="code-line active" id="l0"><span class="line-no">1</span><span>x = 10</span></div>
+        <div class="code-line" id="l1"><span class="line-no">2</span><span>y = 20</span></div>
+        <div class="code-line" id="l2"><span class="line-no">3</span><span>suma = x + y</span></div>
+        <div class="code-line" id="l3"><span class="line-no">4</span><span>x = x + 5</span></div>
+        <div class="code-line" id="l4"><span class="line-no">5</span><span>y = y * 2</span></div>
+      </div>
+
+      <div class="mem-panel">
+        <div class="mem-title">Estado de Variables (Memoria RAM)</div>
+        <div id="varList">
+          <div style="font-size:0.75rem; color:var(--muted); text-align:center; padding:20px;">Presiona "Siguiente Paso" para inicializar</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="expl-box" id="stepExpl">Paso 1 de 5: Inicializando la ejecución.</div>
+
+    <div class="controls">
+      <button class="btn" onclick="prevStep()">◀ Anterior</button>
+      <button class="btn btn-next" onclick="nextStep()">Siguiente Paso ▶</button>
+      <button class="btn" onclick="resetSteps()">Reiniciar</button>
+    </div>
+  </div>
+
+  <script>
+    const stepsData = [
+      { line: 0, vars: { x: "10" }, updated: "x", expl: "Se asigna el valor entero 10 a la variable 'x'. Se reserva un objeto en memoria." },
+      { line: 1, vars: { x: "10", y: "20" }, updated: "y", expl: "Se asigna 20 a 'y'. Ambas variables coexisten en el espacio de nombres local." },
+      { line: 2, vars: { x: "10", y: "20", suma: "30" }, updated: "suma", expl: "Se evalúa la expresión x + y (10 + 20 = 30) y el resultado se guarda en 'suma'." },
+      { line: 3, vars: { x: "15", y: "20", suma: "30" }, updated: "x", expl: "Reasignación de 'x': se toma su valor previo 10 + 5 = 15. La variable ahora apunta al nuevo entero 15." },
+      { line: 4, vars: { x: "15", y: "40", suma: "30" }, updated: "y", expl: "Reasignación de 'y': 20 * 2 = 40. Nota que 'suma' sigue valiendo 30 (no cambia automáticamente)." }
+    ];
+
+    let currentStep = 0;
+
+    function renderStep() {
+      const data = stepsData[currentStep];
+      for (let i = 0; i < 5; i++) {
+        document.getElementById('l' + i).classList.toggle('active', i === data.line);
+      }
+      const list = document.getElementById('varList');
+      list.innerHTML = '';
+      for (let k in data.vars) {
+        const div = document.createElement('div');
+        div.className = 'var-card' + (k === data.updated ? ' updated' : '');
+        div.innerHTML = `<span class="var-name">${k}</span><span class="var-val">${data.vars[k]}</span>`;
+        list.appendChild(div);
+      }
+      document.getElementById('stepExpl').textContent = `Paso ${currentStep + 1} de 5: ${data.expl}`;
+    }
+
+    function nextStep() {
+      if (currentStep < stepsData.length - 1) {
+        currentStep++;
+        renderStep();
+      }
+    }
+    function prevStep() {
+      if (currentStep > 0) {
+        currentStep--;
+        renderStep();
+      }
+    }
+    function resetSteps() {
+      currentStep = 0;
+      renderStep();
+    }
+    renderStep();
+  </script>
+</body>
+</html>

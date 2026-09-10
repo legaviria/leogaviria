@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pila de Llamadas Recursivas (Call Stack)</title>
+  <style>
+    :root {
+      --bg: #0e0e11; --card: #141923; --border: #232d42; --text: #fff;
+      --muted: #94a3b8; --sky: #38bdf8; --purple: #a855f7; --green: #10b981;
+    }
+    body.theme-light {
+      --bg: #f8fafc; --card: #ffffff; --border: #e2e8f0; --text: #0f172a;
+      --muted: #64748b; --sky: #0284c7; --purple: #9333ea; --green: #059669;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { background: var(--bg); color: var(--text); padding: 14px; display: flex; justify-content: center; }
+    .container { width: 100%; max-width: 680px; background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 16px; }
+    .header { text-align: center; margin-bottom: 12px; }
+    .header h3 { font-size: 1.1rem; color: #a855f7; margin-bottom: 4px; }
+    .layout { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+    @media (max-width: 550px) { .layout { grid-template-columns: 1fr; } }
+    .code-col { background: #080b10; border: 1px solid var(--border); border-radius: 8px; padding: 10px; font-family: monospace; font-size: 0.8rem; }
+    .stack-col { background: #080b10; border: 1px solid var(--border); border-radius: 8px; padding: 10px; display: flex; flex-direction: column-reverse; gap: 6px; min-height: 180px; justify-content: flex-start; }
+    .stack-frame { padding: 8px; border-radius: 6px; background: rgba(168, 85, 247, 0.15); border: 1px solid var(--purple); font-family: monospace; font-size: 0.78rem; display: flex; justify-content: space-between; align-items: center; animation: slideIn 0.3s ease; }
+    @keyframes slideIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    .stack-frame.returning { border-color: var(--green); background: rgba(16, 185, 129, 0.15); color: #86efac; }
+    .expl-banner { background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 6px; padding: 10px; font-size: 0.78rem; text-align: center; color: var(--muted); min-height: 42px; display: flex; align-items: center; justify-content: center; margin-bottom: 10px; }
+    .controls { display: flex; gap: 8px; justify-content: center; }
+    .btn { padding: 6px 14px; font-size: 0.78rem; font-weight: 600; border-radius: 6px; cursor: pointer; border: 1px solid var(--border); background: rgba(255,255,255,0.05); color: var(--text); }
+    .btn-act { background: var(--purple); color: white; border: none; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h3>📚 Pila de Llamadas (Call Stack) en Recursividad: Factorial(4)</h3>
+      <p style="font-size:0.75rem; color:var(--muted)">Observa el apilamiento de marcos de activación hasta el caso base y el posterior desapilamiento.</p>
+    </div>
+
+    <div class="layout">
+      <div class="code-col">
+        <div><strong>Código Python:</strong></div>
+        <div style="color:var(--muted); margin-top:4px;">def factorial(n):</div>
+        <div>&nbsp;&nbsp;&nbsp;&nbsp;if n &lt;= 1:</div>
+        <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return 1</div>
+        <div>&nbsp;&nbsp;&nbsp;&nbsp;return n * factorial(n - 1)</div>
+        <div style="margin-top:10px; font-size:0.72rem; color:var(--sky)">print(factorial(4))</div>
+      </div>
+
+      <div>
+        <div style="font-size:0.72rem; color:var(--muted); font-weight:bold; margin-bottom:4px; text-transform:uppercase;">Tope de la Pila (Call Stack) ⬆</div>
+        <div class="stack-col" id="stackBox"></div>
+      </div>
+    </div>
+
+    <div class="expl-banner" id="explText">Paso 0: Inicio de la simulación. Presiona 'Avanzar Paso'.</div>
+
+    <div class="controls">
+      <button class="btn btn-act" onclick="nextStack()">Avanzar Paso ▶</button>
+      <button class="btn" onclick="resetStack()">Reiniciar</button>
+    </div>
+  </div>
+
+  <script>
+    const stackStates = [
+      { frames: ["factorial(4) [espera factorial(3)]"], msg: "Llamada inicial factorial(4). Se apila en el Call Stack." },
+      { frames: ["factorial(4) [espera factorial(3)]", "factorial(3) [espera factorial(2)]"], msg: "Llamada recursiva factorial(3). Se apila sobre factorial(4)." },
+      { frames: ["factorial(4) [espera factorial(3)]", "factorial(3) [espera factorial(2)]", "factorial(2) [espera factorial(1)]"], msg: "Llamada recursiva factorial(2). Se apila en el tope." },
+      { frames: ["factorial(4)", "factorial(3)", "factorial(2)", "factorial(1) [Caso Base!]"], msg: "¡Caso Base alcanzado! n=1. factorial(1) retorna 1 inmediatamente." },
+      { frames: ["factorial(4)", "factorial(3)", "factorial(2) ➔ retorna 2 * 1 = 2"], msg: "factorial(1) se desapila. factorial(2) calcula 2 * 1 = 2 y retorna." },
+      { frames: ["factorial(4)", "factorial(3) ➔ retorna 3 * 2 = 6"], msg: "factorial(2) se desapila. factorial(3) calcula 3 * 2 = 6 y retorna." },
+      { frames: ["factorial(4) ➔ retorna 4 * 6 = 24"], msg: "factorial(3) se desapila. factorial(4) calcula 4 * 6 = 24 y finaliza." },
+      { frames: [], msg: "🎉 ¡Pila vacía! El resultado final retornado a la consola es 24." }
+    ];
+
+    let stIdx = 0;
+    function renderStack() {
+      const s = stackStates[stIdx];
+      const box = document.getElementById('stackBox');
+      box.innerHTML = '';
+      s.frames.forEach((f, i) => {
+        const d = document.createElement('div');
+        d.className = 'stack-frame' + (f.includes('retorna') ? ' returning' : '');
+        d.innerHTML = `<span>${f}</span><span style="font-size:0.7rem; color:var(--muted)">Frame #${i+1}</span>`;
+        box.appendChild(d);
+      });
+      document.getElementById('explText').textContent = s.msg;
+    }
+
+    function nextStack() {
+      stIdx = (stIdx + 1) % stackStates.length;
+      renderStack();
+    }
+    function resetStack() {
+      stIdx = 0;
+      renderStack();
+    }
+    renderStack();
+  </script>
+</body>
+</html>

@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      background-color: #0b0e14;
+      color: #e2e8f0;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      margin: 0;
+      padding: 12px;
+      transition: background-color 0.2s, color 0.2s;
+    }
+    [data-theme="light"] body { background-color: #ffffff; color: #0f172a; }
+    [data-theme="light"] .card-box { background-color: #f8fafc !important; border-color: #e2e8f0 !important; color: #0f172a !important; }
+    [data-theme="light"] .subcard-box { background-color: #ffffff !important; border-color: #cbd5e1 !important; color: #1e293b !important; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+    [data-theme="light"] .text-muted { color: #64748b !important; }
+    [data-theme="light"] .text-highlight { color: #0f766e !important; }
+    [data-theme="light"] input, [data-theme="light"] select { background-color: #ffffff !important; border-color: #cbd5e1 !important; color: #0f172a !important; }
+    .card-box { background-color: #121622; border: 1px solid #1f293d; border-radius: 12px; }
+    .subcard-box { background-color: #090d14; border: 1px solid #1a2233; border-radius: 8px; }
+    .text-muted { color: #94a3b8; }
+    .text-highlight { color: #2dd4bf; }
+  </style>
+  <script>
+    window.addEventListener('message', (event) => {
+      if (event.data && event.data.type === 'THEME_CHANGE') {
+        document.documentElement.setAttribute('data-theme', event.data.theme);
+      }
+    });
+    try {
+      const savedTheme = localStorage.getItem('leogaviria_theme') || 'dark';
+      document.documentElement.setAttribute('data-theme', savedTheme);
+    } catch(e) {}
+  </script>
+
+  <title>Operaciones con Relaciones</title>
+</head>
+<body>
+  <div class="max-w-4xl mx-auto space-y-4">
+    <div class="card-box p-4 sm:p-5">
+      <div class="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-gray-800/80 mb-4">
+        <div>
+          <h2 class="text-base sm:text-lg font-bold flex items-center gap-2 text-highlight">
+            <i class="fas fa-code-merge"></i> Operaciones con Relaciones: Inversa y Composición
+          </h2>
+          <p class="text-xs text-muted">Unión R ∪ S, Intersección R ∩ S, Relación Inversa R^-1 y Composición S ∘ R</p>
+        </div>
+      </div>
+
+      <!-- Tarjetas de Relaciones Base R y S -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4 font-mono text-xs">
+        <div class="subcard-box p-3 border-teal-500/30">
+          <span class="text-teal-400 font-bold block mb-1">Relación R (en A = {1, 2, 3}):</span>
+          <span class="text-gray-300">R = { (1, 2), (2, 3), (1, 3) }</span>
+        </div>
+        <div class="subcard-box p-3 border-sky-500/30">
+          <span class="text-sky-400 font-bold block mb-1">Relación S (en A = {1, 2, 3}):</span>
+          <span class="text-gray-300">S = { (2, 1), (3, 2), (3, 3) }</span>
+        </div>
+      </div>
+
+      <!-- Selector de Operación -->
+      <div class="flex flex-wrap gap-2 mb-4">
+        <button onclick="calcRelOp('inv')" class="rop-btn px-3 py-1.5 rounded-lg bg-teal-600 text-white text-xs font-bold font-mono">Inversa: R^-1</button>
+        <button onclick="calcRelOp('comp')" class="rop-btn px-3 py-1.5 rounded-lg bg-gray-800 text-gray-300 text-xs font-bold font-mono">Composición: S &compfn; R</button>
+        <button onclick="calcRelOp('union')" class="rop-btn px-3 py-1.5 rounded-lg bg-gray-800 text-gray-300 text-xs font-bold font-mono">Unión: R &cup; S</button>
+        <button onclick="calcRelOp('inter')" class="rop-btn px-3 py-1.5 rounded-lg bg-gray-800 text-gray-300 text-xs font-bold font-mono">Intersección: R &cap; S</button>
+      </div>
+
+      <!-- Resultado Detallado -->
+      <div class="subcard-box p-4" id="relop-result">
+        <!-- Inyectado por JS -->
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const R = [[1, 2], [2, 3], [1, 3]];
+    const S = [[2, 1], [3, 2], [3, 3]];
+
+    function calcRelOp(op) {
+      document.querySelectorAll('.rop-btn').forEach(b => {
+        b.className = 'rop-btn px-3 py-1.5 rounded-lg bg-gray-800 text-gray-300 text-xs font-bold font-mono';
+      });
+      event.target.className = 'rop-btn px-3 py-1.5 rounded-lg bg-teal-600 text-white text-xs font-bold font-mono';
+
+      const resCont = document.getElementById('relop-result');
+      if (op === 'inv') {
+        const rInv = R.map(([a, b]) => `(${b}, ${a})`);
+        resCont.innerHTML = `
+          <h4 class="text-xs font-bold text-teal-400 uppercase font-mono mb-2">Relación Inversa R^-1:</h4>
+          <p class="text-xs text-gray-300 mb-2">Se invierten todos los pares ordenados: (a, b) ∈ R ⇔ (b, a) ∈ R^-1. Corresponde a la matriz traspuesta M_R^T.</p>
+          <div class="p-2 rounded bg-[#10141d] font-mono text-sm text-emerald-300 font-bold">R^-1 = { ${rInv.join(', ')} }</div>
+        `;
+      } else if (op === 'comp') {
+        // S o R: (a, c) tal que existe b con (a, b) in R y (b, c) in S
+        let compPairs = [];
+        R.forEach(([a, b]) => {
+          S.forEach(([sB, c]) => {
+            if (b === sB) compPairs.push(`(${a}, ${c})`);
+          });
+        });
+        const uniq = Array.from(new Set(compPairs));
+        resCont.innerHTML = `
+          <h4 class="text-xs font-bold text-sky-400 uppercase font-mono mb-2">Composición S ∘ R:</h4>
+          <p class="text-xs text-gray-300 mb-2">Pares (a, c) tales que ∃ b donde (a, b) ∈ R y (b, c) ∈ S. Corresponde al producto booleano de matrices.</p>
+          <div class="p-2 rounded bg-[#10141d] font-mono text-sm text-sky-300 font-bold">S ∘ R = { ${uniq.join(', ')} }</div>
+        `;
+      } else if (op === 'union') {
+        const all = [...R.map(([a, b]) => `(${a}, ${b})`), ...S.map(([a, b]) => `(${a}, ${b})`)];
+        const uniq = Array.from(new Set(all));
+        resCont.innerHTML = `
+          <h4 class="text-xs font-bold text-amber-400 uppercase font-mono mb-2">Unión R ∪ S:</h4>
+          <p class="text-xs text-gray-300 mb-2">Todos los pares ordenados presentes en R o en S.</p>
+          <div class="p-2 rounded bg-[#10141d] font-mono text-sm text-amber-300 font-bold">R ∪ S = { ${uniq.join(', ')} }</div>
+        `;
+      } else if (op === 'inter') {
+        const sStrs = S.map(([a, b]) => `(${a}, ${b})`);
+        const inter = R.map(([a, b]) => `(${a}, ${b})`).filter(p => sStrs.includes(p));
+        resCont.innerHTML = `
+          <h4 class="text-xs font-bold text-purple-400 uppercase font-mono mb-2">Intersección R ∩ S:</h4>
+          <p class="text-xs text-gray-300 mb-2">Pares ordenados comunes presentes simultáneamente en R y en S.</p>
+          <div class="p-2 rounded bg-[#10141d] font-mono text-sm text-purple-300 font-bold">R ∩ S = ${inter.length > 0 ? `{ ${inter.join(', ')} }` : '∅ (Conjunto Vacío)'}</div>
+        `;
+      }
+    }
+
+    calcRelOp('inv');
+  </script>
+</body>
+</html>

@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quiz de Evaluación: Complejidad Algorítmica y Notación Big-O</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      background-color: #0e0e11 !important;
+      color: #c9d1d9;
+      padding: 12px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+    .quiz-container {
+      background-color: #141419;
+      color: #c9d1d9;
+      padding: 20px 24px;
+      border-radius: 12px;
+      border: 1px solid #232d42;
+      max-width: 820px;
+      margin: 0 auto;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+    }
+    .quiz-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #21262d;
+      padding-bottom: 12px;
+      margin-bottom: 20px;
+    }
+    .quiz-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #10b981;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .quiz-counter {
+      background-color: #21262d;
+      color: #8b949e;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-family: monospace;
+    }
+    .question-card {
+      display: none;
+    }
+    .question-card.active {
+      display: block;
+      animation: fadeIn 0.25s ease-in-out;
+      min-height: 250px;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .question-text {
+      font-size: 0.95rem;
+      color: #f0f6fc;
+      margin-bottom: 16px;
+      line-height: 1.5;
+    }
+    .options-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 18px;
+    }
+    .option-btn {
+      background-color: #181d28;
+      border: 1px solid #21262d;
+      border-radius: 8px;
+      padding: 10px 14px;
+      color: #c9d1d9;
+      text-align: left;
+      cursor: pointer;
+      font-size: 0.82rem;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .option-btn:hover:not(:disabled) {
+      background-color: #21262d;
+      border-color: #10b981;
+      color: #ffffff;
+    }
+    .option-btn.selected {
+      background-color: rgba(16, 185, 129, 0.15);
+      border-color: #10b981;
+      color: #34d399;
+      font-weight: 600;
+    }
+    .option-btn.correct {
+      background-color: rgba(16, 185, 129, 0.25) !important;
+      border-color: #10b981 !important;
+      color: #34d399 !important;
+    }
+    .option-btn.incorrect {
+      background-color: rgba(239, 68, 68, 0.2) !important;
+      border-color: #ef4444 !important;
+      color: #f87171 !important;
+    }
+    .nav-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 14px;
+      border-top: 1px solid #21262d;
+      padding-top: 14px;
+    }
+    .btn {
+      padding: 6px 14px;
+      border-radius: 6px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s;
+    }
+    .btn-prev {
+      background-color: #21262d;
+      color: #c9d1d9;
+    }
+    .btn-next {
+      background-color: #10b981;
+      color: #000;
+    }
+    .btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+    .explanation {
+      margin-top: 12px;
+      padding: 12px 14px;
+      border-radius: 6px;
+      background-color: #0d1117;
+      border-left: 3px solid #10b981;
+      font-size: 0.8rem;
+      line-height: 1.5;
+      color: #cbd5e1;
+      display: none;
+      animation: fadeInExp 0.2s ease-out;
+    }
+    @keyframes fadeInExp {
+      from { opacity: 0; transform: translateY(-3px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .score-view {
+      display: none;
+      text-align: center;
+      padding: 24px 10px;
+    }
+    .score-number {
+      font-size: 2.4rem;
+      font-weight: 800;
+      color: #10b981;
+      margin-bottom: 6px;
+    }
+    .score-feedback {
+      font-size: 0.9rem;
+      color: #94a3b8;
+      margin-bottom: 16px;
+    }
+  
+  /* SOPORTE LIGHT MODE (ALTO CONTRASTE) */
+  [data-theme="light"] html, [data-theme="light"] body {
+    background-color: #ffffff !important;
+    color: #0f172a !important;
+  }
+  [data-theme="light"] .quiz-container {
+    background-color: #ffffff !important;
+    border-color: #cbd5e1 !important;
+    color: #0f172a !important;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.06) !important;
+  }
+  [data-theme="light"] .quiz-header {
+    border-bottom-color: #e2e8f0 !important;
+  }
+  [data-theme="light"] .quiz-title {
+    color: #0f172a !important;
+  }
+  [data-theme="light"] .quiz-counter {
+    background-color: #e2e8f0 !important;
+    color: #475569 !important;
+  }
+  [data-theme="light"] .question-text {
+    color: #0f172a !important;
+  }
+  [data-theme="light"] .option-btn {
+    background-color: #f8fafc !important;
+    border-color: #cbd5e1 !important;
+    color: #1e293b !important;
+  }
+  [data-theme="light"] .option-btn:hover:not(:disabled) {
+    background-color: #f1f5f9 !important;
+    border-color: #059669 !important;
+  }
+  [data-theme="light"] .option-btn.correct {
+    background-color: #d1fae5 !important;
+    border-color: #059669 !important;
+    color: #065f46 !important;
+    font-weight: 600 !important;
+  }
+  [data-theme="light"] .option-btn.incorrect {
+    background-color: #fee2e2 !important;
+    border-color: #dc2626 !important;
+    color: #991b1b !important;
+    font-weight: 600 !important;
+  }
+  [data-theme="light"] .option-badge {
+    background-color: #e2e8f0 !important;
+    color: #334155 !important;
+  }
+  [data-theme="light"] .explanation {
+    background-color: #ecfdf5 !important;
+    border: 1px solid #a7f3d0 !important;
+    border-left: 4px solid #059669 !important;
+    color: #064e3b !important;
+    font-weight: 500 !important;
+  }
+  [data-theme="light"] .btn-prev {
+    background-color: #f1f5f9 !important;
+    border: 1px solid #cbd5e1 !important;
+    color: #334155 !important;
+  }
+  [data-theme="light"] .btn-prev:hover:not(:disabled) {
+    background-color: #e2e8f0 !important;
+    color: #0f172a !important;
+  }
+  [data-theme="light"] .btn-next {
+    background-color: #059669 !important;
+    color: #ffffff !important;
+    font-weight: 700 !important;
+  }
+  [data-theme="light"] .btn-next:hover:not(:disabled) {
+    background-color: #047857 !important;
+  }
+
+</style>
+</head>
+<body>
+
+<div class="quiz-container">
+  <div class="quiz-header">
+    <div class="quiz-title">
+      <i class="fas fa-clipboard-check"></i>
+      <span>Comprueba: Quiz de Complejidad Algorítmica</span>
+    </div>
+    <div class="quiz-counter" id="counter">Pregunta 1 / 10</div>
+  </div>
+
+  <div id="quiz-body"></div>
+
+  <div class="score-view" id="score-view">
+    <div class="score-number" id="final-score">0 / 10</div>
+    <div class="score-feedback" id="final-feedback"></div>
+    <button class="btn btn-next" onclick="restartQuiz()"><i class="fas fa-redo mr-1"></i> Reiniciar Quiz</button>
+  </div>
+
+  <div class="nav-bar" id="nav-bar">
+    <button class="btn btn-prev" id="btn-prev" onclick="moveQuestion(-1)" disabled><i class="fas fa-arrow-left mr-1"></i> Anterior</button>
+    <button class="btn btn-next" id="btn-next" onclick="moveQuestion(1)">Siguiente <i class="fas fa-arrow-right ml-1"></i></button>
+  </div>
+</div>
+
+<script>
+const questions = [
+  {
+    q: "1. ¿Qué define formalmente la cota superior asintótica Big-O (f(n) = O(g(n)))?",
+    options: [
+      "El tiempo exacto en milisegundos que demora el código en ejecutarse en un procesador.",
+      "Que existen constantes c > 0 y n₀ > 0 tales que f(n) ≤ c · g(n) para todo n ≥ n₀.",
+      "Que el algoritmo siempre se ejecutará en menos de g(n) instrucciones para cualquier n.",
+      "La cantidad mínima de memoria física requerida por el compilador."
+    ],
+    answer: 1,
+    exp: "Big-O describe una cota superior asintótica: garantiza que a partir de un tamaño n₀, el crecimiento del algoritmo no superará a c · g(n)."
+  },
+  {
+    q: "2. Si calculamos la sumatoria de 1 a n mediante la fórmula de Gauss n*(n+1)//2 en lugar de un bucle iterativo, ¿cómo cambia la complejidad temporal?",
+    options: [
+      "Pasa de O(n) a O(1), pues se ejecutan solo operaciones aritméticas fijas independientes de n.",
+      "Pasa de O(n²) a O(n).",
+      "Pasa de O(log n) a O(n).",
+      "No cambia, ambas implementaciones son O(n)."
+    ],
+    answer: 0,
+    exp: "Una fórmula directa no contiene bucles y realiza un número fijo de operaciones aritméticas en tiempo constante O(1), mientras que el bucle itera n veces O(n)."
+  },
+  {
+    q: "3. ¿Por qué la Búsqueda Binaria tiene una complejidad temporal de O(log n)?",
+    options: [
+      "Porque examina todos los elementos del arreglo uno por uno.",
+      "Porque en cada iteración divide el espacio de búsqueda restante a la mitad (n / 2^k = 1 ➔ k = log₂ n).",
+      "Porque duplica el tamaño del arreglo en cada paso recursivo.",
+      "Porque requiere ordenar el arreglo en cada comparación."
+    ],
+    answer: 1,
+    exp: "Al dividir el arreglo a la mitad en cada paso, el número máximo de comparaciones k satisface n / 2^k = 1, lo cual despejando da k = log₂(n)."
+  },
+  {
+    q: "4. ¿Cuál es la complejidad temporal de la implementación recursiva simple (sin memoización) de Fibonacci?",
+    options: [
+      "O(1)",
+      "O(log n)",
+      "O(n)",
+      "O(2ⁿ)"
+    ],
+    answer: 3,
+    exp: "Cada llamada a fibonacci(n) genera dos llamadas recursivas (fib(n-1) y fib(n-2)), creando un árbol binario de llamadas cuyo número de nodos crece exponencialmente O(2ⁿ)."
+  },
+  {
+    q: "5. En un algoritmo recursivo, ¿a qué corresponde principalmente la Complejidad Espacial (memoria adicional)?",
+    options: [
+      "Al número de líneas de código fuente en el archivo.",
+      "A la profundidad máxima alcanzada en la pila de llamadas (call stack) del sistema.",
+      "Al tamaño del archivo binario compilado.",
+      "Únicamente al valor retornado en el caso base."
+    ],
+    answer: 1,
+    exp: "Cada llamada recursiva activa almacena un marco en la pila del sistema. La memoria espacial auxiliar depende de la profundidad máxima de esa pila."
+  },
+  {
+    q: "6. ¿Cuál es el beneficio de aplicar Memoización (Programación Dinámica Top-Down) a la función de Fibonacci?",
+    options: [
+      "Reduce el tiempo de O(2ⁿ) a O(n), almacenando los resultados de subproblemas ya calculados a cambio de O(n) espacio.",
+      "Elimina por completo el uso de memoria en la pila a O(1).",
+      "Transforma el algoritmo en un problema NP-completo.",
+      "Convierte la solución recursiva en un algoritmo de ordenamiento."
+    ],
+    answer: 0,
+    exp: "Al almacenar en una tabla hash los resultados intermedios, cada valor de 0 a n se calcula exactamente una sola vez, logrando tiempo O(n) con espacio O(n)."
+  },
+  {
+    q: "7. ¿Qué ventaja tiene la versión iterativa de Fibonacci frente a la versión con memoización?",
+    options: [
+      "Tiene un menor tiempo asintótico de O(log n).",
+      "Consume solo O(1) de memoria espacial adicional, ya que solo necesita mantener dos variables de estado.",
+      "No requiere validar los casos base.",
+      "Permite calcular números negativos directamente."
+    ],
+    answer: 1,
+    exp: "La versión iterativa con dos variables ('a' y 'b') mantiene el tiempo lineal O(n) pero optimiza la memoria a espacio constante O(1), sin necesidad de tablas auxiliares."
+  },
+  {
+    q: "8. ¿Qué representa la notación Omega (Ω) en el análisis de algoritmos?",
+    options: [
+      "La cota superior o peor caso garantizado.",
+      "La cota inferior asintótica o mejor caso posible de ejecución.",
+      "El promedio estadístico ponderado.",
+      "El número de núcleos del procesador requeridos."
+    ],
+    answer: 1,
+    exp: "Omega (Ω) describe la cota inferior: el algoritmo nunca tomará menos tiempo que esa cota para tamaños de entrada suficientemente grandes."
+  },
+  {
+    q: "9. ¿Cuándo se utiliza la notación Theta (Θ)?",
+    options: [
+      "Cuando las cotas superior (O) e inferior (Ω) coinciden en el mismo orden de crecimiento (cota ajustada).",
+      "Únicamente cuando el algoritmo falla por desbordamiento de pila.",
+      "Cuando no es posible calcular ninguna cota matemática.",
+      "Solo para algoritmos con complejidad factorial O(n!)."
+    ],
+    answer: 0,
+    exp: "Theta (Θ) representa una cota asintóticamente ajustada: f(n) = Θ(g(n)) si y solo si f(n) = O(g(n)) y f(n) = Ω(g(n))."
+  },
+  {
+    q: "10. Dada la función T(n) = 15n² + 120n + 500, ¿cuál es su complejidad asintótica Big-O al simplificar?",
+    options: [
+      "O(500)",
+      "O(120n)",
+      "O(n²)",
+      "O(n³)"
+    ],
+    answer: 2,
+    exp: "Por la regla del término dominante y eliminación de coeficientes constantes, se descartan los términos de menor orden (120n y 500) y la constante 15, quedando O(n²)."
+  }
+];
+
+let currentQ = 0;
+let userAnswers = new Array(questions.length).fill(null);
+
+function renderQuiz() {
+  const container = document.getElementById('quiz-body');
+  container.innerHTML = questions.map((q, i) => `
+    <div class="question-card ${i === currentQ ? 'active' : ''}" id="q-card-${i}">
+      <div class="question-text">${q.q}</div>
+      <div class="options-list">
+        ${q.options.map((opt, optIdx) => `
+          <button class="option-btn" onclick="selectQuizAnswer(${i}, ${optIdx})">
+            <i class="far fa-circle text-xs"></i>
+            <span>${opt}</span>
+          </button>
+        `).join('')}
+      </div>
+      <div class="explanation" id="exp-${i}">${q.exp}</div>
+    </div>
+  `).join('');
+  updateNav();
+}
+
+function selectQuizAnswer(qIdx, optIdx) {
+  if (userAnswers[qIdx] !== null) return; // ya contestada
+  userAnswers[qIdx] = optIdx;
+
+  const card = document.getElementById(`q-card-${qIdx}`);
+  const btns = card.querySelectorAll('.option-btn');
+  const expEl = document.getElementById(`exp-${qIdx}`);
+  const isCorrect = optIdx === questions[qIdx].answer;
+
+  btns.forEach((btn, idx) => {
+    btn.disabled = true;
+    if (idx === questions[qIdx].answer) {
+      btn.className = 'option-btn correct';
+      btn.querySelector('i').className = 'fas fa-check-circle text-xs';
+    } else if (idx === optIdx) {
+      btn.className = 'option-btn incorrect';
+      btn.querySelector('i').className = 'fas fa-times-circle text-xs';
+    }
+  });
+
+  expEl.style.display = 'block';
+  updateNav();
+}
+
+function moveQuestion(dir) {
+  currentQ += dir;
+  if (currentQ >= questions.length) {
+    showResults();
+    return;
+  }
+  document.querySelectorAll('.question-card').forEach((card, idx) => {
+    card.classList.toggle('active', idx === currentQ);
+  });
+  updateNav();
+}
+
+function updateNav() {
+  document.getElementById('counter').innerText = `Pregunta ${currentQ + 1} / ${questions.length}`;
+  document.getElementById('btn-prev').disabled = currentQ === 0;
+  
+  const isLast = currentQ === questions.length - 1;
+  const btnNext = document.getElementById('btn-next');
+  btnNext.innerHTML = isLast ? 'Finalizar y Ver Nota <i class="fas fa-trophy ml-1"></i>' : 'Siguiente <i class="fas fa-arrow-right ml-1"></i>';
+}
+
+function showResults() {
+  document.getElementById('quiz-body').style.display = 'none';
+  document.getElementById('nav-bar').style.display = 'none';
+  const scoreView = document.getElementById('score-view');
+  scoreView.style.display = 'block';
+
+  let score = 0;
+  userAnswers.forEach((ans, idx) => {
+    if (ans === questions[idx].answer) score++;
+  });
+
+  document.getElementById('final-score').innerText = `${score} / ${questions.length}`;
+  const pct = Math.round((score / questions.length) * 100);
+  let msg = '';
+  if (pct >= 90) msg = `¡Excelente! Dominas a la perfección la Notación Big-O y el análisis de algoritmos (${pct}% de aciertos).`;
+  else if (pct >= 70) msg = `¡Buen trabajo! Tienes un entendimiento sólido de las complejidades algorítmicas (${pct}% de aciertos).`;
+  else msg = `Puedes repasar el simulador y las derivaciones matemáticas para afianzar los conceptos (${pct}% de aciertos).`;
+
+  document.getElementById('final-feedback').innerText = msg;
+}
+
+function restartQuiz() {
+  currentQ = 0;
+  userAnswers = new Array(questions.length).fill(null);
+  document.getElementById('quiz-body').style.display = 'block';
+  document.getElementById('nav-bar').style.display = 'flex';
+  document.getElementById('score-view').style.display = 'none';
+  renderQuiz();
+}
+
+renderQuiz();
+</script>
+
+
+<script>
+  (function() {
+    function applyWidgetTheme(t) {
+      if (t) document.documentElement.setAttribute('data-theme', t);
+    }
+    try {
+      var saved = localStorage.getItem('leogaviria_theme') || 'dark';
+      applyWidgetTheme(saved);
+    } catch(e) {}
+    window.addEventListener('message', function(e) {
+      if (e.data && e.data.type === 'THEME_CHANGE') {
+        applyWidgetTheme(e.data.theme);
+      }
+    });
+  })();
+</script>
+
+</body>
+</html>

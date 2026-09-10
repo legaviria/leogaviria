@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simulador de Controles y Layout con Flet</title>
+  <style>
+    :root {
+      --bg: #0e0e11; --card: #141923; --border: #232d42; --text: #fff;
+      --muted: #94a3b8; --sky: #38bdf8; --purple: #a855f7;
+    }
+    body.theme-light {
+      --bg: #f8fafc; --card: #ffffff; --border: #e2e8f0; --text: #0f172a;
+      --muted: #64748b; --sky: #0284c7; --purple: #9333ea;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { background: var(--bg); color: var(--text); padding: 14px; display: flex; justify-content: center; }
+    .container { width: 100%; max-width: 680px; background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 16px; }
+    .header { text-align: center; margin-bottom: 12px; }
+    .header h3 { font-size: 1.1rem; color: #38bdf8; margin-bottom: 4px; }
+    .layout-split { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    @media (max-width: 550px) { .layout-split { grid-template-columns: 1fr; } }
+    .preview-box { background: #080b10; border: 1px solid var(--border); border-radius: 8px; padding: 12px; display: flex; flex-direction: column; gap: 8px; justify-content: center; align-items: center; min-height: 160px; }
+    .flet-input { padding: 6px 10px; border-radius: 6px; border: 1px solid #38bdf8; background: #141923; color: white; width: 100%; font-size: 0.8rem; }
+    .flet-btn { background: #0284c7; color: white; border: none; padding: 8px 14px; border-radius: 6px; font-weight: bold; cursor: pointer; width: 100%; font-size: 0.8rem; }
+    .code-box { background: #080b10; border: 1px solid var(--border); border-radius: 8px; padding: 10px; font-family: monospace; font-size: 0.74rem; color: #a5f3fc; overflow-x: auto; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h3>📱 Simulador de Interfaces Modernas con Flet (Flutter para Python)</h3>
+      <p style="font-size:0.75rem; color:var(--muted)">Interactúa con la ventana reactiva y observa la estructura declarativa de controles y eventos.</p>
+    </div>
+
+    <div class="layout-split">
+      <div class="preview-box">
+        <div style="font-size:0.75rem; color:var(--muted); text-transform:uppercase; margin-bottom:4px">Ventana Flet Reactiva</div>
+        <input type="text" class="flet-input" id="txtName" placeholder="Ingresa tu nombre..." oninput="updateFlet()">
+        <button class="flet-btn" onclick="sayHello()">ft.ElevatedButton("Saludar")</button>
+        <div id="fletGreeting" style="font-size:0.85rem; font-weight:bold; color:#4ade80; margin-top:4px">¡Hola!</div>
+      </div>
+
+      <div class="code-box">
+        <div>import flet as ft</div>
+        <div style="color:var(--muted)">def main(page: ft.Page):</div>
+        <div>&nbsp;&nbsp;page.title = "App Flet"</div>
+        <div>&nbsp;&nbsp;txt_nombre = ft.TextField(label="Nombre")</div>
+        <div>&nbsp;&nbsp;lbl_saludo = ft.Text()</div>
+        <div>&nbsp;&nbsp;def saludar(e):</div>
+        <div>&nbsp;&nbsp;&nbsp;&nbsp;lbl_saludo.value = f"¡Hola {txt_nombre.value}!"</div>
+        <div>&nbsp;&nbsp;&nbsp;&nbsp;page.update()</div>
+        <div>&nbsp;&nbsp;page.add(txt_nombre, ft.ElevatedButton("Saludar", on_click=saludar), lbl_saludo)</div>
+        <div style="color:var(--muted)">ft.app(target=main)</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function sayHello() {
+      const name = document.getElementById('txtName').value || 'Mundo';
+      document.getElementById('fletGreeting').textContent = `¡Hola, ${name}! (page.update())`;
+    }
+  </script>
+</body>
+</html>

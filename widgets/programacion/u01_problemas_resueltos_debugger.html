@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Problemas Resueltos: Pseudocódigo vs Diagrama de Flujo</title>
+  <style>
+    * { box-sizing: border-box; }
+    html, body {
+      background-color: #0e0e11 !important;
+      color: #ffffff;
+      margin: 0;
+      padding: 10px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+  </style>
+</head>
+<body>
+<style>
+  .debug-container {
+    background-color: #0e0e11;
+    color: #ffffff;
+    padding: 12px 16px;
+    border-radius: 10px;
+    border: 1px solid #1f293d;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    max-width: 880px;
+    margin: 0 auto;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.5);
+    user-select: none;
+    box-sizing: border-box;
+  }
+
+  .debug-header {
+    text-align: center;
+    margin-bottom: 8px;
+  }
+
+  .debug-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #00c8ff;
+  }
+
+  .problem-selector {
+    width: 100%;
+    background: #181d28;
+    border: 1px solid #334155;
+    color: #00c8ff;
+    padding: 6px 8px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+    outline: none;
+    cursor: pointer;
+  }
+
+  .debug-grid {
+    display: grid;
+    grid-template-columns: 0.95fr 1.05fr;
+    gap: 10px;
+    margin-bottom: 8px;
+  }
+
+  .panel-title {
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: #94a3b8;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  /* Compact Viewers */
+  .code-viewer {
+    background: #05070a;
+    border: 1px solid #1f293d;
+    border-radius: 6px;
+    height: 270px;
+    padding: 6px;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.72rem;
+    overflow-y: auto;
+    box-sizing: border-box;
+  }
+
+  .code-line {
+    padding: 2px 5px;
+    border-radius: 3px;
+    color: #64748b;
+    transition: all 0.2s ease;
+    white-space: pre;
+    line-height: 1.3;
+  }
+
+  .code-line.active {
+    background: #0284c7;
+    color: #ffffff;
+    font-weight: bold;
+    box-shadow: 0 0 6px rgba(2, 132, 199, 0.5);
+  }
+
+  /* Compacted Diagram Stage */
+  .diagram-stage {
+    background: #05070a;
+    border: 1px solid #1f293d;
+    border-radius: 6px;
+    height: 270px;
+    padding: 6px 4px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    box-sizing: border-box;
+  }
+
+  /* Micro Nodes for compact fit */
+  .node {
+    padding: 4px 8px;
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-align: center;
+    color: #fff;
+    min-width: 100px;
+    max-width: 190px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    opacity: 0.35;
+    transition: all 0.2s ease;
+    border: 1.5px solid transparent;
+    box-sizing: border-box;
+    line-height: 1.15;
+  }
+
+  .node.active {
+    opacity: 1;
+    transform: scale(1.02);
+    border-color: #ffffff;
+    box-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
+  }
+
+  .node-start { background: #10b981; border-radius: 10px; }
+  .node-io { background: #0284c7; transform: skewX(-10deg); }
+  .node-io span { display: inline-block; transform: skewX(10deg); }
+  .node-process { background: #eab308; color: #000; border-radius: 3px; }
+  .node-end { background: #ef4444; border-radius: 10px; }
+
+  /* Reduced Decision & Branches */
+  .node-decision-wrap {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 1px 0;
+  }
+
+  .node-decision {
+    background: #a855f7;
+    width: 52px;
+    height: 52px;
+    transform: rotate(45deg);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 3px;
+  }
+
+  .node-decision span {
+    transform: rotate(-45deg);
+    display: block;
+    text-align: center;
+    font-size: 0.58rem;
+    line-height: 1.05;
+    width: 62px;
+  }
+
+  .branches-container {
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+    gap: 4px;
+    margin: 2px 0;
+  }
+
+  .branch-box {
+    flex: 1;
+    border: 1px dashed #334155;
+    border-radius: 4px;
+    padding: 4px 2px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    background: rgba(255, 255, 255, 0.02);
+  }
+
+  .branch-tag {
+    font-size: 0.55rem;
+    font-weight: 800;
+    padding: 1px 4px;
+    border-radius: 2px;
+    text-transform: uppercase;
+  }
+
+  .tag-yes { background: #10b981; color: #000; }
+  .tag-no { background: #ef4444; color: #fff; }
+
+  .branch-box.active-branch {
+    border-style: solid;
+    border-color: #00c8ff;
+    background: rgba(0, 200, 255, 0.05);
+    box-shadow: inset 0 0 6px rgba(0, 200, 255, 0.2);
+  }
+
+  .arrow {
+    color: #475569;
+    font-size: 0.65rem;
+    line-height: 1;
+    font-weight: bold;
+  }
+
+  .inputs-section {
+    background: #141419;
+    border: 1px solid #1f293d;
+    border-radius: 6px;
+    padding: 8px;
+  }
+
+  .inputs-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 6px;
+  }
+
+  .input-field {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .input-field label {
+    font-size: 0.62rem;
+    color: #94a3b8;
+    font-weight: 600;
+  }
+
+  .input-field input {
+    width: 52px;
+    background: #0f141d;
+    border: 1px solid #334155;
+    color: #fff;
+    padding: 2px 4px;
+    border-radius: 4px;
+    font-size: 0.72rem;
+    text-align: center;
+    outline: none;
+  }
+
+  /* Controls Grid */
+  .controls-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 6px;
+  }
+
+  .btn-ctrl {
+    background: #1e293b;
+    color: #00c8ff;
+    border: 1px solid #334155;
+    border-radius: 5px;
+    padding: 5px;
+    font-weight: 700;
+    font-size: 0.7rem;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-ctrl:hover { background: #00c8ff; color: #000; }
+  .btn-ctrl:disabled { opacity: 0.3; cursor: not-allowed; background: #1e293b; color: #64748b; }
+
+  .console-box {
+    background: #05070a;
+    border: 1px solid #1f293d;
+    border-radius: 6px;
+    padding: 6px 10px;
+    margin-top: 8px;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.72rem;
+    min-height: 32px;
+  }
+
+  .console-title {
+    color: #94a3b8;
+    font-size: 0.62rem;
+    font-weight: 700;
+    margin-bottom: 2px;
+    text-transform: uppercase;
+  }
+
+  .console-out {
+    color: #4ade80;
+    font-weight: 600;
+    white-space: pre-wrap;
+  }
+</style>
+
+<div class="debug-container">
+  <div class="debug-header">
+    <div class="debug-title">
+      Problemas resueltos (seudocódigo vs Diagrama de flujo)
+    </div>
+  </div>
+
+  <select class="problem-selector" id="prob-select">
+    <option value="p1">1. Sumar dos números</option>
+    <option value="p2">2. Calcular el área de un triángulo</option>
+    <option value="p3">3. Verificar si un número es positivo o negativo</option>
+    <option value="p4">4. Verificar si un número es par o impar</option>
+    <option value="p5">5. Calcular nota definitiva de 4 notas (>3.0)</option>
+    <option value="p6">6. Sumar números del 1 al N</option>
+  </select>
+
+  <div class="debug-grid">
+    <div>
+      <div class="panel-title">Seudocódigo</div>
+      <div class="code-viewer" id="code-viewer"></div>
+    </div>
+
+    <div>
+      <div class="panel-title">Diagrama de Flujo</div>
+      <div class="diagram-stage" id="diagram-render"></div>
+    </div>
+  </div>
+
+  <div class="inputs-section">
+    <div class="panel-title">Variables y Controles Paso a Paso</div>
+    <div class="inputs-grid" id="inputs-container"></div>
+    <div class="controls-grid">
+      <button class="btn-ctrl" id="btn-prev">⏮ Paso Anterior</button>
+      <button class="btn-ctrl" id="btn-next">⏭ Paso Siguiente</button>
+      <button class="btn-ctrl" id="btn-reset">🔄 Reiniciar</button>
+    </div>
+  </div>
+
+  <div class="console-box">
+    <div class="console-title">Consola de Estado</div>
+    <div class="console-out" id="console-output">Selecciona un ejercicio y presiona "Paso Siguiente"...</div>
+  </div>
+</div>
+
+<script>
+(function() {
+  const problemsData = {
+    p1: {
+      lines: ["Inicio", "Leer num1, num2", "suma = num1 + num2", 'Escribir "La suma es: ", suma', "Fin"],
+      inputs: [{ id: 'in_n1', label: 'num1', default: 8 }, { id: 'in_n2', label: 'num2', default: 12 }],
+      structure: [
+        { type: 'node', id: 'node_0', nodeType: 'start', label: 'Inicio' },
+        { type: 'node', id: 'node_1', nodeType: 'io', label: 'Leer num1, num2' },
+        { type: 'node', id: 'node_2', nodeType: 'process', label: 'suma = num1 + num2' },
+        { type: 'node', id: 'node_3', nodeType: 'io', label: 'Escribir suma' },
+        { type: 'node', id: 'node_4', nodeType: 'end', label: 'Fin' }
+      ],
+      getSteps: () => {
+        const n1 = parseFloat(document.getElementById('in_n1').value) || 0;
+        const n2 = parseFloat(document.getElementById('in_n2').value) || 0;
+        const suma = n1 + n2;
+        return [
+          { line: 0, node: 'node_0', log: `[ESTADO]: Inicio` },
+          { line: 1, node: 'node_1', log: `[ENTRADA]: num1 = ${n1}, num2 = ${n2}` },
+          { line: 2, node: 'node_2', log: `[CÁLCULO]: suma = ${n1} + ${n2} = ${suma}` },
+          { line: 3, node: 'node_3', log: `[SALIDA]: La suma es ${suma}` },
+          { line: 4, node: 'node_4', log: `[ESTADO]: Fin` }
+        ];
+      }
+    },
+    p2: {
+      lines: ["Inicio", "Leer base, altura", "area = (base * altura) / 2", 'Escribir "El área es: ", area', "Fin"],
+      inputs: [{ id: 'in_b', label: 'base', default: 10 }, { id: 'in_h', label: 'altura', default: 5 }],
+      structure: [
+        { type: 'node', id: 'node_0', nodeType: 'start', label: 'Inicio' },
+        { type: 'node', id: 'node_1', nodeType: 'io', label: 'Leer base, altura' },
+        { type: 'node', id: 'node_2', nodeType: 'process', label: 'area = (base * altura) / 2' },
+        { type: 'node', id: 'node_3', nodeType: 'io', label: 'Escribir area' },
+        { type: 'node', id: 'node_4', nodeType: 'end', label: 'Fin' }
+      ],
+      getSteps: () => {
+        const b = parseFloat(document.getElementById('in_b').value) || 0;
+        const h = parseFloat(document.getElementById('in_h').value) || 0;
+        const area = (b * h) / 2;
+        return [
+          { line: 0, node: 'node_0', log: `[ESTADO]: Inicio` },
+          { line: 1, node: 'node_1', log: `[ENTRADA]: base = ${b}, altura = ${h}` },
+          { line: 2, node: 'node_2', log: `[CÁLCULO]: area = (${b} * ${h}) / 2 = ${area}` },
+          { line: 3, node: 'node_3', log: `[SALIDA]: Área = ${area}` },
+          { line: 4, node: 'node_4', log: `[ESTADO]: Fin` }
+        ];
+      }
+    },
+    p3: {
+      lines: ["Inicio", "Leer num", "Si num >= 0 Entonces", '  Escribir "Es POSITIVO"', "Sino", '  Escribir "Es NEGATIVO"', "FinSi", "Fin"],
+      inputs: [{ id: 'in_num', label: 'num', default: 5 }],
+      structure: [
+        { type: 'node', id: 'node_0', nodeType: 'start', label: 'Inicio' },
+        { type: 'node', id: 'node_1', nodeType: 'io', label: 'Leer num' },
+        { type: 'decision_branch', id: 'dec_2', decisionNode: { id: 'node_2', label: '¿num >= 0?' },
+          yesNodes: [{ id: 'node_3a', type: 'io', label: 'Escribir "Es POSITIVO"' }],
+          noNodes: [{ id: 'node_3b', type: 'io', label: 'Escribir "Es NEGATIVO"' }]
+        },
+        { type: 'node', id: 'node_4', nodeType: 'end', label: 'Fin' }
+      ],
+      getSteps: () => {
+        const num = parseFloat(document.getElementById('in_num').value) || 0;
+        const isPos = num >= 0;
+        return [
+          { line: 0, node: 'node_0', log: `[ESTADO]: Inicio` },
+          { line: 1, node: 'node_1', log: `[ENTRADA]: num = ${num}` },
+          { line: 2, node: 'node_2', branch: isPos ? 'yes' : 'no', branchId: 'dec_2', log: `[EVALUACIÓN]: ¿${num} >= 0? ➔ Camino: ${isPos ? 'SÍ (POSITIVO)' : 'NO (NEGATIVO)'}` },
+          { line: isPos ? 3 : 5, node: isPos ? 'node_3a' : 'node_3b', branch: isPos ? 'yes' : 'no', branchId: 'dec_2', log: `[SALIDA]: "${isPos ? 'Es POSITIVO' : 'Es NEGATIVO'}"` },
+          { line: 7, node: 'node_4', log: `[ESTADO]: Fin` }
+        ];
+      }
+    },
+    p4: {
+      lines: ["Inicio", "Leer num", "Si num MOD 2 == 0 Entonces", '  Escribir "Es PAR"', "Sino", '  Escribir "Es IMPAR"', "FinSi", "Fin"],
+      inputs: [{ id: 'in_num_p', label: 'num', default: 7 }],
+      structure: [
+        { type: 'node', id: 'node_0', nodeType: 'start', label: 'Inicio' },
+        { type: 'node', id: 'node_1', nodeType: 'io', label: 'Leer num' },
+        { type: 'decision_branch', id: 'dec_p4', decisionNode: { id: 'node_2', label: '¿MOD 2 == 0?' },
+          yesNodes: [{ id: 'node_3a', type: 'io', label: 'Escribir "Es PAR"' }],
+          noNodes: [{ id: 'node_3b', type: 'io', label: 'Escribir "Es IMPAR"' }]
+        },
+        { type: 'node', id: 'node_4', nodeType: 'end', label: 'Fin' }
+      ],
+      getSteps: () => {
+        const num = parseFloat(document.getElementById('in_num_p').value) || 0;
+        const isEven = num % 2 === 0;
+        return [
+          { line: 0, node: 'node_0', log: `[ESTADO]: Inicio` },
+          { line: 1, node: 'node_1', log: `[ENTRADA]: num = ${num}` },
+          { line: 2, node: 'node_2', branch: isEven ? 'yes' : 'no', branchId: 'dec_p4', log: `[EVALUACIÓN]: ¿${num} MOD 2 == 0? ➔ Camino: ${isEven ? 'SÍ (PAR)' : 'NO (IMPAR)'}` },
+          { line: isEven ? 3 : 5, node: isEven ? 'node_3a' : 'node_3b', branch: isEven ? 'yes' : 'no', branchId: 'dec_p4', log: `[SALIDA]: Resultado = ${isEven ? 'PAR' : 'IMPAR'}` },
+          { line: 7, node: 'node_4', log: `[ESTADO]: Fin` }
+        ];
+      }
+    },
+    p5: {
+      lines: ["Inicio", "Leer n1, n2, n3, n4", "def = (n1 + n2 + n3 + n4) / 4", "Si def > 3.0 Entonces", '  Escribir "APROBÓ: ", def', "Sino", '  Escribir "REPROBÓ: ", def', "FinSi", "Fin"],
+      inputs: [
+        { id: 'in_n1_p5', label: 'n1', default: 3.5 },
+        { id: 'in_n2_p5', label: 'n2', default: 4.0 },
+        { id: 'in_n3_p5', label: 'n3', default: 2.5 },
+        { id: 'in_n4_p5', label: 'n4', default: 3.0 }
+      ],
+      structure: [
+        { type: 'node', id: 'node_0', nodeType: 'start', label: 'Inicio' },
+        { type: 'node', id: 'node_1', nodeType: 'io', label: 'Leer n1, n2, n3, n4' },
+        { type: 'node', id: 'node_2', nodeType: 'process', label: 'def = (n1+n2+n3+n4)/4' },
+        { type: 'decision_branch', id: 'dec_p5', decisionNode: { id: 'node_3', label: '¿def > 3.0?' },
+          yesNodes: [{ id: 'node_4a', type: 'io', label: 'Escribir "APROBÓ"' }],
+          noNodes: [{ id: 'node_4b', type: 'io', label: 'Escribir "REPROBÓ"' }]
+        },
+        { type: 'node', id: 'node_5', nodeType: 'end', label: 'Fin' }
+      ],
+      getSteps: () => {
+        const n1 = parseFloat(document.getElementById('in_n1_p5').value) || 0;
+        const n2 = parseFloat(document.getElementById('in_n2_p5').value) || 0;
+        const n3 = parseFloat(document.getElementById('in_n3_p5').value) || 0;
+        const n4 = parseFloat(document.getElementById('in_n4_p5').value) || 0;
+        const def = (n1 + n2 + n3 + n4) / 4;
+        const passed = def > 3.0;
+        return [
+          { line: 0, node: 'node_0', log: `[ESTADO]: Inicio` },
+          { line: 1, node: 'node_1', log: `[ENTRADA]: Notas [${n1}, ${n2}, ${n3}, ${n4}]` },
+          { line: 2, node: 'node_2', log: `[CÁLCULO]: def = ${def.toFixed(2)}` },
+          { line: 3, node: 'node_3', branch: passed ? 'yes' : 'no', branchId: 'dec_p5', log: `[EVALUACIÓN]: ¿${def.toFixed(2)} > 3.0? ➔ Camino: ${passed ? 'SÍ (APROBÓ)' : 'NO (REPROBÓ)'}` },
+          { line: passed ? 4 : 6, node: passed ? 'node_4a' : 'node_4b', branch: passed ? 'yes' : 'no', branchId: 'dec_p5', log: `[SALIDA]: ${passed ? 'APROBÓ' : 'REPROBÓ'} con ${def.toFixed(2)}` },
+          { line: 8, node: 'node_5', log: `[ESTADO]: Fin` }
+        ];
+      }
+    },
+    p6: {
+      lines: ["Inicio", "Leer N", "i = 1, suma = 0", "Mientras i <= N Hacer", "  suma = suma + i", "  i = i + 1", "FinMientras", 'Escribir "Suma total: ", suma', "Fin"],
+      inputs: [{ id: 'in_n6', label: 'N (Límite)', default: 3 }],
+      structure: [
+        { type: 'node', id: 'node_0', nodeType: 'start', label: 'Inicio' },
+        { type: 'node', id: 'node_1', nodeType: 'io', label: 'Leer N' },
+        { type: 'node', id: 'node_2', nodeType: 'process', label: 'i = 1, suma = 0' },
+        { type: 'decision_branch', id: 'dec_p6', decisionNode: { id: 'node_3', label: '¿i <= N?' },
+          yesNodes: [{ id: 'node_4', type: 'process', label: 'suma = suma + i\\ni = i + 1' }],
+          noNodes: [{ id: 'node_out', type: 'process', label: 'Fin Bucle' }]
+        },
+        { type: 'node', id: 'node_5', nodeType: 'io', label: 'Escribir suma' },
+        { type: 'node', id: 'node_6', nodeType: 'end', label: 'Fin' }
+      ],
+      getSteps: () => {
+        const N = Math.min(Math.max(parseInt(document.getElementById('in_n6').value) || 1, 1), 6);
+        let steps = [
+          { line: 0, node: 'node_0', log: `[ESTADO]: Inicio` },
+          { line: 1, node: 'node_1', log: `[ENTRADA]: N = ${N}` },
+          { line: 2, node: 'node_2', log: `[INICIALIZACIÓN]: i = 1, suma = 0` }
+        ];
+
+        let i = 1, suma = 0;
+        while (i <= N) {
+          steps.push({ line: 3, node: 'node_3', branch: 'yes', branchId: 'dec_p6', log: `[EVALUACIÓN]: ¿${i} <= ${N}? ➔ Camino: SÍ` });
+          suma += i;
+          steps.push({ line: 4, node: 'node_4', branch: 'yes', branchId: 'dec_p6', log: `[ACUMULACIÓN]: suma = ${suma}` });
+          i++;
+          steps.push({ line: 5, node: 'node_4', branch: 'yes', branchId: 'dec_p6', log: `[INCREMENTO]: i = ${i}` });
+        }
+
+        steps.push({ line: 3, node: 'node_3', branch: 'no', branchId: 'dec_p6', log: `[EVALUACIÓN]: ¿${i} <= ${N}? ➔ Camino: NO` });
+        steps.push({ line: 7, node: 'node_5', log: `[SALIDA]: Suma total = ${suma}` });
+        steps.push({ line: 8, node: 'node_6', log: `[ESTADO]: Fin` });
+        return steps;
+      }
+    }
+  };
+
+  let currentStepIdx = -1;
+  let currentSteps = [];
+
+  function renderNode(id, type, label) {
+    const nodeDiv = document.createElement('div');
+    nodeDiv.id = id;
+    nodeDiv.className = `node node-${type}`;
+    nodeDiv.innerHTML = `<span>${label.replace(/\\\\n/g, '<br>')}</span>`;
+    return nodeDiv;
+  }
+
+  function loadProblem() {
+    resetDebug();
+    const selected = document.getElementById('prob-select').value;
+    const p = problemsData[selected];
+
+    const codeViewer = document.getElementById('code-viewer');
+    if (codeViewer) {
+      codeViewer.innerHTML = p.lines.map((l, idx) => `<div class="code-line" id="line-${idx}">${l}</div>`).join('');
+    }
+
+    const inContainer = document.getElementById('inputs-container');
+    if (inContainer) {
+      inContainer.innerHTML = p.inputs.map(inp => `
+        <div class="input-field">
+          <label>${inp.label}:</label>
+          <input type="number" id="${inp.id}" value="${inp.default}" step="0.5">
+        </div>
+      `).join('');
+
+      inContainer.querySelectorAll('input').forEach(input => {
+        input.addEventListener('change', resetDebug);
+      });
+    }
+
+    const stage = document.getElementById('diagram-render');
+    if (stage) {
+      stage.innerHTML = '';
+
+      p.structure.forEach((item, idx) => {
+        if (item.type === 'node') {
+          stage.appendChild(renderNode(item.id, item.nodeType, item.label));
+        } else if (item.type === 'decision_branch') {
+          const wrap = document.createElement('div');
+          wrap.className = 'node-decision-wrap';
+          const decNode = document.createElement('div');
+          decNode.id = item.decisionNode.id;
+          decNode.className = 'node node-decision';
+          decNode.innerHTML = `<span>${item.decisionNode.label}</span>`;
+          wrap.appendChild(decNode);
+          stage.appendChild(wrap);
+
+          const branchesCont = document.createElement('div');
+          branchesCont.className = 'branches-container';
+          branchesCont.id = item.id;
+
+          const branchYes = document.createElement('div');
+          branchYes.className = 'branch-box branch-yes-box';
+          branchYes.innerHTML = `<span class="branch-tag tag-yes">SÍ</span>`;
+          item.yesNodes.forEach(n => branchYes.appendChild(renderNode(n.id, n.type, n.label)));
+
+          const branchNo = document.createElement('div');
+          branchNo.className = 'branch-box branch-no-box';
+          branchNo.innerHTML = `<span class="branch-tag tag-no">NO</span>`;
+          item.noNodes.forEach(n => branchNo.appendChild(renderNode(n.id, n.type, n.label)));
+
+          branchesCont.appendChild(branchYes);
+          branchesCont.appendChild(branchNo);
+          stage.appendChild(branchesCont);
+        }
+
+        if (idx < p.structure.length - 1) {
+          const arrow = document.createElement('div');
+          arrow.className = 'arrow';
+          arrow.innerText = '↓';
+          stage.appendChild(arrow);
+        }
+      });
+    }
+
+    const consoleOut = document.getElementById('console-output');
+    if (consoleOut) consoleOut.innerText = 'Presiona "Paso Siguiente" para comenzar...';
+    updateButtonsState();
+  }
+
+  function resetDebug() {
+    currentStepIdx = -1;
+    currentSteps = [];
+
+    document.querySelectorAll('.code-line').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.node').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.branch-box').forEach(el => el.classList.remove('active-branch'));
+    const consoleOut = document.getElementById('console-output');
+    if (consoleOut) consoleOut.innerText = 'Estado reiniciado.';
+    updateButtonsState();
+  }
+
+  function renderCurrentStep() {
+    const step = currentSteps[currentStepIdx];
+
+    document.querySelectorAll('.code-line').forEach(el => el.classList.remove('active'));
+    const activeLine = document.getElementById(`line-${step.line}`);
+    if (activeLine) activeLine.classList.add('active');
+
+    document.querySelectorAll('.node').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.branch-box').forEach(el => el.classList.remove('active-branch'));
+
+    const activeNode = document.getElementById(step.node);
+    if (activeNode) {
+      activeNode.classList.add('active');
+      activeNode.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    if (step.branchId) {
+      const parentBranch = document.getElementById(step.branchId);
+      if (parentBranch) {
+        const targetClass = step.branch === 'yes' ? '.branch-yes-box' : '.branch-no-box';
+        const activeBranchBox = parentBranch.querySelector(targetClass);
+        if (activeBranchBox) activeBranchBox.classList.add('active-branch');
+      }
+    }
+
+    const consoleOut = document.getElementById('console-output');
+    if (consoleOut) consoleOut.innerText = step.log;
+
+    updateButtonsState();
+  }
+
+  function nextStep() {
+    const selected = document.getElementById('prob-select').value;
+    const p = problemsData[selected];
+
+    if (currentSteps.length === 0) {
+      currentSteps = p.getSteps();
+    }
+
+    if (currentStepIdx < currentSteps.length - 1) {
+      currentStepIdx++;
+      renderCurrentStep();
+    }
+  }
+
+  function prevStep() {
+    if (currentStepIdx > 0) {
+      currentStepIdx--;
+      renderCurrentStep();
+    } else if (currentStepIdx === 0) {
+      resetDebug();
+    }
+  }
+
+  function updateButtonsState() {
+    const btnPrev = document.getElementById('btn-prev');
+    const btnNext = document.getElementById('btn-next');
+
+    if (btnPrev) btnPrev.disabled = (currentStepIdx <= -1);
+    if (btnNext) btnNext.disabled = (currentSteps.length > 0 && currentStepIdx >= currentSteps.length - 1);
+  }
+
+  document.getElementById('prob-select').addEventListener('change', loadProblem);
+  document.getElementById('btn-next').addEventListener('click', nextStep);
+  document.getElementById('btn-prev').addEventListener('click', prevStep);
+  document.getElementById('btn-reset').addEventListener('click', resetDebug);
+
+  loadProblem();
+})();
+</script>
+</body>
+</html>

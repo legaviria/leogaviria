@@ -1,0 +1,19 @@
+{
+  "name": "leo-gaviria-programacion",
+  "version": "1.0.0",
+  "description": "Plataforma educativa interactiva - Leo Gaviria | Programación en 14 unidades con animaciones interactivas.",
+  "scripts": {
+    "start": "npx serve .",
+    "dev": "npx serve ."
+  },
+  "keywords": [
+    "dsa",
+    "algoritmos",
+    "ordenamiento",
+    "programacion",
+    "bubble-sort",
+    "animaciones-interactivas"
+  ],
+  "author": "Leo Gaviria",
+  "license": "MIT"
+}

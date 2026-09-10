@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      background-color: #0b0e14;
+      color: #e2e8f0;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      margin: 0;
+      padding: 12px;
+      transition: background-color 0.2s, color 0.2s;
+    }
+    /* Light Mode */
+    [data-theme="light"] body {
+      background-color: #ffffff;
+      color: #0f172a;
+    }
+    [data-theme="light"] .card-box {
+      background-color: #f8fafc !important;
+      border-color: #e2e8f0 !important;
+      color: #0f172a !important;
+    }
+    [data-theme="light"] .subcard-box {
+      background-color: #ffffff !important;
+      border-color: #cbd5e1 !important;
+      color: #1e293b !important;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+    [data-theme="light"] .text-muted {
+      color: #64748b !important;
+    }
+    [data-theme="light"] .text-highlight {
+      color: #0f766e !important;
+    }
+    [data-theme="light"] input, [data-theme="light"] select {
+      background-color: #ffffff !important;
+      border-color: #cbd5e1 !important;
+      color: #0f172a !important;
+    }
+    /* Estilos base */
+    .card-box {
+      background-color: #121622;
+      border: 1px solid #1f293d;
+      border-radius: 12px;
+    }
+    .subcard-box {
+      background-color: #090d14;
+      border: 1px solid #1a2233;
+      border-radius: 8px;
+    }
+    .text-muted { color: #94a3b8; }
+    .text-highlight { color: #2dd4bf; }
+  </style>
+  <script>
+    window.addEventListener('message', (event) => {
+      if (event.data && event.data.type === 'THEME_CHANGE') {
+        document.documentElement.setAttribute('data-theme', event.data.theme);
+      }
+    });
+    try {
+      const savedTheme = localStorage.getItem('leogaviria_theme') || 'dark';
+      document.documentElement.setAttribute('data-theme', savedTheme);
+    } catch(e) {}
+  </script>
+
+  <title>Reto Integrador: Sistemas Numéricos</title>
+</head>
+<body>
+  <div class="max-w-4xl mx-auto space-y-4">
+    <div class="card-box p-4 sm:p-5">
+      <div class="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-gray-800/80 mb-4">
+        <div>
+          <h2 class="text-base sm:text-lg font-bold flex items-center gap-2 text-highlight">
+            <i class="fas fa-trophy text-amber-400"></i> Reto Integrador: Sistemas Numéricos y Aritmética
+          </h2>
+          <p class="text-xs text-muted">Evalúa tus conocimientos en valor posicional, conversiones, Euclides y aritmética modular</p>
+        </div>
+        <div class="flex items-center gap-2">
+          <span id="quiz-score" class="px-3 py-1 rounded-full text-xs font-mono font-bold bg-teal-500/20 text-teal-400 border border-teal-500/30">
+            Puntaje: 0 / 5
+          </span>
+        </div>
+      </div>
+
+      <div id="quiz-body" class="space-y-4">
+        <!-- Pregunta 1 -->
+        <div class="subcard-box p-4" id="q-box-1">
+          <div class="text-xs font-bold text-muted uppercase mb-1">Desafío 1 • Valor Posicional</div>
+          <p class="text-xs sm:text-sm font-semibold text-white mb-2">¿Cuál es el valor en base 10 del número binario <code>11011<sub>(2)</sub></code>?</p>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <button onclick="check(1, 27, this)" class="q-opt px-3 py-2 rounded-lg bg-gray-800 hover:bg-gray-700 text-xs text-left text-gray-200 transition">A) 27</button>
+            <button onclick="check(1, 25, this)" class="q-opt px-3 py-2 rounded-lg bg-gray-800 hover:bg-gray-700 text-xs text-left text-gray-200 transition">B) 25</button>
+            <button onclick="check(1, 31, this)" class="q-opt px-3 py-2 rounded-lg bg-gray-800 hover:bg-gray-700 text-xs text-left text-gray-200 transition">C) 31</button>
+            <button onclick="check(1, 23, this)" class="q-opt px-3 py-2 rounded-lg bg-gray-800 hover:bg-gray-700 text-xs text-left text-gray-200 transition">D) 23</button>
+          </div>
+          <div class="feedback hidden text-xs p-2 rounded-lg mt-2 font-mono"></div>
+        </div>
+
+        <!-- Pregunta 2 -->
+        <div class="subcard-box p-4" id="q-box-2">
+          <div class="text-xs font-bold text-muted uppercase mb-1">Desafío 2 • Agrupación de Bits</div>
+          <p class="text-xs sm:text-sm font-semibold text-white mb-2">Al convertir el binario <code>11111010<sub>(2)</sub></code> a hexadecimal, agrupamos en bloques de 4 bits. ¿Cuál es el resultado?</p>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <button onclick="check(2, 'FA', this)" class="q-opt px-3 py-2 rounded-lg bg-gray-800 hover:bg-gray-700 text-xs text-left text-gray-200 transition">A) FA<sub>(16)</sub></button>
+            <button onclick="check(2, 'FB', this)" class="q-opt px-3 py-2 rounded-lg bg-gray-800 hover:bg-gray-700 text-xs text-left text-gray-200 transition">B) FB<sub>(16)</sub></button>
+            <button onclick="check(2, 'EA', this)" class="q-opt px-3 py-2 rounded-lg bg-gray-800 hover:bg-gray-700 text-xs text-left text-gray-200 transition">C) EA<sub>(16)</sub></button>
+            <button onclick="check(2, 'F2', this)" class="q-opt px-3 py-2 rounded-lg bg-gray-800 hover:bg-gray-700 text-xs text-left text-gray-200 transition">D) F2<sub>(16)</sub></button>
+          </div>
+          <div class="feedback hidden text-xs p-2 rounded-lg mt-2 font-mono"></div>
+        </div>
+
+        <!-- Pregunta 3 -->
+        <div class="subcard-box p-4" id="q-box-3">
+          <div class="text-xs font-bold text-muted uppercase mb-1">Desafío 3 • Suma Binaria y Acarreo</div>
+          <p class="text-xs sm:text-sm font-semibold text-white mb-2">¿Cuál es el resultado de sumar <code>101<sub>(2)</sub> + 011<sub>(2)</sub></code>?</p>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <button onclick="check(3, '1000', this)" class="q-opt px-3 py-2 rounded-lg bg-gray-800 hover:bg-gray-700 text-xs text-left text-gray-200 transition">A) 1000<sub>(2)</sub></button>
+            <button onclick="check(3, '1110', this)" class="q-opt px-3 py-2 rounded-lg bg-gray-800 hover:bg-gray-700 text-xs text-left text-gray-200 transition">B) 1110<sub>(2)</sub></button>
+            <button onclick="check(3, '1001', this)" class="q-opt px-3 py-2 rounded-lg bg-gray-800 hover:bg-gray-700 text-xs text-left text-gray-200 transition">C) 1001<sub>(2)</sub></button>
+            <button onclick="check(3, '110', this)" class="q-opt px-3 py-2 rounded-lg bg-gray-800 hover:bg-gray-700 text-xs text-left text-gray-200 transition">D) 110<sub>(2)</sub></button>
+          </div>
+          <div class="feedback hidden text-xs p-2 rounded-lg mt-2 font-mono"></div>
+        </div>
+
+        <!-- Pregunta 4 -->
+        <div class="subcard-box p-4" id="q-box-4">
+          <div class="text-xs font-bold text-muted uppercase mb-1">Desafío 4 • Algoritmo de Euclides</div>
+          <p class="text-xs sm:text-sm font-semibold text-white mb-2">Si aplicamos el algoritmo de división a <code>a = 60</code> y <code>b = 24</code>, ¿cuál es el MCD(60, 24)?</p>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <button onclick="check(4, 12, this)" class="q-opt px-3 py-2 rounded-lg bg-gray-800 hover:bg-gray-700 text-xs text-left text-gray-200 transition">A) 12</button>
+            <button onclick="check(4, 6, this)" class="q-opt px-3 py-2 rounded-lg bg-gray-800 hover:bg-gray-700 text-xs text-left text-gray-200 transition">B) 6</button>
+            <button onclick="check(4, 24, this)" class="q-opt px-3 py-2 rounded-lg bg-gray-800 hover:bg-gray-700 text-xs text-left text-gray-200 transition">C) 24</button>
+            <button onclick="check(4, 4, this)" class="q-opt px-3 py-2 rounded-lg bg-gray-800 hover:bg-gray-700 text-xs text-left text-gray-200 transition">D) 4</button>
+          </div>
+          <div class="feedback hidden text-xs p-2 rounded-lg mt-2 font-mono"></div>
+        </div>
+
+        <!-- Pregunta 5 -->
+        <div class="subcard-box p-4" id="q-box-5">
+          <div class="text-xs font-bold text-muted uppercase mb-1">Desafío 5 • Aritmética Modular</div>
+          <p class="text-xs sm:text-sm font-semibold text-white mb-2">Calcula <code>(17 + 25) mod 7</code>:</p>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <button onclick="check(5, 0, this)" class="q-opt px-3 py-2 rounded-lg bg-gray-800 hover:bg-gray-700 text-xs text-left text-gray-200 transition">A) 0</button>
+            <button onclick="check(5, 2, this)" class="q-opt px-3 py-2 rounded-lg bg-gray-800 hover:bg-gray-700 text-xs text-left text-gray-200 transition">B) 2</button>
+            <button onclick="check(5, 5, this)" class="q-opt px-3 py-2 rounded-lg bg-gray-800 hover:bg-gray-700 text-xs text-left text-gray-200 transition">C) 5</button>
+            <button onclick="check(5, 4, this)" class="q-opt px-3 py-2 rounded-lg bg-gray-800 hover:bg-gray-700 text-xs text-left text-gray-200 transition">D) 4</button>
+          </div>
+          <div class="feedback hidden text-xs p-2 rounded-lg mt-2 font-mono"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const answers = {
+      1: { correct: 27, exp: "16 + 8 + 0 + 2 + 1 = 27." },
+      2: { correct: 'FA', exp: "1111 = F (15) y 1010 = A (10) &rarr; FA(16)." },
+      3: { correct: '1000', exp: "5 + 3 = 8 en decimal, que equivale a 1000(2)." },
+      4: { correct: 12, exp: "60 = 24×2 + 12; 24 = 12×2 + 0. El último residuo no nulo es 12." },
+      5: { correct: 0, exp: "17 + 25 = 42. 42 es múltiplo exacto de 7 (42 = 7×6 + 0) &rarr; 0." }
+    };
+
+    let answered = {};
+    let score = 0;
+
+    function check(qId, userAns, btn) {
+      if (answered[qId]) return;
+      answered[qId] = true;
+
+      const qBox = document.getElementById(`q-box-${qId}`);
+      const fb = qBox.querySelector('.feedback');
+      const isCorrect = userAns === answers[qId].correct;
+
+      if (isCorrect) {
+        score++;
+        btn.classList.remove('bg-gray-800');
+        btn.classList.add('bg-emerald-600', 'text-white');
+        fb.classList.remove('hidden');
+        fb.classList.add('bg-emerald-500/10', 'text-emerald-400', 'border', 'border-emerald-500/30');
+        fb.innerHTML = `✅ ¡Correcto! ${answers[qId].exp}`;
+      } else {
+        btn.classList.remove('bg-gray-800');
+        btn.classList.add('bg-rose-600', 'text-white');
+        fb.classList.remove('hidden');
+        fb.classList.add('bg-rose-500/10', 'text-rose-400', 'border', 'border-rose-500/30');
+        fb.innerHTML = `❌ Incorrecto. Respuesta correcta: ${answers[qId].correct}. ${answers[qId].exp}`;
+      }
+
+      document.getElementById('quiz-score').textContent = `Puntaje: ${score} / 5`;
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Programación Dinámica: Recursión vs Memoización vs Tabulación</title>
+  <style>
+    :root {
+      --bg: #0e0e11; --card: #141923; --border: #232d42; --text: #fff;
+      --muted: #94a3b8; --sky: #38bdf8; --purple: #a855f7; --green: #10b981;
+    }
+    body.theme-light {
+      --bg: #f8fafc; --card: #ffffff; --border: #e2e8f0; --text: #0f172a;
+      --muted: #64748b; --sky: #0284c7; --purple: #9333ea; --green: #059669;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { background: var(--bg); color: var(--text); padding: 14px; display: flex; justify-content: center; }
+    .container { width: 100%; max-width: 680px; background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 16px; }
+    .header { text-align: center; margin-bottom: 12px; }
+    .header h3 { font-size: 1.1rem; color: #a855f7; margin-bottom: 4px; }
+    .method-tabs { display: flex; gap: 6px; margin-bottom: 12px; }
+    .mtab { flex: 1; padding: 8px 4px; font-size: 0.75rem; font-weight: 600; border-radius: 6px; border: 1px solid var(--border); background: rgba(255,255,255,0.03); color: var(--muted); cursor: pointer; text-align: center; }
+    .mtab.active { background: rgba(168, 85, 247, 0.2); border-color: var(--purple); color: #d8b4fe; }
+    .comp-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
+    @media (max-width: 550px) { .comp-grid { grid-template-columns: 1fr; } }
+    .cpanel { background: #080b10; border: 1px solid var(--border); border-radius: 8px; padding: 10px; font-family: monospace; font-size: 0.8rem; }
+    .cpanel h5 { font-size: 0.72rem; color: var(--muted); margin-bottom: 4px; text-transform: uppercase; }
+    .tree-box { min-height: 120px; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 6px; color: #a5f3fc; }
+    .table-row { display: flex; gap: 4px; justify-content: center; margin-top: 8px; }
+    .tcell { width: 34px; height: 34px; border: 1px solid var(--border); border-radius: 4px; display: flex; align-items: center; justify-content: center; font-weight: bold; background: rgba(255,255,255,0.04); font-size: 0.85rem; }
+    .tcell.filled { border-color: var(--green); color: #86efac; background: rgba(16, 185, 129, 0.15); }
+    .badge-comp { padding: 4px 8px; border-radius: 4px; font-size: 0.72rem; font-weight: bold; display: inline-block; margin-top: 6px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h3>⚡ Programación Dinámica: Fibonacci(6)</h3>
+      <p style="font-size:0.75rem; color:var(--muted)">De la explosión combinatoria O(2ⁿ) a la eficiencia lineal O(n) mediante reutilización de subproblemas.</p>
+    </div>
+
+    <div class="method-tabs">
+      <button class="mtab active" onclick="setMethod(1)">1. Recursión Simple O(2ⁿ)</button>
+      <button class="mtab" onclick="setMethod(2)">2. Memoización Top-Down O(n)</button>
+      <button class="mtab" onclick="setMethod(3)">3. Tabulación Bottom-Up O(n)</button>
+    </div>
+
+    <div class="comp-grid">
+      <div class="cpanel">
+        <h5>Estructura Algorítmica</h5>
+        <div id="codeDisplay"></div>
+      </div>
+      <div class="cpanel">
+        <h5>Visualización del Estado</h5>
+        <div class="tree-box" id="visDisplay"></div>
+      </div>
+    </div>
+
+    <div id="summaryBadge" style="text-align:center; font-size:0.8rem; padding:8px; background:rgba(255,255,255,0.03); border-radius:6px; border:1px solid var(--border); color:var(--text);"></div>
+  </div>
+
+  <script>
+    function setMethod(m) {
+      document.querySelectorAll('.mtab').forEach((b, i) => b.classList.toggle('active', i === m - 1));
+      const codeEl = document.getElementById('codeDisplay');
+      const visEl = document.getElementById('visDisplay');
+      const sumEl = document.getElementById('summaryBadge');
+
+      if (m === 1) {
+        codeEl.innerHTML = "def fib(n):<br>&nbsp;&nbsp;&nbsp;&nbsp;if n &lt;= 1: return n<br>&nbsp;&nbsp;&nbsp;&nbsp;return fib(n-1) + fib(n-2)<br><br><span style='color:#f87171'>Complejidad: O(2ⁿ) Tiempo, O(n) Pila</span>";
+        visEl.innerHTML = "<div>fib(6)</div><div style='color:var(--muted); font-size:0.7rem'>↙&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;↘</div><div>fib(5)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fib(4)</div><div style='color:#f87171; font-size:0.7rem; margin-top:8px;'>¡25 llamadas redundantes para n=6!</div>";
+        sumEl.innerHTML = "<span style='color:#f87171; font-weight:bold;'>⚠️ Recursión Ineficiente:</span> Recalcula fib(3) 5 veces y fib(2) 8 veces. Inviable para n > 40.";
+      } else if (m === 2) {
+        codeEl.innerHTML = "memo = {}<br>def fib_memo(n):<br>&nbsp;&nbsp;&nbsp;&nbsp;if n in memo: return memo[n]<br>&nbsp;&nbsp;&nbsp;&nbsp;if n &lt;= 1: return n<br>&nbsp;&nbsp;&nbsp;&nbsp;memo[n] = fib_memo(n-1) + fib_memo(n-2)<br>&nbsp;&nbsp;&nbsp;&nbsp;return memo[n]<br><span style='color:#4ade80'>O(n) Tiempo, O(n) Memoria Caché</span>";
+        visEl.innerHTML = "<div style='color:#38bdf8'>Diccionario memo:</div><div style='font-size:0.74rem; line-height:1.4'>{0: 0, 1: 1, 2: 1,<br>3: 2, 4: 3, 5: 5, 6: 8}</div><div style='color:#4ade80; font-size:0.7rem; margin-top:8px;'>✓ Solo 6 llamadas reales; el resto consulta la caché O(1).</div>";
+        sumEl.innerHTML = "<span style='color:#4ade80; font-weight:bold;'>✅ Memoización Top-Down:</span> Almacena resultados en memoria caché (hash map) evitando cálculos duplicados.";
+      } else if (m === 3) {
+        codeEl.innerHTML = "def fib_tab(n):<br>&nbsp;&nbsp;&nbsp;&nbsp;dp = [0] * (n + 1)<br>&nbsp;&nbsp;&nbsp;&nbsp;dp[1] = 1<br>&nbsp;&nbsp;&nbsp;&nbsp;for i in range(2, n + 1):<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dp[i] = dp[i-1] + dp[i-2]<br>&nbsp;&nbsp;&nbsp;&nbsp;return dp[n]<br><span style='color:#4ade80'>O(n) Tiempo, O(1) si optimizamos espacio</span>";
+        visEl.innerHTML = "<div style='color:var(--muted); font-size:0.72rem'>Arreglo DP (Bottom-Up):</div><div class='table-row'><div class='tcell filled'>0</div><div class='tcell filled'>1</div><div class='tcell filled'>1</div><div class='tcell filled'>2</div><div class='tcell filled'>3</div><div class='tcell filled'>5</div><div class='tcell filled' style='color:#fde047'>8</div></div><div style='color:var(--muted); font-size:0.68rem; margin-top:4px'>i=0 &nbsp; i=1 &nbsp; i=2 &nbsp; i=3 &nbsp; i=4 &nbsp; i=5 &nbsp; i=6</div>";
+        sumEl.innerHTML = "<span style='color:#38bdf8; font-weight:bold;'>🚀 Tabulación Bottom-Up:</span> Construye la solución iterativamente desde la base. Sin sobrecarga de pila de llamadas.";
+      }
+    }
+    setMethod(1);
+  </script>
+</body>
+</html>

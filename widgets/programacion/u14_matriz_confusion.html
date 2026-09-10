@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Matriz de Confusión Interactiva</title>
+  <style>
+    :root {
+      --bg: #0e0e11; --card: #141923; --border: #232d42; --text: #fff;
+      --muted: #94a3b8; --sky: #38bdf8; --green: #10b981; --red: #ef4444;
+    }
+    body.theme-light {
+      --bg: #f8fafc; --card: #ffffff; --border: #e2e8f0; --text: #0f172a;
+      --muted: #64748b; --sky: #0284c7; --green: #059669; --red: #dc2626;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { background: var(--bg); color: var(--text); padding: 14px; display: flex; justify-content: center; }
+    .container { width: 100%; max-width: 680px; background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 16px; }
+    .header { text-align: center; margin-bottom: 12px; }
+    .header h3 { font-size: 1.1rem; color: #10b981; margin-bottom: 4px; }
+    .matrix-wrap { display: grid; grid-template-columns: auto 1fr 1fr; gap: 6px; max-width: 380px; margin: 0 auto 14px; text-align: center; }
+    .mcell { padding: 10px 6px; border-radius: 6px; border: 1px solid var(--border); background: #080b10; display: flex; flex-direction: column; justify-content: center; }
+    .mcell.pos { background: rgba(16, 185, 129, 0.15); border-color: var(--green); }
+    .mcell.neg { background: rgba(239, 68, 68, 0.15); border-color: var(--red); }
+    input[type="number"] { width: 60px; margin: 4px auto 0; padding: 4px; text-align: center; background: #141923; border: 1px solid var(--border); color: #fff; border-radius: 4px; font-family: monospace; font-size: 0.85rem; }
+    .metrics-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; text-align: center; }
+    @media (max-width: 500px) { .metrics-grid { grid-template-columns: 1fr 1fr; } }
+    .mcard { background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 6px; padding: 8px; }
+    .mval { font-family: monospace; font-size: 1.1rem; font-weight: bold; color: #fde047; }
+    .mlbl { font-size: 0.68rem; color: var(--muted); text-transform: uppercase; margin-top: 2px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h3>📊 Matriz de Confusión y Métricas de Clasificación</h3>
+      <p style="font-size:0.75rem; color:var(--muted)">Modifica los valores para calcular Accuracy, Precision, Recall y F1-Score en tiempo real.</p>
+    </div>
+
+    <div class="matrix-wrap">
+      <div></div>
+      <div style="font-size:0.72rem; color:var(--muted); font-weight:bold">Predicho Positivo</div>
+      <div style="font-size:0.72rem; color:var(--muted); font-weight:bold">Predicho Negativo</div>
+
+      <div style="font-size:0.72rem; color:var(--muted); font-weight:bold; writing-mode:vertical-rl; transform:rotate(180deg)">Real Pos</div>
+      <div class="mcell pos">
+        <span style="font-size:0.72rem; color:#86efac">Verdaderos Pos (VP)</span>
+        <input type="number" id="vVP" value="85" min="0" oninput="recalc()">
+      </div>
+      <div class="mcell neg">
+        <span style="font-size:0.72rem; color:#fca5a5">Falsos Neg (FN - Tipo II)</span>
+        <input type="number" id="vFN" value="15" min="0" oninput="recalc()">
+      </div>
+
+      <div style="font-size:0.72rem; color:var(--muted); font-weight:bold; writing-mode:vertical-rl; transform:rotate(180deg)">Real Neg</div>
+      <div class="mcell neg">
+        <span style="font-size:0.72rem; color:#fca5a5">Falsos Pos (FP - Tipo I)</span>
+        <input type="number" id="vFP" value="10" min="0" oninput="recalc()">
+      </div>
+      <div class="mcell pos">
+        <span style="font-size:0.72rem; color:#86efac">Verdaderos Neg (VN)</span>
+        <input type="number" id="vVN" value="90" min="0" oninput="recalc()">
+      </div>
+    </div>
+
+    <div class="metrics-grid">
+      <div class="mcard">
+        <div class="mval" id="accVal">87.5%</div>
+        <div class="mlbl">Exactitud (Accuracy)</div>
+      </div>
+      <div class="mcard">
+        <div class="mval" id="precVal">89.5%</div>
+        <div class="mlbl">Precisión (VP / (VP+FP))</div>
+      </div>
+      <div class="mcard">
+        <div class="mval" id="recVal">85.0%</div>
+        <div class="mlbl">Exhaustividad (Recall)</div>
+      </div>
+      <div class="mcard">
+        <div class="mval" id="f1Val">87.2%</div>
+        <div class="mlbl">Puntuación F1-Score</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function recalc() {
+      const vp = parseFloat(document.getElementById('vVP').value) || 0;
+      const fn = parseFloat(document.getElementById('vFN').value) || 0;
+      const fp = parseFloat(document.getElementById('vFP').value) || 0;
+      const vn = parseFloat(document.getElementById('vVN').value) || 0;
+
+      const total = vp + fn + fp + vn;
+      const acc = total > 0 ? ((vp + vn) / total) * 100 : 0;
+      const prec = (vp + fp) > 0 ? (vp / (vp + fp)) * 100 : 0;
+      const rec = (vp + fn) > 0 ? (vp / (vp + fn)) * 100 : 0;
+      const f1 = (prec + rec) > 0 ? (2 * (prec * rec) / (prec + rec)) : 0;
+
+      document.getElementById('accVal').textContent = acc.toFixed(1) + '%';
+      document.getElementById('precVal').textContent = prec.toFixed(1) + '%';
+      document.getElementById('recVal').textContent = rec.toFixed(1) + '%';
+      document.getElementById('f1Val').textContent = f1.toFixed(1) + '%';
+    }
+    recalc();
+  </script>
+</body>
+</html>

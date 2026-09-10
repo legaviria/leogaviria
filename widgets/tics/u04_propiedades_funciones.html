@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      background-color: #0b0e14;
+      color: #e2e8f0;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      margin: 0;
+      padding: 12px;
+      transition: background-color 0.2s, color 0.2s;
+    }
+    [data-theme="light"] body { background-color: #ffffff; color: #0f172a; }
+    [data-theme="light"] .card-box { background-color: #f8fafc !important; border-color: #e2e8f0 !important; color: #0f172a !important; }
+    [data-theme="light"] .subcard-box { background-color: #ffffff !important; border-color: #cbd5e1 !important; color: #1e293b !important; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+    [data-theme="light"] .text-muted { color: #64748b !important; }
+    [data-theme="light"] .text-highlight { color: #0f766e !important; }
+    [data-theme="light"] input, [data-theme="light"] select { background-color: #ffffff !important; border-color: #cbd5e1 !important; color: #0f172a !important; }
+    .card-box { background-color: #121622; border: 1px solid #1f293d; border-radius: 12px; }
+    .subcard-box { background-color: #090d14; border: 1px solid #1a2233; border-radius: 8px; }
+    .text-muted { color: #94a3b8; }
+    .text-highlight { color: #2dd4bf; }
+  </style>
+  <script>
+    window.addEventListener('message', (event) => {
+      if (event.data && event.data.type === 'THEME_CHANGE') {
+        document.documentElement.setAttribute('data-theme', event.data.theme);
+      }
+    });
+    try {
+      const savedTheme = localStorage.getItem('leogaviria_theme') || 'dark';
+      document.documentElement.setAttribute('data-theme', savedTheme);
+    } catch(e) {}
+  </script>
+
+  <title>Simulador de Funciones: Inyectiva, Sobreyectiva y Biyectiva</title>
+</head>
+<body>
+  <div class="max-w-4xl mx-auto space-y-4">
+    <div class="card-box p-4 sm:p-5">
+      <div class="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-gray-800/80 mb-4">
+        <div>
+          <h2 class="text-base sm:text-lg font-bold flex items-center gap-2 text-highlight">
+            <i class="fas fa-arrows-to-dot"></i> Simulador de Funciones entre Conjuntos (A &rarr; B)
+          </h2>
+          <p class="text-xs text-muted">Evalúa en tiempo real: ¿Es Función?, Inyectiva (1 a 1), Sobreyectiva (Sobre) y Biyectiva</p>
+        </div>
+      </div>
+
+      <!-- Presets Rápidos -->
+      <div class="flex flex-wrap gap-2 mb-4">
+        <span class="text-xs text-muted font-semibold flex items-center">Casos Típicos:</span>
+        <button onclick="applyPreset('bij')" class="px-2.5 py-1 text-xs rounded bg-gray-800 hover:bg-teal-600 text-gray-200 transition font-mono">Biyectiva (1-a-1 y Sobre)</button>
+        <button onclick="applyPreset('inj')" class="px-2.5 py-1 text-xs rounded bg-gray-800 hover:bg-teal-600 text-gray-200 transition font-mono">Inyectiva (No Sobre)</button>
+        <button onclick="applyPreset('sur')" class="px-2.5 py-1 text-xs rounded bg-gray-800 hover:bg-teal-600 text-gray-200 transition font-mono">Sobreyectiva (No 1-a-1)</button>
+        <button onclick="applyPreset('not_fn')" class="px-2.5 py-1 text-xs rounded bg-gray-800 hover:bg-teal-600 text-gray-200 transition font-mono">No es Función</button>
+      </div>
+
+      <!-- Lienzo SVG con Conjuntos A y B y Flechas -->
+      <div class="subcard-box p-4 flex flex-col items-center justify-center min-h-[200px] mb-4">
+        <svg viewBox="0 0 360 180" class="w-full max-w-md h-auto" id="fn-svg">
+          <!-- Elipse Dominio A -->
+          <ellipse cx="70" cy="90" rx="45" ry="75" fill="#14b8a6" fill-opacity="0.15" stroke="#14b8a6" stroke-width="2"/>
+          <text x="70" y="32" fill="#2dd4bf" font-size="14" font-bold="true" text-anchor="middle" font-family="monospace">Dominio A</text>
+
+          <!-- Elipse Codominio B -->
+          <ellipse cx="290" cy="90" rx="45" ry="75" fill="#38bdf8" fill-opacity="0.15" stroke="#38bdf8" stroke-width="2"/>
+          <text x="290" y="32" fill="#38bdf8" font-size="14" font-bold="true" text-anchor="middle" font-family="monospace">Codominio B</text>
+
+          <!-- Nodos A (1, 2, 3) -->
+          <circle cx="70" cy="60" r="8" fill="#14b8a6" id="na-1"/>
+          <text x="70" y="64" fill="#000" font-size="10" font-bold="true" text-anchor="middle">1</text>
+
+          <circle cx="70" cy="90" r="8" fill="#14b8a6" id="na-2"/>
+          <text x="70" y="94" fill="#000" font-size="10" font-bold="true" text-anchor="middle">2</text>
+
+          <circle cx="70" cy="120" r="8" fill="#14b8a6" id="na-3"/>
+          <text x="70" y="124" fill="#000" font-size="10" font-bold="true" text-anchor="middle">3</text>
+
+          <!-- Nodos B (x, y, z) -->
+          <circle cx="290" cy="55" r="8" fill="#38bdf8" id="nb-x"/>
+          <text x="290" y="59" fill="#000" font-size="10" font-bold="true" text-anchor="middle">x</text>
+
+          <circle cx="290" cy="90" r="8" fill="#38bdf8" id="nb-y"/>
+          <text x="290" y="94" fill="#000" font-size="10" font-bold="true" text-anchor="middle">y</text>
+
+          <circle cx="290" cy="125" r="8" fill="#38bdf8" id="nb-z"/>
+          <text x="290" y="129" fill="#000" font-size="10" font-bold="true" text-anchor="middle">z</text>
+
+          <!-- Flechas dinámicas -->
+          <g id="arrows-group"></g>
+        </svg>
+      </div>
+
+      <!-- Selectores de Mapeo f(a) -->
+      <div class="grid grid-cols-3 gap-2 mb-4 font-mono text-xs text-center">
+        <div class="p-2 subcard-box border-teal-500/30">
+          <label class="text-muted block mb-1">f(1) &rarr;</label>
+          <select id="map-1" onchange="updateFunction()" class="w-full px-2 py-1 rounded bg-[#1a2234] border border-gray-700 text-white font-bold text-center">
+            <option value="x" selected>x</option>
+            <option value="y">y</option>
+            <option value="z">z</option>
+            <option value="none">Sin asignar</option>
+          </select>
+        </div>
+        <div class="p-2 subcard-box border-teal-500/30">
+          <label class="text-muted block mb-1">f(2) &rarr;</label>
+          <select id="map-2" onchange="updateFunction()" class="w-full px-2 py-1 rounded bg-[#1a2234] border border-gray-700 text-white font-bold text-center">
+            <option value="x">x</option>
+            <option value="y" selected>y</option>
+            <option value="z">z</option>
+            <option value="none">Sin asignar</option>
+          </select>
+        </div>
+        <div class="p-2 subcard-box border-teal-500/30">
+          <label class="text-muted block mb-1">f(3) &rarr;</label>
+          <select id="map-3" onchange="updateFunction()" class="w-full px-2 py-1 rounded bg-[#1a2234] border border-gray-700 text-white font-bold text-center">
+            <option value="x">x</option>
+            <option value="y">y</option>
+            <option value="z" selected>z</option>
+            <option value="none">Sin asignar</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Diagnóstico de Clasificación -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 font-mono text-center text-xs" id="eval-badges">
+        <!-- Inyectado por JS -->
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const bY = { x: 55, y: 90, z: 125 };
+    const aY = { 1: 60, 2: 90, 3: 120 };
+
+    function applyPreset(p) {
+      if (p === 'bij') {
+        document.getElementById('map-1').value = 'x';
+        document.getElementById('map-2').value = 'y';
+        document.getElementById('map-3').value = 'z';
+      } else if (p === 'inj') {
+        document.getElementById('map-1').value = 'x';
+        document.getElementById('map-2').value = 'y';
+        document.getElementById('map-3').value = 'y'; // not inj
+      } else if (p === 'sur') {
+        document.getElementById('map-1').value = 'x';
+        document.getElementById('map-2').value = 'y';
+        document.getElementById('map-3').value = 'y';
+      } else if (p === 'not_fn') {
+        document.getElementById('map-1').value = 'none';
+        document.getElementById('map-2').value = 'y';
+        document.getElementById('map-3').value = 'z';
+      }
+      updateFunction();
+    }
+
+    function updateFunction() {
+      const m1 = document.getElementById('map-1').value;
+      const m2 = document.getElementById('map-2').value;
+      const m3 = document.getElementById('map-3').value;
+
+      const group = document.getElementById('arrows-group');
+      group.innerHTML = '';
+
+      const maps = [{ a: 1, b: m1 }, { a: 2, b: m2 }, { a: 3, b: m3 }];
+
+      maps.forEach(m => {
+        if (m.b !== 'none') {
+          const y1 = aY[m.a];
+          const y2 = bY[m.b];
+          const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+          line.setAttribute("x1", "78");
+          line.setAttribute("y1", y1);
+          line.setAttribute("x2", "282");
+          line.setAttribute("y2", y2);
+          line.setAttribute("stroke", "#2dd4bf");
+          line.setAttribute("stroke-width", "2");
+          line.setAttribute("stroke-dasharray", "4,2");
+          group.appendChild(line);
+        }
+      });
+
+      // Análisis formal
+      const isFn = m1 !== 'none' && m2 !== 'none' && m3 !== 'none';
+      const targets = [m1, m2, m3].filter(x => x !== 'none');
+      const uniqueTargets = new Set(targets);
+      const isInj = isFn && uniqueTargets.size === 3;
+      const isSur = isFn && ['x', 'y', 'z'].every(val => targets.includes(val));
+      const isBij = isInj && isSur;
+
+      const badgeCont = document.getElementById('eval-badges');
+      badgeCont.innerHTML = `
+        <div class="p-2 rounded subcard-box border ${isFn ? 'border-emerald-500/50 text-emerald-400' : 'border-rose-500/50 text-rose-400'}">
+          <span class="block text-[10px] text-muted">&iquest;Es Función?</span>
+          <strong>${isFn ? 'SÍ (Válida)' : 'NO (Falta Imagen)'}</strong>
+        </div>
+        <div class="p-2 rounded subcard-box border ${isInj ? 'border-teal-500/50 text-teal-400' : 'border-gray-800 text-gray-500'}">
+          <span class="block text-[10px] text-muted">Inyectiva (1-a-1)</span>
+          <strong>${isInj ? 'SÍ' : 'NO'}</strong>
+        </div>
+        <div class="p-2 rounded subcard-box border ${isSur ? 'border-sky-500/50 text-sky-400' : 'border-gray-800 text-gray-500'}">
+          <span class="block text-[10px] text-muted">Sobreyectiva</span>
+          <strong>${isSur ? 'SÍ' : 'NO'}</strong>
+        </div>
+        <div class="p-2 rounded subcard-box border ${isBij ? 'border-amber-500/50 text-amber-400 font-extrabold' : 'border-gray-800 text-gray-500'}">
+          <span class="block text-[10px] text-muted">Biyectiva (Invertible)</span>
+          <strong>${isBij ? 'SÍ (Biyectiva)' : 'NO'}</strong>
+        </div>
+      `;
+    }
+
+    updateFunction();
+  </script>
+</body>
+</html>

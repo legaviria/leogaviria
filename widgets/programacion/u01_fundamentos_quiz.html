@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quiz Interactivo - Unidad 01: Fundamentos</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      background-color: #0e0e11 !important;
+      color: #c9d1d9;
+      margin: 0;
+      padding: 8px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+    .quiz-container {
+      background-color: #141419;
+      color: #c9d1d9;
+      padding: 20px 24px;
+      border-radius: 12px;
+      border: 1px solid #232d42;
+      max-width: 100%;
+      margin: 0 auto;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+    }
+    .quiz-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #21262d;
+      padding-bottom: 12px;
+      margin-bottom: 20px;
+    }
+    .quiz-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #f0f6fc;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .quiz-counter {
+      background-color: #21262d;
+      color: #8b949e;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+    }
+    .question-text {
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: #ffffff;
+      margin-bottom: 20px;
+      line-height: 1.4;
+    }
+    .options-container {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .option-btn {
+      display: flex;
+      align-items: center;
+      background-color: #161b22;
+      border: 1px solid #30363d;
+      border-radius: 8px;
+      padding: 14px 16px;
+      color: #c9d1d9;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-align: left;
+      font-size: 0.95rem;
+    }
+    .option-btn:hover:not(:disabled) {
+      border-color: #8b949e;
+      background-color: #21262d;
+    }
+    .option-badge {
+      background-color: #21262d;
+      color: #f0f6fc;
+      font-weight: bold;
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 14px;
+      flex-shrink: 0;
+    }
+    .option-btn.correct {
+      border-color: #238636 !important;
+      background-color: rgba(46, 160, 67, 0.15) !important;
+      color: #ffffff;
+    }
+    .option-btn.correct .option-badge {
+      background-color: #238636;
+      color: #ffffff;
+    }
+    .option-btn.wrong {
+      border-color: #da3633 !important;
+      background-color: rgba(218, 54, 51, 0.15) !important;
+      color: #ffffff;
+    }
+    .option-btn.wrong .option-badge {
+      background-color: #da3633;
+      color: #ffffff;
+    }
+    .feedback-box {
+      margin-top: 16px;
+      padding: 12px 16px;
+      border-radius: 8px;
+      font-size: 0.88rem;
+      line-height: 1.5;
+      display: none;
+      animation: fadeInExp 0.2s ease-out;
+    }
+    @keyframes fadeInExp {
+      from { opacity: 0; transform: translateY(-3px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .feedback-box.show { display: block; }
+    .feedback-box.correct {
+      background-color: rgba(46, 160, 67, 0.15);
+      border: 1px solid #238636;
+      color: #7ee787;
+    }
+    .feedback-box.wrong {
+      background-color: rgba(218, 54, 51, 0.15);
+      border: 1px solid #da3633;
+      color: #ff7b72;
+    }
+    .quiz-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 24px;
+      border-top: 1px solid #21262d;
+      padding-top: 16px;
+    }
+    .nav-btn {
+      background-color: #21262d;
+      color: #c9d1d9;
+      border: 1px solid #30363d;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+    .nav-btn:hover:not(:disabled) {
+      background-color: #30363d;
+      color: #f0f6fc;
+    }
+    .nav-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    .nav-btn.primary {
+      background-color: #10b981;
+      color: #05160e;
+      border-color: #10b981;
+      font-weight: 700;
+    }
+    .nav-btn.primary:hover:not(:disabled) {
+      background-color: #34d399;
+    }
+    .results-box {
+      display: none;
+      text-align: center;
+      padding: 30px 10px;
+    }
+    .results-box h2 {
+      font-size: 1.5rem;
+      color: #ffffff;
+      margin-bottom: 12px;
+    }
+    .score-badge {
+      font-size: 2.5rem;
+      font-weight: bold;
+      color: #34d399;
+      margin: 16px 0;
+    }
+    .score-message {
+      font-size: 1rem;
+      color: #8b949e;
+      margin-bottom: 24px;
+    }
+  
+  /* SOPORTE LIGHT MODE (ALTO CONTRASTE) */
+  [data-theme="light"] html, [data-theme="light"] body {
+    background-color: #ffffff !important;
+    color: #0f172a !important;
+  }
+  [data-theme="light"] .quiz-container {
+    background-color: #ffffff !important;
+    border-color: #cbd5e1 !important;
+    color: #0f172a !important;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.06) !important;
+  }
+  [data-theme="light"] .quiz-header {
+    border-bottom-color: #e2e8f0 !important;
+  }
+  [data-theme="light"] .quiz-title {
+    color: #0f172a !important;
+  }
+  [data-theme="light"] .quiz-counter {
+    background-color: #e2e8f0 !important;
+    color: #475569 !important;
+  }
+  [data-theme="light"] .question-text {
+    color: #0f172a !important;
+  }
+  [data-theme="light"] .option-btn {
+    background-color: #f8fafc !important;
+    border-color: #cbd5e1 !important;
+    color: #1e293b !important;
+  }
+  [data-theme="light"] .option-btn:hover:not(:disabled) {
+    background-color: #f1f5f9 !important;
+    border-color: #059669 !important;
+  }
+  [data-theme="light"] .option-badge {
+    background-color: #e2e8f0 !important;
+    color: #334155 !important;
+  }
+  [data-theme="light"] .option-btn.correct {
+    background-color: #d1fae5 !important;
+    border-color: #059669 !important;
+    color: #065f46 !important;
+  }
+  [data-theme="light"] .option-btn.wrong {
+    background-color: #fee2e2 !important;
+    border-color: #dc2626 !important;
+    color: #991b1b !important;
+  }
+  [data-theme="light"] .feedback-box.correct {
+    background-color: #ecfdf5 !important;
+    border: 1px solid #a7f3d0 !important;
+    border-left: 4px solid #059669 !important;
+    color: #065f46 !important;
+  }
+  [data-theme="light"] .feedback-box.wrong {
+    background-color: #fef2f2 !important;
+    border: 1px solid #fecaca !important;
+    border-left: 4px solid #dc2626 !important;
+    color: #991b1b !important;
+  }
+  [data-theme="light"] .btn-action, [data-theme="light"] .nav-btn.primary {
+    background-color: #059669 !important;
+    color: #ffffff !important;
+  }
+
+</style>
+</head>
+<body>
+
+<div class="quiz-container">
+  <div id="quiz-view">
+    <div class="quiz-header">
+      <div class="quiz-title">
+        <span>Evaluación: Fundamentos y Representación</span>
+      </div>
+      <div class="quiz-counter" id="question-counter">Pregunta 1 de 10</div>
+    </div>
+
+    <div class="question-text" id="question-text">Cargando pregunta...</div>
+
+    <div class="options-container" id="options-container"></div>
+
+    <div class="feedback-box" id="feedback-box"></div>
+
+    <div class="quiz-footer">
+      <button class="nav-btn" id="prev-btn" onclick="prevQuestion()" disabled>❮ Anterior</button>
+      <button class="nav-btn primary" id="next-btn" onclick="nextQuestion()" disabled>Siguiente ❯</button>
+    </div>
+  </div>
+
+  <div class="results-box" id="results-view">
+    <h2>¡Quiz Finalizado!</h2>
+    <div class="score-badge" id="score-text">0 / 10</div>
+    <p class="score-message" id="score-msg"></p>
+    <button class="nav-btn primary" onclick="restartQuiz()">Reintentar Quiz</button>
+  </div>
+</div>
+
+<script>
+const questions = [
+  {
+    question: "¿Cuál es la definición formal de un algoritmo en ciencias de la computación?",
+    options: [
+      "Un programa ejecutable escrito exclusivamente en binario para la CPU.",
+      "Una secuencia ordenada, finita y no ambigua de pasos que procesa entradas para entregar una salida.",
+      "Una ecuación matemática continua que solo puede resolverse a mano.",
+      "Un diagrama gráfico compuesto únicamente por rombos y rectángulos."
+    ],
+    correct: 1,
+    explanation: "<b>Explicación:</b> Un algoritmo es una secuencia ordenada, finita y no ambigua de instrucciones que toma datos de entrada (inputs), realiza operaciones lógicas/aritméticas y genera una salida (output)."
+  },
+  {
+    question: "¿Cuáles son las tres fases canónicas en la estructura estándar de cualquier algoritmo?",
+    options: [
+      "Compilación, Enlazado y Ejecución.",
+      "Entrada (Input), Proceso y Salida (Output).",
+      "Hipótesis, Demostración y Conclusión.",
+      "Lectura, Escritura y Depuración."
+    ],
+    correct: 1,
+    explanation: "<b>Explicación:</b> Todo algoritmo opera en el modelo IPO: Entrada (adquisición de datos), Proceso (cálculos y transformaciones) y Salida (presentación o retorno del resultado)."
+  },
+  {
+    question: "¿Cuál es el orden correcto del ciclo metodológico para resolver un problema en programación?",
+    options: [
+      "Codificación ➔ Pruebas ➔ Análisis ➔ Diseño",
+      "Diseño Algorítmico ➔ Codificación ➔ Análisis ➔ Depuración",
+      "Análisis del Problema ➔ Diseño Algorítmico ➔ Codificación ➔ Pruebas y Depuración",
+      "Pruebas ➔ Codificación ➔ Análisis ➔ Pseudocódigo"
+    ],
+    correct: 2,
+    explanation: "<b>Explicación:</b> No se escribe código a ciegas. Primero se analiza el problema (entradas/salidas), luego se diseña la lógica (pseudocódigo/diagrama), después se codifica en un lenguaje real, y finalmente se prueba y depura."
+  },
+  {
+    question: "¿Cuál es la diferencia fundamental entre un lenguaje compilado (ej. C, Rust) y uno interpretado (ej. Python)?",
+    options: [
+      "Los compilados se traducen por completo a código máquina antes de ejecutarse; los interpretados se traducen línea por línea durante la ejecución.",
+      "Los compilados solo admiten variables enteras y los interpretados solo texto.",
+      "Los interpretados son código binario y los compilados usan lenguaje natural.",
+      "No existe diferencia, ambos requieren de una máquina virtual obligatoria."
+    ],
+    correct: 0,
+    explanation: "<b>Explicación:</b> Un compilador traduce todo el código fuente a código binario nativo antes de la ejecución, logrando alto rendimiento. El intérprete procesa y ejecuta instrucción por instrucción al momento de correr el programa."
+  },
+  {
+    question: "¿Cuál es el propósito primordial del pseudocódigo antes de escribir código real?",
+    options: [
+      "Verificar que la sintaxis de C++ no tenga puntos y comas faltantes.",
+      "Aislar los errores sintácticos y enfocarse al 100% en la lógica y diseño de la solución.",
+      "Acelerar la velocidad del procesador al saltarse el compilador.",
+      "Reemplazar por completo el uso de lenguajes de programación en producción."
+    ],
+    correct: 1,
+    explanation: "<b>Explicación:</b> El pseudocódigo elimina las restricciones rígidas de puntuación y sintaxis para que el programador y los analistas puedan validar y depurar la lógica algorítmica de manera clara y flexible."
+  },
+  {
+    question: "En la simbología estándar de los Diagramas de Flujo, ¿qué representa la figura del ROMBO?",
+    options: [
+      "El punto exacto de Inicio o Fin del algoritmo.",
+      "Una operación o cálculo de proceso interno (ej. promedio = (a+b)/2).",
+      "Una toma de decisión condicional que bifurca el camino según se cumpla o no una condición (SI/NO).",
+      "La lectura de datos desde el teclado por el usuario."
+    ],
+    correct: 2,
+    explanation: "<b>Explicación:</b> El rombo representa una bifurcación de decisión condicional. A partir de una pregunta lógica (ej. ¿edad >= 18?), el flujo se divide en ramas mutuamente excluyentes (Verdadero/Falso)."
+  },
+  {
+    question: "En un Diagrama de Flujo, ¿qué figura geométrica se utiliza para indicar la Entrada o Salida de datos?",
+    options: [
+      "El Paralelogramo.",
+      "El Círculo pequeño.",
+      "El Rectángulo.",
+      "El Triángulo invertido."
+    ],
+    correct: 0,
+    explanation: "<b>Explicación:</b> El paralelogramo representa operaciones de I/O (Input/Output), como 'Leer edad' o 'Escribir resultado'."
+  },
+  {
+    question: "Según los principios pedagógicos expuestos en la Unidad 01, ¿cuál es la 'Regla de Oro' para aprender a programar?",
+    options: [
+      "Memorizar las palabras reservadas de todos los lenguajes.",
+      "Comprensión de lectura, practicar continuamente y leer mucho código.",
+      "Utilizar únicamente lenguajes de bajo nivel como ensamblador.",
+      "Escribir código directamente sin realizar ningún análisis previo."
+    ],
+    correct: 1,
+    explanation: "<b>Explicación:</b> La regla de oro enfatiza que aprender la sintaxis de un lenguaje es sencillo; la verdadera habilidad se forja mediante comprensión de lectura, análisis de problemas, práctica constante y lectura de código ajeno."
+  }
+,
+  {
+    question: "En la evaluación de expresiones aritméticas mediante árboles sintácticos (AST), ¿cuál es el orden característico de la Notación Postfija (Polaca Inversa)?",
+    options: [
+      "Operador, Operando 1, Operando 2 (Recorrido Preorden).",
+      "Operando 1, Operador, Operando 2 (Recorrido Inorden).",
+      "Operando 1, Operando 2, Operador (Recorrido Postorden).",
+      "Paréntesis, Operador, Operando 1, Operando 2."
+    ],
+    correct: 2,
+    explanation: "<b>Explicación:</b> En la notación postfija o RPN, los operandos preceden inmediatamente a su operador (recorrido Postorden: Izquierda, Derecha, Raíz), lo que permite evaluar expresiones en una pila sin requerir paréntesis de agrupación."
+  },
+  {
+    question: "De acuerdo con las convenciones de nomenclatura y la guía de estilo PEP 8 de Python, ¿cuál es la convención estándar para nombrar variables y funciones?",
+    options: [
+      "camelCase (ej. saldoCuenta, calcularPromedio())",
+      "snake_case (ej. saldo_cuenta, calcular_promedio())",
+      "PascalCase (ej. SaldoCuenta, CalcularPromedio())",
+      "kebab-case (ej. saldo-cuenta, calcular-promedio())"
+    ],
+    correct: 1,
+    explanation: "<b>Explicación:</b> PEP 8 adopta snake_case (minúsculas separadas por guiones bajos) para variables y funciones por su alta legibilidad. PascalCase se reserva para clases y SCREAMING_SNAKE para constantes globales."
+  }
+];
+
+let currentIndex = 0;
+let score = 0;
+let userAnswers = new Array(questions.length).fill(null);
+
+function renderQuestion() {
+  const q = questions[currentIndex];
+  document.getElementById('question-counter').innerText = `Pregunta ${currentIndex + 1} de ${questions.length}`;
+  document.getElementById('question-text').innerText = q.question;
+
+  const container = document.getElementById('options-container');
+  container.innerHTML = '';
+
+  const feedback = document.getElementById('feedback-box');
+  feedback.className = 'feedback-box';
+  feedback.innerHTML = '';
+
+  const answered = userAnswers[currentIndex] !== null;
+
+  q.options.forEach((opt, idx) => {
+    const btn = document.createElement('button');
+    btn.className = 'option-btn';
+    btn.disabled = answered;
+
+    if (answered) {
+      if (idx === q.correct) {
+        btn.classList.add('correct');
+      } else if (idx === userAnswers[currentIndex]) {
+        btn.classList.add('wrong');
+      }
+    }
+
+    const badge = document.createElement('div');
+    badge.className = 'option-badge';
+    badge.innerText = String.fromCharCode(65 + idx);
+
+    const span = document.createElement('span');
+    span.innerText = opt;
+
+    btn.appendChild(badge);
+    btn.appendChild(span);
+
+    btn.onclick = () => selectOption(idx);
+    container.appendChild(btn);
+  });
+
+  if (answered) {
+    showFeedback(userAnswers[currentIndex] === q.correct);
+  }
+
+  document.getElementById('prev-btn').disabled = currentIndex === 0;
+  document.getElementById('next-btn').disabled = !answered;
+  if (currentIndex === questions.length - 1) {
+    document.getElementById('next-btn').innerText = 'Ver Resultados ❯';
+  } else {
+    document.getElementById('next-btn').innerText = 'Siguiente ❯';
+  }
+}
+
+function selectOption(index) {
+  if (userAnswers[currentIndex] !== null) return;
+  userAnswers[currentIndex] = index;
+  const isCorrect = index === questions[currentIndex].correct;
+  if (isCorrect) score++;
+  renderQuestion();
+}
+
+function showFeedback(isCorrect) {
+  const feedback = document.getElementById('feedback-box');
+  feedback.className = `feedback-box show ${isCorrect ? 'correct' : 'wrong'}`;
+  feedback.innerHTML = (isCorrect ? '<b>✓ ¡Correcto!</b> ' : '<b>✗ Incorrecto.</b> ') + questions[currentIndex].explanation;
+}
+
+function prevQuestion() {
+  if (currentIndex > 0) {
+    currentIndex--;
+    renderQuestion();
+  }
+}
+
+function nextQuestion() {
+  if (currentIndex < questions.length - 1) {
+    currentIndex++;
+    renderQuestion();
+  } else {
+    showResults();
+  }
+}
+
+function showResults() {
+  document.getElementById('quiz-view').style.display = 'none';
+  const resultsView = document.getElementById('results-view');
+  resultsView.style.display = 'block';
+
+  document.getElementById('score-text').innerText = `${score} / ${questions.length}`;
+  const pct = Math.round((score / questions.length) * 100);
+  let msg = '';
+  if (pct === 100) {
+    msg = '¡Excelente dominio! Tienes claras las bases conceptuales, metodológicas y de representación de algoritmos.';
+  } else if (pct >= 75) {
+    msg = '¡Muy buen trabajo! Tienes una comprensión sólida de los fundamentos de la programación.';
+  } else if (pct >= 50) {
+    msg = 'Buen intento. Te recomendamos repasar los símbolos de diagramas de flujo y las fases del ciclo algorítmico.';
+  } else {
+    msg = 'Sigue practicando. Revisa el material teórico y vuelve a intentar el cuestionario.';
+  }
+  document.getElementById('score-msg').innerText = `${msg} (${pct}% de aciertos)`;
+}
+
+function restartQuiz() {
+  currentIndex = 0;
+  score = 0;
+  userAnswers = new Array(questions.length).fill(null);
+  document.getElementById('results-view').style.display = 'none';
+  document.getElementById('quiz-view').style.display = 'block';
+  renderQuestion();
+}
+
+// Inicializar
+renderQuestion();
+</script>
+
+
+<script>
+  (function() {
+    function applyWidgetTheme(t) {
+      if (t) document.documentElement.setAttribute('data-theme', t);
+    }
+    try {
+      var saved = localStorage.getItem('leogaviria_theme') || 'dark';
+      applyWidgetTheme(saved);
+    } catch(e) {}
+    window.addEventListener('message', function(e) {
+      if (e.data && e.data.type === 'THEME_CHANGE') {
+        applyWidgetTheme(e.data.theme);
+      }
+    });
+  })();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Notaciones Aritméticas (Infija, Prefija, Postfija)</title>
+  <style>
+    * { box-sizing: border-box; }
+    html, body {
+      background-color: #0e0e11 !important;
+      color: #ffffff;
+      margin: 0;
+      padding: 10px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+  </style>
+</head>
+<body>
+<style>
+  .noti-container {
+    background-color: #0e0e11;
+    color: #ffffff;
+    padding: 20px;
+    border-radius: 12px;
+    border: 1px solid #1f293d;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    user-select: none;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+    max-width: 580px;
+    margin: 0 auto;
+  }
+
+  .noti-header {
+    text-align: center;
+    margin-bottom: 16px;
+  }
+
+  .noti-title {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #00c8ff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .noti-subtitle {
+    font-size: 0.8rem;
+    color: #94a3b8;
+    margin-top: 2px;
+  }
+
+  /* Selector de Notaciones */
+  .noti-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+    justify-content: center;
+  }
+
+  .tab-btn {
+    background: #181d28;
+    border: 1px solid #232d42;
+    color: #94a3b8;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .tab-btn:hover {
+    background: #1c2332;
+    color: #fff;
+  }
+
+  .tab-btn.active-infija {
+    background: rgba(0, 200, 255, 0.15);
+    border-color: #00c8ff;
+    color: #00c8ff;
+    box-shadow: 0 0 10px rgba(0, 200, 255, 0.2);
+  }
+
+  .tab-btn.active-prefija {
+    background: rgba(234, 179, 8, 0.15);
+    border-color: #eab308;
+    color: #eab308;
+    box-shadow: 0 0 10px rgba(234, 179, 8, 0.2);
+  }
+
+  .tab-btn.active-postfija {
+    background: rgba(192, 132, 252, 0.15);
+    border-color: #c084fc;
+    color: #c084fc;
+    box-shadow: 0 0 10px rgba(192, 132, 252, 0.2);
+  }
+
+  /* Visualizador interactivo de expresión */
+  .expr-stage {
+    background: #141419;
+    border: 1px solid #1f293d;
+    border-radius: 8px;
+    padding: 20px;
+    min-height: 110px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 16px;
+  }
+
+  .expr-display {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: monospace;
+    font-size: 1.4rem;
+    font-weight: bold;
+  }
+
+  .token {
+    padding: 6px 12px;
+    border-radius: 6px;
+    background: #181d28;
+    border: 1px solid #232d42;
+    transition: all 0.3s ease;
+  }
+
+  .token-op {
+    color: #ff7676;
+    border-color: rgba(255, 118, 118, 0.4);
+  }
+
+  .token-val {
+    color: #4ade80;
+    border-color: rgba(74, 222, 128, 0.4);
+  }
+
+  .token-paren {
+    color: #94a3b8;
+  }
+
+  .structure-badge {
+    font-family: monospace;
+    font-size: 0.75rem;
+    color: #00c8ff;
+    background: rgba(0, 200, 255, 0.1);
+    padding: 4px 8px;
+    border-radius: 4px;
+    margin-top: 10px;
+  }
+
+  /* Ficha Informativa */
+  .info-box {
+    background: #181d28;
+    border-left: 3px solid #00c8ff;
+    border-radius: 0 8px 8px 0;
+    padding: 12px 16px;
+    font-size: 0.8rem;
+    line-height: 1.4;
+  }
+
+  .info-title {
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: #ffffff;
+    margin-bottom: 4px;
+  }
+
+  .info-desc {
+    color: #94a3b8;
+    margin-bottom: 8px;
+  }
+
+  .info-feat {
+    color: #cbd5e1;
+    background: #0f141d;
+    padding: 8px;
+    border-radius: 4px;
+    border: 1px solid #1f293d;
+  }
+</style>
+
+<div class="noti-container">
+  <div class="noti-header">
+    <div class="noti-title">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#00c8ff" stroke-width="2.2"><path d="M4 7h16M4 12h16M4 17h10"/></svg>
+      Notaciones Aritméticas
+    </div>
+    <div class="noti-subtitle">Posición relativa de operadores respecto a los operandos</div>
+  </div>
+
+  <!-- Pestañas de Selección -->
+  <div class="noti-tabs">
+    <button id="btn-inf" class="tab-btn active-infija" onclick="selectNoti('infija')">
+      A. Infija (Infix)
+    </button>
+    <button id="btn-pre" class="tab-btn" onclick="selectNoti('prefija')">
+      B. Prefija (Prefix)
+    </button>
+    <button id="btn-pos" class="tab-btn" onclick="selectNoti('postfija')">
+      C. Postfija (RPN)
+    </button>
+  </div>
+
+  <!-- Escenario de la Expresión -->
+  <div class="expr-stage">
+    <div id="expr-display" class="expr-display">
+      <!-- Se inyecta dinámicamente -->
+    </div>
+    <div id="structure-badge" class="structure-badge">
+      Estructura: Operando_1 Operador Operando_2
+    </div>
+  </div>
+
+  <!-- Información Detallada -->
+  <div id="info-box" class="info-box">
+    <div id="info-title" class="info-title">A. Notación Infija (Infix)</div>
+    <div id="info-desc" class="info-desc">
+      El operador está situado entre los operandos. Es la notación matemática estándar usada por los seres humanos y en lenguajes de programación.
+    </div>
+    <div id="info-feat" class="info-feat">
+      <b>Características:</b> Requiere paréntesis y reglas de precedencia (como PEMDAS) para evitar ambigüedades.
+    </div>
+  </div>
+</div>
+
+<script>
+const notiData = {
+  infija: {
+    title: 'A. Notación Infija (Infix)',
+    color: '#00c8ff',
+    structure: 'Estructura: Operando_1 Operador Operando_2',
+    desc: 'El operador está situado entre los operandos. Es la notación matemática estándar usada por los seres humanos y en lenguajes de programación.',
+    feat: '<b>Características:</b> Requiere paréntesis y reglas de precedencia (como PEMDAS) para evitar ambigüedades.',
+    render: `
+      <span class="token token-paren">(</span>
+      <span class="token token-val">A</span>
+      <span class="token token-op">+</span>
+      <span class="token token-val">B</span>
+      <span class="token token-paren">)</span>
+      <span class="token token-op">*</span>
+      <span class="token token-val">C</span>
+    `
+  },
+  prefija: {
+    title: 'B. Notación Prefija (Prefix / Polaca)',
+    color: '#eab308',
+    structure: 'Estructura: Operador Operando_1 Operando_2',
+    desc: 'El operador se coloca antes de sus operandos. Fue desarrollada por el matemático polaco Jan Łukasiewicz.',
+    feat: '<b>Características:</b> No requiere paréntesis ni reglas de precedencia, ya que el orden de evaluación queda completamente determinado por la posición de los elementos.',
+    render: `
+      <span class="token token-op">*</span>
+      <span class="token token-op">+</span>
+      <span class="token token-val">A</span>
+      <span class="token token-val">B</span>
+      <span class="token token-val">C</span>
+    `
+  },
+  postfija: {
+    title: 'C. Notación Postfija (Postfix / Polaca Inversa / RPN)',
+    color: '#c084fc',
+    structure: 'Estructura: Operando_1 Operando_2 Operador',
+    desc: 'El operador se coloca después de sus operandos.',
+    feat: '<b>Características:</b> No requiere paréntesis. Es ideal para procesarse mediante estructuras de datos de tipo Pila (Stack), siendo utilizada en compiladores y calculadoras avanzadas.',
+    render: `
+      <span class="token token-val">A</span>
+      <span class="token token-val">B</span>
+      <span class="token token-op">+</span>
+      <span class="token token-val">C</span>
+      <span class="token token-op">*</span>
+    `
+  }
+};
+
+function selectNoti(type) {
+  // Actualizar botones
+  document.getElementById('btn-inf').className = 'tab-btn' + (type === 'infija' ? ' active-infija' : '');
+  document.getElementById('btn-pre').className = 'tab-btn' + (type === 'prefija' ? ' active-prefija' : '');
+  document.getElementById('btn-pos').className = 'tab-btn' + (type === 'postfija' ? ' active-postfija' : '');
+
+  // Actualizar datos
+  const data = notiData[type];
+  document.getElementById('expr-display').innerHTML = data.render;
+  document.getElementById('structure-badge').innerText = data.structure;
+  document.getElementById('structure-badge').style.color = data.color;
+  document.getElementById('structure-badge').style.background = data.color + '1a';
+
+  document.getElementById('info-title').innerText = data.title;
+  document.getElementById('info-desc').innerText = data.desc;
+  document.getElementById('info-feat').innerHTML = data.feat;
+  document.getElementById('info-box').style.borderLeftColor = data.color;
+}
+
+// Inicialización
+selectNoti('infija');
+</script>
+</body>
+</html>

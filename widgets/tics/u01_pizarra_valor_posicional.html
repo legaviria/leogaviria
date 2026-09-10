@@ -1,0 +1,669 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pizarra Interactiva: ¿Cómo funciona el valor posicional?</title>
+    <script>
+      window.addEventListener('message', (event) => {
+        if (event.data && event.data.type === 'THEME_CHANGE') {
+          document.documentElement.setAttribute('data-theme', event.data.theme);
+        }
+      });
+      try {
+        const savedTheme = localStorage.getItem('leogaviria_theme') || 'dark';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+      } catch(e) {}
+    </script>
+    <style>
+      /* Soporte para temas Claro y Oscuro */
+      [data-theme="light"] body {
+        background-color: #f8fafc !important;
+        color: #0f172a !important;
+      }
+      [data-theme="light"] .main-app-container {
+        background-color: #ffffff !important;
+        border-color: #cbd5e1 !important;
+      }
+      [data-theme="light"] .bg-\[\#141419\] {
+        background-color: #ffffff !important;
+      }
+      [data-theme="light"] .bg-\[\#0e0e11\] {
+        background-color: #f1f5f9 !important;
+        border-color: #cbd5e1 !important;
+      }
+      [data-theme="light"] .border-gray-800 {
+        border-color: #e2e8f0 !important;
+      }
+      [data-theme="light"] #lesson-title, [data-theme="light"] .text-white {
+        color: #0f172a !important;
+      }
+      [data-theme="light"] .text-gray-300 {
+        color: #334155 !important;
+      }
+      [data-theme="light"] .speech-bubble-white {
+        background: #ffffff !important;
+        border-color: #cbd5e1 !important;
+      }
+      [data-theme="light"] .notebook-page {
+        border-color: #cbd5e1 !important;
+      }
+      [data-theme="light"] #step-counter {
+        color: #64748b !important;
+      }
+    </style>
+    
+    <meta charset="UTF-8">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Kalam:wght@400;700&family=Patrick+Hand&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+
+    <style>
+        :root {
+            --ipad-bg: #fdfbf7;
+            --grid-line: #e2e8f0;
+            --ink-main: #1e293b;
+            --ink-blue: #0284c7;
+            --ink-orange: #ea580c;
+            --ink-green: #16a34a;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        html, body {
+            overflow: hidden;
+            margin: 0;
+            padding: 0;
+            width: 100%;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        .main-app-container {
+            width: 100%;
+            max-width: 820px;
+            overflow: hidden;
+            box-sizing: border-box;
+        }
+
+        .step-badge-font {
+            font-family: 'Patrick Hand', cursive;
+            font-size: 1.15rem;
+            letter-spacing: 0.02em;
+        }
+
+        .notebook-page {
+            position: relative;
+            width: 100%;
+            height: 380px;
+            background-color: var(--ipad-bg);
+            background-image:
+                linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
+                linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px);
+            background-size: 20px 20px;
+            border-radius: 8px;
+            border: 1.5px solid #cbd5e1;
+            overflow: hidden;
+        }
+
+        .notebook-page::-webkit-scrollbar { width: 8px; }
+        .notebook-page::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.05); border-radius: 4px; }
+        .notebook-page::-webkit-scrollbar-thumb { background: #94a3b8; border-radius: 4px; }
+        .notebook-page::-webkit-scrollbar-thumb:hover { background: #64748b; }
+
+        .canvas-container {
+            position: relative;
+            width: 100%;
+            height: 380px;
+        }
+
+        .svg-canvas {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        .pen-element {
+            position: absolute;
+            user-select: none;
+            line-height: 1.2;
+            z-index: 5;
+            white-space: nowrap;
+            max-width: 720px;
+        }
+
+        .color-ink { color: var(--ink-main); }
+        .color-blue { color: var(--ink-blue); }
+        .color-orange { color: var(--ink-orange); }
+        .color-green { color: var(--ink-green); }
+
+        .pen-title { font-family: 'Kalam', cursive; font-size: 1.15rem; font-weight: 700; }
+        .pen-math-large { font-size: 1.05rem; font-family: 'Kalam', cursive; }
+        .pen-math-huge { font-size: 1.2rem; font-weight: bold; font-family: 'Kalam', cursive; }
+        .pen-math-title { font-size: 1.15rem; font-weight: bold; font-family: 'Kalam', cursive; }
+
+        .pencil-clip {
+            display: inline-block;
+            overflow: hidden;
+            vertical-align: bottom;
+            white-space: nowrap;
+            clip-path: polygon(0 0, 0 0, 0 100%, 0 100%);
+            max-width: 100%;
+        }
+
+        .apple-pencil-nib {
+            position: absolute;
+            width: 44px;
+            height: 44px;
+            pointer-events: none;
+            z-index: 100;
+            display: none;
+            transform: translate(0px, -44px);
+            transition: opacity 0.15s ease;
+        }
+
+        .speech-bubble-white {
+            position: relative;
+            background: #ffffff;
+            border: 2px solid #e2e8f0;
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+        }
+
+        .speech-bubble-white::before {
+            content: '';
+            position: absolute;
+            left: -14px;
+            bottom: 22px;
+            border-width: 8px 14px 8px 0;
+            border-style: solid;
+            border-color: transparent #cbd5e1 transparent transparent;
+            display: block;
+            width: 0;
+        }
+
+        .speech-bubble-white::after {
+            content: '';
+            position: absolute;
+            left: -10px;
+            bottom: 24px;
+            border-width: 6px 11px 6px 0;
+            border-style: solid;
+            border-color: transparent #ffffff transparent transparent;
+            display: block;
+            width: 0;
+        }
+    </style>
+</head>
+<body class="bg-[#0e0e11] text-gray-200 font-sans p-1.5 sm:p-2 select-none flex justify-center">
+
+<div class="main-app-container bg-[#141419] border border-gray-800 rounded-xl p-3 sm:p-3.5 flex flex-col gap-2.5 sm:gap-3">
+
+    <!-- CABECERA -->
+    <div class="flex items-center justify-between border-b border-gray-800 pb-2">
+        <div class="flex items-center gap-2.5">
+            <div class="w-8 h-8 rounded-lg bg-teal-500/10 border border-teal-500/30 flex items-center justify-center text-teal-400">
+                <i class="fas fa-chalkboard text-base"></i>
+            </div>
+            <span class="font-extrabold text-white text-sm tracking-wide" id="lesson-title">¡Vamos a la Pizarra! - Valor Posicional</span>
+        </div>
+    </div>
+
+    <!-- PIZARRA CON TAMAÑO FIJO -->
+    <div class="notebook-page relative" id="notebook-page">
+        <div class="canvas-container" id="canvas-container">
+            <svg class="svg-canvas" id="svg-canvas">
+                <defs>
+                    <marker id="arrowhead-ink" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                        <path d="M 0 1 L 10 5 L 0 9 z" fill="#1e293b"/>
+                    </marker>
+                    <marker id="arrowhead-blue" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                        <path d="M 0 1 L 10 5 L 0 9 z" fill="#0284c7"/>
+                    </marker>
+                    <marker id="arrowhead-orange" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                        <path d="M 0 1 L 10 5 L 0 9 z" fill="#ea580c"/>
+                    </marker>
+                    <marker id="arrowhead-green" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                        <path d="M 0 1 L 10 5 L 0 9 z" fill="#16a34a"/>
+                    </marker>
+                </defs>
+            </svg>
+
+            <div class="apple-pencil-nib" id="pencil-nib">
+                <svg viewBox="0 0 48 48" class="w-full h-full filter drop-shadow-md">
+                    <path d="M 12 36 L 44 4 L 48 8 L 16 40 Z" fill="#e2e8f0" stroke="#cbd5e1" stroke-width="0.5"/>
+                    <path d="M 0 48 L 16 40 L 12 36 Z" fill="#475569"/>
+                    <circle cx="2" cy="46" r="2.5" id="nib-dot" fill="var(--ink-main)"/>
+                </svg>
+            </div>
+        </div>
+    </div>
+
+    <!-- AVATAR Y DIÁLOGO -->
+    <div class="flex items-end gap-3 px-2 py-1">
+        <div class="flex flex-col items-center flex-shrink-0">
+            <div class="w-14 h-14 border-2 border-red-500 rounded-full flex items-center justify-center shadow-lg overflow-hidden relative bg-slate-900" id="avatar-box">
+                <svg id="prof-leo-svg" viewBox="0 0 100 100" class="w-full h-full">
+                    <defs>
+                        <linearGradient id="leoBgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="#f8fafc" />
+                            <stop offset="100%" stop-color="#e2e8f0" />
+                        </linearGradient>
+                        <linearGradient id="leoSkin" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" stop-color="#f8d3b0" />
+                            <stop offset="100%" stop-color="#e2ad7f" />
+                        </linearGradient>
+                    </defs>
+                    <circle cx="50" cy="50" r="48" fill="url(#leoBgGrad)" stroke="#cbd5e1" stroke-width="2" />
+                    <path d="M 43 58 L 57 58 L 58 72 L 42 72 Z" fill="url(#leoSkin)" />
+                    <path d="M 16 100 C 20 72 36 66 50 66 C 64 66 80 72 84 100 Z" fill="#dc2626"/>
+                    <path d="M 36 66 L 50 80 L 64 66 L 56 66 L 50 74 L 44 66 Z" fill="#b91c1c"/>
+                    <path d="M 44 66 L 50 74 L 56 66 Z" fill="url(#leoSkin)"/>
+                    <path d="M 24 45 C 22 28 32 12 50 12 C 68 12 78 28 76 45 C 76 48 72 52 72 52 C 72 52 74 36 66 22 C 58 14 42 14 34 22 C 26 36 28 52 28 52 Z" fill="#1e130c"/>
+                    <path d="M 29 36 C 29 20 71 20 71 36 C 71 54 61 64 50 64 C 39 64 29 54 29 36 Z" fill="url(#leoSkin)"/>
+                    <circle cx="28" cy="42" r="4.5" fill="#e2ad7f"/>
+                    <circle cx="72" cy="42" r="4.5" fill="#e2ad7f"/>
+                    <path d="M 30 42 C 30 58 39 64 50 64 C 61 64 70 58 70 42 C 70 50 61 61 50 61 C 39 61 30 50 30 42 Z" fill="#2d1a10"/>
+                    <path d="M 43 55 Q 50 57 57 55 Q 50 60 43 55 Z" fill="#2d1a10"/>
+                    <path d="M 26 36 C 25 24 34 14 50 14 C 66 14 75 24 74 36 C 71 26 63 20 50 20 C 37 20 29 26 26 36 Z" fill="#2d1a10"/>
+                    <circle cx="40" cy="40" r="2.8" fill="#0f172a"/>
+                    <circle cx="60" cy="40" r="2.8" fill="#0f172a"/>
+                    <rect x="31" y="33" width="17" height="13" rx="3.5" fill="none" stroke="#0f172a" stroke-width="2"/>
+                    <rect x="52" y="33" width="17" height="13" rx="3.5" fill="none" stroke="#0f172a" stroke-width="2"/>
+                    <line x1="48" y1="38" x2="52" y2="38" stroke="#0f172a" stroke-width="2"/>
+                    <path id="leo-eyebrow-left" d="M 32 30 Q 39 28 46 30" stroke="#2d1a10" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+                    <path id="leo-eyebrow-right" d="M 54 30 Q 61 28 68 30" stroke="#2d1a10" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+                    <path id="leo-mouth" d="M 43 51 Q 50 56 57 51" stroke="#9a3412" stroke-width="2" stroke-linecap="round" fill="none"/>
+                </svg>
+            </div>
+            <span class="text-[11px] font-extrabold text-red-400 mt-1 uppercase tracking-wider">Profe Leo</span>
+        </div>
+
+        <div class="speech-bubble-white flex-1 p-2.5 min-h-[64px] flex flex-col justify-center">
+            <div class="flex items-center justify-between mb-0.5" id="badge-container">
+                <span class="step-badge-font text-red-600 font-bold" id="step-badge"></span>
+            </div>
+            <div id="step-description" class="text-xs sm:text-sm font-semibold text-slate-800 leading-relaxed">
+            </div>
+        </div>
+    </div>
+
+    <!-- CONTROLES -->
+    <div class="bg-[#0e0e11] border border-gray-800 rounded-xl px-3 py-2 flex flex-wrap items-center justify-between gap-2">
+        <div class="flex items-center gap-2">
+            <button onclick="restartLesson()" class="px-3 py-1.5 hover:bg-gray-800 rounded-lg text-gray-300 transition text-xs font-semibold flex items-center gap-1.5 border border-gray-800">
+                <i class="fas fa-rotate-left text-xs"></i> Reiniciar
+            </button>
+            <button onclick="previousStep()" class="px-3 py-1.5 bg-gray-800 hover:bg-gray-700 rounded-lg text-white transition text-xs font-semibold flex items-center gap-1">
+                <i class="fas fa-chevron-left text-xs"></i> Anterior
+            </button>
+            <button onclick="nextStep()" class="px-3 py-1.5 bg-teal-600 hover:bg-teal-500 rounded-lg text-white transition text-xs font-bold flex items-center gap-1 shadow-md">
+                Siguiente <i class="fas fa-chevron-right text-xs"></i>
+            </button>
+        </div>
+
+        <div class="flex-1 flex items-center gap-3 mx-1 min-w-[120px]">
+            <div class="w-full bg-gray-800 h-1.5 rounded-full overflow-hidden">
+                <div id="progress-bar" class="bg-teal-500 h-full w-0 transition-all duration-200"></div>
+            </div>
+            <span id="step-counter" class="text-xs font-mono text-gray-400 min-w-[40px]">0/0</span>
+        </div>
+
+        <div class="flex items-center gap-1">
+            <button id="speed-btn" onclick="toggleSpeed()" class="px-2.5 py-1 bg-gray-800 hover:bg-gray-700 text-teal-400 font-mono text-xs font-bold rounded-lg border border-gray-700">
+                1.0x
+            </button>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    const leccion = {"titulo": "\u00a1Vamos a la Pizarra!", "pasos": [{"badge": "Inicio", "explicacion": "\u00a1Hola a todos! Bienvenidos a la clase.", "expresion": "saludo", "acciones": [{"tipo": "cambiar_color", "color": "ink", "duracion": 200}]}, {"badge": "Concepto", "explicacion": "Analizaremos detalladamente c\u00f3mo el valor de cada cifra depende de su posici\u00f3n.", "expresion": "explicando", "acciones": [{"tipo": "cambiar_color", "color": "ink", "duracion": 200}, {"tipo": "escribir", "id": "t_def", "zona": "def_title", "contenido": "\\text{\u00bfC\u00f3mo funciona el valor posicional?}", "estilo": "pen-title", "duracion": 1000}]}, {"badge": "Estructura", "explicacion": "Alineamos los d\u00edgitos (d) con sus pesos o potencias de la base (b).", "expresion": "explicando", "acciones": [{"tipo": "cambiar_color", "color": "blue", "duracion": 200}, {"tipo": "escribir", "id": "p_def1", "zona": "def_body1", "contenido": "d_3 \\qquad d_2 \\qquad d_1 \\qquad d_0", "estilo": "pen-math-large", "duracion": 1000}, {"tipo": "escribir", "id": "p_def2", "zona": "def_body2", "contenido": "b^3 \\qquad b^2 \\qquad b^1 \\qquad b^0", "estilo": "pen-math-large", "duracion": 1000}]}, {"badge": "Conexi\u00f3n", "explicacion": "Observa bien c\u00f3mo conectamos cada posici\u00f3n con su potencia respectiva.", "expresion": "atenta", "acciones": [{"tipo": "cambiar_color", "color": "orange", "duracion": 200}, {"tipo": "flecha", "origen": {"x": 160, "y": 70}, "destino": {"x": 160, "y": 95}, "duracion": 200}, {"tipo": "flecha", "origen": {"x": 215, "y": 70}, "destino": {"x": 215, "y": 95}, "duracion": 200}, {"tipo": "flecha", "origen": {"x": 270, "y": 70}, "destino": {"x": 270, "y": 95}, "duracion": 200}, {"tipo": "flecha", "origen": {"x": 325, "y": 70}, "destino": {"x": 325, "y": 95}, "duracion": 200}]}, {"badge": "F\u00f3rmula", "explicacion": "Construimos la ecuaci\u00f3n polin\u00f3mica multiplicando cada d\u00edgito por su peso.", "expresion": "explicando", "acciones": [{"tipo": "cambiar_color", "color": "blue", "duracion": 200}, {"tipo": "escribir", "id": "t1", "zona": "title", "contenido": "N = d_3 \\cdot b^3 + d_2 \\cdot b^2 + d_1 \\cdot b^1 + d_0 \\cdot b^0", "estilo": "pen-math-large", "duracion": 1800}]}, {"badge": "Ejemplo", "explicacion": "Procedamos a evaluar el n\u00famero binario (1011)\u2082.", "expresion": "entusiasta", "acciones": [{"tipo": "cambiar_color", "color": "ink", "duracion": 200}, {"tipo": "escribir", "id": "lbl_12", "zona": "col1_top", "contenido": "\\text{Ejemplo: } (1011)_2", "estilo": "pen-math-title", "duracion": 800}]}, {"badge": "Sustituci\u00f3n", "explicacion": "Sustituimos la base b = 2 y los d\u00edgitos d = 1, 0, 1, 1 en nuestra estructura.", "expresion": "explicando", "acciones": [{"tipo": "cambiar_color", "color": "blue", "duracion": 200}, {"tipo": "escribir", "id": "step_12_1", "zona": "col1_mid1", "contenido": "= 1 \\cdot 2^3 + 0 \\cdot 2^2 + 1 \\cdot 2^1 + 1 \\cdot 2^0", "estilo": "pen-math-large", "duracion": 1500}]}, {"badge": "C\u00e1lculo", "explicacion": "Ahora calculamos el valor num\u00e9rico de cada potencia (8, 4, 2 y 1).", "expresion": "atenta", "acciones": [{"tipo": "cambiar_color", "color": "blue", "duracion": 200}, {"tipo": "escribir", "id": "step_12_2", "zona": "col1_mid2", "contenido": "= 1(8) + 0(4) + 1(2) + 1(1)", "estilo": "pen-math-large", "duracion": 1200}]}, {"badge": "Resultado", "explicacion": "Sumamos los t\u00e9rminos y destacamos el resultado final en decimal. \u00a1Gran trabajo!", "expresion": "genial", "acciones": [{"tipo": "cambiar_color", "color": "blue", "duracion": 200}, {"tipo": "escribir", "id": "final_calc", "zona": "col1_res", "contenido": "= 8 + 0 + 2 + 1 =", "estilo": "pen-math-huge", "duracion": 800}, {"tipo": "cambiar_color", "color": "green", "duracion": 200}, {"tipo": "escribir", "id": "final_res", "zona": "col2_top", "contenido": "(11)_{10}", "estilo": "pen-math-huge", "duracion": 600}, {"tipo": "subrayado_target", "target_id": "final_res", "duracion": 400}]}]};
+
+    // Coordenadas optimizadas para evitar solapamiento
+    const LAYOUT = {
+        zones: {
+            def_title:    { x: 200, y: 15 },
+            def_body1:    { x: 140, y: 45 },  // Dígitos
+            def_body2:    { x: 140, y: 105 }, // Bases (espacio ampliado para las flechas)
+
+            title:        { x: 140, y: 160 }, // Fórmula general
+
+            col1_top:     { x: 140, y: 215 }, // Ejemplo
+            col1_mid1:    { x: 140, y: 250 }, // Sustitución
+            col1_mid2:    { x: 140, y: 285 }, // Cálculo
+            col1_res:     { x: 140, y: 325 }, // Suma
+
+            col2_top:     { x: 330, y: 325 }, // Resultado Final
+
+            col2_mid1:    { x: 480, y: 250 },
+            col2_mid2:    { x: 480, y: 285 },
+            col2_bot:     { x: 480, y: 320 },
+            col2_res:     { x: 460, y: 360 },
+
+            summary_rule: { x: 200, y: 400 },
+            summary_calc: { x: 140, y: 440 },
+            summary_res:  { x: 495, y: 440 }
+        }
+    };
+
+    const COLOR_MAP = { "ink": "#1e293b", "blue": "#0284c7", "orange": "#ea580c", "green": "#16a34a" };
+    const SPEEDS = [0.5, 1.0, 1.5, 2.0];
+
+    let currentStepIndex = 0;
+    let speedIndex = 1;
+    let playbackSpeed = 1.0;
+    let activeColor = "ink";
+    let isAnimating = false;
+
+    function initEngine() {
+        document.getElementById('lesson-title').innerText = '¡Vamos a la Pizarra! - Valor Posicional';
+        goToStep(0, false);
+    }
+
+    function setToolColor(colorKey) {
+        activeColor = colorKey;
+        const dot = document.getElementById('nib-dot');
+        if (dot) dot.setAttribute('fill', COLOR_MAP[colorKey] || COLOR_MAP.ink);
+    }
+
+    function toggleSpeed() {
+        speedIndex = (speedIndex + 1) % SPEEDS.length;
+        playbackSpeed = SPEEDS[speedIndex];
+        document.getElementById('speed-btn').innerText = playbackSpeed.toFixed(1) + 'x';
+    }
+
+    function restartLesson() { goToStep(0, false); }
+
+    function nextStep() {
+        if (currentStepIndex < leccion.pasos.length - 1 && !isAnimating) {
+            goToStep(currentStepIndex + 1, true);
+        }
+    }
+
+    function previousStep() {
+        if (currentStepIndex > 0 && !isAnimating) {
+            goToStep(currentStepIndex - 1, false);
+        }
+    }
+
+    function updateUI() {
+        const step = leccion.pasos[currentStepIndex];
+        const badgeEl = document.getElementById('step-badge');
+
+        if (step.badge) {
+            badgeEl.innerText = step.badge;
+            badgeEl.style.display = 'inline-block';
+        } else {
+            badgeEl.innerText = '';
+            badgeEl.style.display = 'none';
+        }
+
+        document.getElementById('step-description').innerText = step.explicacion;
+        document.getElementById('step-counter').innerText = `${currentStepIndex + 1}/${leccion.pasos.length}`;
+
+        const pct = ((currentStepIndex + 1) / leccion.pasos.length) * 100;
+        document.getElementById('progress-bar').style.width = `${pct}%`;
+    }
+
+    function ensureVisible(yPos) {
+        // Todo el contenido está ajustado exactamente a la pizarra
+    }
+
+    function goToStep(stepIndex, animated = true) {
+        if (stepIndex < 0 || stepIndex >= leccion.pasos.length) return;
+        currentStepIndex = stepIndex;
+        updateUI();
+
+        if (!animated) {
+            rebuildBoardStateUpTo(stepIndex);
+            hidePencil();
+        } else {
+            rebuildBoardStateUpTo(stepIndex - 1);
+            executeStepSequence(stepIndex);
+        }
+    }
+
+    function rebuildBoardStateUpTo(targetStepIndex) {
+        const container = document.getElementById('canvas-container');
+        const svg = document.getElementById('svg-canvas');
+
+        container.querySelectorAll('.pen-element').forEach(e => e.remove());
+
+        const defs = svg.querySelector('defs');
+        svg.innerHTML = '';
+        if (defs) svg.appendChild(defs);
+
+        for (let i = 0; i <= targetStepIndex; i++) {
+            const paso = leccion.pasos[i];
+            if (paso && paso.acciones) {
+                paso.acciones.forEach(acc => applyActionInstant(acc));
+            }
+        }
+
+        if (targetStepIndex >= 0 && leccion.pasos[targetStepIndex].acciones.length > 0) {
+            const lastAction = leccion.pasos[targetStepIndex].acciones.slice(-1)[0];
+            if (lastAction) {
+                const pos = getZonePos(lastAction);
+                ensureVisible(pos.y);
+            }
+        }
+    }
+
+    function getZonePos(acc) {
+        if (acc.origen) return acc.origen;
+        if (acc.zona && LAYOUT.zones[acc.zona]) return LAYOUT.zones[acc.zona];
+        return acc.pos || { x: 200, y: 100 };
+    }
+
+    function renderMathOrText(el, text) {
+        if (text.includes('\\') || text.includes('_') || text.includes('^') || text.includes('=')) {
+            katex.render(text, el, { throwOnError: false });
+        } else {
+            el.innerText = text;
+        }
+    }
+
+    function applyActionInstant(acc) {
+        const container = document.getElementById('canvas-container');
+        const svg = document.getElementById('svg-canvas');
+        const pos = getZonePos(acc);
+
+        if (acc.tipo === 'cambiar_color') {
+            setToolColor(acc.color);
+        }
+        else if (acc.tipo === 'escribir') {
+            let el = document.getElementById(acc.id);
+            if (!el) {
+                el = document.createElement('div');
+                el.id = acc.id;
+                el.className = `pen-element color-${activeColor} ${acc.estilo || ''}`;
+                el.style.left = pos.x + 'px';
+                el.style.top = pos.y + 'px';
+                container.appendChild(el);
+            }
+            renderMathOrText(el, acc.contenido);
+        }
+        else if (acc.tipo === 'flecha') {
+            const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            line.setAttribute('x1', acc.origen.x);
+            line.setAttribute('y1', acc.origen.y);
+            line.setAttribute('x2', acc.destino.x);
+            line.setAttribute('y2', acc.destino.y);
+            line.setAttribute('stroke', COLOR_MAP[activeColor]);
+            line.setAttribute('stroke-width', '2');
+            line.setAttribute('marker-end', `url(#arrowhead-${activeColor})`);
+            svg.appendChild(line);
+        }
+        else if (acc.tipo === 'subrayado_target') {
+            const targetEl = document.getElementById(acc.target_id);
+            if (targetEl) {
+                const containerRect = container.getBoundingClientRect();
+                const rect = targetEl.getBoundingClientRect();
+                const startX = rect.left - containerRect.left;
+                const endX = rect.right - containerRect.left;
+                const y = rect.bottom - containerRect.top + 2;
+
+                const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                line.setAttribute('x1', startX);
+                line.setAttribute('y1', y);
+                line.setAttribute('x2', endX);
+                line.setAttribute('y2', y);
+                line.setAttribute('stroke', COLOR_MAP[activeColor]);
+                line.setAttribute('stroke-width', '2.5');
+                svg.appendChild(line);
+            }
+        }
+    }
+
+    async function executeStepSequence(stepIndex) {
+        isAnimating = true;
+        const paso = leccion.pasos[stepIndex];
+        for (let acc of paso.acciones) {
+            await runSingleActionAnimated(acc);
+        }
+        hidePencil();
+        isAnimating = false;
+    }
+
+    function moveWritingTip(x, y) {
+        const nib = document.getElementById('pencil-nib');
+        nib.style.display = 'block';
+        nib.style.opacity = '1';
+        nib.style.left = x + 'px';
+        nib.style.top = y + 'px';
+    }
+
+    function hidePencil() {
+        const nib = document.getElementById('pencil-nib');
+        if (nib) nib.style.display = 'none';
+    }
+
+    function delay(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms / playbackSpeed));
+    }
+
+    async function runSingleActionAnimated(acc) {
+        const container = document.getElementById('canvas-container');
+        const svg = document.getElementById('svg-canvas');
+        const pos = getZonePos(acc);
+
+        ensureVisible(pos.y);
+
+        if (acc.tipo === 'cambiar_color') {
+            setToolColor(acc.color);
+            await delay(acc.duracion || 100);
+        }
+        else if (acc.tipo === 'escribir') {
+            let el = document.getElementById(acc.id);
+            let clipWrapper;
+
+            if (!el) {
+                el = document.createElement('div');
+                el.id = acc.id;
+                el.className = `pen-element color-${activeColor} ${acc.estilo || ''}`;
+                el.style.left = pos.x + 'px';
+                el.style.top = pos.y + 'px';
+
+                clipWrapper = document.createElement('span');
+                clipWrapper.className = 'pencil-clip';
+                el.appendChild(clipWrapper);
+                container.appendChild(el);
+            } else {
+                clipWrapper = el.querySelector('.pencil-clip') || el;
+            }
+
+            renderMathOrText(clipWrapper, acc.contenido);
+
+            const totalWidth = el.offsetWidth || 150;
+            const startX = pos.x;
+            const endX = pos.x + totalWidth;
+            const startY = pos.y + 15;
+
+            const duration = acc.duracion || 500;
+            const steps = 12;
+            const stepDuration = duration / steps;
+
+            for (let i = 0; i <= steps; i++) {
+                const pct = (i / steps) * 100;
+                clipWrapper.style.clipPath = `polygon(0 0, ${pct}% 0, ${pct}% 100%, 0 100%)`;
+                const currentX = startX + (totalWidth * (i / steps));
+                moveWritingTip(currentX, startY);
+                await delay(stepDuration);
+            }
+        }
+        else if (acc.tipo === 'flecha') {
+            const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            line.setAttribute('x1', acc.origen.x);
+            line.setAttribute('y1', acc.origen.y);
+            line.setAttribute('x2', acc.origen.x);
+            line.setAttribute('y2', acc.origen.y);
+            line.setAttribute('stroke', COLOR_MAP[activeColor]);
+            line.setAttribute('stroke-width', '2');
+            line.setAttribute('marker-end', `url(#arrowhead-${activeColor})`);
+            svg.appendChild(line);
+
+            const duration = acc.duracion || 200;
+            const steps = 10;
+            const stepDuration = duration / steps;
+
+            for (let i = 0; i <= steps; i++) {
+                const curX = acc.origen.x + (acc.destino.x - acc.origen.x) * (i / steps);
+                const curY = acc.origen.y + (acc.destino.y - acc.origen.y) * (i / steps);
+                line.setAttribute('x2', curX);
+                line.setAttribute('y2', curY);
+                moveWritingTip(curX, curY);
+                await delay(stepDuration);
+            }
+        }
+        else if (acc.tipo === 'subrayado_target') {
+            const targetEl = document.getElementById(acc.target_id);
+            if (targetEl) {
+                const containerRect = container.getBoundingClientRect();
+                const rect = targetEl.getBoundingClientRect();
+                const startX = rect.left - containerRect.left;
+                const endX = rect.right - containerRect.left;
+                const y = rect.bottom - containerRect.top + 2;
+
+                const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                line.setAttribute('x1', startX);
+                line.setAttribute('y1', y);
+                line.setAttribute('x2', startX);
+                line.setAttribute('y2', y);
+                line.setAttribute('stroke', COLOR_MAP[activeColor]);
+                line.setAttribute('stroke-width', '2.5');
+                svg.appendChild(line);
+
+                const duration = acc.duracion || 400;
+                const steps = 10;
+                const stepDuration = duration / steps;
+
+                for (let i = 0; i <= steps; i++) {
+                    const currentX = startX + ((endX - startX) * (i / steps));
+                    line.setAttribute('x2', currentX);
+                    moveWritingTip(currentX, y);
+                    await delay(stepDuration);
+                }
+            }
+        }
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+        initEngine();
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Clasificador: ¿Función o Procedimiento?</title>
+  <style>
+    :root {
+      --bg: #0e0e11; --card: #141923; --border: #232d42; --text: #fff;
+      --muted: #94a3b8; --sky: #38bdf8; --purple: #a855f7; --green: #10b981;
+    }
+    body.theme-light {
+      --bg: #f8fafc; --card: #ffffff; --border: #e2e8f0; --text: #0f172a;
+      --muted: #64748b; --sky: #0284c7; --purple: #9333ea; --green: #059669;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { background: var(--bg); color: var(--text); padding: 14px; display: flex; justify-content: center; }
+    .container { width: 100%; max-width: 660px; background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 16px; }
+    .header { text-align: center; margin-bottom: 12px; }
+    .header h3 { font-size: 1.1rem; color: #34d399; margin-bottom: 4px; }
+    .code-card { background: #080b10; border: 1px solid var(--border); border-radius: 8px; padding: 14px; font-family: monospace; font-size: 0.85rem; margin-bottom: 12px; color: #fde047; }
+    .choice-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
+    .cbtn { padding: 10px; border-radius: 6px; border: 1px solid var(--border); background: rgba(255,255,255,0.03); color: var(--text); font-weight: 600; font-size: 0.82rem; cursor: pointer; transition: 0.2s; }
+    .cbtn:hover { border-color: #34d399; background: rgba(52, 211, 153, 0.1); }
+    .fb-box { padding: 10px; border-radius: 6px; font-size: 0.8rem; line-height: 1.4; display: none; margin-bottom: 10px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h3>⚖️ ¿Función o Procedimiento?</h3>
+      <p style="font-size:0.75rem; color:var(--muted)">Una función retorna un valor calculado; un procedimiento ejecuta una acción o efecto colateral (retorno implícito None).</p>
+    </div>
+
+    <div class="code-card" id="codeSnippet"></div>
+
+    <div class="choice-row">
+      <button class="cbtn" onclick="checkAnswer('funcion')">Es una Función (retorna valor)</button>
+      <button class="cbtn" onclick="checkAnswer('procedimiento')">Es un Procedimiento (efecto / acción)</button>
+    </div>
+
+    <div class="fb-box" id="fbBox"></div>
+
+    <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.75rem; color:var(--muted)">
+      <span id="score">Aciertos: 0 / 0</span>
+      <button class="cbtn" style="padding:4px 8px;" onclick="nextSnippet()">Siguiente Caso ➔</button>
+    </div>
+  </div>
+
+  <script>
+    const items = [
+      {
+        code: "def mostrar_bienvenida(usuario):\n    print(f'=== Bienvenido al Sistema, {usuario} ===')\n    print('Hora de acceso registrada.')",
+        type: "procedimiento",
+        expl: "Es un PROCEDIMIENTO: realiza efectos colaterales (imprimir en consola) pero no tiene sentencia 'return'. Su valor de retorno implícito es None."
+      },
+      {
+        code: "def calcular_area_circulo(radio):\n    import math\n    return math.pi * (radio ** 2)",
+        type: "funcion",
+        expl: "Es una FUNCIÓN PURA: toma un parámetro, calcula un resultado matemático y lo devuelve explícitamente mediante 'return'."
+      },
+      {
+        code: "def limpiar_archivo_log(ruta):\n    with open(ruta, 'w') as f:\n        f.write('')",
+        type: "procedimiento",
+        expl: "Es un PROCEDIMIENTO: su objetivo es modificar el estado del sistema de archivos en disco; no devuelve ningún dato calculado."
+      },
+      {
+        code: "def es_par(numero):\n    return numero % 2 == 0",
+        type: "funcion",
+        expl: "Es una FUNCIÓN (predicado booleano): devuelve True o False según la condición evaluada."
+      }
+    ];
+
+    let cIdx = 0, ok = 0, tot = 0;
+    function renderSnippet() {
+      document.getElementById('codeSnippet').innerHTML = items[cIdx].code.replace(/\\n/g, '<br>').replace(/ /g, '&nbsp;');
+      document.getElementById('fbBox').style.display = 'none';
+      document.querySelectorAll('.cbtn').forEach(b => b.disabled = false);
+    }
+
+    function checkAnswer(choice) {
+      tot++;
+      const cur = items[cIdx];
+      const fb = document.getElementById('fbBox');
+      fb.style.display = 'block';
+      if (choice === cur.type) {
+        ok++;
+        fb.style.background = 'rgba(16, 185, 129, 0.15)';
+        fb.style.color = '#86efac';
+        fb.innerHTML = '<strong>✅ ¡Correcto!</strong> ' + cur.expl;
+      } else {
+        fb.style.background = 'rgba(239, 68, 68, 0.15)';
+        fb.style.color = '#fca5a5';
+        fb.innerHTML = '<strong>❌ Incorrecto.</strong> ' + cur.expl;
+      }
+      document.getElementById('score').textContent = `Aciertos: ${ok} / ${tot}`;
+    }
+
+    function nextSnippet() {
+      cIdx = (cIdx + 1) % items.length;
+      renderSnippet();
+    }
+    renderSnippet();
+  </script>
+</body>
+</html>

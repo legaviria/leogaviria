@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Modelo de Memoria de Python: Stack vs Heap</title>
+  <style>
+    :root {
+      --bg: #0e0e11; --card: #141923; --border: #232d42; --text: #fff;
+      --muted: #94a3b8; --sky: #38bdf8; --purple: #a855f7; --green: #10b981;
+    }
+    body.theme-light {
+      --bg: #f8fafc; --card: #ffffff; --border: #e2e8f0; --text: #0f172a;
+      --muted: #64748b; --sky: #0284c7; --purple: #9333ea; --green: #059669;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { background: var(--bg); color: var(--text); padding: 14px; display: flex; justify-content: center; }
+    .container { width: 100%; max-width: 680px; background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 16px; }
+    .header { text-align: center; margin-bottom: 12px; }
+    .header h3 { font-size: 1.1rem; color: #38bdf8; margin-bottom: 4px; }
+    .memory-layout { display: grid; grid-template-columns: 1fr 1.3fr; gap: 14px; margin-bottom: 12px; }
+    @media (max-width: 550px) { .memory-layout { grid-template-columns: 1fr; } }
+    .mem-box { background: #080b10; border: 1px solid var(--border); border-radius: 8px; padding: 10px; }
+    .mem-box h5 { font-size: 0.75rem; color: var(--muted); margin-bottom: 8px; text-transform: uppercase; border-bottom: 1px solid var(--border); padding-bottom: 4px; }
+    .stack-item { display: flex; justify-content: space-between; align-items: center; padding: 6px 8px; border-radius: 6px; background: rgba(56, 189, 248, 0.08); border: 1px solid rgba(56, 189, 248, 0.3); font-family: monospace; font-size: 0.78rem; margin-bottom: 6px; }
+    .heap-item { padding: 8px; border-radius: 6px; background: rgba(168, 85, 247, 0.08); border: 1px solid rgba(168, 85, 247, 0.3); font-family: monospace; font-size: 0.78rem; margin-bottom: 6px; }
+    .ref-addr { color: #fde047; font-size: 0.7rem; }
+    .controls { display: flex; gap: 8px; justify-content: center; }
+    .btn { padding: 6px 14px; font-size: 0.78rem; font-weight: 600; border-radius: 6px; cursor: pointer; border: 1px solid var(--border); background: rgba(255,255,255,0.05); color: var(--text); }
+    .btn-act { background: #38bdf8; color: #0f172a; border: none; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h3>🧱 Modelo de Memoria: Stack (Pila) vs Heap (Montículo)</h3>
+      <p style="font-size:0.75rem; color:var(--muted)">En Python, las variables en el Stack son referencias (punteros) hacia objetos creados en el Heap.</p>
+    </div>
+
+    <div class="memory-layout">
+      <div class="mem-box">
+        <h5>Call Stack (Pila de Variables)</h5>
+        <div id="stackItems"></div>
+      </div>
+
+      <div class="mem-box">
+        <h5>Heap Memory (Objetos Reales)</h5>
+        <div id="heapItems"></div>
+      </div>
+    </div>
+
+    <div style="font-size:0.76rem; color:var(--muted); text-align:center; padding:8px; background:rgba(255,255,255,0.02); border-radius:6px; border:1px dashed var(--border); margin-bottom:10px;" id="infoText"></div>
+
+    <div class="controls">
+      <button class="btn btn-act" onclick="nextMem()">Siguiente Instrucción ▶</button>
+      <button class="btn" onclick="resetMem()">Reiniciar</button>
+    </div>
+  </div>
+
+  <script>
+    const memSteps = [
+      {
+        stack: [{ name: "a", ref: "0x1004" }],
+        heap: [{ addr: "0x1004", type: "int", val: "100" }],
+        info: "a = 100 ➔ Se crea el objeto int(100) en el Heap en 0x1004. La variable 'a' en el Stack guarda esa dirección."
+      },
+      {
+        stack: [{ name: "a", ref: "0x1004" }, { name: "b", ref: "0x1004" }],
+        heap: [{ addr: "0x1004", type: "int", val: "100" }],
+        info: "b = a ➔ 'b' NO copia el 100; comparte la misma referencia 0x1004 (id(a) == id(b) es True)."
+      },
+      {
+        stack: [{ name: "a", ref: "0x1004" }, { name: "b", ref: "0x1004" }, { name: "lista", ref: "0x2050" }],
+        heap: [{ addr: "0x1004", type: "int", val: "100" }, { addr: "0x2050", type: "list", val: "[1, 2, 3]" }],
+        info: "lista = [1, 2, 3] ➔ Se aloja un objeto mutable list en 0x2050 con punteros a sus elementos."
+      },
+      {
+        stack: [{ name: "a", ref: "0x1008" }, { name: "b", ref: "0x1004" }, { name: "lista", ref: "0x2050" }],
+        heap: [{ addr: "0x1004", type: "int", val: "100" }, { addr: "0x1008", type: "int", val: "105" }, { addr: "0x2050", type: "list", val: "[1, 2, 3]" }],
+        info: "a = a + 5 ➔ Los enteros son inmutables. 'a' apunta ahora a un nuevo objeto 105 (0x1008). 'b' sigue en 100."
+      }
+    ];
+
+    let sIdx = 0;
+    function renderMem() {
+      const step = memSteps[sIdx];
+      const sBox = document.getElementById('stackItems');
+      const hBox = document.getElementById('heapItems');
+      sBox.innerHTML = '';
+      hBox.innerHTML = '';
+
+      step.stack.forEach(s => {
+        const d = document.createElement('div');
+        d.className = 'stack-item';
+        d.innerHTML = `<span><strong>${s.name}</strong></span><span class="ref-addr">➔ ${s.ref}</span>`;
+        sBox.appendChild(d);
+      });
+
+      step.heap.forEach(h => {
+        const d = document.createElement('div');
+        d.className = 'heap-item';
+        d.innerHTML = `<div style="display:flex; justify-content:space-between;"><span style="color:#a855f7">${h.type}</span><span class="ref-addr">${h.addr}</span></div><div style="color:#fde047; font-weight:bold; margin-top:3px">${h.val}</div>`;
+        hBox.appendChild(d);
+      });
+
+      document.getElementById('infoText').textContent = step.info;
+    }
+
+    function nextMem() {
+      sIdx = (sIdx + 1) % memSteps.length;
+      renderMem();
+    }
+    function resetMem() {
+      sIdx = 0;
+      renderMem();
+    }
+    renderMem();
+  </script>
+</body>
+</html>

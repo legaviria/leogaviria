@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Solucionador Visual de Sudoku con Backtracking</title>
+  <style>
+    :root {
+      --bg: #0e0e11; --card: #141923; --border: #232d42; --text: #fff;
+      --muted: #94a3b8; --sky: #38bdf8; --amber: #f59e0b; --green: #10b981; --red: #ef4444;
+    }
+    body.theme-light {
+      --bg: #f8fafc; --card: #ffffff; --border: #e2e8f0; --text: #0f172a;
+      --muted: #64748b; --sky: #0284c7; --amber: #d97706; --green: #059669; --red: #dc2626;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { background: var(--bg); color: var(--text); padding: 14px; display: flex; justify-content: center; }
+    .container { width: 100%; max-width: 660px; background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 16px; }
+    .header { text-align: center; margin-bottom: 12px; }
+    .header h3 { font-size: 1.1rem; color: #fbbf24; margin-bottom: 4px; }
+    .sudoku-grid { display: grid; grid-template-columns: repeat(4, 48px); gap: 4px; justify-content: center; margin-bottom: 12px; }
+    .scell { width: 48px; height: 48px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-family: monospace; font-size: 1.2rem; font-weight: bold; background: #080b10; border: 1px solid var(--border); transition: all 0.2s; }
+    .scell.fixed { color: #94a3b8; background: #1a2234; }
+    .scell.trying { border-color: var(--amber); color: #fde047; transform: scale(1.05); }
+    .scell.conflict { border-color: var(--red); background: rgba(239, 68, 68, 0.2); color: #f87171; }
+    .scell.solved { border-color: var(--green); background: rgba(16, 185, 129, 0.15); color: #4ade80; }
+    .msg-box { background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 6px; padding: 8px 12px; font-size: 0.78rem; text-align: center; color: var(--muted); min-height: 42px; display: flex; align-items: center; justify-content: center; margin-bottom: 10px; }
+    .controls { display: flex; gap: 8px; justify-content: center; }
+    .btn { padding: 6px 14px; font-size: 0.78rem; font-weight: 600; border-radius: 6px; cursor: pointer; border: 1px solid var(--border); background: rgba(255,255,255,0.05); color: var(--text); }
+    .btn-act { background: #fbbf24; color: #0f172a; border: none; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h3>🔢 Solucionador de Sudoku 4x4: Búsqueda con Restricciones</h3>
+      <p style="font-size:0.75rem; color:var(--muted)">Reglas: Números 1 a 4 sin repetir en fila, columna ni subcuadrícula 2x2.</p>
+    </div>
+
+    <div class="sudoku-grid" id="sGrid"></div>
+    <div class="msg-box" id="sMsg">Presiona 'Avanzar Paso' para observar el algoritmo recursivo.</div>
+
+    <div class="controls">
+      <button class="btn btn-act" onclick="nextSudokuStep()">Avanzar Paso ▶</button>
+      <button class="btn" onclick="resetSudoku()">Reiniciar</button>
+    </div>
+  </div>
+
+  <script>
+    // Tablero 4x4: 0 es vacío
+    const initialBoard = [
+      [1, 0, 0, 4],
+      [0, 0, 3, 0],
+      [0, 1, 0, 0],
+      [4, 0, 0, 2]
+    ];
+
+    const solverSteps = [
+      { r: 0, c: 1, val: 2, status: "trying", msg: "Celda (0,1): Probar dígito 2. Válido en fila, col y bloque." },
+      { r: 0, c: 2, val: 3, status: "trying", msg: "Celda (0,2): Probar dígito 3. Fila 0 completada con [1, 2, 3, 4]." },
+      { r: 1, c: 0, val: 2, status: "trying", msg: "Celda (1,0): Probar 2. Válido." },
+      { r: 1, c: 1, val: 4, status: "trying", msg: "Celda (1,1): Probar 4. Válido." },
+      { r: 1, c: 3, val: 1, status: "trying", msg: "Celda (1,3): Probar 1. Válido." },
+      { r: 2, c: 0, val: 3, status: "trying", msg: "Celda (2,0): Probar 3. Válido." },
+      { r: 2, c: 2, val: 2, status: "trying", msg: "Celda (2,2): Probar 2. Válido." },
+      { r: 2, c: 3, val: 4, status: "trying", msg: "Celda (2,3): Probar 4. Válido." },
+      { r: 3, c: 1, val: 3, status: "trying", msg: "Celda (3,1): Probar 3. Válido." },
+      { r: 3, c: 2, val: 1, status: "solved", msg: "🎉 ¡Sudoku 4x4 resuelto completamente sin violar ninguna restricción!" }
+    ];
+
+    let suStep = 0;
+    function resetSudoku() {
+      suStep = 0;
+      const g = document.getElementById('sGrid');
+      g.innerHTML = '';
+      for (let r = 0; r < 4; r++) {
+        for (let c = 0; c < 4; c++) {
+          const v = initialBoard[r][c];
+          const div = document.createElement('div');
+          div.id = `sc-${r}-${c}`;
+          div.className = 'scell' + (v !== 0 ? ' fixed' : '');
+          div.textContent = v !== 0 ? v : '';
+          g.appendChild(div);
+        }
+      }
+      document.getElementById('sMsg').textContent = "Estado: Tablero inicial listo.";
+    }
+
+    function nextSudokuStep() {
+      if (suStep >= solverSteps.length) return;
+      const s = solverSteps[suStep];
+      const cell = document.getElementById(`sc-${s.r}-${s.c}`);
+      cell.textContent = s.val;
+      cell.className = 'scell ' + s.status;
+      document.getElementById('sMsg').textContent = s.msg;
+      suStep++;
+    }
+    resetSudoku();
+  </script>
+</body>
+</html>

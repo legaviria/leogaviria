@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Configura tu Entorno de Desarrollo</title>
+  <style>
+    :root {
+      --bg: #0e0e11; --card-bg: #141923; --border: #232d42;
+      --text: #ffffff; --muted: #94a3b8; --accent: #10b981;
+      --accent-glow: rgba(16, 185, 129, 0.2);
+    }
+    body.theme-light {
+      --bg: #f8fafc; --card-bg: #ffffff; --border: #e2e8f0;
+      --text: #0f172a; --muted: #64748b; --accent: #059669;
+      --accent-glow: rgba(5, 150, 105, 0.15);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { background: var(--bg); color: var(--text); padding: 14px; display: flex; justify-content: center; }
+    .container { width: 100%; max-width: 620px; background: var(--card-bg); border: 1px solid var(--border); border-radius: 14px; padding: 18px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); }
+    .header { text-align: center; margin-bottom: 16px; }
+    .header h2 { font-size: 1.15rem; color: var(--accent); margin-bottom: 4px; display: flex; align-items: center; justify-content: center; gap: 8px; }
+    .header p { font-size: 0.8rem; color: var(--muted); }
+    .progress-bar-container { background: rgba(255,255,255,0.08); height: 8px; border-radius: 4px; overflow: hidden; margin: 12px 0 16px; }
+    .progress-bar { height: 100%; width: 0%; background: linear-gradient(90deg, #10b981, #38bdf8); transition: width 0.3s; }
+    .item-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
+    .check-item { display: flex; align-items: flex-start; gap: 12px; padding: 12px; background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 8px; cursor: pointer; transition: all 0.2s; }
+    .check-item:hover { border-color: var(--accent); background: var(--accent-glow); }
+    .check-item.done { border-color: var(--accent); background: rgba(16, 185, 129, 0.08); }
+    .checkbox-box { width: 22px; height: 22px; border-radius: 6px; border: 2px solid var(--muted); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: bold; flex-shrink: 0; color: white; transition: all 0.2s; }
+    .check-item.done .checkbox-box { background: var(--accent); border-color: var(--accent); }
+    .item-content h4 { font-size: 0.88rem; font-weight: 600; margin-bottom: 2px; }
+    .item-content p { font-size: 0.75rem; color: var(--muted); line-height: 1.35; }
+    .code-chip { font-family: monospace; font-size: 0.73rem; background: rgba(0,0,0,0.3); padding: 2px 6px; border-radius: 4px; color: #38bdf8; display: inline-block; margin-top: 3px; }
+    .status-badge { text-align: center; padding: 10px; border-radius: 8px; font-size: 0.85rem; font-weight: 600; display: none; }
+    .status-badge.complete { display: block; background: rgba(16, 185, 129, 0.15); color: #10b981; border: 1px solid #10b981; }
+    .btn-reset { width: 100%; padding: 8px; background: transparent; border: 1px dashed var(--border); color: var(--muted); border-radius: 6px; cursor: pointer; font-size: 0.78rem; transition: 0.2s; margin-top: 8px; }
+    .btn-reset:hover { color: var(--text); border-color: var(--muted); }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h2>🛠️ Lista de Comprobación: Configura tu Entorno</h2>
+      <p>Verifica paso a paso que tu estación de desarrollo esté 100% lista para programar</p>
+      <div class="progress-bar-container">
+        <div class="progress-bar" id="progressBar"></div>
+      </div>
+      <div style="font-size: 0.75rem; color: var(--muted);" id="progressText">0 de 5 tareas completadas (0%)</div>
+    </div>
+
+    <div class="item-list" id="itemList">
+      <div class="check-item" onclick="toggleItem(0)">
+        <div class="checkbox-box" id="chk-0"></div>
+        <div class="item-content">
+          <h4>1. Instalar Python 3 y agregar al PATH</h4>
+          <p>Descarga el instalador oficial y marca la casilla obligatoria: <strong>"Add python.exe to PATH"</strong>.</p>
+          <div class="code-chip">python --version &nbsp;➔ Python 3.11+</div>
+        </div>
+      </div>
+
+      <div class="check-item" onclick="toggleItem(1)">
+        <div class="checkbox-box" id="chk-1"></div>
+        <div class="item-content">
+          <h4>2. Instalar Visual Studio Code</h4>
+          <p>Descarga e instala el editor de código ligero y modular para tu sistema operativo.</p>
+          <div class="code-chip">code . &nbsp;➔ Abre VS Code en la carpeta actual</div>
+        </div>
+      </div>
+
+      <div class="check-item" onclick="toggleItem(2)">
+        <div class="checkbox-box" id="chk-2"></div>
+        <div class="item-content">
+          <h4>3. Instalar extensión oficial de Python (Microsoft)</h4>
+          <p>Abre el panel de extensiones (Ctrl+Shift+X) y busca <strong>"Python"</strong> de Microsoft para autocompletado y depuración.</p>
+          <div class="code-chip">ms-python.python & Pylance</div>
+        </div>
+      </div>
+
+      <div class="check-item" onclick="toggleItem(3)">
+        <div class="checkbox-box" id="chk-3"></div>
+        <div class="item-content">
+          <h4>4. Crear estructura de carpeta del proyecto y archivo .py</h4>
+          <p>Crea una carpeta de trabajo ordenada y un archivo llamado <code class="code-chip">main.py</code> o <code class="code-chip">app.py</code>.</p>
+          <div class="code-chip">print("¡Hola Mundo!")</div>
+        </div>
+      </div>
+
+      <div class="check-item" onclick="toggleItem(4)">
+        <div class="checkbox-box" id="chk-4"></div>
+        <div class="item-content">
+          <h4>5. Ejecutar en la Terminal Integrada</h4>
+          <p>Abre la terminal integrada (Ctrl+ñ) y ejecuta tu script con el comando correspondiente.</p>
+          <div class="code-chip">python main.py &nbsp;➔ ¡Hola Mundo!</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="status-badge" id="statusBadge">
+      🎉 ¡Felicitaciones! Tu entorno de Python y VS Code está listo para construir proyectos profesionales.
+    </div>
+
+    <button class="btn-reset" onclick="resetChecklist()">Reiniciar lista de comprobación</button>
+  </div>
+
+  <script>
+    const itemsState = [false, false, false, false, false];
+    function updateUI() {
+      let count = 0;
+      itemsState.forEach((done, i) => {
+        const el = document.querySelectorAll('.check-item')[i];
+        const chk = document.getElementById('chk-' + i);
+        if (done) {
+          count++;
+          el.classList.add('done');
+          chk.textContent = '✓';
+        } else {
+          el.classList.remove('done');
+          chk.textContent = '';
+        }
+      });
+      const pct = Math.round((count / itemsState.length) * 100);
+      document.getElementById('progressBar').style.width = pct + '%';
+      document.getElementById('progressText').textContent = `${count} de ${itemsState.length} tareas completadas (${pct}%)`;
+      const badge = document.getElementById('statusBadge');
+      if (count === itemsState.length) {
+        badge.classList.add('complete');
+      } else {
+        badge.classList.remove('complete');
+      }
+    }
+    function toggleItem(idx) {
+      itemsState[idx] = !itemsState[idx];
+      updateUI();
+    }
+    function resetChecklist() {
+      for (let i = 0; i < itemsState.length; i++) itemsState[i] = false;
+      updateUI();
+    }
+  </script>
+</body>
+</html>

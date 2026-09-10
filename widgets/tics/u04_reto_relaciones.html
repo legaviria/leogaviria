@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      background-color: #0b0e14;
+      color: #e2e8f0;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      margin: 0;
+      padding: 12px;
+      transition: background-color 0.2s, color 0.2s;
+    }
+    [data-theme="light"] body { background-color: #ffffff; color: #0f172a; }
+    [data-theme="light"] .card-box { background-color: #f8fafc !important; border-color: #e2e8f0 !important; color: #0f172a !important; }
+    [data-theme="light"] .subcard-box { background-color: #ffffff !important; border-color: #cbd5e1 !important; color: #1e293b !important; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+    [data-theme="light"] .text-muted { color: #64748b !important; }
+    [data-theme="light"] .text-highlight { color: #0f766e !important; }
+    [data-theme="light"] input, [data-theme="light"] select { background-color: #ffffff !important; border-color: #cbd5e1 !important; color: #0f172a !important; }
+    .card-box { background-color: #121622; border: 1px solid #1f293d; border-radius: 12px; }
+    .subcard-box { background-color: #090d14; border: 1px solid #1a2233; border-radius: 8px; }
+    .text-muted { color: #94a3b8; }
+    .text-highlight { color: #2dd4bf; }
+  </style>
+  <script>
+    window.addEventListener('message', (event) => {
+      if (event.data && event.data.type === 'THEME_CHANGE') {
+        document.documentElement.setAttribute('data-theme', event.data.theme);
+      }
+    });
+    try {
+      const savedTheme = localStorage.getItem('leogaviria_theme') || 'dark';
+      document.documentElement.setAttribute('data-theme', savedTheme);
+    } catch(e) {}
+  </script>
+
+  <title>Reto Integrador: Funciones y Relaciones</title>
+</head>
+<body>
+  <div class="max-w-4xl mx-auto space-y-4">
+    <div class="card-box p-4 sm:p-5">
+      <div class="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-gray-800/80 mb-4">
+        <div>
+          <h2 class="text-base sm:text-lg font-bold flex items-center gap-2 text-highlight">
+            <i class="fas fa-trophy text-amber-400"></i> Reto Integrador: Funciones, Relaciones y Órdenes
+          </h2>
+          <p class="text-xs text-muted">Evalúa tus conocimientos en biyectividad, relaciones de equivalencia, particiones y diagramas de Hasse</p>
+        </div>
+        <div class="flex items-center gap-2">
+          <span id="quiz-score" class="px-3 py-1 rounded-full text-xs font-mono font-bold bg-teal-500/20 text-teal-400 border border-teal-500/30">
+            Puntaje: 0 / 5
+          </span>
+        </div>
+      </div>
+
+      <div class="space-y-4">
+        <!-- Pregunta 1 -->
+        <div class="subcard-box p-4" id="q-box-1">
+          <div class="text-xs font-bold text-muted uppercase mb-1">Desafío 1 • Función Biyectiva</div>
+          <p class="text-xs sm:text-sm font-semibold text-white mb-2">Una función f: A &rarr; B es <strong>biyectiva</strong> si y solo si:</p>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <button onclick="check(1, 'A', this)" class="q-opt px-3 py-2 rounded-lg bg-gray-800 hover:bg-gray-700 text-xs text-left text-gray-200 transition">A) Es inyectiva y sobreyectiva simultáneamente (tiene inversa f^-1).</button>
+            <button onclick="check(1, 'B', this)" class="q-opt px-3 py-2 rounded-lg bg-gray-800 hover:bg-gray-700 text-xs text-left text-gray-200 transition">B) Su dominio tiene más elementos que su codominio.</button>
+            <button onclick="check(1, 'C', this)" class="q-opt px-3 py-2 rounded-lg bg-gray-800 hover:bg-gray-700 text-xs text-left text-gray-200 transition">C) No tiene ningún punto fijo f(x) = x.</button>
+            <button onclick="check(1, 'D', this)" class="q-opt px-3 py-2 rounded-lg bg-gray-800 hover:bg-gray-700 text-xs text-left text-gray-200 transition">D) Es simétrica y transitiva.</button>
+          </div>
+          <div class="feedback hidden text-xs p-2 rounded-lg mt-2 font-mono"></div>
+        </div>
+
+        <!-- Pregunta 2 -->
+        <div class="subcard-box p-4" id="q-box-2">
+          <div class="text-xs font-bold text-muted uppercase mb-1">Desafío 2 • Relación de Equivalencia</div>
+          <p class="text-xs sm:text-sm font-semibold text-white mb-2">Para que una relación binaria R en un conjunto A sea de <strong>equivalencia</strong>, debe cumplir las siguientes 3 propiedades:</p>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <button onclick="check(2, 'A', this)" class="q-opt px-3 py-2 rounded-lg bg-gray-800 hover:bg-gray-700 text-xs text-left text-gray-200 transition">A) Reflexiva, Simétrica y Transitiva.</button>
+            <button onclick="check(2, 'B', this)" class="q-opt px-3 py-2 rounded-lg bg-gray-800 hover:bg-gray-700 text-xs text-left text-gray-200 transition">B) Reflexiva, Antisimétrica y Transitiva.</button>
+            <button onclick="check(2, 'C', this)" class="q-opt px-3 py-2 rounded-lg bg-gray-800 hover:bg-gray-700 text-xs text-left text-gray-200 transition">C) Simétrica, Antisimétrica y Completa.</button>
+            <button onclick="check(2, 'D', this)" class="q-opt px-3 py-2 rounded-lg bg-gray-800 hover:bg-gray-700 text-xs text-left text-gray-200 transition">D) Inyectiva, Sobreyectiva y Biyectiva.</button>
+          </div>
+          <div class="feedback hidden text-xs p-2 rounded-lg mt-2 font-mono"></div>
+        </div>
+
+        <!-- Pregunta 3 -->
+        <div class="subcard-box p-4" id="q-box-3">
+          <div class="text-xs font-bold text-muted uppercase mb-1">Desafío 3 • Particiones del Conjunto</div>
+          <p class="text-xs sm:text-sm font-semibold text-white mb-2">Toda relación de equivalencia sobre un conjunto A induce directamente:</p>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <button onclick="check(3, 'A', this)" class="q-opt px-3 py-2 rounded-lg bg-gray-800 hover:bg-gray-700 text-xs text-left text-gray-200 transition">A) Una partición de A en clases disjuntas no vacías.</button>
+            <button onclick="check(3, 'B', this)" class="q-opt px-3 py-2 rounded-lg bg-gray-800 hover:bg-gray-700 text-xs text-left text-gray-200 transition">B) Un árbol binario de búsqueda balanceado.</button>
+            <button onclick="check(3, 'C', this)" class="q-opt px-3 py-2 rounded-lg bg-gray-800 hover:bg-gray-700 text-xs text-left text-gray-200 transition">C) Un orden estricto sin elementos incomparables.</button>
+            <button onclick="check(3, 'D', this)" class="q-opt px-3 py-2 rounded-lg bg-gray-800 hover:bg-gray-700 text-xs text-left text-gray-200 transition">D) Un conjunto vacío.</button>
+          </div>
+          <div class="feedback hidden text-xs p-2 rounded-lg mt-2 font-mono"></div>
+        </div>
+
+        <!-- Pregunta 4 -->
+        <div class="subcard-box p-4" id="q-box-4">
+          <div class="text-xs font-bold text-muted uppercase mb-1">Desafío 4 • Composición de Funciones</div>
+          <p class="text-xs sm:text-sm font-semibold text-white mb-2">Si <code>f(x) = x + 3</code> y <code>g(x) = 2x</code>, ¿cuánto vale <code>(g ∘ f)(4)</code>?</p>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <button onclick="check(4, 14, this)" class="q-opt px-3 py-2 rounded-lg bg-gray-800 hover:bg-gray-700 text-xs text-left text-gray-200 transition">A) 14</button>
+            <button onclick="check(4, 11, this)" class="q-opt px-3 py-2 rounded-lg bg-gray-800 hover:bg-gray-700 text-xs text-left text-gray-200 transition">B) 11</button>
+            <button onclick="check(4, 8, this)" class="q-opt px-3 py-2 rounded-lg bg-gray-800 hover:bg-gray-700 text-xs text-left text-gray-200 transition">C) 8</button>
+            <button onclick="check(4, 24, this)" class="q-opt px-3 py-2 rounded-lg bg-gray-800 hover:bg-gray-700 text-xs text-left text-gray-200 transition">D) 24</button>
+          </div>
+          <div class="feedback hidden text-xs p-2 rounded-lg mt-2 font-mono"></div>
+        </div>
+
+        <!-- Pregunta 5 -->
+        <div class="subcard-box p-4" id="q-box-5">
+          <div class="text-xs font-bold text-muted uppercase mb-1">Desafío 5 • Diagramas de Hasse y Órdenes Parciales</div>
+          <p class="text-xs sm:text-sm font-semibold text-white mb-2">En un diagrama de Hasse para un orden parcial (Poset):</p>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <button onclick="check(5, 'A', this)" class="q-opt px-3 py-2 rounded-lg bg-gray-800 hover:bg-gray-700 text-xs text-left text-gray-200 transition">A) Se omiten bucles reflexivos y aristas transitivas para mostrar solo la cobertura directa.</button>
+            <button onclick="check(5, 'B', this)" class="q-opt px-3 py-2 rounded-lg bg-gray-800 hover:bg-gray-700 text-xs text-left text-gray-200 transition">B) Todos los pares de vértices deben estar conectados obligatoriamente.</button>
+            <button onclick="check(5, 'C', this)" class="q-opt px-3 py-2 rounded-lg bg-gray-800 hover:bg-gray-700 text-xs text-left text-gray-200 transition">C) No pueden existir elementos incomparables.</button>
+            <button onclick="check(5, 'D', this)" class="q-opt px-3 py-2 rounded-lg bg-gray-800 hover:bg-gray-700 text-xs text-left text-gray-200 transition">D) Las flechas siempre apuntan hacia abajo.</button>
+          </div>
+          <div class="feedback hidden text-xs p-2 rounded-lg mt-2 font-mono"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const answers = {
+      1: { correct: 'A', exp: "Una función es biyectiva si y solo si es inyectiva (1-a-1) y sobreyectiva a la vez, lo que garantiza la existencia de su función inversa f^-1." },
+      2: { correct: 'A', exp: "La tríada que define una relación de equivalencia es: reflexividad, simetría y transitividad." },
+      3: { correct: 'A', exp: "Teorema fundamental: las clases de equivalencia [x] forman una partición exacta del conjunto A." },
+      4: { correct: 14, exp: "(g ∘ f)(4) = g(f(4)) = g(4 + 3) = g(7) = 2(7) = 14." },
+      5: { correct: 'A', exp: "El diagrama de Hasse simplifica la visualización omitiendo bucles reflexivos (x ≤ x) y aristas transitivas (x ≤ y ≤ z ⇒ x ≤ z)." }
+    };
+
+    let answered = {};
+    let score = 0;
+
+    function check(qId, userAns, btn) {
+      if (answered[qId]) return;
+      answered[qId] = true;
+
+      const qBox = document.getElementById(`q-box-${qId}`);
+      const fb = qBox.querySelector('.feedback');
+      const isCorrect = userAns === answers[qId].correct;
+
+      if (isCorrect) {
+        score++;
+        btn.classList.remove('bg-gray-800');
+        btn.classList.add('bg-emerald-600', 'text-white');
+        fb.classList.remove('hidden');
+        fb.classList.add('bg-emerald-500/10', 'text-emerald-400', 'border', 'border-emerald-500/30');
+        fb.innerHTML = `✅ ¡Correcto! ${answers[qId].exp}`;
+      } else {
+        btn.classList.remove('bg-gray-800');
+        btn.classList.add('bg-rose-600', 'text-white');
+        fb.classList.remove('hidden');
+        fb.classList.add('bg-rose-500/10', 'text-rose-400', 'border', 'border-rose-500/30');
+        fb.innerHTML = `❌ Incorrecto. Opción correcta: ${answers[qId].correct}. ${answers[qId].exp}`;
+      }
+
+      document.getElementById('quiz-score').textContent = `Puntaje: ${score} / 5`;
+    }
+  </script>
+</body>
+</html>

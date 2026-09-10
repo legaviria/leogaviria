@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      background-color: #0b0e14;
+      color: #e2e8f0;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      margin: 0;
+      padding: 12px;
+      transition: background-color 0.2s, color 0.2s;
+    }
+    [data-theme="light"] body { background-color: #ffffff; color: #0f172a; }
+    [data-theme="light"] .card-box { background-color: #f8fafc !important; border-color: #e2e8f0 !important; color: #0f172a !important; }
+    [data-theme="light"] .subcard-box { background-color: #ffffff !important; border-color: #cbd5e1 !important; color: #1e293b !important; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+    [data-theme="light"] .text-muted { color: #64748b !important; }
+    [data-theme="light"] .text-highlight { color: #0f766e !important; }
+    [data-theme="light"] input, [data-theme="light"] select { background-color: #ffffff !important; border-color: #cbd5e1 !important; color: #0f172a !important; }
+    .card-box { background-color: #121622; border: 1px solid #1f293d; border-radius: 12px; }
+    .subcard-box { background-color: #090d14; border: 1px solid #1a2233; border-radius: 8px; }
+    .text-muted { color: #94a3b8; }
+    .text-highlight { color: #2dd4bf; }
+  </style>
+  <script>
+    window.addEventListener('message', (event) => {
+      if (event.data && event.data.type === 'THEME_CHANGE') {
+        document.documentElement.setAttribute('data-theme', event.data.theme);
+      }
+    });
+    try {
+      const savedTheme = localStorage.getItem('leogaviria_theme') || 'dark';
+      document.documentElement.setAttribute('data-theme', savedTheme);
+    } catch(e) {}
+  </script>
+
+  <title>Fibonacci y Triángulo de Pascal Interactivo</title>
+</head>
+<body>
+  <div class="max-w-4xl mx-auto space-y-4">
+    <div class="card-box p-4 sm:p-5">
+      <div class="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-gray-800/80 mb-4">
+        <div>
+          <h2 class="text-base sm:text-lg font-bold flex items-center gap-2 text-highlight">
+            <i class="fas fa-network-wired"></i> Fibonacci y Triángulo de Pascal
+          </h2>
+          <p class="text-xs text-muted">Construcción paso a paso y la sorprendente suma en diagonales poco profundas</p>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="text-xs font-mono text-muted">Filas:</span>
+          <input type="range" id="pascal-rows" min="4" max="8" value="6" oninput="renderPascal()" class="w-24 accent-teal-500 cursor-pointer">
+          <span id="rows-lbl" class="text-xs font-mono text-teal-400 font-bold">6</span>
+        </div>
+      </div>
+
+      <!-- Triángulo de Pascal Visual -->
+      <div class="subcard-box p-4 overflow-x-auto text-center mb-4">
+        <div id="pascal-container" class="inline-block min-w-[340px] space-y-1.5 font-mono"></div>
+      </div>
+
+      <!-- Relación con Fibonacci -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div class="subcard-box p-3 sm:p-4">
+          <h4 class="text-xs font-bold text-sky-400 uppercase font-mono mb-1.5 flex items-center gap-1.5">
+            <i class="fas fa-square-root-variable"></i> Regla de Pascal: C(n, k)
+          </h4>
+          <p class="text-xs text-gray-300 leading-relaxed font-mono">
+            C(n, k) = C(n-1, k-1) + C(n-1, k)<br>
+            Cada número es la suma de los dos números situados directamente arriba de él.
+          </p>
+        </div>
+
+        <div class="subcard-box p-3 sm:p-4">
+          <h4 class="text-xs font-bold text-amber-400 uppercase font-mono mb-1.5 flex items-center gap-1.5">
+            <i class="fas fa-chart-line"></i> Conexión con Fibonacci:
+          </h4>
+          <p class="text-xs text-gray-300 leading-relaxed">
+            Las <strong>diagonales tenues</strong> del triángulo de Pascal suman exactamente los términos de Fibonacci:
+            <span class="font-mono text-emerald-400 block mt-1">1, 1, 2, 3, 5, 8, 13, 21...</span>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function renderPascal() {
+      const rows = parseInt(document.getElementById('pascal-rows').value);
+      document.getElementById('rows-lbl').textContent = rows;
+      const cont = document.getElementById('pascal-container');
+      cont.innerHTML = '';
+
+      let triangle = [];
+      for (let i = 0; i < rows; i++) {
+        triangle[i] = new Array(i + 1);
+        for (let j = 0; j <= i; j++) {
+          if (j === 0 || j === i) {
+            triangle[i][j] = 1;
+          } else {
+            triangle[i][j] = triangle[i - 1][j - 1] + triangle[i - 1][j];
+          }
+        }
+      }
+
+      for (let i = 0; i < rows; i++) {
+        const rowDiv = document.createElement('div');
+        rowDiv.className = 'flex justify-center gap-1.5 sm:gap-2';
+        for (let j = 0; j <= i; j++) {
+          const val = triangle[i][j];
+          const cell = document.createElement('span');
+          cell.className = 'w-7 sm:w-9 h-7 sm:h-8 rounded-lg bg-[#141b29] border border-gray-700 hover:border-teal-400 text-xs sm:text-sm font-bold text-teal-300 flex items-center justify-center transition cursor-pointer';
+          cell.title = `Fila ${i}, Columna ${j} = ${val}`;
+          cell.textContent = val;
+          rowDiv.appendChild(cell);
+        }
+        cont.appendChild(rowDiv);
+      }
+    }
+
+    renderPascal();
+  </script>
+</body>
+</html>

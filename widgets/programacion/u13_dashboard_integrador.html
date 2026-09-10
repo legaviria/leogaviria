@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard de Análisis de Datos Integrador</title>
+  <style>
+    :root {
+      --bg: #0e0e11; --card: #141923; --border: #232d42; --text: #fff;
+      --muted: #94a3b8; --sky: #38bdf8; --green: #10b981;
+    }
+    body.theme-light {
+      --bg: #f8fafc; --card: #ffffff; --border: #e2e8f0; --text: #0f172a;
+      --muted: #64748b; --sky: #0284c7; --green: #059669;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { background: var(--bg); color: var(--text); padding: 14px; display: flex; justify-content: center; }
+    .container { width: 100%; max-width: 680px; background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 16px; }
+    .header { text-align: center; margin-bottom: 12px; }
+    .header h3 { font-size: 1.1rem; color: #a855f7; margin-bottom: 4px; }
+    .kpis { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 12px; }
+    .kcard { background: #080b10; border: 1px solid var(--border); border-radius: 8px; padding: 10px; text-align: center; }
+    .kval { font-family: monospace; font-size: 1.2rem; font-weight: bold; color: #4ade80; }
+    .klbl { font-size: 0.7rem; color: var(--muted); text-transform: uppercase; }
+    .chart-panel { background: #080b10; border: 1px solid var(--border); border-radius: 8px; padding: 10px; font-size: 0.78rem; font-family: monospace; color: #cbd5e1; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h3>📊 Dashboard Integrador (Pandas + NumPy + Matplotlib)</h3>
+      <p style="font-size:0.75rem; color:var(--muted)">Pipeline completo: Limpieza con Pandas ➔ Cálculo matricial con NumPy ➔ Visualización con Matplotlib.</p>
+    </div>
+
+    <div class="kpis">
+      <div class="kcard">
+        <div class="kval">$124,500</div>
+        <div class="klbl">Ingresos Totales (sum)</div>
+      </div>
+      <div class="kcard">
+        <div class="kval">1,420</div>
+        <div class="klbl">Unidades Vendidas (count)</div>
+      </div>
+      <div class="kcard">
+        <div class="kval">28.4%</div>
+        <div class="klbl">Margen Promedio (mean)</div>
+      </div>
+    </div>
+
+    <div class="chart-panel">
+      <div style="color:#a855f7; font-weight:bold; margin-bottom:4px;">Pipeline de Transformación:</div>
+      <div>1. df = pd.read_csv("ventas_2024.csv")</div>
+      <div>2. ingresos_np = np.array(df['precio']) * np.array(df['cantidad'])</div>
+      <div>3. fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10, 4))</div>
+      <div>4. ax1.bar(df['categoria'].unique(), df.groupby('categoria')['ventas'].sum())</div>
+      <div>5. ax2.plot(df['mes'], df['ingresos'], color='tab:purple')</div>
+    </div>
+  </div>
+</body>
+</html>

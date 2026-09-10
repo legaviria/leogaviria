@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simulador de Expresiones Booleanas</title>
+  <style>
+    :root {
+      --bg: #0e0e11; --card: #141923; --border: #232d42; --text: #fff;
+      --muted: #94a3b8; --sky: #38bdf8; --green: #10b981; --red: #ef4444;
+    }
+    body.theme-light {
+      --bg: #f8fafc; --card: #ffffff; --border: #e2e8f0; --text: #0f172a;
+      --muted: #64748b; --sky: #0284c7; --green: #059669; --red: #dc2626;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { background: var(--bg); color: var(--text); padding: 14px; display: flex; justify-content: center; }
+    .container { width: 100%; max-width: 660px; background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 16px; }
+    .header { text-align: center; margin-bottom: 14px; }
+    .header h3 { font-size: 1.1rem; color: #fbbf24; margin-bottom: 4px; }
+    .controls-grid { display: grid; grid-template-columns: 1fr auto 1fr; gap: 8px; align-items: center; margin-bottom: 14px; background: #080b10; padding: 12px; border-radius: 8px; border: 1px solid var(--border); }
+    select, input { padding: 8px; background: #141923; border: 1px solid var(--border); border-radius: 6px; color: var(--text); font-family: monospace; font-size: 0.85rem; outline: none; }
+    select:focus, input:focus { border-color: #fbbf24; }
+    .eval-box { background: rgba(0,0,0,0.3); border: 1px solid var(--border); border-radius: 8px; padding: 12px; text-align: center; margin-bottom: 14px; }
+    .eval-expr { font-family: monospace; font-size: 1rem; color: #a5f3fc; margin-bottom: 8px; }
+    .eval-res { font-size: 1.3rem; font-weight: bold; font-family: monospace; }
+    .res-true { color: #4ade80; text-shadow: 0 0 10px rgba(74, 222, 128, 0.4); }
+    .res-false { color: #f87171; text-shadow: 0 0 10px rgba(248, 113, 113, 0.4); }
+    .ttable { width: 100%; border-collapse: collapse; font-family: monospace; font-size: 0.78rem; text-align: center; }
+    .ttable th, .ttable td { padding: 6px 8px; border: 1px solid var(--border); }
+    .ttable th { background: rgba(255,255,255,0.04); color: var(--muted); }
+    .ttable tr.highlight { background: rgba(251, 191, 36, 0.15); font-weight: bold; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h3>⚖️ Simulador de Operadores Relacionales y Lógicos</h3>
+      <p style="font-size:0.75rem; color:var(--muted)">Compara valores y encadena operadores relacionales (==, !=, &lt;, &gt;) y lógicos (and, or, not).</p>
+    </div>
+
+    <div class="controls-grid">
+      <input type="number" id="valA" value="10" oninput="calc()">
+      <select id="relOp" onchange="calc()">
+        <option value="==">== (Igual)</option>
+        <option value="!=">!= (Distinto)</option>
+        <option value=">">&gt; (Mayor)</option>
+        <option value="<">&lt; (Menor)</option>
+        <option value=">=">&gt;= (Mayor o igual)</option>
+        <option value="<=">&lt;= (Menor o igual)</option>
+      </select>
+      <input type="number" id="valB" value="5" oninput="calc()">
+    </div>
+
+    <div class="eval-box">
+      <div class="eval-expr" id="exprDisplay">10 &gt; 5</div>
+      <div class="eval-res" id="resDisplay"><span class="res-true">True</span></div>
+    </div>
+
+    <div style="font-size: 0.75rem; font-weight: bold; color: var(--muted); margin-bottom: 6px; text-transform: uppercase;">
+      Tabla de Verdad: Operadores Lógicos (and / or)
+    </div>
+    <table class="ttable">
+      <thead>
+        <tr>
+          <th>P</th>
+          <th>Q</th>
+          <th>P and Q</th>
+          <th>P or Q</th>
+          <th>not P</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>True</td><td>True</td><td class="res-true">True</td><td class="res-true">True</td><td class="res-false">False</td></tr>
+        <tr><td>True</td><td>False</td><td class="res-false">False</td><td class="res-true">True</td><td class="res-false">False</td></tr>
+        <tr><td>False</td><td>True</td><td class="res-false">False</td><td class="res-true">True</td><td class="res-true">True</td></tr>
+        <tr><td>False</td><td>False</td><td class="res-false">False</td><td class="res-false">False</td><td class="res-true">True</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <script>
+    function calc() {
+      const a = parseFloat(document.getElementById('valA').value);
+      const b = parseFloat(document.getElementById('valB').value);
+      const op = document.getElementById('relOp').value;
+      let r = false;
+      if (op === '==') r = a === b;
+      else if (op === '!=') r = a !== b;
+      else if (op === '>') r = a > b;
+      else if (op === '<') r = a < b;
+      else if (op === '>=') r = a >= b;
+      else if (op === '<=') r = a <= b;
+
+      document.getElementById('exprDisplay').textContent = `${a} ${op} ${b}`;
+      const resEl = document.getElementById('resDisplay');
+      if (r) {
+        resEl.innerHTML = '<span class="res-true">True</span>';
+      } else {
+        resEl.innerHTML = '<span class="res-false">False</span>';
+      }
+    }
+    calc();
+  </script>
+</body>
+</html>

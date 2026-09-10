@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>El Ciclo de Vida de Machine Learning</title>
+  <style>
+    :root {
+      --bg: #0e0e11; --card: #141923; --border: #232d42; --text: #fff;
+      --muted: #94a3b8; --sky: #38bdf8; --purple: #a855f7; --green: #10b981;
+    }
+    body.theme-light {
+      --bg: #f8fafc; --card: #ffffff; --border: #e2e8f0; --text: #0f172a;
+      --muted: #64748b; --sky: #0284c7; --purple: #9333ea; --green: #059669;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { background: var(--bg); color: var(--text); padding: 14px; display: flex; justify-content: center; }
+    .container { width: 100%; max-width: 680px; background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 16px; }
+    .header { text-align: center; margin-bottom: 12px; }
+    .header h3 { font-size: 1.1rem; color: #a855f7; margin-bottom: 4px; }
+    .cycle-track { display: flex; justify-content: space-between; gap: 4px; margin-bottom: 14px; overflow-x: auto; padding: 8px 4px; }
+    .stage-node { flex: 1; min-width: 90px; background: #080b10; border: 1px solid var(--border); border-radius: 8px; padding: 8px 4px; text-align: center; cursor: pointer; transition: all 0.2s; }
+    .stage-node.active { border-color: var(--purple); background: rgba(168, 85, 247, 0.15); transform: translateY(-2px); }
+    .stage-node h6 { font-size: 0.72rem; color: var(--sky); margin-bottom: 2px; }
+    .stage-node span { font-size: 0.65rem; color: var(--muted); }
+    .detail-card { background: #080b10; border: 1px solid var(--border); border-radius: 8px; padding: 12px; min-height: 90px; }
+    .detail-title { font-size: 0.85rem; font-weight: bold; color: #fde047; margin-bottom: 6px; }
+    .detail-desc { font-size: 0.78rem; color: #cbd5e1; line-height: 1.4; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h3>🤖 El Ciclo de Vida de Machine Learning (ML Pipeline)</h3>
+      <p style="font-size:0.75rem; color:var(--muted)">Explora cada una de las 5 fases esenciales desde los datos crudos hasta el modelo en producción.</p>
+    </div>
+
+    <div class="cycle-track">
+      <div class="stage-node active" onclick="setStage(0)"><h6>1. Datos</h6><span>Recolección</span></div>
+      <div class="stage-node" onclick="setStage(1)"><h6>2. Preparación</h6><span>Limpieza &amp; Split</span></div>
+      <div class="stage-node" onclick="setStage(2)"><h6>3. Entrenamiento</h6><span>model.fit()</span></div>
+      <div class="stage-node" onclick="setStage(3)"><h6>4. Predicción</h6><span>model.predict()</span></div>
+      <div class="stage-node" onclick="setStage(4)"><h6>5. Evaluación</h6><span>Métricas &amp; Ajuste</span></div>
+    </div>
+
+    <div class="detail-card">
+      <div class="detail-title" id="stTitle">Fase 1: Recolección y Carga de Datos</div>
+      <div class="detail-desc" id="stDesc">Se recopilan fuentes de datos históricas (archivos CSV, bases de datos SQL, sensores, APIs). Los datos deben ser representativos y balanceados para que el modelo aprenda patrones reales.</div>
+    </div>
+  </div>
+
+  <script>
+    const stages = [
+      { t: "Fase 1: Recolección y Carga de Datos", d: "Se recopilan fuentes de datos históricas (archivos CSV, bases de datos SQL, sensores, APIs). Los datos deben ser representativos y balanceados para que el modelo aprenda patrones reales." },
+      { t: "Fase 2: Preparación y División (Train / Test)", d: "Limpieza de valores nulos, escalado de variables numéricas y codificación de categorías. Se divide en conjunto de entrenamiento (80%) para aprender y prueba (20%) para evaluar objetivamente." },
+      { t: "Fase 3: Entrenamiento del Modelo (model.fit)", d: "El algoritmo matemático (ej. Regresión, Árboles, SVM) ajusta sus pesos internos minimizando la función de pérdida sobre el conjunto de entrenamiento." },
+      { t: "Fase 4: Inferencia y Predicción (model.predict)", d: "El modelo entrenado recibe nuevas observaciones nunca antes vistas y genera una estimación o clasificación probabilística." },
+      { t: "Fase 5: Evaluación y Métricas de Rendimiento", d: "Se cuantifica el error con métricas reales (Matriz de Confusión, Accuracy, Precision, Recall, MSE). Si el rendimiento no es óptimo, se ajustan hiperparámetros o se agregan más datos." }
+    ];
+
+    function setStage(idx) {
+      document.querySelectorAll('.stage-node').forEach((el, i) => el.classList.toggle('active', i === idx));
+      document.getElementById('stTitle').textContent = stages[idx].t;
+      document.getElementById('stDesc').textContent = stages[idx].d;
+    }
+  </script>
+</body>
+</html>

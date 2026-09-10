@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      background-color: #0b0e14;
+      color: #e2e8f0;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      margin: 0;
+      padding: 12px;
+      transition: background-color 0.2s, color 0.2s;
+    }
+    [data-theme="light"] body { background-color: #ffffff; color: #0f172a; }
+    [data-theme="light"] .card-box { background-color: #f8fafc !important; border-color: #e2e8f0 !important; color: #0f172a !important; }
+    [data-theme="light"] .subcard-box { background-color: #ffffff !important; border-color: #cbd5e1 !important; color: #1e293b !important; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+    [data-theme="light"] .text-muted { color: #64748b !important; }
+    [data-theme="light"] .text-highlight { color: #0f766e !important; }
+    [data-theme="light"] input, [data-theme="light"] select { background-color: #ffffff !important; border-color: #cbd5e1 !important; color: #0f172a !important; }
+    .card-box { background-color: #121622; border: 1px solid #1f293d; border-radius: 12px; }
+    .subcard-box { background-color: #090d14; border: 1px solid #1a2233; border-radius: 8px; }
+    .text-muted { color: #94a3b8; }
+    .text-highlight { color: #2dd4bf; }
+  </style>
+  <script>
+    window.addEventListener('message', (event) => {
+      if (event.data && event.data.type === 'THEME_CHANGE') {
+        document.documentElement.setAttribute('data-theme', event.data.theme);
+      }
+    });
+    try {
+      const savedTheme = localStorage.getItem('leogaviria_theme') || 'dark';
+      document.documentElement.setAttribute('data-theme', savedTheme);
+    } catch(e) {}
+  </script>
+
+  <title>Permutaciones con Repetición (Anagramas)</title>
+</head>
+<body>
+  <div class="max-w-4xl mx-auto space-y-4">
+    <div class="card-box p-4 sm:p-5">
+      <div class="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-gray-800/80 mb-4">
+        <div>
+          <h2 class="text-base sm:text-lg font-bold flex items-center gap-2 text-highlight">
+            <i class="fas fa-repeat"></i> Permutaciones con Elementos Repetidos (Coeficiente Multinomial)
+          </h2>
+          <p class="text-xs text-muted">Fórmula: PR = n! / (n₁! · n₂! · ... · n_k!) donde los elementos idénticos no generan arreglos nuevos</p>
+        </div>
+      </div>
+
+      <div class="flex flex-wrap items-center gap-3 mb-4">
+        <label class="text-xs font-semibold text-muted">Palabra / Cadena a Analizar:</label>
+        <input type="text" id="word-input" value="BANANA" maxlength="10" oninput="calcRepPerm()" class="px-3 py-1.5 rounded bg-[#090d14] border border-gray-700 text-teal-400 font-mono font-bold uppercase text-xs">
+        <div class="flex gap-1.5">
+          <button onclick="setWord('CASA')" class="px-2 py-1 text-[11px] rounded bg-gray-800 hover:bg-gray-700 text-gray-300 font-mono">CASA</button>
+          <button onclick="setWord('BANANA')" class="px-2 py-1 text-[11px] rounded bg-gray-800 hover:bg-gray-700 text-gray-300 font-mono">BANANA</button>
+          <button onclick="setWord('MATEMATICA')" class="px-2 py-1 text-[11px] rounded bg-gray-800 hover:bg-gray-700 text-gray-300 font-mono">MATEMATICA</button>
+        </div>
+      </div>
+
+      <!-- Frecuencias de Letras -->
+      <div class="subcard-box p-3 sm:p-4 mb-4">
+        <h4 class="text-xs font-bold text-muted uppercase font-mono mb-2">Conteo de Letras Repetidas:</h4>
+        <div id="freq-badges" class="flex flex-wrap gap-2 font-mono text-xs"></div>
+      </div>
+
+      <!-- Desglose Matemático -->
+      <div class="subcard-box p-4 text-center">
+        <div id="rep-formula-str" class="text-xs font-mono text-gray-300 mb-1"></div>
+        <div id="rep-result-str" class="text-2xl font-black text-teal-300 font-mono">---</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function setWord(w) {
+      document.getElementById('word-input').value = w;
+      calcRepPerm();
+    }
+
+    function factorial(n) {
+      let f = 1;
+      for (let i = 2; i <= n; i++) f *= i;
+      return f;
+    }
+
+    function calcRepPerm() {
+      const str = document.getElementById('word-input').value.trim().toUpperCase();
+      if (!str) return;
+
+      const n = str.length;
+      let freqs = {};
+      for (let ch of str) freqs[ch] = (freqs[ch] || 0) + 1;
+
+      const fb = document.getElementById('freq-badges');
+      fb.innerHTML = '';
+      let den = 1;
+      let denParts = [];
+
+      Object.keys(freqs).forEach(k => {
+        const count = freqs[k];
+        den *= factorial(count);
+        denParts.push(`${count}! (${k})`);
+
+        const badge = document.createElement('span');
+        badge.className = 'px-2.5 py-1 rounded bg-[#10141d] border border-gray-700 text-gray-300';
+        badge.innerHTML = `Letra <strong class="text-teal-400">${k}</strong>: ${count} vez${count > 1 ? 'es' : ''}`;
+        fb.appendChild(badge);
+      });
+
+      const num = factorial(n);
+      const total = Math.round(num / den);
+
+      document.getElementById('rep-formula-str').innerHTML = `PR = ${n}! / (${denParts.join(' &times; ')}) = ${num} / ${den}`;
+      document.getElementById('rep-result-str').innerHTML = `Total de Anagramas: <strong class="text-teal-400">${total}</strong> palabras distintas`;
+    }
+
+    calcRepPerm();
+  </script>
+</body>
+</html>

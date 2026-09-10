@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      background-color: #0b0e14;
+      color: #e2e8f0;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      margin: 0;
+      padding: 12px;
+      transition: background-color 0.2s, color 0.2s;
+    }
+    [data-theme="light"] body { background-color: #ffffff; color: #0f172a; }
+    [data-theme="light"] .card-box { background-color: #f8fafc !important; border-color: #e2e8f0 !important; color: #0f172a !important; }
+    [data-theme="light"] .subcard-box { background-color: #ffffff !important; border-color: #cbd5e1 !important; color: #1e293b !important; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+    [data-theme="light"] .text-muted { color: #64748b !important; }
+    [data-theme="light"] .text-highlight { color: #0f766e !important; }
+    [data-theme="light"] input, [data-theme="light"] select { background-color: #ffffff !important; border-color: #cbd5e1 !important; color: #0f172a !important; }
+    .card-box { background-color: #121622; border: 1px solid #1f293d; border-radius: 12px; }
+    .subcard-box { background-color: #090d14; border: 1px solid #1a2233; border-radius: 8px; }
+    .text-muted { color: #94a3b8; }
+    .text-highlight { color: #2dd4bf; }
+  </style>
+  <script>
+    window.addEventListener('message', (event) => {
+      if (event.data && event.data.type === 'THEME_CHANGE') {
+        document.documentElement.setAttribute('data-theme', event.data.theme);
+      }
+    });
+    try {
+      const savedTheme = localStorage.getItem('leogaviria_theme') || 'dark';
+      document.documentElement.setAttribute('data-theme', savedTheme);
+    } catch(e) {}
+  </script>
+
+  <title>Generador Interactivo de Sumas y Recurrencias</title>
+</head>
+<body>
+  <div class="max-w-4xl mx-auto space-y-4">
+    <div class="card-box p-4 sm:p-5">
+      <div class="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-gray-800/80 mb-4">
+        <div>
+          <h2 class="text-base sm:text-lg font-bold flex items-center gap-2 text-highlight">
+            <i class="fas fa-chart-simple"></i> Visualizador de Sumas y Recurrencias
+          </h2>
+          <p class="text-xs text-muted">Generación progresiva de términos recursivos a_n = c · a_{n-1} + f(n)</p>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
+        <div>
+          <label class="text-xs font-semibold text-muted block mb-1">Tipo de Recurrencia:</label>
+          <select id="rec-type" onchange="calcRecurrence()" class="w-full px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-[#1a2234] border border-gray-700 text-white">
+            <option value="linear" selected>a_n = a_{n-1} + 3 (Aritmética)</option>
+            <option value="geom">a_n = 2 · a_{n-1} (Geométrica)</option>
+            <option value="sum_n">a_n = a_{n-1} + n (Suma de Gauss)</option>
+            <option value="fib">a_n = a_{n-1} + a_{n-2} (Fibonacci)</option>
+          </select>
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-muted block mb-1">Término Inicial (a_0 ó a_1):</label>
+          <input type="number" id="rec-a0" value="1" oninput="calcRecurrence()" class="w-full px-3 py-1.5 rounded-lg text-xs font-mono bg-[#090d14] border border-gray-700 text-emerald-400 font-bold">
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-muted block mb-1">Cantidad de Términos (n):</label>
+          <input type="range" id="rec-n" min="4" max="12" value="8" oninput="calcRecurrence()" class="w-full mt-2 accent-teal-500 cursor-pointer">
+          <div class="text-[10px] text-muted text-right font-mono" id="n-val-lbl">n = 8</div>
+        </div>
+      </div>
+
+      <!-- Gráfica de Barras Progresivas -->
+      <div class="subcard-box p-4 mb-4">
+        <h4 class="text-xs font-bold text-muted uppercase tracking-wider mb-2">Crecimiento de los Términos</h4>
+        <div id="bars-container" class="flex items-end gap-2 h-36 pt-2 border-b border-gray-700 overflow-x-auto"></div>
+      </div>
+
+      <!-- Tabla de Valores y Fórmula Cerrada -->
+      <div class="subcard-box p-3 sm:p-4">
+        <div class="text-xs font-bold text-teal-400 uppercase font-mono mb-2" id="formula-closed">Fórmula Cerrada: ---</div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-xs text-left">
+            <thead>
+              <tr class="text-muted border-b border-gray-800">
+                <th class="py-1 px-2 font-mono">Índice (n)</th>
+                <th class="py-1 px-2 font-mono">Cálculo Recursivo</th>
+                <th class="py-1 px-2 font-mono text-emerald-400">Valor a_n</th>
+              </tr>
+            </thead>
+            <tbody id="rec-tbody" class="divide-y divide-gray-800/60 font-mono"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function calcRecurrence() {
+      const type = document.getElementById('rec-type').value;
+      const a0 = parseInt(document.getElementById('rec-a0').value) || 1;
+      const nMax = parseInt(document.getElementById('rec-n').value);
+      document.getElementById('n-val-lbl').textContent = `n = ${nMax}`;
+
+      let terms = [];
+      let formDesc = '';
+
+      if (type === 'linear') {
+        formDesc = `a_n = ${a0} + 3n (Crecimiento Lineal O(n))`;
+        for (let i = 0; i <= nMax; i++) {
+          const v = a0 + 3 * i;
+          const calcStr = i === 0 ? `${a0}` : `a_${i-1} + 3 = ${terms[i-1].val} + 3`;
+          terms.push({ n: i, calc: calcStr, val: v });
+        }
+      } else if (type === 'geom') {
+        formDesc = `a_n = ${a0} · 2^n (Crecimiento Exponencial O(2^n))`;
+        for (let i = 0; i <= nMax; i++) {
+          const v = a0 * Math.pow(2, i);
+          const calcStr = i === 0 ? `${a0}` : `2 · a_${i-1} = 2 · ${terms[i-1].val}`;
+          terms.push({ n: i, calc: calcStr, val: v });
+        }
+      } else if (type === 'sum_n') {
+        formDesc = `a_n = a_0 + n(n+1)/2 (Crecimiento Cuadrático O(n^2))`;
+        let acc = a0;
+        terms.push({ n: 0, calc: `${a0}`, val: a0 });
+        for (let i = 1; i <= nMax; i++) {
+          acc += i;
+          terms.push({ n: i, calc: `a_${i-1} + ${i} = ${terms[i-1].val} + ${i}`, val: acc });
+        }
+      } else if (type === 'fib') {
+        formDesc = `a_n = F_n (Sucesión de Fibonacci O(φ^n), φ ≈ 1.618)`;
+        terms.push({ n: 0, calc: '0', val: 0 });
+        terms.push({ n: 1, calc: '1', val: 1 });
+        for (let i = 2; i <= nMax; i++) {
+          const v = terms[i-1].val + terms[i-2].val;
+          terms.push({ n: i, calc: `a_${i-1} + a_${i-2} = ${terms[i-1].val} + ${terms[i-2].val}`, val: v });
+        }
+      }
+
+      document.getElementById('formula-closed').textContent = formDesc;
+
+      // Render barras
+      const barsCont = document.getElementById('bars-container');
+      barsCont.innerHTML = '';
+      const maxVal = Math.max(...terms.map(t => t.val), 1);
+
+      terms.forEach(t => {
+        const heightPct = Math.max(8, Math.min(100, (t.val / maxVal) * 100));
+        const col = document.createElement('div');
+        col.className = 'flex-1 flex flex-col items-center justify-end h-full min-w-[28px]';
+        col.innerHTML = `
+          <span class="text-[9px] font-mono text-muted mb-1">${t.val}</span>
+          <div class="w-full bg-teal-500 hover:bg-teal-400 rounded-t transition-all" style="height: ${heightPct}%;"></div>
+          <span class="text-[10px] font-mono text-gray-400 mt-1">n=${t.n}</span>
+        `;
+        barsCont.appendChild(col);
+      });
+
+      // Render tabla
+      const tbody = document.getElementById('rec-tbody');
+      tbody.innerHTML = '';
+      terms.forEach(t => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td class="py-1 px-2 text-muted font-bold">n = ${t.n}</td>
+          <td class="py-1 px-2 text-gray-300">${t.calc}</td>
+          <td class="py-1 px-2 font-bold text-teal-400">${t.val}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    calcRecurrence();
+  </script>
+</body>
+</html>

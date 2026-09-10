@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ordenar Pasos de Resolución de Problemas</title>
+  <style>
+    * { box-sizing: border-box; }
+    html, body {
+      background-color: #0e0e11 !important;
+      color: #ffffff;
+      margin: 0;
+      padding: 10px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+  </style>
+</head>
+<body>
+<style>
+  .quiz-box {
+    background: #0e0e11;
+    color: #ffffff;
+    padding: 20px;
+    border-radius: 12px;
+    border: 1px solid #1f293d;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    max-width: 580px;
+    margin: 0 auto;
+    user-select: none;
+  }
+  .quiz-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #eab308;
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .quiz-subtitle {
+    font-size: 0.82rem;
+    color: #94a3b8;
+    margin-bottom: 16px;
+  }
+  .sort-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+  .sort-item {
+    background: #181d28;
+    border: 1px solid #232d42;
+    border-radius: 8px;
+    padding: 12px 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: grab;
+    transition: all 0.2s ease;
+  }
+  .sort-item.dragging {
+    opacity: 0.5;
+    border-color: #eab308;
+  }
+  .sort-item:hover {
+    border-color: #eab308;
+    background: #1e2638;
+  }
+  .item-content {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .handle {
+    color: #64748b;
+    font-size: 1.2rem;
+  }
+  .btn-check {
+    background: #eab308;
+    color: #000;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 16px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    cursor: pointer;
+    width: 100%;
+    transition: background 0.2s;
+  }
+  .btn-check:hover { background: #facc15; }
+  .feedback {
+    margin-top: 12px;
+    padding: 10px;
+    border-radius: 6px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    text-align: center;
+    display: none;
+  }
+  .feedback.correct { background: rgba(74, 222, 128, 0.15); color: #4ade80; border: 1px solid #4ade80; }
+  .feedback.incorrect { background: rgba(255, 118, 118, 0.15); color: #ff7676; border: 1px solid #ff7676; }
+</style>
+
+<div class="quiz-box">
+  <div class="quiz-title">
+    Ordena la Secuencia
+  </div>
+  <div class="quiz-subtitle">Arrastra y reordena los bloques para formar la secuencia correcta en la resolución de problemas:</div>
+
+  <div class="sort-list" id="sortable-list">
+    <div class="sort-item" draggable="true" data-id="3">
+      <div class="item-content">
+        <span class="handle">☰</span>
+        <span>Codificación (Traducir a lenguaje real)</span>
+      </div>
+    </div>
+    <div class="sort-item" draggable="true" data-id="1">
+      <div class="item-content">
+        <span class="handle">☰</span>
+        <span>Análisis del Problema (Entradas y Salidas)</span>
+      </div>
+    </div>
+    <div class="sort-item" draggable="true" data-id="4">
+      <div class="item-content">
+        <span class="handle">☰</span>
+        <span>Pruebas y Depuración (Debugging)</span>
+      </div>
+    </div>
+    <div class="sort-item" draggable="true" data-id="2">
+      <div class="item-content">
+        <span class="handle">☰</span>
+        <span>Diseño Algorítmico (Pseudocódigo)</span>
+      </div>
+    </div>
+  </div>
+
+  <button class="btn-check" onclick="checkOrder()">Validar Orden</button>
+  <div class="feedback" id="feedback-order"></div>
+</div>
+
+<script>
+const list = document.getElementById('sortable-list');
+let draggedItem = null;
+
+list.querySelectorAll('.sort-item').forEach(item => {
+  item.addEventListener('dragstart', () => {
+    draggedItem = item;
+    setTimeout(() => item.classList.add('dragging'), 0);
+  });
+  item.addEventListener('dragend', () => {
+    draggedItem = null;
+    item.classList.remove('dragging');
+  });
+});
+
+list.addEventListener('dragover', e => {
+  e.preventDefault();
+  const afterElement = getDragAfterElement(list, e.clientY);
+  if (afterElement == null) {
+    list.appendChild(draggedItem);
+  } else {
+    list.insertBefore(draggedItem, afterElement);
+  }
+});
+
+function getDragAfterElement(container, y) {
+  const draggableElements = [...container.querySelectorAll('.sort-item:not(.dragging)')];
+  return draggableElements.reduce((closest, child) => {
+    const box = child.getBoundingClientRect();
+    const offset = y - box.top - box.height / 2;
+    if (offset < 0 && offset > closest.offset) {
+      return { offset: offset, element: child };
+    } else {
+      return closest;
+    }
+  }, { offset: Number.NEGATIVE_INFINITY }).element;
+}
+
+function checkOrder() {
+  const currentOrder = [...list.querySelectorAll('.sort-item')].map(item => item.dataset.id).join('');
+  const fb = document.getElementById('feedback-order');
+  fb.style.display = 'block';
+  if (currentOrder === '1234') {
+    fb.className = 'feedback correct';
+    fb.innerText = '¡Correcto! El flujo es: Análisis ➔ Diseño ➔ Codificación ➔ Pruebas.';
+  } else {
+    fb.className = 'feedback incorrect';
+    fb.innerText = 'Respuesta incorrecta. Recuerda: Primero analizas las entradas/salidas, luego diseñas la lógica, codificas y al final realizas pruebas.';
+  }
+}
+</script>
+</body>
+</html>

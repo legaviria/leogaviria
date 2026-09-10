@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Símbolos de Diagrama de Flujo</title>
+  <style>
+    * { box-sizing: border-box; }
+    html, body {
+      background-color: #0e0e11 !important;
+      color: #ffffff;
+      margin: 0;
+      padding: 10px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+  </style>
+</head>
+<body>
+<style>
+  .symbols-container {
+    background-color: #0e0e11;
+    color: #ffffff;
+    padding: 14px 16px;
+    border-radius: 12px;
+    border: 1px solid #1f293d;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    user-select: none;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+    max-width: 580px;
+    margin: 0 auto;
+  }
+
+  .symbols-header {
+    text-align: center;
+    margin-bottom: 10px;
+  }
+
+  .symbols-title {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #00c8ff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .symbols-subtitle {
+    font-size: 0.8rem;
+    color: #94a3b8;
+    margin-top: 2px;
+  }
+
+  /* Lista de Tarjetas de Símbolos */
+  .symbols-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .symbol-card {
+    background-color: #181d28;
+    border: 1px solid #232d42;
+    border-radius: 8px;
+    padding: 9px 12px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .symbol-card:hover {
+    transform: translateX(4px);
+    background-color: #1c2332;
+  }
+
+  /* Vista previa visual de la figura */
+  .symbol-preview {
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  /* Figuras personalizadas con CSS */
+  .shape-oval {
+    width: 42px;
+    height: 22px;
+    border: 2px solid #00c8ff;
+    border-radius: 12px;
+    background: rgba(0, 200, 255, 0.1);
+  }
+
+  .shape-parallelogram {
+    width: 38px;
+    height: 22px;
+    border: 2px solid #eab308;
+    transform: skewX(-15deg);
+    background: rgba(234, 179, 8, 0.1);
+    border-radius: 2px;
+  }
+
+  .shape-rectangle {
+    width: 40px;
+    height: 24px;
+    border: 2px solid #c084fc;
+    border-radius: 4px;
+    background: rgba(192, 132, 252, 0.1);
+  }
+
+  .shape-rhombus {
+    width: 26px;
+    height: 26px;
+    border: 2px solid #ff7676;
+    transform: rotate(45deg);
+    background: rgba(255, 118, 118, 0.1);
+    border-radius: 2px;
+  }
+
+  .shape-arrow {
+    width: 36px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .shape-arrow svg {
+    width: 24px;
+    height: 24px;
+    stroke: #4ade80;
+    stroke-width: 2.5;
+  }
+
+  /* Información textual */
+  .symbol-info {
+    flex: 1;
+  }
+
+  .symbol-top {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 2px;
+  }
+
+  .symbol-name {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #ffffff;
+  }
+
+  .symbol-badge {
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 4px;
+    text-transform: uppercase;
+  }
+
+  .symbol-desc {
+    font-size: 0.78rem;
+    color: #94a3b8;
+    line-height: 1.3;
+  }
+
+  /* Colores temáticos por badge/borde */
+  .card-blue { border-left: 3px solid #00c8ff; }
+  .card-blue .symbol-badge { background: rgba(0, 200, 255, 0.15); color: #00c8ff; }
+
+  .card-yellow { border-left: 3px solid #eab308; }
+  .card-yellow .symbol-badge { background: rgba(234, 179, 8, 0.15); color: #eab308; }
+
+  .card-purple { border-left: 3px solid #c084fc; }
+  .card-purple .symbol-badge { background: rgba(192, 132, 252, 0.15); color: #c084fc; }
+
+  .card-red { border-left: 3px solid #ff7676; }
+  .card-red .symbol-badge { background: rgba(255, 118, 118, 0.15); color: #ff7676; }
+
+  .card-green { border-left: 3px solid #4ade80; }
+  .card-green .symbol-badge { background: rgba(74, 222, 128, 0.15); color: #4ade80; }
+
+  code {
+    background: #0f141d;
+    padding: 1px 5px;
+    border-radius: 4px;
+    color: #c084fc;
+    font-family: monospace;
+    font-size: 0.75rem;
+    border: 1px solid #232d42;
+  }
+</style>
+
+<div class="symbols-container">
+  <div class="symbols-header">
+    <div class="symbols-title">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#00c8ff" stroke-width="2.2"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+      Símbolos Diagrama de Flujo
+    </div>
+    <div class="symbols-subtitle">Elementos estándar de los diagramas de flujo</div>
+  </div>
+
+  <div class="symbols-grid">
+    <!-- Óvalo -->
+    <div class="symbol-card card-blue">
+      <div class="symbol-preview">
+        <div class="shape-oval"></div>
+      </div>
+      <div class="symbol-info">
+        <div class="symbol-top">
+          <span class="symbol-name">Óvalo Alargado</span>
+          <span class="symbol-badge">Inicio / Fin</span>
+        </div>
+        <div class="symbol-desc">Marca el punto exacto de entrada o salida del proceso.</div>
+      </div>
+    </div>
+
+    <!-- Paralelogramo -->
+    <div class="symbol-card card-yellow">
+      <div class="symbol-preview">
+        <div class="shape-parallelogram"></div>
+      </div>
+      <div class="symbol-info">
+        <div class="symbol-top">
+          <span class="symbol-name">Paralelogramo</span>
+          <span class="symbol-badge">Entrada / Salida</span>
+        </div>
+        <div class="symbol-desc">Representa la lectura de datos (ingreso) o el resultado mostrado.</div>
+      </div>
+    </div>
+
+    <!-- Rectángulo -->
+    <div class="symbol-card card-purple">
+      <div class="symbol-preview">
+        <div class="shape-rectangle"></div>
+      </div>
+      <div class="symbol-info">
+        <div class="symbol-top">
+          <span class="symbol-name">Rectángulo</span>
+          <span class="symbol-badge">Proceso</span>
+        </div>
+        <div class="symbol-desc">Indica una acción o cálculo matemático (ej. <code>suma = a + b</code>).</div>
+      </div>
+    </div>
+
+    <!-- Rombo -->
+    <div class="symbol-card card-red">
+      <div class="symbol-preview">
+        <div class="shape-rhombus"></div>
+      </div>
+      <div class="symbol-info">
+        <div class="symbol-top">
+          <span class="symbol-name">Rombo</span>
+          <span class="symbol-badge">Decisión</span>
+        </div>
+        <div class="symbol-desc">Evalúa una condición (SI/NO); el camino se divide según la respuesta.</div>
+      </div>
+    </div>
+
+    <!-- Flecha -->
+    <div class="symbol-card card-green">
+      <div class="symbol-preview">
+        <div class="shape-arrow">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </div>
+      </div>
+      <div class="symbol-info">
+        <div class="symbol-top">
+          <span class="symbol-name">Flecha</span>
+          <span class="symbol-badge">Línea de flujo</span>
+        </div>
+        <div class="symbol-desc">Conecta las figuras geométricas y señala la dirección del proceso.</div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

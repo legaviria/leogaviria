@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Clasificación de Lenguajes</title>
+  <style>
+    * { box-sizing: border-box; }
+    html, body {
+      background-color: #0e0e11 !important;
+      color: #ffffff;
+      margin: 0;
+      padding: 10px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+  </style>
+</head>
+<body>
+<style>
+  .classify-box {
+    background: #0e0e11;
+    color: #ffffff;
+    padding: 20px;
+    border-radius: 12px;
+    border: 1px solid #1f293d;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    max-width: 600px;
+    margin: 0 auto;
+    user-select: none;
+  }
+  .classify-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #00c8ff;
+    margin-bottom: 6px;
+  }
+  .classify-subtitle {
+    font-size: 0.82rem;
+    color: #94a3b8;
+    margin-bottom: 14px;
+  }
+  .chips-source {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    background: #141419;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #1f293d;
+    min-height: 48px;
+    margin-bottom: 16px;
+  }
+  .chip {
+    background: #1e293b;
+    color: #00c8ff;
+    border: 1px solid #00c8ff;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: grab;
+  }
+  .drop-zones {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  .drop-zone {
+    background: #181d28;
+    border: 2px dashed #334155;
+    border-radius: 8px;
+    padding: 12px;
+    min-height: 120px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .drop-zone.hovered {
+    border-color: #00c8ff;
+    background: #1e2638;
+  }
+  .zone-title {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #94a3b8;
+    text-align: center;
+  }
+  .btn-check-cls {
+    background: #00c8ff;
+    color: #000;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 16px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    cursor: pointer;
+    width: 100%;
+  }
+  .feedback-cls {
+    margin-top: 12px;
+    padding: 10px;
+    border-radius: 6px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    text-align: center;
+    display: none;
+  }
+  .feedback-cls.correct { background: rgba(74, 222, 128, 0.15); color: #4ade80; border: 1px solid #4ade80; }
+  .feedback-cls.incorrect { background: rgba(255, 118, 118, 0.15); color: #ff7676; border: 1px solid #ff7676; }
+</style>
+
+<div class="classify-box">
+  <div class="classify-title">Clasifica los Lenguajes</div>
+  <div class="classify-subtitle">Arrastra cada lenguaje a su categoría correspondiente:</div>
+
+  <div class="chips-source" id="source-zone">
+    <div class="chip" draggable="true" data-type="compilado" id="c1">C++</div>
+    <div class="chip" draggable="true" data-type="interpretado" id="c2">Python</div>
+    <div class="chip" draggable="true" data-type="compilado" id="c3">Rust</div>
+    <div class="chip" draggable="true" data-type="compilado" id="c4">C</div>
+  </div>
+
+  <div class="drop-zones">
+    <div class="drop-zone" id="zone-compilados" data-category="compilado">
+      <div class="zone-title">⚡ Compilados</div>
+    </div>
+    <div class="drop-zone" id="zone-interpretados" data-category="interpretado">
+      <div class="zone-title">🔄 Interpretados</div>
+    </div>
+  </div>
+
+  <button class="btn-check-cls" onclick="checkClassification()">Comprobar Clasificación</button>
+  <div class="feedback-cls" id="fb-cls"></div>
+</div>
+
+<script>
+let draggedChip = null;
+
+document.querySelectorAll('.chip').forEach(chip => {
+  chip.addEventListener('dragstart', e => {
+    draggedChip = chip;
+  });
+});
+
+document.querySelectorAll('.drop-zone, .chips-source').forEach(zone => {
+  zone.addEventListener('dragover', e => {
+    e.preventDefault();
+    zone.classList.add('hovered');
+  });
+  zone.addEventListener('dragleave', () => zone.classList.remove('hovered'));
+  zone.addEventListener('drop', e => {
+    e.preventDefault();
+    zone.classList.remove('hovered');
+    if (draggedChip) {
+      zone.appendChild(draggedChip);
+    }
+  });
+});
+
+function checkClassification() {
+  const zComp = document.getElementById('zone-compilados');
+  const zInter = document.getElementById('zone-interpretados');
+  const source = document.getElementById('source-zone');
+  const fb = document.getElementById('fb-cls');
+  fb.style.display = 'block';
+
+  if (source.children.length > 0) {
+    fb.className = 'feedback-cls incorrect';
+    fb.innerText = 'Asegúrate de clasificar todos los elementos primero.';
+    return;
+  }
+
+  let ok = true;
+  zComp.querySelectorAll('.chip').forEach(c => { if(c.dataset.type !== 'compilado') ok = false; });
+  zInter.querySelectorAll('.chip').forEach(c => { if(c.dataset.type !== 'interpretado') ok = false; });
+
+  if (ok) {
+    fb.className = 'feedback-cls correct';
+    fb.innerText = '¡Excelente! C, C++ y Rust son compilados previa ejecución, mientras que Python se interpreta línea por línea.';
+  } else {
+    fb.className = 'feedback-cls incorrect';
+    fb.innerText = 'Hay elementos mal ubicados. Revisa la definición de lenguajes compilados vs. interpretados.';
+  }
+}
+</script>
+</body>
+</html>

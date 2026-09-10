@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bubble Sort Concepto</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      background-color: #0e0e11 !important;
+      color: #ffffff;
+      margin: 0;
+      padding: 4px;
+      overflow-y: auto;
+      overflow-x: auto;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      user-select: none;
+    }
+
+    .example-container {
+      background-color: #141419;
+      color: #ffffff;
+      padding: 16px 20px;
+      border-radius: 12px;
+      border: 1px solid #1f293d;
+      max-width: 100%;
+      margin: 0 auto;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+    }
+
+    .flow-step {
+      background-color: #181d28;
+      border: 1px solid #232d42;
+      border-radius: 8px;
+      padding: 10px 14px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .step-title {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #94a3b8;
+      margin-bottom: 8px;
+    }
+
+    .array-row {
+      display: flex;
+      gap: 12px;
+    }
+
+    .array-box {
+      width: 54px;
+      height: 42px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #000000;
+      border-radius: 4px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    }
+
+    .box-blue {
+      background-color: #00c8ff;
+    }
+
+    .box-red {
+      background-color: #ff7676;
+    }
+
+    .box-green {
+      background-color: #4ade80;
+    }
+
+    .arrow-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 6px 0;
+    }
+
+    .arrow-svg {
+      width: 18px;
+      height: 20px;
+      fill: none;
+      stroke: #10b981;
+      stroke-width: 2.5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+  </style>
+</head>
+<body>
+
+<div class="example-container">
+  <!-- Paso 1: Estado Inicial -->
+  <div class="flow-step">
+    <div class="step-title">Antes de la Pasada</div>
+    <div class="array-row">
+      <div class="array-box box-red">5</div>
+      <div class="array-box box-blue">3</div>
+      <div class="array-box box-blue">8</div>
+      <div class="array-box box-blue">4</div>
+      <div class="array-box box-blue">2</div>
+    </div>
+  </div>
+
+  <!-- Flecha 1 -->
+  <div class="arrow-container">
+    <svg class="arrow-svg" viewBox="0 0 24 24">
+      <line x1="12" y1="2" x2="12" y2="16"></line>
+      <polyline points="6 11 12 17 18 11"></polyline>
+    </svg>
+  </div>
+
+  <!-- Paso 2: Proceso de Burbujeo -->
+  <div class="flow-step">
+    <div class="step-title">Desplazamiento (Burbujeo)</div>
+    <div class="array-row">
+      <div class="array-box box-blue">3</div>
+      <div class="array-box box-blue">5</div>
+      <div class="array-box box-blue">4</div>
+      <div class="array-box box-blue">2</div>
+      <div class="array-box box-red">8</div>
+    </div>
+  </div>
+
+  <!-- Flecha 2 -->
+  <div class="arrow-container">
+    <svg class="arrow-svg" viewBox="0 0 24 24">
+      <line x1="12" y1="2" x2="12" y2="16"></line>
+      <polyline points="6 11 12 17 18 11"></polyline>
+    </svg>
+  </div>
+
+  <!-- Paso 3: Resultado de la primera pasada -->
+  <div class="flow-step">
+    <div class="step-title">Después de la Pasada 1</div>
+    <div class="array-row">
+      <div class="array-box box-blue">3</div>
+      <div class="array-box box-blue">5</div>
+      <div class="array-box box-blue">4</div>
+      <div class="array-box box-blue">2</div>
+      <div class="array-box box-green">8</div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  * { box-sizing: border-box; }
+  html, body {
+    background-color: #0b0e14 !important;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+  }
+  .flowchart-wrapper {
+    background-color: #0b0e14;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    overflow: hidden;
+    position: relative;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    user-select: none;
+  }
+
+  /* Barra de herramientas VERTICAL y compacta en la esquina superior derecha */
+  .controls-bar {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    background: rgba(18, 24, 38, 0.85);
+    padding: 6px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(8px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+  }
+
+  .control-btn {
+    background: #1e293b;
+    color: #e2e8f0;
+    border: 1px solid #334155;
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+  }
+
+  .control-btn svg {
+    width: 15px;
+    height: 15px;
+    stroke-width: 2.2;
+    flex-shrink: 0;
+  }
+
+  .control-btn:hover {
+    background: #334155;
+    color: #ffffff;
+    border-color: #475569;
+  }
+
+  .control-btn:active {
+    transform: scale(0.96);
+  }
+
+  .hint-text {
+    position: absolute;
+    bottom: 12px;
+    left: 14px;
+    color: #64748b;
+    font-size: 0.78rem;
+    pointer-events: none;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  svg#canvas {
+    width: 100%;
+    height: 100%;
+    cursor: grab;
+    background-color: #05070a;
+  }
+
+  svg#canvas:active {
+    cursor: grabbing;
+  }
+
+  .node {
+    cursor: move;
+  }
+
+  .node-rect {
+    rx: 6px;
+    ry: 6px;
+    filter: drop-shadow(0px 4px 10px rgba(0,0,0,0.6));
+  }
+
+  .node-text {
+    font-size: 12px;
+    font-weight: 700;
+    text-anchor: middle;
+    dominant-baseline: middle;
+    pointer-events: none;
+  }
+
+  /* Paleta de colores temáticos */
+  .blue { fill: #00c8ff; }
+  .teal { fill: #00d2a0; }
+  .orange { fill: #f97316; }
+  .green { fill: #4ade80; }
+  .yellow { fill: #eab308; }
+
+  /* Conectores */
+  .connection-line {
+    stroke: #22c55e;
+    stroke-width: 2.2;
+    fill: none;
+  }
+
+  .arrow-head {
+    fill: #22c55e;
+  }
+
+  .label-bg {
+    fill: #0f172a;
+    stroke: #22c55e;
+    stroke-width: 1;
+    rx: 4px;
+    ry: 4px;
+  }
+
+  .line-label {
+    fill: #4ade80;
+    font-size: 10.5px;
+    font-weight: 800;
+    text-anchor: middle;
+    dominant-baseline: middle;
+  }
+</style>
+</head>
+<body>
+
+<div class="flowchart-wrapper">
+  <!-- Botones compactos verticales a la derecha superior -->
+  <div class="controls-bar">
+    <button class="control-btn" onclick="zoomIn()" title="Acercar (Zoom +)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+    </button>
+    <button class="control-btn" onclick="zoomOut()" title="Alejar (Zoom -)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+    </button>
+    <button class="control-btn" onclick="fitView()" title="Centrar diagrama en la mitad">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
+    </button>
+    <button class="control-btn" onclick="resetNodes()" title="Reiniciar posiciones">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+    </button>
+  </div>
+
+  <div class="hint-text">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+    Arrastra el fondo para moverte • Scroll para zoom • Puedes mover los bloques
+  </div>
+
+  <svg id="canvas">
+    <defs>
+      <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+        <path d="M 0 0 L 10 5 L 0 10 z" class="arrow-head" />
+      </marker>
+    </defs>
+
+    <g id="viewport">
+      <g id="linesGroup"></g>
+      <g id="nodesGroup"></g>
+    </g>
+  </svg>
+</div>
+
+<script>
+// Datos Iniciales de los Nodos
+const initialNodesData = [
+  { id: 'start', label: ['Inicio'], type: 'rect', color: 'blue', x: 250, y: 35, w: 160, h: 35 },
+  { id: 'def_n', label: ['Definir n = longitud del arreglo'], type: 'rect', color: 'blue', x: 250, y: 95, w: 220, h: 35 },
+  { id: 'loop_i', label: ['Para i = 0 hasta n - 2'], type: 'rect', color: 'teal', x: 250, y: 155, w: 190, h: 35 },
+  { id: 'set_swapped', label: ['Definir swapped = false'], type: 'rect', color: 'teal', x: 250, y: 215, w: 190, h: 35 },
+  { id: 'loop_j', label: ['Para j = 0 hasta n - i - 2'], type: 'rect', color: 'teal', x: 250, y: 275, w: 190, h: 35 },
+  { id: 'cond_swap', label: ['arr[j] > arr[j+1]?'], type: 'rhombus', color: 'yellow', x: 250, y: 360, w: 130, h: 70 },
+  { id: 'do_swap', label: ['Intercambiar arr[j] y arr[j+1]', 'Definir swapped = true'], type: 'rect', color: 'orange', x: 110, y: 450, w: 200, h: 45 },
+  { id: 'next_pair', label: ['Mover al siguiente par'], type: 'rect', color: 'blue', x: 250, y: 530, w: 190, h: 35 },
+  { id: 'check_swapped', label: ['swapped == false?'], type: 'rhombus', color: 'yellow', x: 250, y: 630, w: 130, h: 70 },
+  { id: 'end', label: ['El arreglo está ordenado'], type: 'rect', color: 'green', x: 250, y: 735, w: 190, h: 35 }
+];
+
+let nodesData = JSON.parse(JSON.stringify(initialNodesData));
+
+// Conexiones de flujo
+const connectionsData = [
+  { from: 'start', to: 'def_n' },
+  { from: 'def_n', to: 'loop_i' },
+  { from: 'loop_i', to: 'set_swapped' },
+  { from: 'set_swapped', to: 'loop_j' },
+  { from: 'loop_j', to: 'cond_swap' },
+  { from: 'cond_swap', to: 'do_swap', label: 'Sí', type: 'branch_left' },
+  { from: 'cond_swap', to: 'next_pair', label: 'No', type: 'branch_right' },
+  { from: 'do_swap', to: 'next_pair', type: 'swap_to_next' },
+  { from: 'next_pair', to: 'loop_j', label: '¿Más pares?', type: 'loop_j_back' },
+  { from: 'next_pair', to: 'check_swapped', label: 'Pasada completa' },
+  { from: 'check_swapped', to: 'end', label: 'Sí' },
+  { from: 'check_swapped', to: 'loop_i', label: 'No', type: 'loop_i_back' }
+];
+
+const svg = document.getElementById('canvas');
+const viewport = document.getElementById('viewport');
+const linesGroup = document.getElementById('linesGroup');
+const nodesGroup = document.getElementById('nodesGroup');
+
+let scale = 0.65;
+let pointX = 140;
+let pointY = 10;
+let isPanning = false;
+let startX = 0, startY = 0;
+let draggedNode = null;
+let nodeOffsetX = 0, nodeOffsetY = 0;
+
+function setTransform() {
+  viewport.setAttribute('transform', `translate(${pointX}, ${pointY}) scale(${scale})`);
+}
+
+function getNodeAnchor(node, side) {
+  if (side === 'top') return { x: node.x, y: node.y - node.h/2 };
+  if (side === 'bottom') return { x: node.x, y: node.y + node.h/2 };
+  if (side === 'left') return { x: node.x - node.w/2, y: node.y };
+  if (side === 'right') return { x: node.x + node.w/2, y: node.y };
+  return { x: node.x, y: node.y + node.h/2 };
+}
+
+function renderLines() {
+  linesGroup.innerHTML = '';
+  connectionsData.forEach(conn => {
+    const f = nodesData.find(n => n.id === conn.from);
+    const t = nodesData.find(n => n.id === conn.to);
+
+    let pathD = '';
+    let labelPos = { x: 0, y: 0 };
+
+    if (conn.type === 'branch_left') {
+      const start = getNodeAnchor(f, 'left');
+      const end = getNodeAnchor(t, 'top');
+      pathD = `M ${start.x} ${start.y} L ${end.x} ${start.y} L ${end.x} ${end.y}`;
+      labelPos = { x: (start.x + end.x) / 2 - 5, y: start.y - 12 };
+    }
+    else if (conn.type === 'branch_right') {
+      const start = getNodeAnchor(f, 'right');
+      const end = getNodeAnchor(t, 'top');
+      const midX = start.x + 30;
+      pathD = `M ${start.x} ${start.y} L ${midX} ${start.y} L ${midX} ${end.y - 25} L ${t.x + 35} ${end.y - 25} L ${t.x + 35} ${end.y}`;
+      labelPos = { x: midX + 15, y: start.y + 12 };
+    }
+    else if (conn.type === 'swap_to_next') {
+      const start = getNodeAnchor(f, 'bottom');
+      const end = getNodeAnchor(t, 'left');
+      pathD = `M ${start.x} ${start.y} L ${start.x} ${end.y} L ${end.x} ${end.y}`;
+    }
+    else if (conn.type === 'loop_j_back') {
+      const start = getNodeAnchor(f, 'right');
+      const end = getNodeAnchor(t, 'right');
+      const routeX = Math.max(f.x, t.x) + 110;
+      pathD = `M ${start.x} ${start.y} L ${routeX} ${start.y} L ${routeX} ${end.y} L ${end.x} ${end.y}`;
+      labelPos = { x: routeX + 5, y: (start.y + end.y) / 2 };
+    }
+    else if (conn.type === 'loop_i_back') {
+      const start = getNodeAnchor(f, 'right');
+      const end = getNodeAnchor(t, 'right');
+      const routeX = Math.max(f.x, t.x) + 190;
+      pathD = `M ${start.x} ${start.y} L ${routeX} ${start.y} L ${routeX} ${end.y} L ${end.x} ${end.y}`;
+      labelPos = { x: routeX + 5, y: (start.y + end.y) / 2 };
+    }
+    else {
+      const start = getNodeAnchor(f, 'bottom');
+      const end = getNodeAnchor(t, 'top');
+      pathD = `M ${start.x} ${start.y} L ${end.x} ${end.y}`;
+      labelPos = { x: (start.x + end.x) / 2, y: (start.y + end.y) / 2 };
+    }
+
+    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    path.setAttribute('d', pathD);
+    path.setAttribute('class', 'connection-line');
+    path.setAttribute('marker-end', 'url(#arrow)');
+    linesGroup.appendChild(path);
+
+    if (conn.label) {
+      const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+
+      const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+      text.setAttribute('x', labelPos.x);
+      text.setAttribute('y', labelPos.y);
+      text.setAttribute('class', 'line-label');
+      text.textContent = conn.label;
+
+      linesGroup.appendChild(g);
+      g.appendChild(text);
+
+      const bbox = text.getBBox();
+      const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+      rect.setAttribute('x', bbox.x - 6);
+      rect.setAttribute('y', bbox.y - 3);
+      rect.setAttribute('width', bbox.width + 12);
+      rect.setAttribute('height', bbox.height + 6);
+      rect.setAttribute('class', 'label-bg');
+
+      g.insertBefore(rect, text);
+    }
+  });
+}
+
+function renderNodes() {
+  nodesGroup.innerHTML = '';
+  nodesData.forEach(node => {
+    const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+    g.setAttribute('class', 'node');
+    g.setAttribute('transform', `translate(${node.x}, ${node.y})`);
+    g.dataset.id = node.id;
+
+    if (node.type === 'rect') {
+      const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+      rect.setAttribute('x', -node.w / 2);
+      rect.setAttribute('y', -node.h / 2);
+      rect.setAttribute('width', node.w);
+      rect.setAttribute('height', node.h);
+      rect.setAttribute('class', `node-rect ${node.color}`);
+      g.appendChild(rect);
+    } else if (node.type === 'rhombus') {
+      const polygon = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+      const hw = node.w / 2, hh = node.h / 2;
+      polygon.setAttribute('points', `0,${-hh} ${hw},0 0,${hh} ${-hw},0`);
+      polygon.setAttribute('class', `node-rect ${node.color}`);
+      g.appendChild(polygon);
+    }
+
+    node.label.forEach((textLine, i) => {
+      const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+      const offset = (i - (node.label.length - 1) / 2) * 13;
+      text.setAttribute('y', offset);
+      text.setAttribute('class', 'node-text');
+      text.setAttribute('fill', '#000000');
+      text.textContent = textLine;
+      g.appendChild(text);
+    });
+
+    g.addEventListener('mousedown', (e) => {
+      e.stopPropagation();
+      draggedNode = node;
+      const rect = svg.getBoundingClientRect();
+      const mouseX = (e.clientX - rect.left - pointX) / scale;
+      const mouseY = (e.clientY - rect.top - pointY) / scale;
+      nodeOffsetX = mouseX - node.x;
+      nodeOffsetY = mouseY - node.y;
+    });
+
+    nodesGroup.appendChild(g);
+  });
+}
+
+// Navegación
+svg.addEventListener('mousedown', (e) => {
+  isPanning = true;
+  startX = e.clientX - pointX;
+  startY = e.clientY - pointY;
+});
+
+window.addEventListener('mousemove', (e) => {
+  if (draggedNode) {
+    const rect = svg.getBoundingClientRect();
+    const mouseX = (e.clientX - rect.left - pointX) / scale;
+    const mouseY = (e.clientY - rect.top - pointY) / scale;
+    draggedNode.x = mouseX - nodeOffsetX;
+    draggedNode.y = mouseY - nodeOffsetY;
+
+    const elem = nodesGroup.querySelector(`[data-id="${draggedNode.id}"]`);
+    if (elem) elem.setAttribute('transform', `translate(${draggedNode.x}, ${draggedNode.y})`);
+    renderLines();
+  } else if (isPanning) {
+    pointX = e.clientX - startX;
+    pointY = e.clientY - startY;
+    setTransform();
+  }
+});
+
+window.addEventListener('mouseup', () => {
+  isPanning = false;
+  draggedNode = null;
+});
+
+svg.addEventListener('wheel', (e) => {
+  e.preventDefault();
+  const delta = -e.deltaY;
+  if (delta > 0) scale *= 1.08;
+  else scale /= 1.08;
+  scale = Math.min(Math.max(0.3, scale), 2.2);
+  setTransform();
+});
+
+function zoomIn() { scale *= 1.15; setTransform(); }
+function zoomOut() { scale /= 1.15; setTransform(); }
+
+function fitView() {
+  const rect = svg.getBoundingClientRect();
+  const w = rect.width > 0 ? rect.width : (window.innerWidth || 900);
+  const h = rect.height > 0 ? rect.height : 580;
+  
+  scale = Math.min(w / 860, h / 760, 0.72);
+  // Centrar exactamente en la mitad horizontal
+  pointX = (w / 2) - (375 * scale);
+  pointY = 20;
+  setTransform();
+}
+
+window.addEventListener('resize', fitView);
+
+function resetNodes() {
+  nodesData = JSON.parse(JSON.stringify(initialNodesData));
+  fitView();
+  renderNodes();
+  renderLines();
+}
+
+fitView();
+renderNodes();
+renderLines();
+</script>
+</body>
+</html>

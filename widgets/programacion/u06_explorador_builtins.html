@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Explorador de Funciones Integradas (Built-ins)</title>
+  <style>
+    :root {
+      --bg: #0e0e11; --card: #141923; --border: #232d42; --text: #fff;
+      --muted: #94a3b8; --sky: #38bdf8; --purple: #a855f7; --green: #10b981;
+    }
+    body.theme-light {
+      --bg: #f8fafc; --card: #ffffff; --border: #e2e8f0; --text: #0f172a;
+      --muted: #64748b; --sky: #0284c7; --purple: #9333ea; --green: #059669;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { background: var(--bg); color: var(--text); padding: 14px; display: flex; justify-content: center; }
+    .container { width: 100%; max-width: 680px; background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 16px; }
+    .header { text-align: center; margin-bottom: 12px; }
+    .header h3 { font-size: 1.1rem; color: var(--sky); margin-bottom: 4px; }
+    .fn-selector { display: flex; gap: 6px; overflow-x: auto; margin-bottom: 12px; padding-bottom: 4px; }
+    .fn-btn { padding: 6px 10px; font-size: 0.74rem; font-family: monospace; font-weight: bold; border-radius: 6px; border: 1px solid var(--border); background: rgba(255,255,255,0.04); color: var(--text); cursor: pointer; white-space: nowrap; }
+    .fn-btn.active { border-color: var(--sky); background: rgba(56, 189, 248, 0.15); color: #a5f3fc; }
+    .tester-card { background: #080b10; border: 1px solid var(--border); border-radius: 8px; padding: 12px; margin-bottom: 12px; }
+    .tester-card label { font-size: 0.75rem; color: var(--muted); font-weight: bold; display: block; margin-bottom: 4px; }
+    input[type="text"] { width: 100%; padding: 8px 10px; background: #141923; border: 1px solid var(--border); border-radius: 6px; color: #fde047; font-family: monospace; font-size: 0.85rem; outline: none; margin-bottom: 10px; }
+    .result-box { display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.03); padding: 8px 12px; border-radius: 6px; border: 1px solid var(--border); font-family: monospace; font-size: 0.85rem; }
+    .doc-text { font-size: 0.76rem; color: var(--muted); line-height: 1.4; margin-top: 10px; padding: 8px; background: rgba(255,255,255,0.02); border-radius: 6px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h3>🧩 Explorador de Funciones Integradas (Built-ins)</h3>
+      <p style="font-size:0.75rem; color:var(--muted)">Prueba funciones estándar de Python en tiempo real y comprende qué reciben y qué retornan.</p>
+    </div>
+
+    <div class="fn-selector">
+      <button class="fn-btn active" onclick="selectFn('len')">len()</button>
+      <button class="fn-btn" onclick="selectFn('type')">type()</button>
+      <button class="fn-btn" onclick="selectFn('sum')">sum()</button>
+      <button class="fn-btn" onclick="selectFn('min')">min()</button>
+      <button class="fn-btn" onclick="selectFn('max')">max()</button>
+      <button class="fn-btn" onclick="selectFn('abs')">abs()</button>
+      <button class="fn-btn" onclick="selectFn('round')">round()</button>
+    </div>
+
+    <div class="tester-card">
+      <label id="inputLabel">Argumento para len():</label>
+      <input type="text" id="fnInput" value="Programación con Python" oninput="evalBuiltin()">
+
+      <div class="result-box">
+        <span style="color:var(--muted)">Resultado retornado:</span>
+        <strong id="fnOut" style="color:#4ade80">23</strong>
+      </div>
+      <div class="doc-text" id="fnDoc">len(s) retorna el número de elementos de una secuencia (cadena, lista, tupla, etc.).</div>
+    </div>
+  </div>
+
+  <script>
+    let activeFn = 'len';
+    const docs = {
+      len: { label: "Texto o lista (ej. [1, 2, 3] o texto):", val: "Programación con Python", doc: "len(s) retorna la cantidad de elementos o caracteres que componen la estructura." },
+      type: { label: "Expresión o valor:", val: "3.14159", doc: "type(objeto) retorna el tipo o clase nativa de la entidad evaluada." },
+      sum: { label: "Lista de números separados por coma:", val: "10, 20, 30, 40", doc: "sum(iterable) suma todos los números presentes en la colección." },
+      min: { label: "Números separados por coma:", val: "45, 12, 89, 3, 27", doc: "min(arg1, arg2, ...) retorna el menor valor entre los elementos evaluados." },
+      max: { label: "Números separados por coma:", val: "45, 12, 89, 3, 27", doc: "max(arg1, arg2, ...) retorna el valor numérico más alto." },
+      abs: { label: "Número negativo o positivo:", val: "-142.8", doc: "abs(x) retorna la magnitud o valor absoluto (distancia a cero sin signo)." },
+      round: { label: "Número decimal a redondear:", val: "3.7865", doc: "round(x, n) redondea un número al entero más próximo o al número especificado de decimales." }
+    };
+
+    function selectFn(fn) {
+      activeFn = fn;
+      document.querySelectorAll('.fn-btn').forEach(b => b.classList.toggle('active', b.textContent.startsWith(fn)));
+      document.getElementById('inputLabel').textContent = docs[fn].label;
+      document.getElementById('fnInput').value = docs[fn].val;
+      document.getElementById('fnDoc').textContent = docs[fn].doc;
+      evalBuiltin();
+    }
+
+    function evalBuiltin() {
+      const v = document.getElementById('fnInput').value.trim();
+      const out = document.getElementById('fnOut');
+      try {
+        if (activeFn === 'len') {
+          out.textContent = v.length;
+        } else if (activeFn === 'type') {
+          if (/^-?\d+$/.test(v)) out.textContent = "<class 'int'>";
+          else if (/^-?\d*\.\d+$/.test(v)) out.textContent = "<class 'float'>";
+          else if (v === 'True' || v === 'False') out.textContent = "<class 'bool'>";
+          else out.textContent = "<class 'str'>";
+        } else if (activeFn === 'sum' || activeFn === 'min' || activeFn === 'max') {
+          const nums = v.split(',').map(s => parseFloat(s.trim())).filter(n => !isNaN(n));
+          if (nums.length === 0) { out.textContent = "Error: lista vacía"; return; }
+          if (activeFn === 'sum') out.textContent = nums.reduce((a,b) => a+b, 0);
+          if (activeFn === 'min') out.textContent = Math.min(...nums);
+          if (activeFn === 'max') out.textContent = Math.max(...nums);
+        } else if (activeFn === 'abs') {
+          const n = parseFloat(v);
+          out.textContent = isNaN(n) ? "ValueError" : Math.abs(n);
+        } else if (activeFn === 'round') {
+          const n = parseFloat(v);
+          out.textContent = isNaN(n) ? "ValueError" : Math.round(n);
+        }
+      } catch(e) { out.textContent = "Error de evaluación"; }
+    }
+  </script>
+</body>
+</html>

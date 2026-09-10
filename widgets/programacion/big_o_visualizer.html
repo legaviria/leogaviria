@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    * { box-sizing: border-box; }
+    html, body {
+      background-color: #0e0e11 !important;
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      max-width: 100%;
+      overflow-x: hidden;
+    }
+  </style>
+</head>
+<body class="bg-[#0e0e11] text-gray-200 font-sans p-2 sm:p-3 select-none w-full max-w-full overflow-x-hidden">
+
+  <!-- CONTENEDOR PRINCIPAL -->
+  <div class="space-y-3 w-full max-w-full mx-auto">
+
+    <!-- PANEL SUPERIOR: GRÁFICO + NOTACIONES AL LADO DERECHO -->
+    <div class="bg-[#141419] border border-gray-800 rounded-xl p-3 sm:p-4 w-full max-w-full overflow-hidden">
+
+      <!-- ENCABEZADO Y MÉTRICAS -->
+      <div class="flex flex-wrap sm:flex-nowrap justify-between items-start sm:items-center pb-2.5 mb-3 border-b border-gray-800 gap-2">
+        <div class="min-w-0 flex-1">
+          <div class="text-emerald-400 font-bold text-xs sm:text-sm flex items-center gap-2">
+            <i class="fas fa-chart-line"></i> Notación Big-O: Complejidad de un Algoritmo
+          </div>
+          <div class="text-[11px] text-gray-400 mt-0.5 truncate">Incrementa el valor de n para analizar la complejidad temporal.</div>
+        </div>
+        <div class="text-right font-mono text-xs shrink-0 bg-[#1e1e24] px-2.5 py-1 rounded-lg border border-gray-800">
+          <span class="text-purple-400 font-bold text-xs sm:text-sm" id="n-val">n = 1</span>
+        </div>
+      </div>
+
+      <!-- GRID: GRÁFICA A LA IZQUIERDA | NOTACIONES A LA DERECHA -->
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-3 items-stretch w-full min-w-0">
+
+        <!-- ÁREA DEL GRÁFICO -->
+        <div class="md:col-span-7 h-[300px] sm:h-[330px] bg-[#0e0e11] border border-gray-800 rounded-lg p-2 relative min-w-0 w-full overflow-hidden">
+          <canvas id="bigoChart" class="w-full h-full block"></canvas>
+        </div>
+
+        <!-- LISTA DE NOTACIONES Y MÉTRICAS (LADO DERECHO COMPACTO) -->
+        <div class="md:col-span-5 flex flex-col justify-between gap-1 h-auto md:h-[330px] min-w-0 w-full overflow-hidden" id="legendList"></div>
+      </div>
+
+    </div>
+
+    <!-- BARRA DE EXPLICACIÓN DEL PASO ACTUAL -->
+    <div class="bg-[#141419] border-l-4 border-emerald-500 border-y border-r border-gray-800 rounded-r-xl p-2.5 sm:p-3 text-xs font-mono text-gray-300 w-full overflow-hidden leading-relaxed">
+      <span id="step-description">Cargando análisis de complejidad...</span>
+    </div>
+
+    <!-- BARRA INFERIOR DE CONTROLES -->
+    <div class="bg-[#141419] border border-gray-800 rounded-xl p-2.5 sm:p-3 flex flex-wrap items-center justify-between gap-3 w-full overflow-hidden">
+      <div class="flex items-center gap-1.5 shrink-0">
+        <button id="play-btn" onclick="togglePlay()" class="p-1.5 sm:p-2 hover:bg-gray-800 rounded-lg text-gray-300 transition" title="Reproducir / Pausar">
+          <i id="play-icon" class="fas fa-play text-xs sm:text-sm"></i>
+        </button>
+        <button onclick="stepBack()" class="p-1.5 sm:p-2 hover:bg-gray-800 rounded-lg text-gray-300 transition" title="Paso Anterior">
+          <i class="fas fa-chevron-left text-xs sm:text-sm"></i>
+        </button>
+        <button onclick="stepForward()" class="p-1.5 sm:p-2 hover:bg-gray-800 rounded-lg text-gray-300 transition" title="Siguiente Paso">
+          <i class="fas fa-chevron-right text-xs sm:text-sm"></i>
+        </button>
+      </div>
+
+      <div class="flex-1 flex items-center gap-2 sm:gap-3 mx-1 min-w-[120px]">
+        <span class="text-xs font-mono text-gray-400">n:</span>
+        <input id="nSlider" type="range" min="0" max="8" value="0" oninput="onSliderChange(this.value)" class="w-full accent-emerald-500 cursor-pointer">
+        <span id="step-counter" class="text-xs font-mono text-gray-400 min-w-[35px] text-right">1/9</span>
+      </div>
+
+      <div class="flex items-center gap-1.5 bg-[#1e1e24] border border-gray-700 rounded-lg px-2 py-1 shrink-0">
+        <span class="text-[11px] font-mono text-gray-400">Velocidad:</span>
+        <select id="speed-select" onchange="changeSpeed()" class="bg-transparent text-emerald-400 font-mono text-xs font-semibold outline-none cursor-pointer">
+          <option value="1200">0.5x</option>
+          <option value="800" selected>1x</option>
+          <option value="400">1.5x</option>
+          <option value="200">2x</option>
+        </select>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- LÓGICA JAVASCRIPT -->
+  <script>
+    const nValues = [1, 2, 4, 8, 16, 32, 64, 128, 256];
+
+    function factorial(n) {
+      if (n <= 1) return 1;
+      let res = 1;
+      for (let i = 2; i <= n; i++) res *= i;
+      return res;
+    }
+
+    const seriesConfig = [
+      { label: 'O(1)', desc: 'Búsqueda en Tabla Hash', color: '#2ea043', fn: (n) => 1 },
+      { label: 'O(log n)', desc: 'Búsqueda Binaria', color: '#3fb950', fn: (n) => Math.log2(n) || 1 },
+      { label: 'O(n)', desc: 'Recorrido lineal', color: '#38bdf8', fn: (n) => n },
+      { label: 'O(n log n)', desc: 'Merge Sort', color: '#a855f7', fn: (n) => n * (Math.log2(n) || 1) },
+      { label: 'O(n²)', desc: 'Bucles Anidados (BubbleSort)', color: '#f97316', fn: (n) => n * n },
+      { label: 'O(2ⁿ)', desc: 'Subconjuntos / Recursión', color: '#ef4444', fn: (n) => Math.pow(2, n) },
+      { label: 'O(n!)', desc: 'Permutaciones (Fuerza Bruta)', color: '#ec4899', fn: (n) => factorial(n) }
+    ];
+
+    // Formato ultra-limpio para operaciones
+    function formatOps(num) {
+      if (!isFinite(num) || num >= 1e20) {
+        if (!isFinite(num)) return '>10¹⁰⁰';
+        let exp = Math.floor(Math.log10(num));
+        return `10$^{exp}$`.replace('10$^', '10¹⁰⁰').replace('$', '');
+      }
+      if (num >= 1e18) return (num / 1e18).toFixed(2) + ' E';
+      if (num >= 1e15) return (num / 1e15).toFixed(2) + ' P';
+      if (num >= 1e12) return (num / 1e12).toFixed(2) + ' T';
+      if (num >= 1e9)  return (num / 1e9).toFixed(2) + ' B';
+      if (num >= 1e6)  return (num / 1e6).toFixed(2) + ' M';
+      if (num >= 1e3)  return (num / 1e3).toFixed(1) + ' K';
+      return Math.round(num).toLocaleString('es-ES');
+    }
+
+    // Formato de tiempo conciso y estético
+    function formatTime(ops) {
+      if (!isFinite(ops) || ops >= 1e20) return '>10²⁰ años';
+      let ns = ops; // Asumiendo CPU estándar de 1 GHz (1 op = 1 ns)
+      if (ns < 1000) return Math.round(ns) + ' ns';
+      let us = ns / 1000;
+      if (us < 1000) return us.toFixed(1) + ' µs';
+      let ms = us / 1000;
+      if (ms < 1000) return ms.toFixed(1) + ' ms';
+      let s = ms / 1000;
+      if (s < 60) return s.toFixed(1) + ' s';
+      let min = s / 60;
+      if (min < 60) return min.toFixed(1) + ' min';
+      let hrs = min / 60;
+      if (hrs < 24) return hrs.toFixed(1) + ' h';
+      let days = hrs / 24;
+      if (days < 365) return days.toFixed(1) + ' días';
+      let years = days / 365;
+      if (years < 1e6) return years.toFixed(1) + ' años';
+      return '>10⁶ años';
+    }
+
+    let currentIndex = 0; // Inicio en Paso 1 (n=1)
+    let isPlaying = false;
+    let interval = null;
+    let animationSpeed = 800;
+
+    const ctx = document.getElementById('bigoChart').getContext('2d');
+    const chart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: nValues.map(v => v.toString()),
+        datasets: seriesConfig.map(s => ({
+          label: s.label,
+          borderColor: s.color,
+          backgroundColor: s.color,
+          borderWidth: 2,
+          pointRadius: 3,
+          data: []
+        }))
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          y: {
+            type: 'logarithmic',
+            min: 1,
+            max: 1e12,
+            grid: { color: '#21262d' },
+            ticks: {
+              color: '#8b949e',
+              callback: function(val) {
+                if ([1, 1e3, 1e6, 1e9, 1e12].includes(val)) return formatOps(val);
+                return null;
+              }
+            }
+          },
+          x: {
+            grid: { color: '#21262d' },
+            ticks: { color: '#8b949e' }
+          }
+        },
+        plugins: {
+          legend: { display: false }
+        }
+      }
+    });
+
+    function updateView() {
+      const currentN = nValues[currentIndex];
+      document.getElementById('nSlider').value = currentIndex;
+      document.getElementById('n-val').innerText = `n = ${currentN}`;
+      document.getElementById('step-counter').innerText = `${currentIndex + 1}/${nValues.length}`;
+
+      seriesConfig.forEach((s, idx) => {
+        chart.data.datasets[idx].data = nValues.slice(0, currentIndex + 1).map(s.fn);
+      });
+      chart.update('none');
+
+      // Actualizar el panel derecho super compacto
+      const listContainer = document.getElementById('legendList');
+      listContainer.innerHTML = '';
+
+      seriesConfig.forEach(s => {
+        const ops = s.fn(currentN);
+        const item = document.createElement('div');
+        item.className = 'bg-[#1e1e24] border border-gray-800/80 rounded-md px-2 py-1 flex justify-between items-center text-xs min-w-0 w-full gap-2';
+        item.innerHTML = `
+          <div class="flex items-center gap-1.5 min-w-0 flex-1 overflow-hidden">
+            <span class="w-2 h-2 rounded-full inline-block shrink-0" style="background-color: ${s.color};"></span>
+            <span class="font-bold shrink-0 font-mono text-[11px]" style="color: ${s.color};">${s.label}</span>
+            <span class="text-[10px] text-gray-400 truncate hidden xl:inline">${s.desc}</span>
+          </div>
+          <div class="text-right shrink-0 font-mono">
+            <span class="font-semibold text-gray-200 text-[11px] block leading-tight">${formatOps(ops)} ops</span>
+            <span class="text-[10px] text-gray-500 block leading-none">${formatTime(ops)}</span>
+          </div>
+        `;
+        listContainer.appendChild(item);
+      });
+
+      // Explicación dinámica del paso
+      let desc = '';
+      if (currentN <= 2) {
+        desc = `Paso ${currentIndex + 1}: Para n = ${currentN}, la complejidad de todos los algoritmos es insignificante y responden de forma instantánea.`;
+      } else if (currentN <= 16) {
+        desc = `Paso ${currentIndex + 1}: Con n = ${currentN}, algoritmos con complejidad O(n²) (${formatOps(currentN*currentN)} ops) y O(2ⁿ) (${formatOps(Math.pow(2, currentN))} ops) comienzan a diferir notoriamente de O(n log n).`;
+      } else if (currentN <= 64) {
+        desc = `Paso ${currentIndex + 1}: Con n = ${currentN}, las complejidades O(n!) y O(2ⁿ) se vuelven ineficientes. Mientras O(n log n) requiere solo ${formatOps(currentN * Math.log2(currentN))} ops, O(2ⁿ) supera ${formatOps(Math.pow(2, currentN))} ops.`;
+      } else {
+        desc = `Paso ${currentIndex + 1}: Para una entrada masiva (n = ${currentN}), los algoritmos O(1) y O(log n) mantienen un excelente rendimiento, mientras que complejidades exponenciales o factoriales son inviables.`;
+      }
+
+      document.getElementById('step-description').innerHTML = desc;
+    }
+
+    function onSliderChange(val) {
+      currentIndex = parseInt(val);
+      if (isPlaying) togglePlay();
+      updateView();
+    }
+
+    function startTimer() {
+      clearInterval(interval);
+      interval = setInterval(() => {
+        if (currentIndex < nValues.length - 1) {
+          currentIndex++;
+          updateView();
+        } else {
+          togglePlay();
+        }
+      }, animationSpeed);
+    }
+
+    function changeSpeed() {
+      animationSpeed = parseInt(document.getElementById('speed-select').value);
+      if (isPlaying) startTimer();
+    }
+
+    function togglePlay() {
+      isPlaying = !isPlaying;
+      const icon = document.getElementById('play-icon');
+      if (isPlaying) {
+        icon.className = 'fas fa-pause text-sm';
+        startTimer();
+      } else {
+        icon.className = 'fas fa-play text-sm';
+        clearInterval(interval);
+      }
+    }
+
+    function stepForward() {
+      if (currentIndex < nValues.length - 1) { currentIndex++; updateView(); }
+    }
+
+    function stepBack() {
+      if (currentIndex > 0) { currentIndex--; updateView(); }
+    }
+
+    window.addEventListener('resize', () => {
+      if (chart) chart.resize();
+    });
+
+    updateView();
+  </script>
+</body>
+</html>

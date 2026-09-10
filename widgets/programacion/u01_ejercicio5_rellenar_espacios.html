@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rellenar Espacios Vacíos</title>
+  <style>
+    * { box-sizing: border-box; }
+    html, body {
+      background-color: #0e0e11 !important;
+      color: #ffffff;
+      margin: 0;
+      padding: 10px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+  </style>
+</head>
+<body>
+<style>
+  .fill-box {
+    background: #0e0e11;
+    color: #ffffff;
+    padding: 20px;
+    border-radius: 12px;
+    border: 1px solid #1f293d;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    max-width: 580px;
+    margin: 0 auto;
+  }
+  .fill-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #eab308;
+    margin-bottom: 8px;
+  }
+  .fill-text {
+    font-size: 0.88rem;
+    line-height: 1.8;
+    color: #cbd5e1;
+    margin-bottom: 16px;
+  }
+  .fill-input {
+    background: #0f141d;
+    border: 1px solid #334155;
+    color: #00c8ff;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-weight: 700;
+    width: 110px;
+    text-align: center;
+    font-size: 0.85rem;
+    outline: none;
+  }
+  .fill-input:focus { border-color: #00c8ff; }
+  .btn-check-fill {
+    background: #eab308;
+    color: #000;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 16px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    cursor: pointer;
+    width: 100%;
+  }
+  .fill-feedback {
+    margin-top: 12px;
+    padding: 10px;
+    border-radius: 6px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    text-align: center;
+    display: none;
+  }
+  .fill-feedback.correct { background: rgba(74, 222, 128, 0.15); color: #4ade80; border: 1px solid #4ade80; }
+  .fill-feedback.incorrect { background: rgba(255, 118, 118, 0.15); color: #ff7676; border: 1px solid #ff7676; }
+</style>
+
+<div class="fill-box">
+  <div class="fill-title">Completa el Párrafo</div>
+  <div class="fill-text">
+    Los lenguajes
+    <input type="text" class="fill-input" id="blank1" placeholder="tipo...">
+    se traducen e interpretan línea por línea al ejecutarse, como Python. Por otro lado, la etapa de detección y corrección de errores se conoce como
+    <input type="text" class="fill-input" id="blank2" placeholder="término...">.
+  </div>
+
+  <button class="btn-check-fill" onclick="checkFill()">Verificar Respuestas</button>
+  <div class="fill-feedback" id="fill-fb"></div>
+</div>
+
+<script>
+function checkFill() {
+  const ans1 = document.getElementById('blank1').value.trim().toLowerCase();
+  const ans2 = document.getElementById('blank2').value.trim().toLowerCase();
+  const fb = document.getElementById('fill-fb');
+  fb.style.display = 'block';
+
+  const validAns1 = ['interpretados', 'interpretado'];
+  const validAns2 = ['debugging', 'depuracion', 'depuración', 'pruebas y depuracion', 'pruebas y depuración'];
+
+  if (validAns1.includes(ans1) && validAns2.includes(ans2)) {
+    fb.className = 'fill-feedback correct';
+    fb.innerText = '¡Excelente! Has completado los conceptos correctamente.';
+  } else {
+    fb.className = 'fill-feedback incorrect';
+    fb.innerText = 'Revisa tus respuestas. Pista: 1) Interpretados / 2) Debugging o Depuración.';
+  }
+}
+</script>
+</body>
+</html>

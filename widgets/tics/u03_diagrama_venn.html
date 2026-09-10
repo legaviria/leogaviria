@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      background-color: #0b0e14;
+      color: #e2e8f0;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      margin: 0;
+      padding: 12px;
+      transition: background-color 0.2s, color 0.2s;
+    }
+    [data-theme="light"] body { background-color: #ffffff; color: #0f172a; }
+    [data-theme="light"] .card-box { background-color: #f8fafc !important; border-color: #e2e8f0 !important; color: #0f172a !important; }
+    [data-theme="light"] .subcard-box { background-color: #ffffff !important; border-color: #cbd5e1 !important; color: #1e293b !important; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+    [data-theme="light"] .text-muted { color: #64748b !important; }
+    [data-theme="light"] .text-highlight { color: #0f766e !important; }
+    [data-theme="light"] input, [data-theme="light"] select { background-color: #ffffff !important; border-color: #cbd5e1 !important; color: #0f172a !important; }
+    .card-box { background-color: #121622; border: 1px solid #1f293d; border-radius: 12px; }
+    .subcard-box { background-color: #090d14; border: 1px solid #1a2233; border-radius: 8px; }
+    .text-muted { color: #94a3b8; }
+    .text-highlight { color: #2dd4bf; }
+  </style>
+  <script>
+    window.addEventListener('message', (event) => {
+      if (event.data && event.data.type === 'THEME_CHANGE') {
+        document.documentElement.setAttribute('data-theme', event.data.theme);
+      }
+    });
+    try {
+      const savedTheme = localStorage.getItem('leogaviria_theme') || 'dark';
+      document.documentElement.setAttribute('data-theme', savedTheme);
+    } catch(e) {}
+  </script>
+
+  <title>Diagrama de Venn Interactivo</title>
+</head>
+<body>
+  <div class="max-w-4xl mx-auto space-y-4">
+    <div class="card-box p-4 sm:p-5">
+      <div class="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-gray-800/80 mb-4">
+        <div>
+          <h2 class="text-base sm:text-lg font-bold flex items-center gap-2 text-highlight">
+            <i class="fas fa-circle-nodes"></i> Diagrama de Venn Interactivo: Operaciones con Conjuntos
+          </h2>
+          <p class="text-xs text-muted">Unión (∪), Intersección (∩), Diferencia (A \ B), Complemento (A^c) y Dif. Simétrica (Δ)</p>
+        </div>
+      </div>
+
+      <!-- Botones de Operaciones -->
+      <div class="flex flex-wrap gap-2 mb-4">
+        <button onclick="setVennOp('union')" id="vbtn-union" class="vbtn px-3 py-1.5 rounded-lg bg-teal-600 text-white text-xs font-bold transition">A &cup; B (Unión)</button>
+        <button onclick="setVennOp('inter')" id="vbtn-inter" class="vbtn px-3 py-1.5 rounded-lg bg-gray-800 text-gray-300 text-xs font-bold transition">A &cap; B (Intersección)</button>
+        <button onclick="setVennOp('diffAB')" id="vbtn-diffAB" class="vbtn px-3 py-1.5 rounded-lg bg-gray-800 text-gray-300 text-xs font-bold transition">A \ B (Diferencia)</button>
+        <button onclick="setVennOp('diffBA')" id="vbtn-diffBA" class="vbtn px-3 py-1.5 rounded-lg bg-gray-800 text-gray-300 text-xs font-bold transition">B \ A (Diferencia)</button>
+        <button onclick="setVennOp('symm')" id="vbtn-symm" class="vbtn px-3 py-1.5 rounded-lg bg-gray-800 text-gray-300 text-xs font-bold transition">A &Delta; B (Dif. Simétrica)</button>
+        <button onclick="setVennOp('compA')" id="vbtn-compA" class="vbtn px-3 py-1.5 rounded-lg bg-gray-800 text-gray-300 text-xs font-bold transition">A<sup>c</sup> (Complemento)</button>
+      </div>
+
+      <!-- Lienzo SVG del Diagrama de Venn -->
+      <div class="subcard-box p-4 flex flex-col items-center justify-center min-h-[220px] mb-4">
+        <svg viewBox="0 0 400 220" class="w-full max-w-md h-auto" id="venn-svg">
+          <!-- Rectángulo Universo -->
+          <rect id="reg-univ" x="10" y="10" width="380" height="200" rx="10" fill="#090d14" stroke="#4b5563" stroke-width="2"/>
+          <text x="25" y="32" fill="#9ca3af" font-size="12" font-family="monospace">U (Universo)</text>
+
+          <!-- Región Solo A -->
+          <path id="reg-onlyA" d="M 160 110 A 65 65 0 1 0 160 110" fill="transparent" class="transition-all duration-300"/>
+          <!-- Círculo A -->
+          <circle id="circ-a" cx="150" cy="115" r="65" fill="#14b8a6" fill-opacity="0.25" stroke="#14b8a6" stroke-width="2.5" class="transition-all duration-300"/>
+          <text x="110" y="70" fill="#2dd4bf" font-size="16" font-bold="true" font-family="monospace">A</text>
+
+          <!-- Círculo B -->
+          <circle id="circ-b" cx="250" cy="115" r="65" fill="#38bdf8" fill-opacity="0.25" stroke="#38bdf8" stroke-width="2.5" class="transition-all duration-300"/>
+          <text x="280" y="70" fill="#38bdf8" font-size="16" font-bold="true" font-family="monospace">B</text>
+
+          <!-- Etiquetas de Elementos Muestra -->
+          <text x="125" y="120" fill="#ffffff" font-size="12" font-family="monospace">1, 3</text>
+          <text x="193" y="120" fill="#ffffff" font-size="12" font-family="monospace" font-bold="true">2, 4</text>
+          <text x="260" y="120" fill="#ffffff" font-size="12" font-family="monospace">6, 8</text>
+          <text x="340" y="180" fill="#9ca3af" font-size="12" font-family="monospace">5, 7</text>
+        </svg>
+      </div>
+
+      <!-- Detalle Matemático de la Operación -->
+      <div class="subcard-box p-3 sm:p-4 text-xs leading-relaxed" id="venn-desc"></div>
+    </div>
+  </div>
+
+  <script>
+    const opsData = {
+      union: {
+        title: "Unión: A ∪ B",
+        def: "{ x ∈ U | x ∈ A ∨ x ∈ B }",
+        elems: "{ 1, 2, 3, 4, 6, 8 }",
+        fillA: 0.6, fillB: 0.6, fillU: '#090d14',
+        desc: "Contiene todos los elementos que pertenecen al menos a uno de los dos conjuntos (disyunción lógica OR)."
+      },
+      inter: {
+        title: "Intersección: A ∩ B",
+        def: "{ x ∈ U | x ∈ A ∧ x ∈ B }",
+        elems: "{ 2, 4 }",
+        fillA: 0.15, fillB: 0.15, fillU: '#090d14',
+        desc: "Contiene únicamente los elementos comunes que pertenecen a ambos conjuntos simultáneamente (conjunción lógica AND)."
+      },
+      diffAB: {
+        title: "Diferencia: A \ B (A - B)",
+        def: "{ x ∈ U | x ∈ A ∧ x ∉ B }",
+        elems: "{ 1, 3 }",
+        fillA: 0.7, fillB: 0.05, fillU: '#090d14',
+        desc: "Contiene los elementos exclusivos de A que no pertenecen a B."
+      },
+      diffBA: {
+        title: "Diferencia: B \ A (B - A)",
+        def: "{ x ∈ U | x ∈ B ∧ x ∉ A }",
+        elems: "{ 6, 8 }",
+        fillA: 0.05, fillB: 0.7, fillU: '#090d14',
+        desc: "Contiene los elementos exclusivos de B que no pertenecen a A."
+      },
+      symm: {
+        title: "Diferencia Simétrica: A Δ B",
+        def: "(A \ B) ∪ (B \ A) = (A ∪ B) \ (A ∩ B)",
+        elems: "{ 1, 3, 6, 8 }",
+        fillA: 0.5, fillB: 0.5, fillU: '#090d14',
+        desc: "Elementos que pertenecen a A o a B, pero no a ambos (disyunción exclusiva XOR)."
+      },
+      compA: {
+        title: "Complemento: A^c (U \ A)",
+        def: "{ x ∈ U | x ∉ A }",
+        elems: "{ 5, 6, 7, 8 }",
+        fillA: 0.05, fillB: 0.4, fillU: 'rgba(244, 63, 94, 0.15)',
+        desc: "Todos los elementos del universo U que no pertenecen al conjunto A (negación lógica NOT)."
+      }
+    };
+
+    function setVennOp(opKey) {
+      document.querySelectorAll('.vbtn').forEach(b => {
+        b.className = 'vbtn px-3 py-1.5 rounded-lg bg-gray-800 text-gray-300 text-xs font-bold transition';
+      });
+      const activeBtn = document.getElementById(`vbtn-${opKey}`);
+      if (activeBtn) activeBtn.className = 'vbtn px-3 py-1.5 rounded-lg bg-teal-600 text-white text-xs font-bold transition';
+
+      const d = opsData[opKey];
+      document.getElementById('circ-a').setAttribute('fill-opacity', d.fillA);
+      document.getElementById('circ-b').setAttribute('fill-opacity', d.fillB);
+      document.getElementById('reg-univ').setAttribute('fill', d.fillU);
+
+      document.getElementById('venn-desc').innerHTML = `
+        <div class="flex justify-between items-center mb-1">
+          <span class="text-teal-400 font-bold font-mono text-sm">${d.title}</span>
+          <span class="text-amber-400 font-mono">${d.def}</span>
+        </div>
+        <p class="text-gray-300 mb-2">${d.desc}</p>
+        <div class="text-xs font-mono p-2 rounded bg-[#0b0e14] border border-gray-800 text-emerald-300">
+          Resultado evaluado: <strong>${d.elems}</strong>
+        </div>
+      `;
+    }
+
+    setVennOp('union');
+  </script>
+</body>
+</html>

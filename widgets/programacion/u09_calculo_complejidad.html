@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cálculo de Complejidad y Análisis Paso a Paso</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      background-color: #0e0e11 !important;
+      color: #ffffff;
+      padding: 12px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      user-select: none;
+    }
+
+    .comp-container {
+      background-color: #0e0e11;
+      color: #ffffff;
+      padding: 16px;
+      border-radius: 12px;
+      border: 1px solid #1f293d;
+      max-width: 860px;
+      margin: 0 auto;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+    }
+
+    .comp-header {
+      text-align: center;
+      margin-bottom: 14px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #1f293d;
+    }
+
+    .comp-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #00c8ff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .comp-subtitle {
+      font-size: 0.78rem;
+      color: #94a3b8;
+      margin-top: 4px;
+    }
+
+    .control-panel-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+    }
+
+    .selector-bar {
+      display: flex;
+      gap: 5px;
+      flex-wrap: wrap;
+    }
+
+    .lang-toggle {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      background: #141419;
+      padding: 3px 6px;
+      border-radius: 6px;
+      border: 1px solid #1f293d;
+    }
+
+    .btn-algo, .btn-lang {
+      background: #181d28;
+      border: 1px solid #232d42;
+      color: #cbd5e1;
+      border-radius: 6px;
+      padding: 5px 9px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-algo:hover, .btn-lang:hover {
+      border-color: #00c8ff;
+      color: #ffffff;
+    }
+
+    .btn-algo.active, .btn-lang.active {
+      background: #00c8ff;
+      color: #000000;
+      border-color: #00c8ff;
+      font-weight: 700;
+      box-shadow: 0 0 10px rgba(0, 200, 255, 0.3);
+    }
+
+    /* IDE / Editor de Código COMPACTO */
+    .editor-wrapper {
+      background: #0d1117;
+      border: 1px solid #21262d;
+      border-radius: 8px;
+      overflow: hidden;
+      margin-bottom: 12px;
+      box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
+    }
+
+    .editor-header {
+      background: #161b22;
+      padding: 7px 12px;
+      border-bottom: 1px solid #21262d;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.72rem;
+      color: #8b949e;
+      font-family: monospace;
+    }
+
+    .mac-dots {
+      display: flex;
+      gap: 5px;
+    }
+
+    .dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+    }
+    .dot-red { background: #ff5f56; }
+    .dot-yellow { background: #ffbd2e; }
+    .dot-green { background: #27c93f; }
+
+    .code-body {
+      padding: 2px 0;
+      font-family: 'Fira Code', 'Consolas', monospace;
+      font-size: 0.78rem;
+      line-height: 1.1;
+      overflow-x: auto;
+    }
+
+    .code-line {
+      display: flex;
+      align-items: center;
+      padding: 0px 8px; /* Reduce espacio vertical interno */
+      min-height: 18px;  /* Reduce altura mínima de cada línea */
+      transition: background 0.15s;
+    }
+
+    .code-line.active {
+      background: rgba(0, 200, 255, 0.15);
+      border-left: 3px solid #00c8ff;
+      padding-left: 5px;
+    }
+
+    .line-num {
+      color: #484f58;
+      width: 22px;
+      text-align: right;
+      margin-right: 12px;
+      font-size: 0.72rem;
+      user-select: none;
+    }
+
+    .line-code {
+      flex-grow: 1;
+      color: #e6edf3;
+      font-family: monospace;
+      white-space: pre;
+    }
+
+    .kw { color: #ff7b72; font-weight: bold; }
+    .fn { color: #d2a8ff; }
+    .var { color: #ffa657; }
+    .type { color: #79c0ff; }
+
+    .line-cost-tag {
+      font-family: monospace;
+      font-size: 0.7rem;
+      padding: 2px 7px;
+      border-radius: 4px;
+      background: #161b22;
+      border: 1px solid #30363d;
+      color: #6e7681;
+      transition: all 0.2s;
+      user-select: none;
+      margin-left: 10px;
+    }
+
+    .code-line.active .line-cost-tag {
+      background: #eab308;
+      color: #000;
+      border-color: #eab308;
+      font-weight: bold;
+    }
+
+    .control-bar {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .btn-ctrl {
+      background: #181d28;
+      border: 1px solid #232d42;
+      color: #ffffff;
+      border-radius: 6px;
+      padding: 6px 14px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-ctrl:hover:not(:disabled) {
+      background: #232d42;
+      border-color: #00c8ff;
+    }
+
+    .btn-ctrl:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+    }
+
+    .btn-primary {
+      background: #00c8ff;
+      color: #000;
+      border: none;
+    }
+    .btn-primary:hover:not(:disabled) {
+      background: #38bdf8;
+    }
+
+    .step-counter {
+      font-family: monospace;
+      font-size: 0.78rem;
+      color: #00c8ff;
+      background: #0f141d;
+      padding: 5px 12px;
+      border-radius: 6px;
+      border: 1px solid #1f293d;
+    }
+
+    .analysis-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+
+    .card-box {
+      background: #141419;
+      border: 1px solid #1f293d;
+      border-radius: 8px;
+      padding: 10px 14px;
+    }
+
+    .card-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: #94a3b8;
+      margin-bottom: 5px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .partial-val {
+      font-family: monospace;
+      font-size: 0.95rem;
+      font-weight: bold;
+      color: #eab308;
+    }
+
+    .cases-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-top: 6px;
+    }
+
+    .case-card {
+      background: #0d1117;
+      border: 1px solid #21262d;
+      border-radius: 6px;
+      padding: 8px 10px;
+      text-align: center;
+    }
+
+    .case-title {
+      font-size: 0.68rem;
+      color: #8b949e;
+      font-weight: 600;
+    }
+
+    .case-val {
+      font-family: monospace;
+      font-size: 0.95rem;
+      font-weight: bold;
+      margin-top: 3px;
+    }
+
+    .val-best { color: #4ade80; }
+    .val-avg { color: #38bdf8; }
+    .val-worst { color: #f87171; }
+
+    .exec-trace {
+      font-family: 'Consolas', monospace;
+      font-size: 0.76rem;
+      background: #090d13;
+      padding: 10px;
+      border-radius: 6px;
+      border: 1px solid #21262d;
+      color: #cbd5e1;
+      line-height: 1.45;
+      white-space: pre-wrap;
+      min-height: 60px;
+      max-height: 125px;
+      overflow-y: auto;
+    }
+
+    .desc-text {
+      font-size: 0.8rem;
+      color: #cbd5e1;
+      line-height: 1.45;
+      min-height: 40px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="comp-container">
+  <div class="comp-header">
+    <div class="comp-title">
+      <i class="fas fa-chart-line text-[#00c8ff]"></i>
+      <span>Cálculo de Complejidad y Análisis Escenario por Escenario</span>
+    </div>
+    <div class="comp-subtitle">Análisis paso a paso de algoritmos representativos, costos acumulados y cotas asintóticas</div>
+  </div>
+
+  <div class="control-panel-top">
+    <!-- Selector de Algoritmo -->
+    <div class="selector-bar">
+      <button class="btn-algo active" id="btn-ex0" onclick="loadExample(0)">1. Suma (for)</button>
+      <button class="btn-algo" id="btn-ex1" onclick="loadExample(1)">2. Suma (Fórmula)</button>
+      <button class="btn-algo" id="btn-ex2" onclick="loadExample(2)">3. Búsq. Binaria</button>
+      <button class="btn-algo" id="btn-ex3" onclick="loadExample(3)">4. Fib (Recursivo)</button>
+      <button class="btn-algo" id="btn-ex4" onclick="loadExample(4)">5. Fib (Memo)</button>
+      <button class="btn-algo" id="btn-ex5" onclick="loadExample(5)">6. Fib (Iterativo)</button>
+    </div>
+
+    <!-- Selector de Lenguaje -->
+    <div class="lang-toggle">
+      <button class="btn-lang active" id="btn-lang-py" onclick="setLanguage('python')"><i class="fab fa-python mr-1"></i>Python</button>
+      <button class="btn-lang" id="btn-lang-cpp" onclick="setLanguage('cpp')"><i class="fas fa-code mr-1"></i>C++</button>
+    </div>
+  </div>
+
+  <!-- IDE / Editor de Código COMPACTO -->
+  <div class="editor-wrapper">
+    <div class="editor-header">
+      <div class="mac-dots">
+        <div class="dot dot-red"></div>
+        <div class="dot dot-yellow"></div>
+        <div class="dot dot-green"></div>
+      </div>
+      <span id="file-name">sumatoria_for.py</span>
+      <span id="lang-tag">Python 3.12</span>
+    </div>
+    <div class="code-body" id="code-body"></div>
+  </div>
+
+  <!-- Panel de Navegación -->
+  <div class="control-bar">
+    <button class="btn-ctrl" id="btn-prev" onclick="changeStep(-1)" disabled><i class="fas fa-chevron-left"></i> Anterior</button>
+    <div class="step-counter" id="step-counter">Paso: 0 / 0</div>
+    <button class="btn-ctrl btn-primary" id="btn-next" onclick="changeStep(1)">Siguiente <i class="fas fa-chevron-right"></i></button>
+  </div>
+
+  <!-- Análisis Detallado y Ejemplo -->
+  <div class="analysis-grid">
+    <div class="card-box">
+      <div class="card-label"><i class="fas fa-search"></i> Análisis de la línea actual</div>
+      <div class="desc-text" id="step-desc">Avanza con "Siguiente" para evaluar cada instrucción.</div>
+    </div>
+
+    <div class="card-box">
+      <div class="card-label"><i class="fas fa-calculator"></i> Cálculo Parcial Acumulado</div>
+      <div class="partial-val" id="partial-calc">O(0)</div>
+    </div>
+
+    <div class="card-box">
+      <div class="card-label"><i class="fas fa-tachometer-alt"></i> Complejidad Teórica por Escenario</div>
+      <div class="cases-row">
+        <div class="case-card">
+          <div class="case-title">MEJOR CASO Ω</div>
+          <div class="case-val val-best" id="best-case">-</div>
+        </div>
+        <div class="case-card">
+          <div class="case-title">CASO PROMEDIO Θ</div>
+          <div class="case-val val-avg" id="avg-case">-</div>
+        </div>
+        <div class="case-card">
+          <div class="case-title">PEOR CASO O</div>
+          <div class="case-val val-worst" id="worst-case">-</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card-box">
+      <div class="card-label"><i class="fas fa-stream"></i> Explicación del Análisis y Desglose</div>
+      <div class="exec-trace" id="exec-trace">Completa el recorrido para visualizar la explicación matemática y conceptual.</div>
+    </div>
+  </div>
+</div>
+
+<script>
+const dataset = {
+  python: [
+    {
+      name: "sumatoria_for.py",
+      langTag: "Python 3.12",
+      code: [
+        { html: '<span class="kw">def</span> <span class="fn">sumatoria</span>(n):', cost: "O(1)", desc: "Paso 1: Entrada. n es el número de elementos que queremos sumar." },
+        { html: '    suma = 0', cost: "O(1)", desc: "Inicialización de la variable acumuladora en tiempo constante O(1)." },
+        { html: '    <span class="kw">for</span> i <span class="kw">in</span> range(1, n + 1):', cost: "O(N)", desc: "Paso 3: Bucle for. Recorre 1, 2, ..., n. Se ejecuta n veces." },
+        { html: '        suma += i', cost: "O(N)", desc: "Paso 2: Operación básica. La acumulación se ejecuta n veces dentro del ciclo." },
+        { html: '    <span class="kw">return</span> suma', cost: "O(1)", desc: "Retorno del resultado final en tiempo constante." }
+      ],
+      best: "Ω(N)",
+      avg: "Θ(N)",
+      worst: "O(N)",
+      trace: "ANÁLISIS PASO A PASO:\n" +
+             "1. Entrada: n elementos.\n" +
+             "2. Operación básica: suma += i\n" +
+             "3. Ejecución del ciclo: 1, 2, ..., n ➔ n veces.\n" +
+             "4. Función de tiempo: T(n) = n\n" +
+             "5. Simplificación: T(n) = n\n" +
+             "6. Big O: O(n)\n\n" +
+             "Conclusión: La sumatoria mediante un ciclo tiene complejidad lineal O(n)."
+    },
+    {
+      name: "sumatoria_formula.py",
+      langTag: "Python 3.12",
+      code: [
+        { html: '<span class="kw">def</span> <span class="fn">sumatoria</span>(n):', cost: "O(1)", desc: "Paso 1: Entrada. n es la cantidad de elementos." },
+        { html: '    <span class="kw">return</span> n * (n + 1) // 2', cost: "O(1)", desc: "Paso 2: Operaciones fijas (suma, multiplicación, división). No hay ciclos." }
+      ],
+      best: "Ω(1)",
+      avg: "Θ(1)",
+      worst: "O(1)",
+      trace: "ANÁLISIS PASO A PASO:\n" +
+             "1. Entrada: n.\n" +
+             "2. Operaciones: Suma, multiplicación y división fijas.\n" +
+             "3. Ejecución: Ya sea n = 10 o n = 1.000.000, las operaciones son las mismas.\n" +
+             "4. Función de tiempo: T(n) = c (constante).\n" +
+             "5. Big O: O(1)\n\n" +
+             "Idea fundamental: Una fórmula directa calcula el resultado sin importar el tamaño de n, resultando exponencialmente más eficiente que iterar."
+    },
+    {
+      name: "busqueda_binaria.py",
+      langTag: "Python 3.12",
+      code: [
+        { html: '<span class="kw">def</span> <span class="fn">busqueda_binaria</span>(A, objetivo):', cost: "O(1)", desc: "Paso 1: Entrada. Arreglo A con n elementos y valor a buscar." },
+        { html: '    izquierda, derecha = 0, len(A) - 1', cost: "O(1)", desc: "Asignación de punteros en extremos." },
+        { html: '    <span class="kw">while</span> izquierda <= derecha:', cost: "O(log N)", desc: "Paso 3: Reducción a la mitad. Cada iteración divide los elementos restantes (n → n/2 → n/4...)." },
+        { html: '        medio = (izquierda + derecha) // 2', cost: "O(log N)", desc: "Cálculo del punto medio por iteración." },
+        { html: '        <span class="kw">if</span> A[medio] == objetivo: <span class="kw">return</span> medio', cost: "O(1)", desc: "Paso 2: Operación básica de comparación." },
+        { html: '        <span class="kw">elif</span> A[medio] < objetivo: izquierda = medio + 1', cost: "O(log N)", desc: "Ajuste del límite inferior según el caso." },
+        { html: '        <span class="kw">else</span>: derecha = medio - 1', cost: "O(log N)", desc: "Ajuste del límite superior." },
+        { html: '    <span class="kw">return</span> -1', cost: "O(1)", desc: "Retorna -1 si no se encuentra." }
+      ],
+      best: "Ω(1)",
+      avg: "Θ(log N)",
+      worst: "O(log N)",
+      trace: "ANÁLISIS PASO A PASO:\n" +
+             "1. Reducción: n ➔ n/2 ➔ n/4 ➔ n/8 ... ➔ n/2^k\n" +
+             "2. Cuando queda 1 elemento: n / 2^k = 1  ➔  n = 2^k\n" +
+             "3. Despejando k: k = log₂(n)\n" +
+             "4. Big O: O(log n)\n\n" +
+             "Lección clave: No siempre se cuentan instrucciones directas en loops; hay que analizar a qué ritmo disminuye el espacio de búsqueda."
+    },
+    {
+      name: "fibonacci_recursivo.py",
+      langTag: "Python 3.12",
+      code: [
+        { html: '<span class="kw">def</span> <span class="fn">fibonacci</span>(n):', cost: "O(1)", desc: "Llamada inicial a la función de Fibonacci recursiva." },
+        { html: '    <span class="kw">if</span> n <= 1: <span class="kw">return</span> n', cost: "O(1)", desc: "Caso base de la recursión." },
+        { html: '    <span class="kw">return</span> fibonacci(n - 1) + fibonacci(n - 2)', cost: "O(2ⁿ)", desc: "Llamadas dobles recursivas: Generan un árbol binario de llamadas." }
+      ],
+      best: "Ω(2ⁿ)",
+      avg: "Θ(2ⁿ)",
+      worst: "O(2ⁿ)",
+      trace: "ANÁLISIS PASO A PASO:\n" +
+             "1. Se analiza mediante el árbol de llamadas recursivas.\n" +
+             "2. Recurrencia: T(n) = T(n-1) + T(n-2) + c\n" +
+             "3. Como T(n) > 2T(n-2), el crecimiento es marcadamente exponencial.\n" +
+             "4. Complejidad Temporal: O(2ⁿ) (Aproximación pedagógica basada en la cota superior φⁿ).\n" +
+             "5. Complejidad Espacial: O(n) dada la profundidad máxima de la pila de llamadas."
+    },
+    {
+      name: "fibonacci_memo.py",
+      langTag: "Python 3.12",
+      code: [
+        { html: '<span class="kw">def</span> <span class="fn">fibonacci</span>(n, memo={}):', cost: "O(1)", desc: "Inicio con diccionario para guardar cálculos previos." },
+        { html: '    <span class="kw">if</span> n <span class="kw">in</span> memo: <span class="kw">return</span> memo[n]', cost: "O(1)", desc: "Evita recalcular subproblemas ya resueltos en O(1)." },
+        { html: '    <span class="kw">if</span> n <= 1: <span class="kw">return</span> n', cost: "O(1)", desc: "Evaluación de los casos base." },
+        { html: '    memo[n] = fibonacci(n - 1, memo) + fibonacci(n - 2, memo)', cost: "O(N)", desc: "Cálculo único de cada subproblema guardado en memoria." },
+        { html: '    <span class="kw">return</span> memo[n]', cost: "O(1)", desc: "Retorna el valor almacenado." }
+      ],
+      best: "Ω(N)",
+      avg: "Θ(N)",
+      worst: "O(N)",
+      trace: "ANÁLISIS PASO A PASO:\n" +
+             "1. Sin memoización: F(5) recalcula múltiples veces F(3), F(2), etc.\n" +
+             "2. Con memoización: Cada F(0), F(1), ..., F(n) se procesa exactamente una sola vez.\n" +
+             "3. Tiempo: O(n)\n" +
+             "4. Espacio Adicional: O(n) por la tabla hash/diccionario de memoria extra.\n\n" +
+             "Concepto clave: Programación Dinámica y Memoización."
+    },
+    {
+      name: "fibonacci_iterativo.py",
+      langTag: "Python 3.12",
+      code: [
+        { html: '<span class="kw">def</span> <span class="fn">fibonacci</span>(n):', cost: "O(1)", desc: "Inicio de la versión iterativa optimizada." },
+        { html: '    <span class="kw">if</span> n <= 1: <span class="kw">return</span> n', cost: "O(1)", desc: "Caso base de retornos inmediatos." },
+        { html: '    a, b = 0, 1', cost: "O(1)", desc: "Asignación de variables de estado." },
+        { html: '    <span class="kw">for</span> _ <span class="kw">in</span> range(2, n + 1):', cost: "O(N)", desc: "El bucle se ejecuta n - 1 veces." },
+        { html: '        a, b = b, a + b', cost: "O(N)", desc: "Operaciones constantes de actualización en cada iteración." },
+        { html: '    <span class="kw">return</span> b', cost: "O(1)", desc: "Retorno del resultado final." }
+      ],
+      best: "Ω(N)",
+      avg: "Θ(N)",
+      worst: "O(N)",
+      trace: "ANÁLISIS PASO A PASO:\n" +
+             "1. Bucle ejecutado n - 1 veces con operaciones constantes.\n" +
+             "2. Tiempo: T(n) = c(n - 1) ➔ O(n)\n" +
+             "3. Espacio Adicional: A diferencia de la memoización, solo se guardan 2 variables ('a' y 'b').\n" +
+             "4. Complejidad Espacial: O(1) memoria constante extra."
+    }
+  ],
+  cpp: [
+    {
+      name: "sumatoria_for.cpp",
+      langTag: "C++ 20",
+      code: [
+        { html: '<span class="type">long long</span> <span class="fn">sumatoria</span>(<span class="type">int</span> n) {', cost: "O(1)", desc: "Paso 1: Entrada. n es la cantidad de elementos." },
+        { html: '    <span class="type">long long</span> suma = 0;', cost: "O(1)", desc: "Inicialización del acumulador." },
+        { html: '    <span class="kw">for</span> (<span class="type">int</span> i = 1; i <= n; i++) {', cost: "O(N)", desc: "Paso 3: Bucle ejecutado n veces." },
+        { html: '        suma += i;', cost: "O(N)", desc: "Paso 2: Operación básica acumulativa." },
+        { html: '    }', cost: "O(1)", desc: "Cierre de bucle." },
+        { html: '    <span class="kw">return</span> suma;', cost: "O(1)", desc: "Retorna el total de la sumatoria." }
+      ],
+      best: "Ω(N)",
+      avg: "Θ(N)",
+      worst: "O(N)",
+      trace: "DESGLOSE:\n" +
+             "1. Iteraciones: n veces.\n" +
+             "2. Operaciones internas: O(1) por cada iteración.\n" +
+             "3. Complejidad Temporal: O(n)."
+    },
+    {
+      name: "sumatoria_formula.cpp",
+      langTag: "C++ 20",
+      code: [
+        { html: '<span class="type">long long</span> <span class="fn">sumatoria</span>(<span class="type">long long</span> n) {', cost: "O(1)", desc: "Paso 1: Entrada." },
+        { html: '    <span class="kw">return</span> n * (n + 1) / 2;', cost: "O(1)", desc: "Paso 2: Operación aritmética directa independiente de n." },
+        { html: '}', cost: "O(1)", desc: "Fin de función." }
+      ],
+      best: "Ω(1)",
+      avg: "Θ(1)",
+      worst: "O(1)",
+      trace: "DESGLOSE:\n" +
+             "1. No existen bucles.\n" +
+             "2. Tiempo constante T(n) = O(1)."
+    },
+    {
+      name: "busqueda_binaria.cpp",
+      langTag: "C++ 20",
+      code: [
+        { html: '<span class="type">int</span> <span class="fn">busquedaBinaria</span>(<span class="kw">const</span> std::vector<<span class="type">int</span>>& A, <span class="type">int</span> obj) {', cost: "O(1)", desc: "Inicio de búsqueda binaria." },
+        { html: '    <span class="type">int</span> izq = 0, der = A.size() - 1;', cost: "O(1)", desc: "Punteros en extremos." },
+        { html: '    <span class="kw">while</span> (izq <= der) {', cost: "O(log N)", desc: "Bucle condicional logarítmico." },
+        { html: '        <span class="type">int</span> med = izq + (der - izq) / 2;', cost: "O(log N)", desc: "Cálculo seguro del punto medio." },
+        { html: '        <span class="kw">if</span> (A[med] == obj) <span class="kw">return</span> med;', cost: "O(1)", desc: "Comparación e igualación." },
+        { html: '        <span class="kw">else if</span> (A[med] < obj) izq = med + 1;', cost: "O(log N)", desc: "Reducción a la mitad superior." },
+        { html: '        <span class="kw">else</span> der = med - 1;', cost: "O(log N)", desc: "Reducción a la mitad inferior." },
+        { html: '    }', cost: "O(1)", desc: "Fin del ciclo." },
+        { html: '    <span class="kw">return</span> -1;', cost: "O(1)", desc: "No encontrado." }
+      ],
+      best: "Ω(1)",
+      avg: "Θ(log N)",
+      worst: "O(log N)",
+      trace: "DESGLOSE:\n" +
+             "1. Reducción espacial: n ➔ n/2 ➔ n/4...\n" +
+             "2. Total de pasos k: k = log₂(n) ➔ O(log n)."
+    },
+    {
+      name: "fibonacci_recursivo.cpp",
+      langTag: "C++ 20",
+      code: [
+        { html: '<span class="type">long long</span> <span class="fn">fibonacci</span>(<span class="type">int</span> n) {', cost: "O(1)", desc: "Fórmula recursiva simple." },
+        { html: '    <span class="kw">if</span> (n <= 1) <span class="kw">return</span> n;', cost: "O(1)", desc: "Caso base de retorno." },
+        { html: '    <span class="kw">return</span> fibonacci(n - 1) + fibonacci(n - 2);', cost: "O(2ⁿ)", desc: "Doble ramificación recursiva." },
+        { html: '}', cost: "O(1)", desc: "Fin." }
+      ],
+      best: "Ω(2ⁿ)",
+      avg: "Θ(2ⁿ)",
+      worst: "O(2ⁿ)",
+      trace: "DESGLOSE:\n" +
+             "1. T(n) = T(n-1) + T(n-2) + c\n" +
+             "2. Árbol binario recursivo con complejidad exponencial O(2ⁿ)."
+    },
+    {
+      name: "fibonacci_memo.cpp",
+      langTag: "C++ 20",
+      code: [
+        { html: '<span class="type">long long</span> <span class="fn">fib</span>(<span class="type">int</span> n, std::unordered_map<<span class="type">int</span>, <span class="type">long long</span>>& memo) {', cost: "O(1)", desc: "Inicio con tabla hash por referencia." },
+        { html: '    <span class="kw">if</span> (memo.count(n)) <span class="kw">return</span> memo[n];', cost: "O(1)", desc: "Consulta en la memo en O(1)." },
+        { html: '    <span class="kw">if</span> (n <= 1) <span class="kw">return</span> n;', cost: "O(1)", desc: "Casos base." },
+        { html: '    memo[n] = fib(n - 1, memo) + fib(n - 2, memo);', cost: "O(N)", desc: "Cálculo e inserción en la memo." },
+        { html: '    <span class="kw">return</span> memo[n];', cost: "O(1)", desc: "Retorna el valor guardado." },
+        { html: '}', cost: "O(1)", desc: "Fin de función." }
+      ],
+      best: "Ω(N)",
+      avg: "Θ(N)",
+      worst: "O(N)",
+      trace: "DESGLOSE:\n" +
+             "1. Tiempo: O(n) al no repetir ramas completas del árbol.\n" +
+             "2. Espacio: O(n) adicional por la hash map."
+    },
+    {
+      name: "fibonacci_iterativo.cpp",
+      langTag: "C++ 20",
+      code: [
+        { html: '<span class="type">long long</span> <span class="fn">fibonacci</span>(<span class="type">int</span> n) {', cost: "O(1)", desc: "Inicio versión iterativa." },
+        { html: '    <span class="kw">if</span> (n <= 1) <span class="kw">return</span> n;', cost: "O(1)", desc: "Casos base." },
+        { html: '    <span class="type">long long</span> a = 0, b = 1;', cost: "O(1)", desc: "Variables auxiliares." },
+        { html: '    <span class="kw">for</span> (<span class="type">int</span> i = 2; i <= n; i++) {', cost: "O(N)", desc: "Ciclo de n - 1 pases." },
+        { html: '        <span class="type">long long</span> temp = a + b; a = b; b = temp;', cost: "O(N)", desc: "Actualización de punteros." },
+        { html: '    }', cost: "O(1)", desc: "Fin de bucle." },
+        { html: '    <span class="kw">return</span> b;', cost: "O(1)", desc: "Retorno del n-ésimo número." }
+      ],
+      best: "Ω(N)",
+      avg: "Θ(N)",
+      worst: "O(N)",
+      trace: "DESGLOSE:\n" +
+             "1. Tiempo: O(n).\n" +
+             "2. Espacio Adicional: O(1) memoria fija en registros."
+    }
+  ]
+};
+
+let currentLang = 'python';
+let currentEx = 0;
+let currentStep = 0;
+
+function setLanguage(lang) {
+  currentLang = lang;
+  document.getElementById('btn-lang-py').classList.toggle('active', lang === 'python');
+  document.getElementById('btn-lang-cpp').classList.toggle('active', lang === 'cpp');
+  loadExample(currentEx);
+}
+
+function loadExample(idx) {
+  currentEx = idx;
+  currentStep = 0;
+
+  const totalButtons = dataset[currentLang].length;
+  for (let i = 0; i < totalButtons; i++) {
+    const btn = document.getElementById(`btn-ex${i}`);
+    if (btn) btn.classList.toggle('active', i === idx);
+  }
+
+  const ex = dataset[currentLang][currentEx];
+  document.getElementById('file-name').innerText = ex.name;
+  document.getElementById('lang-tag').innerText = ex.langTag;
+
+  const codeBody = document.getElementById('code-body');
+  codeBody.innerHTML = ex.code.map((line, i) => `
+    <div class="code-line" id="line-${i}">
+      <span class="line-num">${i + 1}</span>
+      <span class="line-code">${line.html}</span>
+      <span class="line-cost-tag" id="tag-${i}">-</span>
+    </div>
+  `).join('');
+
+  renderStep();
+}
+
+function changeStep(dir) {
+  const ex = dataset[currentLang][currentEx];
+  const totalSteps = ex.code.length;
+  currentStep += dir;
+
+  if (currentStep < 0) currentStep = 0;
+  if (currentStep > totalSteps) currentStep = totalSteps;
+
+  renderStep();
+}
+
+function computePartialCost(steps) {
+  if (steps.length === 0) return "O(0)";
+
+  const hierarchy = ["O(1)", "O(log N)", "O(N)", "O(2ⁿ)"];
+  let costs = steps.map(s => s.cost);
+
+  let maxIdx = 0;
+  costs.forEach(c => {
+    let idx = hierarchy.indexOf(c);
+    if (idx > maxIdx) maxIdx = idx;
+  });
+
+  const uniqueCosts = [...new Set(costs)];
+  if (uniqueCosts.length === 1 && uniqueCosts[0] === "O(1)") {
+    return `O(${costs.length}) ➔ Simplificado: O(1)`;
+  }
+
+  const detailedSum = costs.join(" + ");
+  const dominant = hierarchy[maxIdx];
+
+  return `${detailedSum} ➔ Dominante: ${dominant}`;
+}
+
+function renderStep() {
+  const ex = dataset[currentLang][currentEx];
+  const totalSteps = ex.code.length;
+
+  ex.code.forEach((_, i) => {
+    const lineEl = document.getElementById(`line-${i}`);
+    const tagEl = document.getElementById(`tag-${i}`);
+    lineEl.classList.remove('active');
+
+    if (i < currentStep) {
+      tagEl.innerText = ex.code[i].cost;
+    } else {
+      tagEl.innerText = '-';
+    }
+  });
+
+  if (currentStep > 0) {
+    const activeIdx = currentStep - 1;
+    document.getElementById(`line-${activeIdx}`).classList.add('active');
+    document.getElementById('step-desc').innerHTML = ex.code[activeIdx].desc;
+
+    const executedSteps = ex.code.slice(0, currentStep);
+    document.getElementById('partial-calc').innerHTML = computePartialCost(executedSteps);
+  } else {
+    document.getElementById('step-desc').innerHTML = 'Haz clic en <b>"Siguiente ▶"</b> para analizar paso a paso cada instrucción.';
+    document.getElementById('partial-calc').innerText = "O(0)";
+  }
+
+  if (currentStep === totalSteps) {
+    document.getElementById('best-case').innerText = ex.best;
+    document.getElementById('avg-case').innerText = ex.avg;
+    document.getElementById('worst-case').innerText = ex.worst;
+    document.getElementById('exec-trace').innerText = ex.trace;
+  } else {
+    document.getElementById('best-case').innerText = "-";
+    document.getElementById('avg-case').innerText = "-";
+    document.getElementById('worst-case').innerText = "-";
+    document.getElementById('exec-trace').innerText = `Evaluando código (${currentStep}/${totalSteps} líneas)... Completa todos los pasos para ver la demostración pedagógica.`;
+  }
+
+  document.getElementById('step-counter').innerText = `Paso: ${currentStep} / ${totalSteps}`;
+  document.getElementById('btn-prev').disabled = currentStep === 0;
+  document.getElementById('btn-next').disabled = currentStep === totalSteps;
+}
+
+loadExample(0);
+</script>
+
+</body>
+</html>

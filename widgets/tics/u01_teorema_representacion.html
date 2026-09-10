@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      background-color: #0b0e14;
+      color: #e2e8f0;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      margin: 0;
+      padding: 12px;
+      transition: background-color 0.2s, color 0.2s;
+    }
+    /* Light Mode */
+    [data-theme="light"] body {
+      background-color: #ffffff;
+      color: #0f172a;
+    }
+    [data-theme="light"] .card-box {
+      background-color: #f8fafc !important;
+      border-color: #e2e8f0 !important;
+      color: #0f172a !important;
+    }
+    [data-theme="light"] .subcard-box {
+      background-color: #ffffff !important;
+      border-color: #cbd5e1 !important;
+      color: #1e293b !important;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+    [data-theme="light"] .text-muted {
+      color: #64748b !important;
+    }
+    [data-theme="light"] .text-highlight {
+      color: #0f766e !important;
+    }
+    [data-theme="light"] input, [data-theme="light"] select {
+      background-color: #ffffff !important;
+      border-color: #cbd5e1 !important;
+      color: #0f172a !important;
+    }
+    /* Estilos base */
+    .card-box {
+      background-color: #121622;
+      border: 1px solid #1f293d;
+      border-radius: 12px;
+    }
+    .subcard-box {
+      background-color: #090d14;
+      border: 1px solid #1a2233;
+      border-radius: 8px;
+    }
+    .text-muted { color: #94a3b8; }
+    .text-highlight { color: #2dd4bf; }
+  </style>
+  <script>
+    window.addEventListener('message', (event) => {
+      if (event.data && event.data.type === 'THEME_CHANGE') {
+        document.documentElement.setAttribute('data-theme', event.data.theme);
+      }
+    });
+    try {
+      const savedTheme = localStorage.getItem('leogaviria_theme') || 'dark';
+      document.documentElement.setAttribute('data-theme', savedTheme);
+    } catch(e) {}
+  </script>
+
+  <title>Teorema de Representación de Números</title>
+</head>
+<body>
+  <div class="max-w-4xl mx-auto space-y-4">
+    <div class="card-box p-4 sm:p-5">
+      <div class="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-gray-800/80 mb-4">
+        <div>
+          <h2 class="text-base sm:text-lg font-bold flex items-center gap-2 text-highlight">
+            <i class="fas fa-calculator"></i> Teorema Fundamental de la Numeración
+          </h2>
+          <p class="text-xs text-muted">Fórmula universal: N = ∑ d_i · b^i para partes enteras y fraccionarias</p>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="text-xs font-mono text-muted">Base (b):</span>
+          <select id="t-base" onchange="runTheorem()" class="px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-[#1a2234] border border-gray-700 text-white">
+            <option value="2">b = 2 (Binario)</option>
+            <option value="8">b = 8 (Octal)</option>
+            <option value="10" selected>b = 10 (Decimal)</option>
+            <option value="16">b = 16 (Hexadecimal)</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
+        <div>
+          <label class="text-xs font-semibold text-muted block mb-1">Parte Entera:</label>
+          <input type="text" id="t-int" value="1101" oninput="runTheorem()" class="w-full px-3 py-1.5 rounded-lg text-xs font-mono bg-[#090d14] border border-gray-700 text-emerald-400 uppercase font-bold">
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-muted block mb-1">Parte Fraccionaria (opcional):</label>
+          <input type="text" id="t-frac" value="011" oninput="runTheorem()" class="w-full px-3 py-1.5 rounded-lg text-xs font-mono bg-[#090d14] border border-gray-700 text-sky-400 uppercase font-bold">
+        </div>
+      </div>
+
+      <div id="t-error" class="hidden text-xs text-rose-400 bg-rose-500/10 border border-rose-500/20 p-2 rounded-lg mb-3"></div>
+
+      <!-- Cuadrícula de Pesos -->
+      <div class="subcard-box p-3 sm:p-4 mb-4">
+        <h4 class="text-xs font-bold text-muted uppercase tracking-wider mb-2 flex items-center justify-between">
+          <span>Términos del Teorema: d_i · b^i</span>
+          <span class="text-[10px] text-amber-400 font-mono">Punto decimal entre i=0 e i=-1</span>
+        </h4>
+        <div id="t-terms-grid" class="flex flex-wrap gap-2 overflow-x-auto py-1"></div>
+      </div>
+
+      <!-- Resumen Matemático -->
+      <div class="subcard-box p-3 sm:p-4">
+        <div class="text-xs text-muted mb-1 font-mono">Suma evaluada en Base 10:</div>
+        <div id="t-eval" class="text-xs sm:text-sm font-mono text-emerald-300 leading-relaxed overflow-x-auto py-1"></div>
+        <div id="t-final" class="text-base sm:text-lg font-bold text-teal-400 mt-2 pt-2 border-t border-gray-800/80"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function runTheorem() {
+      const b = parseInt(document.getElementById('t-base').value);
+      const intStr = document.getElementById('t-int').value.trim().toUpperCase() || '0';
+      const fracStr = document.getElementById('t-frac').value.trim().toUpperCase();
+      const errEl = document.getElementById('t-error');
+      const validChars = "0123456789ABCDEF".slice(0, b);
+
+      const all = intStr + fracStr;
+      for (let ch of all) {
+        if (!validChars.includes(ch)) {
+          errEl.textContent = `Caracter '${ch}' no permitido en base ${b}. Válidos: ${validChars}`;
+          errEl.classList.remove('hidden');
+          return;
+        }
+      }
+      errEl.classList.add('hidden');
+
+      const grid = document.getElementById('t-terms-grid');
+      grid.innerHTML = '';
+
+      let total = 0;
+      let evalParts = [];
+
+      // Enteros: de intStr.length - 1 down to 0
+      for (let i = 0; i < intStr.length; i++) {
+        const exp = intStr.length - 1 - i;
+        const ch = intStr[i];
+        const d = parseInt(ch, b);
+        const weight = Math.pow(b, exp);
+        const termVal = d * weight;
+        total += termVal;
+
+        const cell = document.createElement('div');
+        cell.className = 'p-2 rounded-lg bg-[#141b29] border border-teal-500/30 text-center min-w-[75px]';
+        cell.innerHTML = `
+          <div class="text-[10px] text-muted font-mono">b<sup>${exp}</sup> = ${weight}</div>
+          <div class="text-lg font-bold text-white font-mono my-1">${ch}</div>
+          <div class="text-[10px] text-teal-400 font-mono">${termVal}</div>
+        `;
+        grid.appendChild(cell);
+        evalParts.push(`(${d} × ${weight})`);
+      }
+
+      // Fraccionarios: de -1 down to -fracStr.length
+      if (fracStr.length > 0) {
+        const dot = document.createElement('div');
+        dot.className = 'flex items-center text-xl font-bold text-rose-400 px-1';
+        dot.textContent = '•';
+        grid.appendChild(dot);
+
+        for (let i = 0; i < fracStr.length; i++) {
+          const exp = -(i + 1);
+          const ch = fracStr[i];
+          const d = parseInt(ch, b);
+          const weight = Math.pow(b, exp);
+          const termVal = d * weight;
+          total += termVal;
+
+          const cell = document.createElement('div');
+          cell.className = 'p-2 rounded-lg bg-[#1a1c26] border border-sky-500/30 text-center min-w-[75px]';
+          cell.innerHTML = `
+            <div class="text-[10px] text-muted font-mono">b<sup>${exp}</sup> = ${weight.toFixed(4)}</div>
+            <div class="text-lg font-bold text-sky-300 font-mono my-1">${ch}</div>
+            <div class="text-[10px] text-sky-400 font-mono">${termVal.toFixed(4)}</div>
+          `;
+          grid.appendChild(cell);
+          evalParts.push(`(${d} × ${weight.toFixed(4)})`);
+        }
+      }
+
+      document.getElementById('t-eval').innerHTML = evalParts.join(' + ');
+      const displayNum = fracStr ? `${intStr}.${fracStr}` : intStr;
+      document.getElementById('t-final').innerHTML = `${displayNum}<sub>(${b})</sub> = ${total.toFixed(4).replace(/\.?0+$/, '')}<sub>(10)</sub>`;
+    }
+    runTheorem();
+  </script>
+</body>
+</html>

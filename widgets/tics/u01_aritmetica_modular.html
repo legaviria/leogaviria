@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      background-color: #0b0e14;
+      color: #e2e8f0;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      margin: 0;
+      padding: 12px;
+      transition: background-color 0.2s, color 0.2s;
+    }
+    /* Light Mode */
+    [data-theme="light"] body {
+      background-color: #ffffff;
+      color: #0f172a;
+    }
+    [data-theme="light"] .card-box {
+      background-color: #f8fafc !important;
+      border-color: #e2e8f0 !important;
+      color: #0f172a !important;
+    }
+    [data-theme="light"] .subcard-box {
+      background-color: #ffffff !important;
+      border-color: #cbd5e1 !important;
+      color: #1e293b !important;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+    [data-theme="light"] .text-muted {
+      color: #64748b !important;
+    }
+    [data-theme="light"] .text-highlight {
+      color: #0f766e !important;
+    }
+    [data-theme="light"] input, [data-theme="light"] select {
+      background-color: #ffffff !important;
+      border-color: #cbd5e1 !important;
+      color: #0f172a !important;
+    }
+    /* Estilos base */
+    .card-box {
+      background-color: #121622;
+      border: 1px solid #1f293d;
+      border-radius: 12px;
+    }
+    .subcard-box {
+      background-color: #090d14;
+      border: 1px solid #1a2233;
+      border-radius: 8px;
+    }
+    .text-muted { color: #94a3b8; }
+    .text-highlight { color: #2dd4bf; }
+  </style>
+  <script>
+    window.addEventListener('message', (event) => {
+      if (event.data && event.data.type === 'THEME_CHANGE') {
+        document.documentElement.setAttribute('data-theme', event.data.theme);
+      }
+    });
+    try {
+      const savedTheme = localStorage.getItem('leogaviria_theme') || 'dark';
+      document.documentElement.setAttribute('data-theme', savedTheme);
+    } catch(e) {}
+  </script>
+
+  <title>Simulador de Aritmética Modular (Reloj Zn)</title>
+</head>
+<body>
+  <div class="max-w-4xl mx-auto space-y-4">
+    <div class="card-box p-4 sm:p-5">
+      <div class="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-gray-800/80 mb-4">
+        <div>
+          <h2 class="text-base sm:text-lg font-bold flex items-center gap-2 text-highlight">
+            <i class="fas fa-clock"></i> Simulador de Aritmética Modular (Anillo ℤ_n)
+          </h2>
+          <p class="text-xs text-muted">Representación circular de congruencias a ≡ b (mod n)</p>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="text-xs font-mono text-muted">Módulo (n):</span>
+          <input type="number" id="mod-n" value="12" min="2" max="24" oninput="drawClock()" class="w-16 px-2 py-1 rounded-lg text-xs font-mono bg-[#1a2234] border border-gray-700 text-teal-400 font-bold text-center">
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 items-center">
+        <!-- Lienzo del Reloj Modular -->
+        <div class="flex flex-col items-center justify-center p-3 subcard-box">
+          <canvas id="clock-canvas" width="260" height="260" class="max-w-full"></canvas>
+          <div class="text-[11px] font-mono text-muted mt-2 text-center" id="pointer-desc">Posición actual: 0</div>
+        </div>
+
+        <!-- Controles de Operación Modular -->
+        <div class="space-y-3">
+          <div class="subcard-box p-3">
+            <label class="text-xs font-bold text-muted block mb-1">Operación:</label>
+            <div class="grid grid-cols-3 gap-2 mb-3">
+              <input type="number" id="mod-a" value="14" oninput="calcMod()" class="px-2 py-1.5 rounded-lg text-xs font-mono bg-[#090d14] border border-gray-700 text-emerald-400 text-center font-bold">
+              <select id="mod-op" onchange="calcMod()" class="px-2 py-1.5 rounded-lg text-xs font-semibold bg-[#1a2234] border border-gray-700 text-white text-center">
+                <option value="+">+</option>
+                <option value="-">-</option>
+                <option value="*">&times;</option>
+              </select>
+              <input type="number" id="mod-b" value="5" oninput="calcMod()" class="px-2 py-1.5 rounded-lg text-xs font-mono bg-[#090d14] border border-gray-700 text-sky-400 text-center font-bold">
+            </div>
+
+            <div class="text-center p-2 rounded-lg bg-teal-500/10 border border-teal-500/30">
+              <span class="text-xs text-muted block">Resultado en ℤ<sub>n</sub>:</span>
+              <span id="mod-result" class="text-xl font-bold font-mono text-teal-300">---</span>
+            </div>
+          </div>
+
+          <!-- Aplicación a Informática / Criptografía -->
+          <div class="subcard-box p-3">
+            <h4 class="text-xs font-bold text-purple-400 flex items-center gap-1.5 mb-1.5">
+              <i class="fas fa-key"></i> Conexión: Cifrado César (ROT-k)
+            </h4>
+            <p class="text-[11px] text-gray-300 leading-relaxed">
+              En el alfabeto inglés (módulo 26), cada letra se codifica como c ≡ (p + k) mod 26.
+              Si k = 3, la letra 'A' (0) se convierte en 'D' (3).
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function drawClock() {
+      const n = Math.max(2, Math.min(24, parseInt(document.getElementById('mod-n').value) || 12));
+      const canvas = document.getElementById('clock-canvas');
+      const ctx = canvas.getContext('2d');
+      const w = canvas.width;
+      const h = canvas.height;
+      const r = w / 2 - 25;
+      const cx = w / 2;
+      const cy = h / 2;
+
+      ctx.clearRect(0, 0, w, h);
+
+      // Círculo principal
+      ctx.beginPath();
+      ctx.arc(cx, cy, r, 0, 2 * Math.PI);
+      ctx.strokeStyle = '#2d3748';
+      ctx.lineWidth = 3;
+      ctx.stroke();
+
+      // Nodos del reloj
+      for (let i = 0; i < n; i++) {
+        const angle = (i * 2 * Math.PI / n) - Math.PI / 2;
+        const x = cx + r * Math.cos(angle);
+        const y = cy + r * Math.sin(angle);
+
+        ctx.beginPath();
+        ctx.arc(x, y, 12, 0, 2 * Math.PI);
+        ctx.fillStyle = '#1a202c';
+        ctx.fill();
+        ctx.strokeStyle = '#4a5568';
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+
+        ctx.fillStyle = '#e2e8f0';
+        ctx.font = 'bold 10px monospace';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(i, x, y);
+      }
+
+      calcMod();
+    }
+
+    function calcMod() {
+      const n = Math.max(2, Math.min(24, parseInt(document.getElementById('mod-n').value) || 12));
+      const a = parseInt(document.getElementById('mod-a').value) || 0;
+      const b = parseInt(document.getElementById('mod-b').value) || 0;
+      const op = document.getElementById('mod-op').value;
+
+      let raw = 0;
+      if (op === '+') raw = a + b;
+      else if (op === '-') raw = a - b;
+      else if (op === '*') raw = a * b;
+
+      // Residuo matemático positivo
+      let res = ((raw % n) + n) % n;
+
+      document.getElementById('mod-result').innerHTML = `(${a} ${op} ${b}) mod ${n} = <strong>${res}</strong>`;
+      document.getElementById('pointer-desc').innerHTML = `Valor = <strong>${raw}</strong> &equiv; <span class="text-teal-400 font-bold">${res}</span> (mod ${n})`;
+
+      // Resaltar en reloj
+      const canvas = document.getElementById('clock-canvas');
+      const ctx = canvas.getContext('2d');
+      const r = canvas.width / 2 - 25;
+      const cx = canvas.width / 2;
+      const cy = canvas.height / 2;
+
+      // Redibujar
+      const angle = (res * 2 * Math.PI / n) - Math.PI / 2;
+      const x = cx + r * Math.cos(angle);
+      const y = cy + r * Math.sin(angle);
+
+      ctx.beginPath();
+      ctx.moveTo(cx, cy);
+      ctx.lineTo(x, y);
+      ctx.strokeStyle = '#2dd4bf';
+      ctx.lineWidth = 2.5;
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.arc(x, y, 13, 0, 2 * Math.PI);
+      ctx.fillStyle = '#0f766e';
+      ctx.fill();
+      ctx.strokeStyle = '#2dd4bf';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 10px monospace';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(res, x, y);
+    }
+
+    drawClock();
+  </script>
+</body>
+</html>

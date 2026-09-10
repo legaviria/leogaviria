@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      background-color: #0b0e14;
+      color: #e2e8f0;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      margin: 0;
+      padding: 12px;
+      transition: background-color 0.2s, color 0.2s;
+    }
+    [data-theme="light"] body { background-color: #ffffff; color: #0f172a; }
+    [data-theme="light"] .card-box { background-color: #f8fafc !important; border-color: #e2e8f0 !important; color: #0f172a !important; }
+    [data-theme="light"] .subcard-box { background-color: #ffffff !important; border-color: #cbd5e1 !important; color: #1e293b !important; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+    [data-theme="light"] .text-muted { color: #64748b !important; }
+    [data-theme="light"] .text-highlight { color: #0f766e !important; }
+    [data-theme="light"] input, [data-theme="light"] select { background-color: #ffffff !important; border-color: #cbd5e1 !important; color: #0f172a !important; }
+    .card-box { background-color: #121622; border: 1px solid #1f293d; border-radius: 12px; }
+    .subcard-box { background-color: #090d14; border: 1px solid #1a2233; border-radius: 8px; }
+    .text-muted { color: #94a3b8; }
+    .text-highlight { color: #2dd4bf; }
+  </style>
+  <script>
+    window.addEventListener('message', (event) => {
+      if (event.data && event.data.type === 'THEME_CHANGE') {
+        document.documentElement.setAttribute('data-theme', event.data.theme);
+      }
+    });
+    try {
+      const savedTheme = localStorage.getItem('leogaviria_theme') || 'dark';
+      document.documentElement.setAttribute('data-theme', savedTheme);
+    } catch(e) {}
+  </script>
+
+  <title>Tuplas, Producto Cartesiano y Conjunto Potencia</title>
+</head>
+<body>
+  <div class="max-w-4xl mx-auto space-y-4">
+    <div class="card-box p-4 sm:p-5">
+      <div class="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-gray-800/80 mb-4">
+        <div>
+          <h2 class="text-base sm:text-lg font-bold flex items-center gap-2 text-highlight">
+            <i class="fas fa-grid-2"></i> Producto Cartesiano A × B y Conjunto Potencia 𝒫(A)
+          </h2>
+          <p class="text-xs text-muted">Pares ordenados (a, b) con |A × B| = |A|·|B| y subconjuntos con |𝒫(A)| = 2^n</p>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
+        <div>
+          <label class="text-xs font-semibold text-muted block mb-1">Elementos Conjunto A (1 a 4 elementos):</label>
+          <input type="text" id="cart-a" value="x, y" oninput="renderCartesianAndPower()" class="w-full px-3 py-1.5 rounded-lg text-xs font-mono bg-[#090d14] border border-gray-700 text-teal-400 font-bold">
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-muted block mb-1">Elementos Conjunto B (1 a 4 elementos):</label>
+          <input type="text" id="cart-b" value="1, 2, 3" oninput="renderCartesianAndPower()" class="w-full px-3 py-1.5 rounded-lg text-xs font-mono bg-[#090d14] border border-gray-700 text-sky-400 font-bold">
+        </div>
+      </div>
+
+      <!-- Producto Cartesiano -->
+      <div class="subcard-box p-4 mb-4">
+        <div class="flex justify-between items-center mb-2">
+          <h4 class="text-xs font-bold text-teal-400 uppercase font-mono">1. Producto Cartesiano A &times; B</h4>
+          <span id="cart-cardinality" class="text-xs font-mono text-muted font-bold">|A &times; B| = 6 pares</span>
+        </div>
+        <div id="cart-grid" class="flex flex-wrap gap-2 py-1 font-mono text-xs"></div>
+      </div>
+
+      <!-- Conjunto Potencia P(A) -->
+      <div class="subcard-box p-4">
+        <div class="flex justify-between items-center mb-2">
+          <h4 class="text-xs font-bold text-amber-400 uppercase font-mono">2. Conjunto Potencia &Pscr;(A) (Todos los subconjuntos)</h4>
+          <span id="power-cardinality" class="text-xs font-mono text-muted font-bold">|&Pscr;(A)| = 2^|A| = 4</span>
+        </div>
+        <div id="power-subsets" class="grid grid-cols-2 sm:grid-cols-4 gap-2 font-mono text-xs"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function parseList(str) {
+      return str.split(',').map(s => s.trim()).filter(s => s.length > 0);
+    }
+
+    function renderCartesianAndPower() {
+      const a = parseList(document.getElementById('cart-a').value).slice(0, 4);
+      const b = parseList(document.getElementById('cart-b').value).slice(0, 4);
+
+      // Cartesiano
+      const cartCont = document.getElementById('cart-grid');
+      cartCont.innerHTML = '';
+      const totalCart = a.length * b.length;
+      document.getElementById('cart-cardinality').textContent = `|A &times; B| = ${a.length} &times; ${b.length} = ${totalCart} pares`;
+
+      a.forEach(ai => {
+        b.forEach(bj => {
+          const chip = document.createElement('span');
+          chip.className = 'px-2.5 py-1 rounded bg-[#10141d] border border-teal-500/40 text-teal-300 font-mono shadow-sm';
+          chip.textContent = `(${ai}, ${bj})`;
+          cartCont.appendChild(chip);
+        });
+      });
+
+      // Conjunto Potencia de A
+      const powerCont = document.getElementById('power-subsets');
+      powerCont.innerHTML = '';
+      const totalPower = Math.pow(2, a.length);
+      document.getElementById('power-cardinality').innerHTML = `|&Pscr;(A)| = 2<sup>${a.length}</sup> = <strong>${totalPower} subconjuntos</strong>`;
+
+      for (let i = 0; i < totalPower; i++) {
+        let subset = [];
+        let maskStr = i.toString(2).padStart(a.length, '0');
+        for (let bit = 0; bit < a.length; bit++) {
+          if ((i >> bit) & 1) {
+            subset.push(a[bit]);
+          }
+        }
+        const box = document.createElement('div');
+        box.className = 'p-2 rounded bg-[#10141d] border border-amber-500/30 text-center flex flex-col justify-between';
+        box.innerHTML = `
+          <span class="text-[9px] text-muted font-mono">Máscara: ${maskStr}</span>
+          <span class="text-xs font-bold text-amber-300 my-1">${subset.length === 0 ? '∅' : `{ ${subset.join(', ')} }`}</span>
+          <span class="text-[9px] text-gray-500 font-mono">Tam: ${subset.length}</span>
+        `;
+        powerCont.appendChild(box);
+      }
+    }
+
+    renderCartesianAndPower();
+  </script>
+</body>
+</html>

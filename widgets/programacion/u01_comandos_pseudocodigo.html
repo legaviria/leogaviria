@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Comandos Principales de Pseudocódigo</title>
+  <style>
+    * { box-sizing: border-box; }
+    html, body {
+      background-color: #0e0e11 !important;
+      color: #ffffff;
+      margin: 0;
+      padding: 10px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+  </style>
+</head>
+<body>
+<style>
+  .pseudo-container {
+    background-color: #0e0e11;
+    color: #ffffff;
+    padding: 14px 16px;
+    border-radius: 12px;
+    border: 1px solid #1f293d;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    user-select: none;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+    max-width: 580px;
+    margin: 0 auto;
+  }
+
+  .pseudo-header {
+    text-align: center;
+    margin-bottom: 10px;
+  }
+
+  .pseudo-title {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #00c8ff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .pseudo-subtitle {
+    font-size: 0.8rem;
+    color: #94a3b8;
+    margin-top: 2px;
+  }
+
+  /* Lista de Tarjetas */
+  .pseudo-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .pseudo-card {
+    background-color: #181d28;
+    border: 1px solid #232d42;
+    border-radius: 8px;
+    padding: 9px 12px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    transition: transform 0.2s ease, background-color 0.2s ease;
+  }
+
+  .pseudo-card:hover {
+    transform: translateX(4px);
+    background-color: #1c2332;
+  }
+
+  /* Bloque de código pequeño */
+  .code-preview {
+    width: 120px;
+    background: #0f141d;
+    border: 1px solid #232d42;
+    border-radius: 6px;
+    padding: 6px 8px;
+    font-family: monospace;
+    font-size: 0.72rem;
+    color: #f8fafc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    text-align: left;
+    line-height: 1.3;
+  }
+
+  /* Información del comando */
+  .pseudo-info {
+    flex: 1;
+  }
+
+  .pseudo-top {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 2px;
+  }
+
+  .pseudo-keyword {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #ffffff;
+    font-family: monospace;
+  }
+
+  .pseudo-badge {
+    font-size: 0.68rem;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 4px;
+    text-transform: uppercase;
+  }
+
+  .pseudo-desc {
+    font-size: 0.78rem;
+    color: #94a3b8;
+    line-height: 1.3;
+  }
+
+  /* Estilos por categoría */
+  .card-blue { border-left: 3px solid #00c8ff; }
+  .card-blue .pseudo-badge { background: rgba(0, 200, 255, 0.15); color: #00c8ff; }
+  .card-blue .code-preview { border-color: rgba(0, 200, 255, 0.3); }
+
+  .card-yellow { border-left: 3px solid #eab308; }
+  .card-yellow .pseudo-badge { background: rgba(234, 179, 8, 0.15); color: #eab308; }
+  .card-yellow .code-preview { border-color: rgba(234, 179, 8, 0.3); }
+
+  .card-purple { border-left: 3px solid #c084fc; }
+  .card-purple .pseudo-badge { background: rgba(192, 132, 252, 0.15); color: #c084fc; }
+  .card-purple .code-preview { border-color: rgba(192, 132, 252, 0.3); }
+
+  .card-red { border-left: 3px solid #ff7676; }
+  .card-red .pseudo-badge { background: rgba(255, 118, 118, 0.15); color: #ff7676; }
+  .card-red .code-preview { border-color: rgba(255, 118, 118, 0.3); }
+
+  .card-green { border-left: 3px solid #4ade80; }
+  .card-green .pseudo-badge { background: rgba(74, 222, 128, 0.15); color: #4ade80; }
+  .card-green .code-preview { border-color: rgba(74, 222, 128, 0.3); }
+
+  .kw { font-weight: bold; }
+  .kw-blue { color: #00c8ff; }
+  .kw-yellow { color: #eab308; }
+  .kw-purple { color: #c084fc; }
+  .kw-red { color: #ff7676; }
+  .kw-green { color: #4ade80; }
+</style>
+
+<div class="pseudo-container">
+  <div class="pseudo-header">
+    <div class="pseudo-title">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#00c8ff" stroke-width="2.2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+      Comandos de Pseudocódigo
+    </div>
+    <div class="pseudo-subtitle">Palabras clave y sintaxis exacta del lenguaje</div>
+  </div>
+
+  <div class="pseudo-grid">
+    <!-- INICIO / FIN -->
+    <div class="pseudo-card card-blue">
+      <div class="code-preview">
+        <span><span class="kw kw-blue">INICIO</span><br>&nbsp;&nbsp;...<br><span class="kw kw-blue">FIN</span></span>
+      </div>
+      <div class="pseudo-info">
+        <div class="pseudo-top">
+          <span class="pseudo-keyword">INICIO / FIN</span>
+          <span class="pseudo-badge">Estructura</span>
+        </div>
+        <div class="pseudo-desc">Marcan el punto de comienzo y de terminación del algoritmo.</div>
+      </div>
+    </div>
+
+    <!-- Leer / Escribir -->
+    <div class="pseudo-card card-purple">
+      <div class="code-preview">
+        <span><span class="kw kw-purple">Escribir</span> "Edad:"<br><span class="kw kw-purple">Leer</span> edad</span>
+      </div>
+      <div class="pseudo-info">
+        <div class="pseudo-top">
+          <span class="pseudo-keyword">Leer / Escribir</span>
+          <span class="pseudo-badge">E/S</span>
+        </div>
+        <div class="pseudo-desc"><b>Escribir:</b> Muestra mensajes en pantalla.<br><b>Leer:</b> Captura el dato ingresado por el usuario.</div>
+      </div>
+    </div>
+
+    <!-- SI / ENTONCES / SINO / FIN_SI -->
+    <div class="pseudo-card card-red">
+      <div class="code-preview">
+        <span><span class="kw kw-red">SI</span> x &gt;= 18 <span class="kw kw-red">ENTONCES</span><br>&nbsp;&nbsp;...<br><span class="kw kw-red">SINO</span><br>&nbsp;&nbsp;...<br><span class="kw kw-red">FIN_SI</span></span>
+      </div>
+      <div class="pseudo-info">
+        <div class="pseudo-top">
+          <span class="pseudo-keyword">SI / SINO / FIN_SI</span>
+          <span class="pseudo-badge">Condicional</span>
+        </div>
+        <div class="pseudo-desc">Evalúa una condición lógica para tomar un camino según sea verdadera o falsa.</div>
+      </div>
+    </div>
+
+    <!-- MIENTRAS / HACER / FIN_MIENTRAS -->
+    <div class="pseudo-card card-green">
+      <div class="code-preview">
+        <span><span class="kw kw-green">MIENTRAS</span> c &lt; 3 <span class="kw kw-green">HACER</span><br>&nbsp;&nbsp;...<br><span class="kw kw-green">FIN_MIENTRAS</span></span>
+      </div>
+      <div class="pseudo-info">
+        <div class="pseudo-top">
+          <span class="pseudo-keyword">MIENTRAS / HACER / FIN_MIENTRAS</span>
+          <span class="pseudo-badge">Bucle</span>
+        </div>
+        <div class="pseudo-desc">Repite un bloque de instrucciones mientras se cumpla la condición especificada.</div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      background-color: #0b0e14;
+      color: #e2e8f0;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      margin: 0;
+      padding: 12px;
+      transition: background-color 0.2s, color 0.2s;
+    }
+    [data-theme="light"] body { background-color: #ffffff; color: #0f172a; }
+    [data-theme="light"] .card-box { background-color: #f8fafc !important; border-color: #e2e8f0 !important; color: #0f172a !important; }
+    [data-theme="light"] .subcard-box { background-color: #ffffff !important; border-color: #cbd5e1 !important; color: #1e293b !important; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+    [data-theme="light"] .text-muted { color: #64748b !important; }
+    [data-theme="light"] .text-highlight { color: #0f766e !important; }
+    [data-theme="light"] input, [data-theme="light"] select { background-color: #ffffff !important; border-color: #cbd5e1 !important; color: #0f172a !important; }
+    .card-box { background-color: #121622; border: 1px solid #1f293d; border-radius: 12px; }
+    .subcard-box { background-color: #090d14; border: 1px solid #1a2233; border-radius: 8px; }
+    .text-muted { color: #94a3b8; }
+    .text-highlight { color: #2dd4bf; }
+  </style>
+  <script>
+    window.addEventListener('message', (event) => {
+      if (event.data && event.data.type === 'THEME_CHANGE') {
+        document.documentElement.setAttribute('data-theme', event.data.theme);
+      }
+    });
+    try {
+      const savedTheme = localStorage.getItem('leogaviria_theme') || 'dark';
+      document.documentElement.setAttribute('data-theme', savedTheme);
+    } catch(e) {}
+  </script>
+
+  <title>Clases de Equivalencia y Particiones</title>
+</head>
+<body>
+  <div class="max-w-4xl mx-auto space-y-4">
+    <div class="card-box p-4 sm:p-5">
+      <div class="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-gray-800/80 mb-4">
+        <div>
+          <h2 class="text-base sm:text-lg font-bold flex items-center gap-2 text-highlight">
+            <i class="fas fa-layer-group"></i> Clases de Equivalencia y Particiones del Conjunto
+          </h2>
+          <p class="text-xs text-muted">Toda relación de equivalencia particiona el conjunto en bloques disjuntos [x] cuya unión es A</p>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="text-xs font-mono text-muted">Módulo m:</span>
+          <select id="m-val" onchange="renderClasses()" class="px-2 py-1 rounded bg-[#1a2234] border border-gray-700 text-teal-400 font-bold text-xs">
+            <option value="2">m = 2 (Par e Impar)</option>
+            <option value="3" selected>m = 3 (Residuos 0, 1, 2)</option>
+            <option value="4">m = 4 (Residuos 0, 1, 2, 3)</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Conjunto Universo Base -->
+      <div class="text-xs text-muted font-mono mb-3">
+        Conjunto A = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11 } bajo la relación a &equiv; b (mod m)
+      </div>
+
+      <!-- Bloques de Clases de Equivalencia -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 mb-4" id="classes-grid">
+        <!-- Inyectado por JS -->
+      </div>
+
+      <!-- Propiedades Fundamentales de la Partición -->
+      <div class="subcard-box p-3 sm:p-4 text-xs font-mono space-y-1 text-gray-300">
+        <div class="text-teal-400 font-bold mb-1 flex items-center gap-1.5">
+          <i class="fas fa-check-double"></i> Teorema Fundamental de las Relaciones de Equivalencia:
+        </div>
+        <p>1. Disjuntas a pares: Si [x] &ne; [y] &rArr; [x] &cap; [y] = &empty; (ningún elemento pertenece a dos clases distintas).</p>
+        <p>2. Cobertura completa: &bigcup; [x] = A (la unión de todas las clases reconstruye el conjunto completo A).</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function renderClasses() {
+      const m = parseInt(document.getElementById('m-val').value);
+      const A = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
+
+      let classes = {};
+      for (let r = 0; r < m; r++) classes[r] = [];
+
+      A.forEach(val => {
+        const rem = val % m;
+        classes[rem].push(val);
+      });
+
+      const grid = document.getElementById('classes-grid');
+      grid.innerHTML = '';
+
+      const borderColors = ['border-teal-500/40', 'border-sky-500/40', 'border-amber-500/40', 'border-purple-500/40'];
+      const textColors = ['text-teal-400', 'text-sky-400', 'text-amber-400', 'text-purple-400'];
+
+      for (let r = 0; r < m; r++) {
+        const colClass = borderColors[r % 4];
+        const tClass = textColors[r % 4];
+        const card = document.createElement('div');
+        card.className = `p-3 subcard-box border ${colClass} text-center flex flex-col justify-between`;
+        card.innerHTML = `
+          <span class="text-xs font-bold ${tClass} font-mono block">Clase [${r}] (mod ${m})</span>
+          <span class="text-[10px] text-muted block mb-2 font-mono">Residuo r = ${r}</span>
+          <div class="p-2 rounded bg-[#10141d] text-white font-mono text-sm font-bold">
+            { ${classes[r].join(', ')} }
+          </div>
+          <span class="text-[10px] text-muted font-mono mt-2">Tamaño: ${classes[r].length} elems</span>
+        `;
+        grid.appendChild(card);
+      }
+    }
+
+    renderClasses();
+  </script>
+</body>
+</html>

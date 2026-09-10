@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simulador de Excepciones try - except - else - finally</title>
+  <style>
+    :root {
+      --bg: #0e0e11; --card: #141923; --border: #232d42; --text: #fff;
+      --muted: #94a3b8; --sky: #38bdf8; --purple: #a855f7; --green: #10b981; --red: #ef4444;
+    }
+    body.theme-light {
+      --bg: #f8fafc; --card: #ffffff; --border: #e2e8f0; --text: #0f172a;
+      --muted: #64748b; --sky: #0284c7; --purple: #9333ea; --green: #059669; --red: #dc2626;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { background: var(--bg); color: var(--text); padding: 14px; display: flex; justify-content: center; }
+    .container { width: 100%; max-width: 680px; background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 16px; }
+    .header { text-align: center; margin-bottom: 12px; }
+    .header h3 { font-size: 1.1rem; color: #ec4899; margin-bottom: 4px; }
+    .scenarios { display: flex; gap: 6px; margin-bottom: 12px; flex-wrap: wrap; }
+    .sbtn { padding: 6px 10px; font-size: 0.74rem; font-weight: 600; border-radius: 6px; border: 1px solid var(--border); background: rgba(255,255,255,0.04); color: var(--muted); cursor: pointer; }
+    .sbtn.active { border-color: #ec4899; color: #fbcfe8; background: rgba(236, 72, 153, 0.15); }
+    .flow-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
+    @media (max-width: 550px) { .flow-grid { grid-template-columns: 1fr; } }
+    .block { padding: 10px; border-radius: 8px; border: 1px solid var(--border); background: #080b10; font-family: monospace; font-size: 0.8rem; }
+    .block.active { border-color: var(--green); background: rgba(16, 185, 129, 0.12); }
+    .block.error { border-color: var(--red); background: rgba(239, 68, 68, 0.12); }
+    .block h5 { font-size: 0.72rem; color: var(--muted); margin-bottom: 4px; text-transform: uppercase; }
+    .console-view { background: #080b10; border: 1px solid var(--border); border-radius: 8px; padding: 10px; font-family: monospace; font-size: 0.8rem; color: #fde047; min-height: 60px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h3>🛡️ Simulador de Excepciones: try, except, else, finally</h3>
+      <p style="font-size:0.75rem; color:var(--muted)">Selecciona un escenario de entrada para observar el control de flujo seguro.</p>
+    </div>
+
+    <div class="scenarios">
+      <button class="sbtn active" onclick="loadScenario(1)">Caso 1: Entrada Válida</button>
+      <button class="sbtn" onclick="loadScenario(2)">Caso 2: ZeroDivisionError</button>
+      <button class="sbtn" onclick="loadScenario(3)">Caso 3: ValueError</button>
+    </div>
+
+    <div class="flow-grid">
+      <div class="block" id="blkTry">
+        <h5>1. Bloque try</h5>
+        <div>a = int(entrada_a)<br>b = int(entrada_b)<br>resultado = a / b</div>
+      </div>
+      <div class="block" id="blkExcept">
+        <h5>2. Bloque except</h5>
+        <div>except ZeroDivisionError:<br>&nbsp;&nbsp;&nbsp;&nbsp;print("No divide entre 0")<br>except ValueError:<br>&nbsp;&nbsp;&nbsp;&nbsp;print("Número inválido")</div>
+      </div>
+      <div class="block" id="blkElse">
+        <h5>3. Bloque else (Si no hubo error)</h5>
+        <div>print("Cálculo exitoso:", resultado)</div>
+      </div>
+      <div class="block" id="blkFinally">
+        <h5>4. Bloque finally (Siempre se ejecuta)</h5>
+        <div>print("Cerrando recursos y conexión")</div>
+      </div>
+    </div>
+
+    <div class="console-view" id="exConsole">> Presiona un escenario arriba</div>
+  </div>
+
+  <script>
+    function loadScenario(type) {
+      document.querySelectorAll('.sbtn').forEach((b, i) => b.classList.toggle('active', i === type - 1));
+      const bTry = document.getElementById('blkTry');
+      const bExcept = document.getElementById('blkExcept');
+      const bElse = document.getElementById('blkElse');
+      const bFinally = document.getElementById('blkFinally');
+      const con = document.getElementById('exConsole');
+
+      [bTry, bExcept, bElse, bFinally].forEach(b => { b.className = 'block'; });
+
+      if (type === 1) { // Normal
+        bTry.classList.add('active');
+        bElse.classList.add('active');
+        bFinally.classList.add('active');
+        con.innerHTML = '> entrada_a = "10", entrada_b = "2"<br>> [try] División exitosa: 10 / 2 = 5.0<br>> [else] Cálculo exitoso: 5.0<br>> [finally] Cerrando recursos y conexión';
+      } else if (type === 2) { // ZeroDivisionError
+        bTry.classList.add('error');
+        bExcept.classList.add('active');
+        bFinally.classList.add('active');
+        con.innerHTML = '> entrada_a = "10", entrada_b = "0"<br>> <span style="color:#f87171">[try] ZeroDivisionError interceptado en runtime</span><br>> [except ZeroDivisionError] No divide entre 0<br>> [finally] Cerrando recursos y conexión';
+      } else if (type === 3) { // ValueError
+        bTry.classList.add('error');
+        bExcept.classList.add('active');
+        bFinally.classList.add('active');
+        con.innerHTML = '> entrada_a = "hola", entrada_b = "5"<br>> <span style="color:#f87171">[try] ValueError: invalid literal for int() with base 10: 'hola'</span><br>> [except ValueError] Número inválido introducido<br>> [finally] Cerrando recursos y conexión';
+      }
+    }
+    loadScenario(1);
+  </script>
+</body>
+</html>

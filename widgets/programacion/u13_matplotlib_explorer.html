@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Explorador de Gráficas con Matplotlib</title>
+  <style>
+    :root {
+      --bg: #0e0e11; --card: #141923; --border: #232d42; --text: #fff;
+      --muted: #94a3b8; --sky: #38bdf8;
+    }
+    body.theme-light {
+      --bg: #f8fafc; --card: #ffffff; --border: #e2e8f0; --text: #0f172a;
+      --muted: #64748b; --sky: #0284c7;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { background: var(--bg); color: var(--text); padding: 14px; display: flex; justify-content: center; }
+    .container { width: 100%; max-width: 680px; background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 16px; }
+    .header { text-align: center; margin-bottom: 12px; }
+    .header h3 { font-size: 1.1rem; color: #38bdf8; margin-bottom: 4px; }
+    .chart-box { background: #080b10; border: 1px solid var(--border); border-radius: 8px; height: 170px; display: flex; justify-content: center; align-items: center; margin-bottom: 12px; padding: 10px; }
+    svg { width: 100%; height: 100%; }
+    .tabs { display: flex; gap: 6px; justify-content: center; margin-bottom: 10px; }
+    .btn { padding: 6px 12px; font-size: 0.75rem; font-weight: 600; border-radius: 6px; cursor: pointer; border: 1px solid var(--border); background: rgba(255,255,255,0.05); color: var(--text); }
+    .btn.active { background: #38bdf8; color: #0f172a; border-color: #38bdf8; }
+    .code-view { background: #080b10; border: 1px solid var(--border); border-radius: 6px; padding: 8px 12px; font-family: monospace; font-size: 0.78rem; color: #a5f3fc; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h3>📈 Explorador de Gráficas Científicas (Matplotlib / Pyplot)</h3>
+      <p style="font-size:0.75rem; color:var(--muted)">Anatomía de una figura: plt.plot (líneas), plt.bar (categorías) y plt.scatter (dispersión).</p>
+    </div>
+
+    <div class="tabs">
+      <button class="btn active" onclick="renderPlot('line')">plt.plot() [Líneas]</button>
+      <button class="btn" onclick="renderPlot('bar')">plt.bar() [Barras]</button>
+      <button class="btn" onclick="renderPlot('scatter')">plt.scatter() [Dispersión]</button>
+    </div>
+
+    <div class="chart-box">
+      <svg id="plotSvg" viewBox="0 0 400 140"></svg>
+    </div>
+
+    <div class="code-view" id="plotCode">import matplotlib.pyplot as plt<br>plt.plot(meses, ventas, marker='o', color='tab:blue')<br>plt.title("Evolución de Ventas")<br>plt.show()</div>
+  </div>
+
+  <script>
+    function renderPlot(type) {
+      document.querySelectorAll('.btn').forEach(b => b.classList.remove('active'));
+      event.target.classList.add('active');
+      const svg = document.getElementById('plotSvg');
+      const code = document.getElementById('plotCode');
+      svg.innerHTML = `
+        <line x1="30" y1="120" x2="380" y2="120" stroke="#334155" stroke-width="1"/>
+        <line x1="30" y1="20" x2="30" y2="120" stroke="#334155" stroke-width="1"/>
+      `;
+
+      if (type === 'line') {
+        code.innerHTML = "plt.plot([1, 2, 3, 4], [20, 55, 40, 85], color='#38bdf8', marker='o')<br>plt.grid(True)";
+        svg.innerHTML += `
+          <polyline points="50,100 130,65 210,80 290,35" fill="none" stroke="#38bdf8" stroke-width="2.5"/>
+          <circle cx="50" cy="100" r="4" fill="#38bdf8"/>
+          <circle cx="130" cy="65" r="4" fill="#38bdf8"/>
+          <circle cx="210" cy="80" r="4" fill="#38bdf8"/>
+          <circle cx="290" cy="35" r="4" fill="#38bdf8"/>
+        `;
+      } else if (type === 'bar') {
+        code.innerHTML = "plt.bar(['Ene', 'Feb', 'Mar', 'Abr'], [45, 80, 60, 95], color='#10b981')";
+        svg.innerHTML += `
+          <rect x="50" y="75" width="40" height="45" fill="#10b981" rx="2"/>
+          <rect x="120" y="40" width="40" height="80" fill="#10b981" rx="2"/>
+          <rect x="190" y="60" width="40" height="60" fill="#10b981" rx="2"/>
+          <rect x="260" y="25" width="40" height="95" fill="#10b981" rx="2"/>
+        `;
+      } else if (type === 'scatter') {
+        code.innerHTML = "plt.scatter(x, y, c='gold', alpha=0.8)<br>plt.xlabel('Inversión'); plt.ylabel('Retorno')";
+        const pts = [[60, 90], [80, 85], [110, 70], [140, 75], [170, 50], [210, 45], [250, 30], [280, 25]];
+        pts.forEach(p => {
+          svg.innerHTML += `<circle cx="${p[0]}" cy="${p[1]}" r="5" fill="#fbbf24" opacity="0.85"/>`;
+        });
+      }
+    }
+    renderPlot('line');
+  </script>
+</body>
+</html>

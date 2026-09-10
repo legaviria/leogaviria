@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Flujo de Ejecución de una Función</title>
+  <style>
+    :root {
+      --bg: #0e0e11; --card: #141923; --border: #232d42; --text: #fff;
+      --muted: #94a3b8; --sky: #38bdf8; --purple: #a855f7; --green: #10b981;
+    }
+    body.theme-light {
+      --bg: #f8fafc; --card: #ffffff; --border: #e2e8f0; --text: #0f172a;
+      --muted: #64748b; --sky: #0284c7; --purple: #9333ea; --green: #059669;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { background: var(--bg); color: var(--text); padding: 14px; display: flex; justify-content: center; }
+    .container { width: 100%; max-width: 680px; background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 16px; }
+    .header { text-align: center; margin-bottom: 12px; }
+    .header h3 { font-size: 1.1rem; color: var(--purple); margin-bottom: 4px; }
+    .pipeline { display: flex; align-items: center; justify-content: space-between; gap: 4px; margin-bottom: 14px; background: #080b10; padding: 10px; border-radius: 8px; border: 1px solid var(--border); }
+    .step-node { flex: 1; text-align: center; padding: 8px 4px; font-size: 0.72rem; font-weight: 600; color: var(--muted); border-radius: 6px; border: 1px solid transparent; }
+    .step-node.active { background: rgba(168, 85, 247, 0.2); border-color: var(--purple); color: #d8b4fe; }
+    .code-box { background: #080b10; border: 1px solid var(--border); border-radius: 8px; padding: 12px; font-family: monospace; font-size: 0.82rem; margin-bottom: 12px; }
+    .line { padding: 4px 6px; border-radius: 4px; }
+    .line.active { background: rgba(168, 85, 247, 0.25); color: #f5d0fe; font-weight: bold; border-left: 3px solid var(--purple); }
+    .info-card { background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 8px; padding: 10px; font-size: 0.8rem; color: #cbd5e1; min-height: 48px; display: flex; align-items: center; justify-content: center; text-align: center; margin-bottom: 10px; }
+    .controls { display: flex; gap: 8px; justify-content: center; }
+    .btn { padding: 6px 14px; font-size: 0.78rem; font-weight: 600; border-radius: 6px; cursor: pointer; border: 1px solid var(--border); background: rgba(255,255,255,0.05); color: var(--text); }
+    .btn-act { background: var(--purple); color: white; border: none; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h3>🚀 Ciclo de Vida y Flujo de una Función</h3>
+      <p style="font-size:0.75rem; color:var(--muted)">Llamada ➔ Traspaso de Parámetros ➔ Ejecución Local ➔ Retorno (return) ➔ Recepción</p>
+    </div>
+
+    <div class="pipeline">
+      <div class="step-node active" id="p1">1. Llamada</div>
+      <span style="color:var(--muted)">➔</span>
+      <div class="step-node" id="p2">2. Parámetros</div>
+      <span style="color:var(--muted)">➔</span>
+      <div class="step-node" id="p3">3. Cuerpo</div>
+      <span style="color:var(--muted)">➔</span>
+      <div class="step-node" id="p4">4. return</div>
+      <span style="color:var(--muted)">➔</span>
+      <div class="step-node" id="p5">5. Resultado</div>
+    </div>
+
+    <div class="code-box">
+      <div class="line" id="fn1">def calcular_iva(precio, tasa=0.19):</div>
+      <div class="line" id="fn2">&nbsp;&nbsp;&nbsp;&nbsp;impuesto = precio * tasa</div>
+      <div class="line" id="fn3">&nbsp;&nbsp;&nbsp;&nbsp;return impuesto</div>
+      <div class="line" id="fn4"># Ámbito Global</div>
+      <div class="line active" id="fn5">resultado = calcular_iva(1000)</div>
+      <div class="line" id="fn6">print("IVA:", resultado)</div>
+    </div>
+
+    <div class="info-card" id="infoMsg">Paso 1: Se invoca calcular_iva(1000) desde el ámbito global.</div>
+
+    <div class="controls">
+      <button class="btn btn-act" onclick="nextFnStep()">Siguiente Paso ▶</button>
+      <button class="btn" onclick="resetFn()">Reiniciar</button>
+    </div>
+  </div>
+
+  <script>
+    let fnStep = 1;
+    const msgs = [
+      "Paso 1: Se invoca calcular_iva(1000) desde el ámbito global.",
+      "Paso 2: Se copian los argumentos a las variables locales: precio = 1000, tasa = 0.19 (valor por defecto).",
+      "Paso 3: Se ejecuta el cuerpo local de la función: impuesto = 1000 * 0.19 = 190.0.",
+      "Paso 4: La sentencia 'return impuesto' envía el valor 190.0 de vuelta al llamador y destruye el stack local.",
+      "Paso 5: La variable global 'resultado' recibe el valor 190.0 y print() lo imprime en consola."
+    ];
+    const lines = ["fn5", "fn1", "fn2", "fn3", "fn6"];
+
+    function resetFn() {
+      fnStep = 1;
+      updateFnUI();
+    }
+
+    function updateFnUI() {
+      for (let k = 1; k <= 5; k++) {
+        document.getElementById('p' + k).classList.toggle('active', k === fnStep);
+      }
+      for (let k = 1; k <= 6; k++) {
+        document.getElementById('fn' + k).classList.remove('active');
+      }
+      document.getElementById(lines[fnStep - 1]).classList.add('active');
+      document.getElementById('infoMsg').textContent = msgs[fnStep - 1];
+    }
+
+    function nextFnStep() {
+      fnStep = (fnStep % 5) + 1;
+      updateFnUI();
+    }
+  </script>
+</body>
+</html>

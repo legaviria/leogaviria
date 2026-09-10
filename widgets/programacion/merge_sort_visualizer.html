@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; }
+    html, body {
+      background-color: #0e0e11 !important;
+      margin: 0;
+      padding: 6px;
+      overflow-x: hidden !important;
+      overflow-y: hidden;
+    }
+    .syn-keyword { color: #f472b6; font-weight: bold; }
+    .syn-func { color: #38bdf8; }
+    .syn-var { color: #facc15; }
+    .syn-num { color: #a78bfa; }
+    .syn-type { color: #4ade80; }
+    .syn-comment { color: #6b7280; font-style: italic; }
+  </style>
+</head>
+<body class="bg-[#0e0e11] text-gray-200 font-sans p-2 select-none">
+
+  <!-- PANEL PRINCIPAL -->
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
+
+    <!-- COLUMNA IZQUIERDA: CÓDIGO -->
+    <div class="lg:col-span-5 bg-[#141419] border border-gray-800 rounded-xl p-4 flex flex-col justify-between">
+      <div>
+        <div class="flex justify-between items-center mb-4 border-b border-gray-800 pb-3">
+          <div class="flex items-center gap-2 bg-[#1e1e24] border border-gray-700 rounded-lg px-2.5 py-1.5">
+            <img id="lang-logo" src="https://raw.githubusercontent.com/devicons/devicon/master/icons/python/python-original.svg" class="w-4 h-4" alt="Logo">
+            <select id="lang-select" onchange="changeLanguage()" class="bg-transparent text-emerald-400 font-semibold text-sm outline-none cursor-pointer">
+              <option value="python" class="bg-[#1e1e24] text-white">Python</option>
+              <option value="cpp" class="bg-[#1e1e24] text-white">C++</option>
+            </select>
+          </div>
+
+          <div class="flex gap-3 text-gray-500 text-sm">
+            <i class="fas fa-copy hover:text-white cursor-pointer" title="Copiar código"></i>
+          </div>
+        </div>
+
+        <div id="code-container" class="font-mono text-xs leading-tight space-y-0 overflow-x-auto"></div>
+      </div>
+    </div>
+
+    <!-- COLUMNA DERECHA: VISUALIZACIÓN Y CONTROLES -->
+    <div class="lg:col-span-7 space-y-4">
+
+      <!-- INPUTS -->
+      <div class="bg-[#141419] border border-gray-800 rounded-xl p-4">
+        <span class="text-xs font-semibold text-gray-400 block mb-3">Entrada de Datos</span>
+
+        <div class="flex flex-wrap gap-2 mb-3">
+          <button id="btn-estandar" onclick="loadPreset('estandar')" class="preset-btn px-3 py-1 bg-[#1e1e24] hover:bg-gray-800 border border-gray-700 rounded-md text-xs font-medium text-gray-300 transition">Estándar</button>
+          <button id="btn-iguales" onclick="loadPreset('iguales')" class="preset-btn px-3 py-1 bg-[#1e1e24] hover:bg-gray-800 border border-gray-700 rounded-md text-xs font-medium text-gray-300 transition">Todos Iguales</button>
+          <button id="btn-pequeno" onclick="loadPreset('pequeno')" class="preset-btn px-3 py-1 bg-[#1e1e24] hover:bg-gray-800 border border-gray-700 rounded-md text-xs font-medium text-gray-300 transition">Pequeño</button>
+          <button id="btn-invertido" onclick="loadPreset('invertido')" class="preset-btn px-3 py-1 bg-[#1e1e24] hover:bg-gray-800 border border-gray-700 rounded-md text-xs font-medium text-gray-300 transition">Invertido</button>
+          <button id="btn-custom" onclick="loadPreset('custom')" class="preset-btn px-3 py-1 bg-[#1e1e24] hover:bg-gray-800 border border-gray-700 rounded-md text-xs font-medium text-gray-300 transition">Custom</button>
+        </div>
+
+        <div class="bg-[#0e0e11] border border-gray-800 rounded-lg p-2.5 flex flex-wrap items-center gap-2">
+          <span class="text-xs text-gray-500 font-mono">arr =</span>
+          <div id="tags-container" class="flex flex-wrap gap-1.5 items-center"></div>
+
+          <input id="num-input" type="text" placeholder="Escribe un número..." class="flex-1 min-w-[110px] bg-transparent text-xs text-white outline-none font-mono" onkeydown="handleInputKey(event)">
+        </div>
+        <span class="text-[10px] text-gray-500 block mt-1">Presiona Enter, Coma o Espacio para agregar (máx. 10 elementos entre 1 y 99).</span>
+      </div>
+
+      <!-- CANVAS DE VISUALIZACIÓN DE BARRAS -->
+      <div class="bg-[#141419] border border-gray-800 rounded-xl p-5 flex flex-col justify-between min-h-[340px] relative overflow-visible">
+
+        <div class="flex justify-between items-center font-mono text-xs text-gray-400 font-semibold px-2">
+          <div>left = <span id="left-val" class="text-purple-400">-</span></div>
+          <div>mid = <span id="mid-val" class="text-amber-400">-</span></div>
+          <div>right = <span id="right-val" class="text-sky-400">-</span></div>
+        </div>
+
+        <div id="bars-container" class="flex justify-center items-end gap-3 w-full h-44 mt-6 border-b border-gray-800 pb-5 mb-8 overflow-visible relative"></div>
+
+        <div class="text-center my-1 h-6">
+          <span id="comparison-expression" class="font-mono text-sm font-bold text-gray-200"></span>
+        </div>
+
+      </div>
+
+      <!-- BARRA DE EXPLICACIÓN DEL PASO ACTUAL -->
+      <div class="bg-[#141419] border-l-4 border-emerald-500 border-y border-r border-gray-800 rounded-r-xl p-3 text-xs font-mono text-gray-300">
+        <span id="step-description">Inicializando el proceso...</span>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- BARRA INFERIOR DE REPRODUCCIÓN -->
+  <div class="mt-4 bg-[#141419] border border-gray-800 rounded-xl p-3 flex flex-wrap items-center justify-between gap-4">
+    <div class="flex items-center gap-2">
+      <button id="play-btn" onclick="togglePlay()" class="p-2 hover:bg-gray-800 rounded-lg text-gray-300 transition" title="Reproducir / Pausar">
+        <i id="play-icon" class="fas fa-play text-sm"></i>
+      </button>
+      <button onclick="stepBack()" class="p-2 hover:bg-gray-800 rounded-lg text-gray-300 transition" title="Paso Anterior">
+        <i class="fas fa-chevron-left text-sm"></i>
+      </button>
+      <button onclick="stepForward()" class="p-2 hover:bg-gray-800 rounded-lg text-gray-300 transition" title="Siguiente Paso">
+        <i class="fas fa-chevron-right text-sm"></i>
+      </button>
+    </div>
+
+    <div class="flex-1 flex items-center gap-3 mx-2">
+      <div class="w-full bg-gray-800 h-1.5 rounded-full overflow-hidden">
+        <div id="progress-bar" class="bg-emerald-500 h-full w-0 transition-all duration-200"></div>
+      </div>
+      <span id="step-counter" class="text-xs font-mono text-gray-400 min-w-[45px]">0/0</span>
+    </div>
+
+    <div class="flex items-center gap-2 bg-[#1e1e24] border border-gray-700 rounded-lg px-2 py-1">
+      <span class="text-xs font-mono text-gray-400">Speed:</span>
+      <select id="speed-select" onchange="changeSpeed()" class="bg-transparent text-emerald-400 font-mono text-xs font-semibold outline-none cursor-pointer">
+        <option value="1000" class="bg-[#1e1e24] text-white">0.5x</option>
+        <option value="600" selected class="bg-[#1e1e24] text-white">1x</option>
+        <option value="350" class="bg-[#1e1e24] text-white">1.5x</option>
+        <option value="150" class="bg-[#1e1e24] text-white">2x</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- LÓGICA JAVASCRIPT -->
+  <script>
+    const LOGOS = {
+      python: 'https://raw.githubusercontent.com/devicons/devicon/master/icons/python/python-original.svg',
+      cpp: 'https://raw.githubusercontent.com/devicons/devicon/master/icons/cplusplus/cplusplus-original.svg'
+    };
+
+    const CODES = {
+      python: [
+        { line: 1, html: '<span class="syn-keyword">def</span> <span class="syn-func">merge_sort</span>(arr, l, r):' },
+        { line: 2, html: '    <span class="syn-keyword">if</span> l &lt; r:' },
+        { line: 3, html: '        mid = (l + r) // <span class="syn-num">2</span>' },
+        { line: 4, html: '        <span class="syn-func">merge_sort</span>(arr, l, mid)' },
+        { line: 5, html: '        <span class="syn-func">merge_sort</span>(arr, mid + <span class="syn-num">1</span>, r)' },
+        { line: 6, html: '        <span class="syn-func">merge</span>(arr, l, mid, r)' },
+        { line: 7, html: '<span class="syn-keyword">def</span> <span class="syn-func">merge</span>(arr, l, mid, r):' },
+        { line: 8, html: '    L = arr[l : mid + <span class="syn-num">1</span>]; R = arr[mid + <span class="syn-num">1</span> : r + <span class="syn-num">1</span>]' },
+        { line: 9, html: '    <span class="syn-keyword">while</span> i &lt; <span class="syn-func">len</span>(L) <span class="syn-keyword">and</span> j &lt; <span class="syn-func">len</span>(R):' },
+        { line: 10, html: '        arr[k] = min_val; k += <span class="syn-num">1</span>' }
+      ],
+      cpp: [
+        { line: 1, html: '<span class="syn-type">void</span> <span class="syn-func">mergeSort</span>(vector&lt;<span class="syn-type">int</span>&gt;&amp; arr, <span class="syn-type">int</span> l, <span class="syn-type">int</span> r) {' },
+        { line: 2, html: '    <span class="syn-keyword">if</span> (l &lt; r) {' },
+        { line: 3, html: '        <span class="syn-type">int</span> mid = l + (r - l) / <span class="syn-num">2</span>;' },
+        { line: 4, html: '        <span class="syn-func">mergeSort</span>(arr, l, mid);' },
+        { line: 5, html: '        <span class="syn-func">mergeSort</span>(arr, mid + <span class="syn-num">1</span>, r);' },
+        { line: 6, html: '        <span class="syn-func">merge</span>(arr, l, mid, r);' },
+        { line: 7, html: '    }' },
+        { line: 8, html: '}' },
+        { line: 9, html: '<span class="syn-type">void</span> <span class="syn-func">merge</span>(vector&lt;<span class="syn-type">int</span>&gt;&amp; arr, <span class="syn-type">int</span> l, <span class="syn-type">int</span> mid, <span class="syn-type">int</span> r) {' },
+        { line: 10, html: '    <span class="syn-comment">// Mezclar subarreglos L[l..mid] y R[mid+1..r]</span>' },
+        { line: 11, html: '}' }
+      ]
+    };
+
+    let currentArray = [42, 10, 25, 30, 18, 5];
+    let activePreset = 'estandar';
+    let steps = [];
+    let currentStep = 0;
+    let isPlaying = false;
+    let interval = null;
+    let animationSpeed = 600;
+
+    function renderCode(activeLine = -1) {
+      const lang = document.getElementById('lang-select').value;
+      const container = document.getElementById('code-container');
+      container.innerHTML = '';
+
+      CODES[lang].forEach(item => {
+        const row = document.createElement('div');
+        const isActive = item.line === activeLine;
+
+        const activeBg = 'bg-emerald-950/60 text-emerald-200 border-l-2 border-emerald-400';
+
+        row.className = `flex gap-4 px-2 py-0 rounded ${isActive ? activeBg : 'text-gray-300'}`;
+        row.innerHTML = `<span class="w-4 text-right text-gray-600 select-none font-normal">${item.line}</span><pre>${item.html}</pre>`;
+        container.appendChild(row);
+      });
+    }
+
+    function generateSteps() {
+      steps = [];
+      let arr = [...currentArray];
+      const isCpp = document.getElementById('lang-select').value === 'cpp';
+
+      steps.push({
+        arr: [...arr],
+        l: 0,
+        r: arr.length - 1,
+        mid: Math.floor((arr.length - 1) / 2),
+        subArray: [0, arr.length - 1],
+        activeLine: 1,
+        description: 'Paso: Inicia el algoritmo Merge Sort (Divide y Vencerás).',
+        expr: ''
+      });
+
+      function mergeSortHelper(l, r) {
+        if (l >= r) return;
+
+        let mid = Math.floor((l + r) / 2);
+
+        steps.push({
+          arr: [...arr],
+          l: l,
+          mid: mid,
+          r: r,
+          subArray: [l, r],
+          activeLine: 3,
+          description: `Paso: Dividir el rango [${l}..${r}] en punto medio mid = ${mid}.`,
+          expr: `<span class="text-amber-400">Dividiendo en mid = ${mid}</span>`
+        });
+
+        mergeSortHelper(l, mid);
+        mergeSortHelper(mid + 1, r);
+
+        // COMBINAR / MEZCLAR (MERGE)
+        steps.push({
+          arr: [...arr],
+          l: l,
+          mid: mid,
+          r: r,
+          subArray: [l, r],
+          activeLine: 6,
+          description: `Paso: Iniciar mezcla (Merge) del subarreglo derecho e izquierdo en [${l}..${r}].`,
+          expr: `<span class="text-emerald-400">Mezclando sublistas [${l}..${mid}] y [${mid + 1}..${r}]</span>`
+        });
+
+        let leftArr = arr.slice(l, mid + 1);
+        let rightArr = arr.slice(mid + 1, r + 1);
+        let i = 0, j = 0, k = l;
+
+        while (i < leftArr.length && j < rightArr.length) {
+          let compareIdx1 = l + i;
+          let compareIdx2 = mid + 1 + j;
+
+          if (leftArr[i] <= rightArr[j]) {
+            steps.push({
+              arr: [...arr],
+              l: l,
+              mid: mid,
+              r: r,
+              comparing: [compareIdx1, compareIdx2],
+              writing: k,
+              subArray: [l, r],
+              activeLine: isCpp ? 10 : 9,
+              description: `Paso: Comparar ${leftArr[i]} <= ${rightArr[j]}. Colocar ${leftArr[i]} en posición ${k}.`,
+              expr: `<span class="text-sky-400">${leftArr[i]}</span> &le; <span class="text-amber-400">${rightArr[j]}</span>`
+            });
+            arr[k] = leftArr[i];
+            i++;
+          } else {
+            steps.push({
+              arr: [...arr],
+              l: l,
+              mid: mid,
+              r: r,
+              comparing: [compareIdx1, compareIdx2],
+              writing: k,
+              subArray: [l, r],
+              activeLine: isCpp ? 10 : 9,
+              description: `Paso: Comparar ${leftArr[i]} > ${rightArr[j]}. Colocar ${rightArr[j]} en posición ${k}.`,
+              expr: `<span class="text-amber-400">${rightArr[j]}</span> &lt; <span class="text-sky-400">${leftArr[i]}</span>`
+            });
+            arr[k] = rightArr[j];
+            j++;
+          }
+          k++;
+        }
+
+        while (i < leftArr.length) {
+          arr[k] = leftArr[i];
+          steps.push({
+            arr: [...arr],
+            l: l,
+            mid: mid,
+            r: r,
+            writing: k,
+            subArray: [l, r],
+            activeLine: isCpp ? 10 : 10,
+            description: `Paso: Copiar elemento restante ${leftArr[i]} en posición ${k}.`,
+            expr: `Copiando restantes de sublista izquierda`
+          });
+          i++; k++;
+        }
+
+        while (j < rightArr.length) {
+          arr[k] = rightArr[j];
+          steps.push({
+            arr: [...arr],
+            l: l,
+            mid: mid,
+            r: r,
+            writing: k,
+            subArray: [l, r],
+            activeLine: isCpp ? 10 : 10,
+            description: `Paso: Copiar elemento restante ${rightArr[j]} en posición ${k}.`,
+            expr: `Copiando restantes de sublista derecha`
+          });
+          j++; k++;
+        }
+
+        steps.push({
+          arr: [...arr],
+          l: l,
+          mid: mid,
+          r: r,
+          subArray: [l, r],
+          mergedRange: [l, r],
+          activeLine: isCpp ? 6 : 6,
+          description: `Paso: Subarreglo en rango [${l}..${r}] ordenado correctamente.`,
+          expr: `<span class="text-emerald-400">Subarreglo [${l}..${r}] combinado</span>`
+        });
+      }
+
+      mergeSortHelper(0, arr.length - 1);
+
+      steps.push({
+        arr: [...arr],
+        l: 0,
+        r: arr.length - 1,
+        mid: Math.floor((arr.length - 1) / 2),
+        sorted: true,
+        activeLine: isCpp ? 8 : 6,
+        description: 'Paso: Merge Sort completado exitosamente. Todo el arreglo está ordenado.',
+        expr: ''
+      });
+
+      currentStep = 0;
+      updateUI();
+    }
+
+    function updateUI() {
+      if (steps.length === 0) return;
+      const step = steps[currentStep];
+
+      renderCode(step.activeLine);
+
+      document.getElementById('left-val').innerText = step.l !== undefined && step.l !== null ? step.l : '-';
+      document.getElementById('mid-val').innerText = step.mid !== undefined && step.mid !== null ? step.mid : '-';
+      document.getElementById('right-val').innerText = step.r !== undefined && step.r !== null ? step.r : '-';
+
+      document.getElementById('step-description').innerHTML = step.description;
+      document.getElementById('comparison-expression').innerHTML = step.expr || '';
+
+      const container = document.getElementById('bars-container');
+      container.innerHTML = '';
+      const maxVal = Math.max(...step.arr, 1);
+
+      step.arr.forEach((val, idx) => {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'flex flex-col items-center relative overflow-visible';
+
+        const bar = document.createElement('div');
+        let barStyle = 'bg-[#1e1e28] border border-gray-700 opacity-40'; // Fuera de foco por defecto
+
+        // Subarreglo activo en la división/mezcla actual
+        if (step.subArray && idx >= step.subArray[0] && idx <= step.subArray[1]) {
+          barStyle = 'bg-[#2a2a38] border border-gray-500 opacity-100';
+        }
+
+        if (step.comparing && step.comparing.includes(idx)) {
+          barStyle = 'bg-amber-500/20 border-2 border-amber-400 text-amber-300 opacity-100';
+        }
+
+        if (step.writing === idx) {
+          barStyle = 'bg-rose-500/20 border-2 border-rose-400 text-rose-300 opacity-100';
+        }
+
+        if (step.sorted || (step.mergedRange && idx >= step.mergedRange[0] && idx <= step.mergedRange[1])) {
+          barStyle = 'bg-emerald-500/20 border-2 border-emerald-400 text-emerald-300 opacity-100';
+        }
+
+        bar.className = `w-10 sm:w-12 rounded-xl transition-all duration-300 flex items-center justify-center font-mono font-bold text-xs ${barStyle}`;
+        bar.style.height = `${(val / maxVal) * 110 + 35}px`;
+        bar.innerText = val;
+
+        const idxLabel = document.createElement('span');
+        idxLabel.className = 'text-[11px] font-mono text-gray-500 mt-2';
+        idxLabel.innerText = idx;
+
+        wrapper.appendChild(bar);
+        wrapper.appendChild(idxLabel);
+
+        // INDICADORES DE PUNTEROS (l, mid, r)
+        const ptrs = [];
+        if (!step.sorted) {
+          if (idx === step.l) ptrs.push({ label: 'L', color: 'bg-purple-400 text-black' });
+          if (idx === step.mid) ptrs.push({ label: 'M', color: 'bg-amber-400 text-black' });
+          if (idx === step.r) ptrs.push({ label: 'R', color: 'bg-sky-400 text-black' });
+        }
+
+        if (ptrs.length > 0) {
+          const ptrContainer = document.createElement('div');
+          ptrContainer.className = 'absolute -bottom-7 flex gap-0.5 z-10';
+
+          ptrs.forEach(p => {
+            const ptr = document.createElement('span');
+            ptr.className = `px-1.5 py-0.5 rounded-md text-[9px] font-mono font-bold shadow-lg ${p.color}`;
+            ptr.innerText = p.label;
+            ptrContainer.appendChild(ptr);
+          });
+
+          wrapper.appendChild(ptrContainer);
+        }
+
+        container.appendChild(wrapper);
+      });
+
+      document.getElementById('step-counter').innerText = `${currentStep + 1}/${steps.length}`;
+      document.getElementById('progress-bar').style.width = `${((currentStep + 1) / steps.length) * 100}%`;
+      renderTags();
+      highlightActivePreset();
+    }
+
+    function renderTags() {
+      const container = document.getElementById('tags-container');
+      container.innerHTML = '';
+      currentArray.forEach((val, idx) => {
+        const tag = document.createElement('span');
+        tag.className = 'px-2 py-0.5 bg-[#1e1e24] text-xs font-mono text-gray-300 rounded border border-gray-700 flex items-center gap-1.5';
+        tag.innerHTML = `${val} <button onclick="removeElement(${idx})" class="text-gray-500 hover:text-rose-400 font-bold">×</button>`;
+        container.appendChild(tag);
+      });
+    }
+
+    function handleInputKey(e) {
+      if (['Enter', ',', ' ', 'Tab'].includes(e.key)) {
+        e.preventDefault();
+        const input = document.getElementById('num-input');
+        const val = parseInt(input.value.trim());
+
+        if (!isNaN(val) && val >= 1 && val <= 99) {
+          if (currentArray.length >= 10) {
+            alert('Máximo 10 elementos permitidos.');
+            return;
+          }
+          if (isPlaying) togglePlay();
+          currentArray.push(val);
+          activePreset = 'custom';
+          input.value = '';
+          generateSteps();
+        } else {
+          input.value = '';
+        }
+      }
+    }
+
+    function removeElement(index) {
+      if (currentArray.length <= 2) return alert('Debes mantener al menos 2 elementos.');
+      if (isPlaying) togglePlay();
+      currentArray.splice(index, 1);
+      activePreset = 'custom';
+      generateSteps();
+    }
+
+    function changeLanguage() {
+      const lang = document.getElementById('lang-select').value;
+      document.getElementById('lang-logo').src = LOGOS[lang];
+      generateSteps();
+    }
+
+    function loadPreset(type) {
+      if (isPlaying) togglePlay();
+      activePreset = type;
+
+      if (type === 'estandar') currentArray = [42, 10, 25, 30, 18, 5];
+      if (type === 'iguales') currentArray = [42, 42, 42, 42, 42, 42];
+      if (type === 'pequeno') currentArray = [12, 5, 8];
+      if (type === 'invertido') currentArray = [60, 50, 40, 30, 20, 10];
+      if (type === 'custom') {
+        currentArray = [15, 3, 99, 44];
+      }
+      generateSteps();
+    }
+
+    function highlightActivePreset() {
+      document.querySelectorAll('.preset-btn').forEach(btn => {
+        btn.className = 'preset-btn px-3 py-1 bg-[#1e1e24] hover:bg-gray-800 border border-gray-700 rounded-md text-xs font-medium text-gray-300 transition';
+      });
+
+      if (activePreset) {
+        const activeBtn = document.getElementById(`btn-${activePreset}`);
+        if (activeBtn) {
+          if (activePreset === 'custom') {
+            activeBtn.className = 'preset-btn px-3 py-1 bg-indigo-950/80 border border-indigo-500 text-indigo-300 rounded-md text-xs font-medium shadow-sm transition';
+          } else {
+            activeBtn.className = 'preset-btn px-3 py-1 bg-emerald-950/80 border border-emerald-500 text-emerald-400 rounded-md text-xs font-medium shadow-sm transition';
+          }
+        }
+      }
+    }
+
+    function startTimer() {
+      clearInterval(interval);
+      interval = setInterval(() => {
+        if (currentStep < steps.length - 1) {
+          currentStep++;
+          updateUI();
+        } else {
+          togglePlay();
+        }
+      }, animationSpeed);
+    }
+
+    function changeSpeed() {
+      animationSpeed = parseInt(document.getElementById('speed-select').value);
+      if (isPlaying) {
+        startTimer();
+      }
+    }
+
+    function togglePlay() {
+      isPlaying = !isPlaying;
+      const icon = document.getElementById('play-icon');
+      if (isPlaying) {
+        icon.className = 'fas fa-pause text-sm';
+        startTimer();
+      } else {
+        icon.className = 'fas fa-play text-sm';
+        clearInterval(interval);
+      }
+    }
+
+    function stepForward() {
+      if (currentStep < steps.length - 1) { currentStep++; updateUI(); }
+    }
+
+    function stepBack() {
+      if (currentStep > 0) { currentStep--; updateUI(); }
+    }
+
+    loadPreset('estandar');
+  </script>
+</body>
+</html>

@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Visualizador del Bucle while</title>
+  <style>
+    :root {
+      --bg: #0e0e11; --card: #141923; --border: #232d42; --text: #fff;
+      --muted: #94a3b8; --sky: #38bdf8; --amber: #f59e0b; --green: #10b981; --red: #ef4444;
+    }
+    body.theme-light {
+      --bg: #f8fafc; --card: #ffffff; --border: #e2e8f0; --text: #0f172a;
+      --muted: #64748b; --sky: #0284c7; --amber: #d97706; --green: #059669; --red: #dc2626;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { background: var(--bg); color: var(--text); padding: 14px; display: flex; justify-content: center; }
+    .container { width: 100%; max-width: 680px; background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 16px; }
+    .header { text-align: center; margin-bottom: 12px; }
+    .header h3 { font-size: 1.1rem; color: var(--sky); margin-bottom: 4px; }
+    .code-view { background: #080b10; border: 1px solid var(--border); border-radius: 8px; padding: 10px; font-family: monospace; font-size: 0.82rem; margin-bottom: 12px; }
+    .cline { padding: 4px 6px; border-radius: 4px; }
+    .cline.active { background: rgba(56, 189, 248, 0.2); color: #7dd3fc; font-weight: bold; border-left: 3px solid var(--sky); }
+    .stats { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 12px; }
+    .stat-card { background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 6px; padding: 8px; text-align: center; }
+    .stat-val { font-family: monospace; font-size: 1.2rem; font-weight: bold; color: #fde047; }
+    .stat-lbl { font-size: 0.72rem; color: var(--muted); text-transform: uppercase; }
+    .console-box { background: #080b10; border: 1px solid var(--border); border-radius: 8px; padding: 8px 12px; font-family: monospace; font-size: 0.8rem; color: #86efac; min-height: 50px; }
+    .controls { display: flex; gap: 8px; justify-content: center; margin-top: 10px; }
+    .btn { padding: 6px 14px; font-size: 0.78rem; font-weight: 600; border-radius: 6px; cursor: pointer; border: 1px solid var(--border); background: rgba(255,255,255,0.05); color: var(--text); }
+    .btn-act { background: var(--sky); color: #0f172a; border: none; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h3>🔄 Visualizador del Bucle while: Condición de Parada</h3>
+      <p style="font-size:0.75rem; color:var(--muted)">Aprende cómo evaluar la condición previa y evitar ciclos infinitos no deseados.</p>
+    </div>
+
+    <div class="code-view">
+      <div class="cline" id="w1">contador = 1</div>
+      <div class="cline" id="w2">while contador &lt;= 5:</div>
+      <div class="cline" id="w3">&nbsp;&nbsp;&nbsp;&nbsp;print("Contador actual:", contador)</div>
+      <div class="cline" id="w4">&nbsp;&nbsp;&nbsp;&nbsp;contador += 1 &nbsp;# Actualización crítica para evitar ciclo infinito</div>
+      <div class="cline" id="w5">print("Fin del ciclo while.")</div>
+    </div>
+
+    <div class="stats">
+      <div class="stat-card">
+        <div class="stat-val" id="dispContador">1</div>
+        <div class="stat-lbl">Valor Contador</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val" id="dispCond">True</div>
+        <div class="stat-lbl">Condición (&lt;= 5)</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val" id="dispPaso">Paso 0</div>
+        <div class="stat-lbl">Fase de Ejecución</div>
+      </div>
+    </div>
+
+    <div class="console-box" id="wConsole">> Salida del programa:</div>
+
+    <div class="controls">
+      <button class="btn btn-act" onclick="nextWhileStep()">Avanzar Paso ▶</button>
+      <button class="btn" onclick="resetWhile()">Reiniciar</button>
+    </div>
+  </div>
+
+  <script>
+    let c = 1;
+    let wState = 0; // 0: init, 1: check, 2: print, 3: inc, 4: done
+    let logs = [];
+
+    function resetWhile() {
+      c = 1;
+      wState = 0;
+      logs = [];
+      document.getElementById('dispContador').textContent = '1';
+      document.getElementById('dispCond').textContent = 'True';
+      document.getElementById('dispCond').style.color = '#4ade80';
+      document.getElementById('dispPaso').textContent = 'Inicialización';
+      document.getElementById('wConsole').textContent = '> Salida del programa:';
+      hi('w1');
+    }
+
+    function hi(id) {
+      for (let k = 1; k <= 5; k++) document.getElementById('w' + k).classList.remove('active');
+      if (id) document.getElementById(id).classList.add('active');
+    }
+
+    function nextWhileStep() {
+      if (wState === 0) {
+        c = 1;
+        document.getElementById('dispContador').textContent = c;
+        document.getElementById('dispPaso').textContent = 'Evaluar Condición';
+        hi('w2');
+        wState = 1;
+      } else if (wState === 1) {
+        const isTrue = c <= 5;
+        document.getElementById('dispCond').textContent = isTrue ? 'True' : 'False';
+        document.getElementById('dispCond').style.color = isTrue ? '#4ade80' : '#f87171';
+        if (isTrue) {
+          document.getElementById('dispPaso').textContent = 'Cuerpo: print()';
+          hi('w3');
+          wState = 2;
+        } else {
+          document.getElementById('dispPaso').textContent = 'Salida del bucle';
+          hi('w5');
+          wState = 4;
+        }
+      } else if (wState === 2) {
+        logs.push(`Contador actual: ${c}`);
+        document.getElementById('wConsole').innerHTML = '> ' + logs.join('<br>> ');
+        document.getElementById('dispPaso').textContent = 'Incrementar (+1)';
+        hi('w4');
+        wState = 3;
+      } else if (wState === 3) {
+        c++;
+        document.getElementById('dispContador').textContent = c;
+        document.getElementById('dispPaso').textContent = 'Reevaluar Condición';
+        hi('w2');
+        wState = 1;
+      } else if (wState === 4) {
+        logs.push("Fin del ciclo while.");
+        document.getElementById('wConsole').innerHTML = '> ' + logs.join('<br>> ');
+        hi(null);
+        document.getElementById('dispPaso').textContent = 'Terminado';
+        wState = 5;
+      }
+    }
+    resetWhile();
+  </script>
+</body>
+</html>

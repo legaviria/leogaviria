@@ -1,0 +1,1738 @@
+/* ==========================================================================
+   LEO GAVIRIA - PROGRAMACIÓN II
+   Sistema de Diseño y Estilos de Interfaz
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+
+:root {
+  --font-sans: 'Geist', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  /* Tema Oscuro (Por defecto) */
+  --bg-primary: #0b0e14;
+  --bg-secondary: #0f131c;
+  --bg-tertiary: #151b27;
+  --bg-card: #141923;
+  --bg-card-hover: #19202e;
+  --bg-surface: #1e2638;
+
+  --border-subtle: #1a2232;
+  --border-default: #232d42;
+  --border-focus: #3b82f6;
+
+  --text-primary: #f3f4f6;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+  --text-inverted: #0b0e14;
+
+  --accent-teal: #10b981;
+  --accent-teal-glow: rgba(16, 185, 129, 0.25);
+  --accent-sky: #0ea5e9;
+  --accent-purple: #8b5cf6;
+  --accent-amber: #f59e0b;
+  --accent-rose: #f43f5e;
+  
+  --header-height: 56px;
+  --sidebar-width: 360px;
+}
+
+[data-theme="light"] {
+  --bg-primary: #f8fafc;
+  --bg-secondary: #ffffff;
+  --bg-tertiary: #f1f5f9;
+  --bg-card: #ffffff;
+  --bg-card-hover: #f8fafc;
+  --bg-surface: #e2e8f0;
+
+  --border-subtle: #e2e8f0;
+  --border-default: #cbd5e1;
+  --border-focus: #2563eb;
+
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-muted: #64748b;
+  --text-inverted: #f8fafc;
+
+  --accent-teal: #059669;
+  --accent-teal-glow: rgba(5, 150, 105, 0.15);
+  --accent-sky: #0284c7;
+  --accent-purple: #7c3aed;
+  --accent-amber: #d97706;
+  --accent-rose: #e11d48;
+}
+
+/* Reset y base */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+/* Tipografía de código */
+code, pre, .font-mono {
+  font-family: var(--font-mono);
+}
+
+/* Barras de desplazamiento estilizadas */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.2);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(148, 163, 184, 0.4);
+}
+
+/* Animaciones suaves */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulseGlow {
+  0%, 100% { box-shadow: 0 0 10px rgba(16, 185, 129, 0.3); }
+  50% { box-shadow: 0 0 20px rgba(16, 185, 129, 0.6); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.2s ease-out forwards;
+}
+
+/* Botón de barra lateral activa */
+.topic-active {
+  background: linear-gradient(90deg, rgba(16, 185, 129, 0.15) 0%, rgba(16, 185, 129, 0.03) 100%) !important;
+  color: #34d399 !important;
+  border-left: 3px solid #10b981 !important;
+  font-weight: 600 !important;
+}
+
+[data-theme="light"] .topic-active {
+  background: linear-gradient(90deg, rgba(5, 150, 105, 0.12) 0%, rgba(5, 150, 105, 0.02) 100%) !important;
+  color: #059669 !important;
+  border-left: 3px solid #059669 !important;
+}
+
+/* Contenedor de widgets incrustados (iframes) */
+.widget-frame-container {
+  background: #0e0e11;
+  border: 1px solid var(--border-default);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  position: relative;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.widget-frame-container:hover {
+  border-color: rgba(16, 185, 129, 0.4);
+}
+
+.widget-iframe {
+  width: 100%;
+  border: none;
+  display: block;
+  background: #0e0e11;
+}
+
+/* Píldoras de navegación interna de contenido */
+.nav-pill {
+  transition: all 0.2s ease;
+}
+.nav-pill:hover {
+  color: var(--text-primary);
+  background: var(--bg-surface);
+  border-color: rgba(16, 185, 129, 0.4);
+}
+.nav-pill.active {
+  background: #10b981;
+  color: #ffffff;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.4);
+}
+
+/* Tablas con formato estilizado */
+.complexity-table th {
+  background-color: var(--bg-tertiary);
+  color: var(--text-primary);
+  font-weight: 600;
+  text-align: left;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border-default);
+}
+.complexity-table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border-subtle);
+  color: var(--text-secondary);
+}
+.complexity-table tr:hover td {
+  background-color: rgba(255, 255, 255, 0.02);
+}
+
+/* Insignias */
+.badge-easy {
+  background: rgba(16, 185, 129, 0.2);
+  color: #34d399;
+  border: 1px solid rgba(16, 185, 129, 0.4);
+}
+.badge-medium {
+  background: rgba(245, 158, 11, 0.2);
+  color: #fbbf24;
+  border: 1px solid rgba(245, 158, 11, 0.4);
+}
+.badge-hard {
+  background: rgba(244, 63, 94, 0.2);
+  color: #fb7185;
+  border: 1px solid rgba(244, 63, 94, 0.4);
+}
+.badge-teal, .badge-emerald {
+  background: rgba(16, 185, 129, 0.15);
+  color: #34d399;
+  border: 1px solid rgba(16, 185, 129, 0.35);
+}
+.badge-purple {
+  background: rgba(168, 85, 247, 0.15);
+  color: #c084fc;
+  border: 1px solid rgba(168, 85, 247, 0.35);
+}
+.badge-sky, .badge-blue {
+  background: rgba(14, 165, 233, 0.15);
+  color: #38bdf8;
+  border: 1px solid rgba(14, 165, 233, 0.35);
+}
+.badge-amber, .badge-yellow {
+  background: rgba(245, 158, 11, 0.15);
+  color: #fbbf24;
+  border: 1px solid rgba(245, 158, 11, 0.35);
+}
+.badge-rose, .badge-red {
+  background: rgba(244, 63, 94, 0.15);
+  color: #fb7185;
+  border: 1px solid rgba(244, 63, 94, 0.35);
+}
+.badge-neutral {
+  background: #1e2638;
+  color: #e2e8f0;
+  border: 1px solid #334155;
+}
+
+/* Modales */
+.modal-overlay {
+  backdrop-filter: blur(8px);
+  background: rgba(0, 0, 0, 0.75);
+}
+
+/* ==========================================================================
+   BARRA LATERAL REDIMENSIONABLE Y LECTURA COMPLETA
+   ========================================================================== */
+#sidebar {
+  position: relative;
+  top: 0 !important;
+  margin-top: 0 !important;
+  min-width: 280px;
+  max-width: 720px;
+  transition: width 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+#sidebar.resizing {
+  transition: none !important;
+}
+
+@media (max-width: 767px) {
+  #sidebar {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+  }
+}
+
+.sidebar-resizer {
+  position: absolute;
+  top: 0;
+  right: -2px;
+  width: 5px;
+  height: 100%;
+  cursor: col-resize;
+  z-index: 40;
+  transition: background-color 0.15s ease;
+}
+
+.sidebar-resizer:hover,
+.sidebar-resizer.is-dragging {
+  background-color: rgba(16, 185, 129, 0.6);
+  box-shadow: 0 0 8px rgba(16, 185, 129, 0.5);
+}
+
+body.is-resizing-sidebar {
+  user-select: none !important;
+  -webkit-user-select: none !important;
+  cursor: col-resize !important;
+}
+
+body.is-resizing-sidebar iframe {
+  pointer-events: none !important;
+}
+
+
+/* ==========================================================================
+   BARRA LATERAL MÓVIL (OFF-CANVAS DRAWER)
+   ========================================================================== */
+@media (max-width: 767px) {
+  #sidebar {
+    position: fixed !important;
+    top: 0 !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    z-index: 50 !important;
+    width: 85vw !important;
+    max-width: 340px !important;
+    height: 100vh !important;
+    height: 100dvh !important;
+    transform: translateX(-100%) !important;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    box-shadow: 10px 0 35px rgba(0, 0, 0, 0.6) !important;
+  }
+
+  #sidebar.mobile-open {
+    transform: translateX(0) !important;
+  }
+
+  .sidebar-resizer {
+    display: none !important;
+  }
+}
+
+#sidebar-backdrop {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+#sidebar-backdrop.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+body.mobile-menu-open {
+  overflow: hidden !important;
+}
+
+/* ==========================================================================
+   TEMA CLARO (LIGHT MODE) - EXHAUSTIVO, ALTO CONTRASTE Y MÁXIMA LEGIBILIDAD
+   ========================================================================== */
+[data-theme="light"] {
+  --bg-main: #f8fafc;
+  --bg-card: #ffffff;
+  --border-default: #e2e8f0;
+  background-color: #f8fafc !important;
+  color: #0f172a !important;
+}
+
+[data-theme="light"] body {
+  background-color: #f8fafc !important;
+  color: #0f172a !important;
+}
+
+/* --------------------------------------------------------------------------
+   1. Header
+   -------------------------------------------------------------------------- */
+[data-theme="light"] header {
+  background-color: rgba(255, 255, 255, 0.97) !important;
+  border-bottom-color: #e2e8f0 !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+[data-theme="light"] header span.text-white {
+  color: #0f172a !important;
+}
+
+[data-theme="light"] #mobile-sidebar-toggle-btn,
+[data-theme="light"] #asignaturas-dropdown-btn,
+[data-theme="light"] #header-search-btn,
+[data-theme="light"] #theme-toggle-btn {
+  background-color: #ffffff !important;
+  border-color: #cbd5e1 !important;
+  color: #334155 !important;
+}
+
+[data-theme="light"] #mobile-sidebar-toggle-btn:hover,
+[data-theme="light"] #asignaturas-dropdown-btn:hover,
+[data-theme="light"] #header-search-btn:hover,
+[data-theme="light"] #theme-toggle-btn:hover {
+  background-color: #f1f5f9 !important;
+  color: #0f172a !important;
+  border-color: #94a3b8 !important;
+}
+
+[data-theme="light"] #current-course-label {
+  color: #047857 !important;
+  font-weight: 700 !important;
+}
+
+[data-theme="light"] header button[onclick*="showWelcomeCodingModal"] {
+  background-color: #ecfdf5 !important;
+  border-color: #a7f3d0 !important;
+  color: #047857 !important;
+}
+
+[data-theme="light"] header button[onclick*="showWelcomeCodingModal"]:hover {
+  background-color: #d1fae5 !important;
+  color: #065f46 !important;
+}
+
+[data-theme="light"] .open-guide-btn {
+  background-color: #ffffff !important;
+  border-color: #10b981 !important;
+  color: #047857 !important;
+}
+
+[data-theme="light"] .open-guide-btn:hover {
+  background-color: #ecfdf5 !important;
+  color: #065f46 !important;
+}
+
+/* Dropdown Asignaturas */
+[data-theme="light"] #asignaturas-menu > div {
+  background-color: #ffffff !important;
+  border-color: #cbd5e1 !important;
+  color: #0f172a !important;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1) !important;
+}
+
+[data-theme="light"] #asignaturas-menu button[data-course-id] {
+  color: #334155 !important;
+}
+
+[data-theme="light"] #asignaturas-menu button[data-course-id]:hover {
+  background-color: #f1f5f9 !important;
+  color: #0f172a !important;
+}
+
+[data-theme="light"] #asignaturas-menu button[data-course-id].bg-emerald-500\/10 {
+  background-color: #ecfdf5 !important;
+  border-color: #a7f3d0 !important;
+  color: #047857 !important;
+}
+
+[data-theme="light"] #asignaturas-menu .course-badge {
+  background-color: #e2e8f0 !important;
+  color: #475569 !important;
+}
+
+[data-theme="light"] #asignaturas-menu button[data-course-id].bg-emerald-500\/10 .course-badge {
+  background-color: transparent !important;
+  color: #047857 !important;
+}
+
+/* --------------------------------------------------------------------------
+   2. Menú Lateral (Sidebar)
+   -------------------------------------------------------------------------- */
+[data-theme="light"] #sidebar {
+  background-color: #ffffff !important;
+  border-right-color: #e2e8f0 !important;
+}
+
+[data-theme="light"] #sidebar .border-b,
+[data-theme="light"] #sidebar .border-gray-800,
+[data-theme="light"] #sidebar .border-gray-800\/80 {
+  border-color: #e2e8f0 !important;
+}
+
+[data-theme="light"] #sidebar-course-title {
+  color: #0f172a !important;
+}
+
+[data-theme="light"] #sidebar-course-subtitle {
+  color: #64748b !important;
+}
+
+[data-theme="light"] #close-sidebar-mobile-btn,
+[data-theme="light"] #toggle-sidebar-width-btn,
+[data-theme="light"] #collapse-sidebar-btn {
+  color: #64748b !important;
+}
+
+[data-theme="light"] #close-sidebar-mobile-btn:hover,
+[data-theme="light"] #toggle-sidebar-width-btn:hover,
+[data-theme="light"] #collapse-sidebar-btn:hover {
+  background-color: #f1f5f9 !important;
+  color: #0f172a !important;
+}
+
+/* Tarjeta de Progreso en Sidebar */
+[data-theme="light"] #sidebar .bg-\[\#121622\] {
+  background-color: #f8fafc !important;
+  border-color: #e2e8f0 !important;
+}
+
+[data-theme="light"] #progress-percentage {
+  color: #047857 !important;
+}
+
+[data-theme="light"] #sidebar .bg-gray-800\/70 {
+  background-color: #e2e8f0 !important;
+}
+
+[data-theme="light"] #sidebar-search {
+  background-color: #f1f5f9 !important;
+  border-color: #cbd5e1 !important;
+  color: #0f172a !important;
+}
+
+[data-theme="light"] #sidebar-search::placeholder {
+  color: #94a3b8 !important;
+}
+
+[data-theme="light"] #sidebar-search:focus {
+  background-color: #ffffff !important;
+  border-color: #059669 !important;
+}
+
+[data-theme="light"] #sidebar-weeks-count {
+  color: #64748b !important;
+}
+
+[data-theme="light"] #expand-all-weeks-btn,
+[data-theme="light"] #collapse-all-weeks-btn {
+  color: #475569 !important;
+}
+
+[data-theme="light"] #expand-all-weeks-btn:hover,
+[data-theme="light"] #collapse-all-weeks-btn:hover {
+  color: #047857 !important;
+}
+
+/* Unidades del acordeón */
+[data-theme="light"] .week-group button {
+  color: #1e293b !important;
+}
+
+[data-theme="light"] .week-group button:hover {
+  background-color: #f1f5f9 !important;
+  color: #0f172a !important;
+}
+
+[data-theme="light"] .week-group button.bg-\[\#151b27\] {
+  background-color: #eff6ff !important;
+  color: #1d4ed8 !important;
+  border: 1px solid #bfdbfe !important;
+}
+
+[data-theme="light"] .week-group button .w-6.h-6 {
+  background-color: #e2e8f0 !important;
+  color: #334155 !important;
+}
+
+[data-theme="light"] .week-group button.bg-\[\#151b27\] .w-6.h-6 {
+  background-color: #dbeafe !important;
+  color: #1d4ed8 !important;
+}
+
+[data-theme="light"] .week-group button span.text-gray-200 {
+  color: #0f172a !important;
+}
+
+[data-theme="light"] .week-group button .bg-gray-800 {
+  background-color: #e2e8f0 !important;
+  color: #475569 !important;
+}
+
+[data-theme="light"] .week-group button .bg-emerald-500\/20 {
+  background-color: #d1fae5 !important;
+  color: #065f46 !important;
+}
+
+[data-theme="light"] .week-group i.fa-chevron-down {
+  color: #64748b !important;
+}
+
+[data-theme="light"] .week-group div[id^="week-topics-"] {
+  border-left-color: #cbd5e1 !important;
+}
+
+/* Temas dentro de cada unidad */
+[data-theme="light"] div[id^="week-topics-"] a {
+  color: #334155 !important;
+}
+
+[data-theme="light"] div[id^="week-topics-"] a:hover {
+  background-color: #f1f5f9 !important;
+  color: #0f172a !important;
+}
+
+[data-theme="light"] div[id^="week-topics-"] a span.text-gray-300 {
+  color: #1e293b !important;
+}
+
+[data-theme="light"] div[id^="week-topics-"] a:hover span.text-gray-300 {
+  color: #0f172a !important;
+}
+
+[data-theme="light"] .topic-active {
+  background: linear-gradient(90deg, rgba(5, 150, 105, 0.12) 0%, rgba(5, 150, 105, 0.02) 100%) !important;
+  border-left: 3px solid #059669 !important;
+  color: #047857 !important;
+  font-weight: 700 !important;
+}
+
+[data-theme="light"] .topic-active span.text-gray-300 {
+  color: #047857 !important;
+  font-weight: 700 !important;
+}
+
+[data-theme="light"] div[id^="week-topics-"] a span.text-emerald-400 {
+  color: #059669 !important;
+}
+
+[data-theme="light"] div[id^="week-topics-"] a span.text-gray-600 {
+  color: #94a3b8 !important;
+}
+
+[data-theme="light"] div[id^="week-topics-"] a span.bg-emerald-500\/10 {
+  background-color: #ecfdf5 !important;
+  border-color: #a7f3d0 !important;
+  color: #047857 !important;
+}
+
+[data-theme="light"] div[id^="week-topics-"] a span.text-gray-500 {
+  color: #64748b !important;
+}
+
+/* --------------------------------------------------------------------------
+   3. Área de Contenido Principal (#content-area)
+   -------------------------------------------------------------------------- */
+[data-theme="light"] #content-area {
+  background-color: #f8fafc !important;
+  color: #0f172a !important;
+}
+
+[data-theme="light"] #content-area h1,
+[data-theme="light"] #content-area h2,
+[data-theme="light"] #content-area h3,
+[data-theme="light"] #content-area h4,
+[data-theme="light"] #content-area h5,
+[data-theme="light"] #content-area h6 {
+  color: #0f172a !important;
+}
+
+[data-theme="light"] #content-area p {
+  color: #334155 !important;
+}
+
+[data-theme="light"] #content-area strong {
+  color: #0f172a !important;
+}
+
+[data-theme="light"] #content-area .border-gray-800,
+[data-theme="light"] #content-area .border-gray-800\/80,
+[data-theme="light"] #content-area .border-gray-700 {
+  border-color: #e2e8f0 !important;
+}
+
+/* Migas de Pan */
+[data-theme="light"] #content-area nav span.text-gray-400,
+[data-theme="light"] #content-area nav span.text-gray-500 {
+  color: #64748b !important;
+}
+
+[data-theme="light"] #content-area nav span.text-gray-600 {
+  color: #cbd5e1 !important;
+}
+
+[data-theme="light"] #content-area nav button {
+  color: #334155 !important;
+}
+
+[data-theme="light"] #content-area nav button:hover {
+  color: #059669 !important;
+}
+
+[data-theme="light"] #content-area nav span.text-emerald-400 {
+  color: #047857 !important;
+  font-weight: 700 !important;
+}
+
+/* Botones de Cabecera del Tema */
+[data-theme="light"] #content-area header span.bg-\[\#141923\] {
+  background-color: #ffffff !important;
+  border-color: #cbd5e1 !important;
+  color: #334155 !important;
+}
+
+[data-theme="light"] #content-area header button.bg-\[\#141923\] {
+  background-color: #ffffff !important;
+  border-color: #cbd5e1 !important;
+  color: #334155 !important;
+}
+
+[data-theme="light"] #content-area header button.bg-\[\#141923\]:hover {
+  background-color: #f1f5f9 !important;
+  color: #0f172a !important;
+}
+
+[data-theme="light"] #content-area header button.bg-emerald-500\/10 {
+  background-color: #ecfdf5 !important;
+  border-color: #a7f3d0 !important;
+  color: #047857 !important;
+}
+
+/* Píldoras de Navegación (.nav-pill) */
+[data-theme="light"] .nav-pill {
+  background-color: #ffffff !important;
+  border-color: #cbd5e1 !important;
+  color: #334155 !important;
+}
+
+[data-theme="light"] .nav-pill:hover {
+  background-color: #f1f5f9 !important;
+  color: #047857 !important;
+  border-color: #059669 !important;
+}
+
+[data-theme="light"] .nav-pill i.text-emerald-400 {
+  color: #059669 !important;
+}
+
+[data-theme="light"] .nav-pill.active {
+  background-color: #059669 !important;
+  border-color: #059669 !important;
+  color: #ffffff !important;
+}
+
+[data-theme="light"] .nav-pill.active i {
+  color: #ffffff !important;
+}
+
+[data-theme="light"] .nav-pill.bg-emerald-500\/10 {
+  background-color: #ecfdf5 !important;
+  border-color: #a7f3d0 !important;
+  color: #047857 !important;
+}
+
+[data-theme="light"] .nav-pill.bg-emerald-500\/10:hover {
+  background-color: #d1fae5 !important;
+  color: #065f46 !important;
+}
+
+/* Encabezados de Sección e Iconos */
+[data-theme="light"] #content-area section span.bg-emerald-500\/10 {
+  background-color: #ecfdf5 !important;
+  border: 1px solid #a7f3d0 !important;
+  color: #047857 !important;
+}
+
+[data-theme="light"] #content-area section span.text-gray-500 {
+  color: #64748b !important;
+}
+
+/* --------------------------------------------------------------------------
+   4. Tarjetas Educativas y Contenedores en Contenido
+   -------------------------------------------------------------------------- */
+[data-theme="light"] #content-area .bg-\[\#121622\],
+[data-theme="light"] #content-area .bg-\[\#141923\],
+[data-theme="light"] #content-area .bg-\[\#10141d\],
+[data-theme="light"] #content-area .bg-\[\#151b27\],
+[data-theme="light"] #content-area .bg-\[\#161c28\],
+[data-theme="light"] #content-area .bg-\[\#181d28\],
+[data-theme="light"] #content-area .bg-\[\#0d1017\],
+[data-theme="light"] #content-area .bg-\[\#0a0d14\] {
+  background-color: #ffffff !important;
+  border-color: #e2e8f0 !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04) !important;
+}
+
+[data-theme="light"] #content-area .bg-\[\#121622\] *,
+[data-theme="light"] #content-area .bg-\[\#141923\] *,
+[data-theme="light"] #content-area .bg-\[\#10141d\] * {
+  border-color: #e2e8f0;
+}
+
+/* Tarjetas Tematizadas Específicas */
+[data-theme="light"] #content-area .bg-\[\#101915\] {
+  background: #f0fdf4 !important;
+  border-color: #bbf7d0 !important;
+}
+[data-theme="light"] #content-area .bg-\[\#101915\] h4,
+[data-theme="light"] #content-area .bg-\[\#101915\] h5,
+[data-theme="light"] #content-area .bg-\[\#101915\] span.text-emerald-400 {
+  color: #047857 !important;
+}
+[data-theme="light"] #content-area .bg-\[\#101915\] p,
+[data-theme="light"] #content-area .bg-\[\#101915\] li,
+[data-theme="light"] #content-area .bg-\[\#101915\] span {
+  color: #1e293b !important;
+}
+
+[data-theme="light"] #content-area .bg-\[\#1a1315\] {
+  background: #fff1f2 !important;
+  border-color: #fecdd3 !important;
+}
+[data-theme="light"] #content-area .bg-\[\#1a1315\] h4,
+[data-theme="light"] #content-area .bg-\[\#1a1315\] h5,
+[data-theme="light"] #content-area .bg-\[\#1a1315\] span.text-rose-400 {
+  color: #be123c !important;
+}
+[data-theme="light"] #content-area .bg-\[\#1a1315\] p,
+[data-theme="light"] #content-area .bg-\[\#1a1315\] li,
+[data-theme="light"] #content-area .bg-\[\#1a1315\] span {
+  color: #1e293b !important;
+}
+
+[data-theme="light"] #content-area .bg-\[\#10141f\] {
+  background: #f0f9ff !important;
+  border-color: #bae6fd !important;
+}
+[data-theme="light"] #content-area .bg-\[\#10141f\] h4,
+[data-theme="light"] #content-area .bg-\[\#10141f\] h5,
+[data-theme="light"] #content-area .bg-\[\#10141f\] span.text-sky-400 {
+  color: #0369a1 !important;
+}
+[data-theme="light"] #content-area .bg-\[\#10141f\] p,
+[data-theme="light"] #content-area .bg-\[\#10141f\] li {
+  color: #1e293b !important;
+}
+
+[data-theme="light"] #content-area .bg-\[\#191522\] {
+  background: #faf5ff !important;
+  border-color: #e9d5ff !important;
+}
+[data-theme="light"] #content-area .bg-\[\#191522\] h4 {
+  color: #6b21a8 !important;
+}
+[data-theme="light"] #content-area .bg-\[\#191522\] .bg-\[\#100d17\] {
+  background: #f3e8ff !important;
+  border-color: #d8b4fe !important;
+  color: #581c87 !important;
+}
+
+/* Remapeo de Utilidades de Texto para Alto Contraste */
+[data-theme="light"] #content-area .text-gray-200 { color: #0f172a !important; }
+[data-theme="light"] #content-area .text-gray-300 { color: #1e293b !important; }
+[data-theme="light"] #content-area .text-gray-400 { color: #475569 !important; }
+[data-theme="light"] #content-area .text-gray-500 { color: #64748b !important; }
+[data-theme="light"] #content-area .text-white { color: #0f172a !important; }
+[data-theme="light"] #content-area .text-emerald-400 { color: #047857 !important; }
+[data-theme="light"] #content-area .text-emerald-300 { color: #047857 !important; }
+[data-theme="light"] #content-area .text-emerald-200 { color: #065f46 !important; }
+[data-theme="light"] #content-area .text-purple-400 { color: #6b21a8 !important; }
+[data-theme="light"] #content-area .text-purple-300 { color: #581c87 !important; }
+[data-theme="light"] #content-area .text-amber-400 { color: #92400e !important; }
+[data-theme="light"] #content-area .text-amber-300 { color: #92400e !important; }
+[data-theme="light"] #content-area .text-sky-400 { color: #0369a1 !important; }
+[data-theme="light"] #content-area .text-sky-300 { color: #0369a1 !important; }
+[data-theme="light"] #content-area .text-rose-400 { color: #be123c !important; }
+[data-theme="light"] #content-area .text-rose-300 { color: #be123c !important; }
+[data-theme="light"] #content-area .text-blue-400 { color: #1d4ed8 !important; }
+
+/* --------------------------------------------------------------------------
+   5. Secciones Interactivas: Explora, Practica y Comprueba
+   -------------------------------------------------------------------------- */
+[data-theme="light"] .bg-gradient-to-b.from-\[\#141226\]\/80 {
+  background: linear-gradient(180deg, #faf5ff 0%, #ffffff 100%) !important;
+  border-color: #d8b4fe !important;
+  box-shadow: 0 4px 16px rgba(107, 33, 168, 0.05) !important;
+}
+[data-theme="light"] .bg-gradient-to-b.from-\[\#141226\]\/80 .bg-purple-500\/15 {
+  background-color: #f3e8ff !important;
+  border-color: #d8b4fe !important;
+  color: #581c87 !important;
+}
+
+[data-theme="light"] .bg-gradient-to-b.from-\[\#221810\]\/80 {
+  background: linear-gradient(180deg, #fffbeb 0%, #ffffff 100%) !important;
+  border-color: #fde68a !important;
+  box-shadow: 0 4px 16px rgba(180, 83, 9, 0.05) !important;
+}
+[data-theme="light"] .bg-gradient-to-b.from-\[\#221810\]\/80 .bg-amber-500\/15 {
+  background-color: #fef3c7 !important;
+  border-color: #fde68a !important;
+  color: #78350f !important;
+}
+
+[data-theme="light"] #sec-comprueba {
+  border-top-color: #cbd5e1 !important;
+}
+[data-theme="light"] .bg-gradient-to-b.from-\[\#0e1f18\]\/80 {
+  background: linear-gradient(180deg, #f0fdf4 0%, #ffffff 100%) !important;
+  border-color: #a7f3d0 !important;
+  box-shadow: 0 4px 20px rgba(5, 150, 105, 0.06) !important;
+}
+[data-theme="light"] .bg-gradient-to-b.from-\[\#0e1f18\]\/80 .bg-emerald-500\/15 {
+  background-color: #d1fae5 !important;
+  border-color: #a7f3d0 !important;
+  color: #065f46 !important;
+}
+
+/* Barra superior de contenedores de widgets */
+[data-theme="light"] .widget-frame-container {
+  background-color: #ffffff !important;
+  border-color: #cbd5e1 !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06) !important;
+}
+
+[data-theme="light"] .widget-frame-container > div:first-child {
+  background-color: #f8fafc !important;
+  border-bottom: 1px solid #e2e8f0 !important;
+}
+
+[data-theme="light"] .widget-frame-container > div:first-child span.text-gray-300 {
+  color: #0f172a !important;
+  font-weight: 600 !important;
+}
+
+[data-theme="light"] .widget-frame-container > div:first-child button,
+[data-theme="light"] .widget-frame-container > div:first-child a {
+  background-color: #ffffff !important;
+  border: 1px solid #cbd5e1 !important;
+  color: #475569 !important;
+}
+
+[data-theme="light"] .widget-frame-container > div:first-child button:hover,
+[data-theme="light"] .widget-frame-container > div:first-child a:hover {
+  background-color: #059669 !important;
+  border-color: #059669 !important;
+  color: #ffffff !important;
+}
+
+/* --------------------------------------------------------------------------
+   6. Tablas, Bloques de Código y Traza
+   -------------------------------------------------------------------------- */
+[data-theme="light"] .complexity-table {
+  border-color: #cbd5e1 !important;
+}
+
+[data-theme="light"] .complexity-table th {
+  background-color: #f1f5f9 !important;
+  color: #0f172a !important;
+  border-color: #cbd5e1 !important;
+  font-weight: 700 !important;
+}
+
+[data-theme="light"] .complexity-table td {
+  border-color: #e2e8f0 !important;
+  color: #334155 !important;
+}
+
+[data-theme="light"] .complexity-table td.font-bold.text-white {
+  color: #0f172a !important;
+  font-weight: 700 !important;
+}
+
+[data-theme="light"] .complexity-table tr:hover td {
+  background-color: #f8fafc !important;
+}
+
+/* Bloques de código */
+[data-theme="light"] pre {
+  background-color: #f8fafc !important;
+  border: 1px solid #cbd5e1 !important;
+  color: #0f172a !important;
+}
+
+[data-theme="light"] pre code {
+  color: #0f172a !important;
+}
+
+[data-theme="light"] code {
+  background-color: #f1f5f9 !important;
+  border: 1px solid #e2e8f0 !important;
+  color: #0f172a !important;
+}
+
+/* Pastillas de traza y resumen */
+[data-theme="light"] #content-area .bg-emerald-950\/20 {
+  background-color: #ecfdf5 !important;
+  border-color: #a7f3d0 !important;
+  color: #065f46 !important;
+}
+
+[data-theme="light"] #content-area .bg-sky-950\/20 {
+  background-color: #f0f9ff !important;
+  border-color: #bae6fd !important;
+  color: #0c4a6e !important;
+}
+
+[data-theme="light"] #content-area .bg-purple-950\/20 {
+  background-color: #faf5ff !important;
+  border-color: #e9d5ff !important;
+  color: #581c87 !important;
+}
+
+[data-theme="light"] #content-area .from-emerald-950\/40 {
+  background: #ecfdf5 !important;
+  border-color: #a7f3d0 !important;
+}
+
+[data-theme="light"] #content-area .bg-emerald-900\/60 {
+  background-color: #059669 !important;
+  color: #ffffff !important;
+}
+
+/* --------------------------------------------------------------------------
+   7. Navegación Inferior entre Temas ("Tema Anterior" / "Siguiente Tema")
+   -------------------------------------------------------------------------- */
+[data-theme="light"] #content-area footer {
+  border-top-color: #e2e8f0 !important;
+}
+
+[data-theme="light"] #content-area footer a {
+  background-color: #ffffff !important;
+  border-color: #cbd5e1 !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04) !important;
+}
+
+[data-theme="light"] #content-area footer a:hover {
+  background-color: #f8fafc !important;
+  border-color: #059669 !important;
+  box-shadow: 0 4px 12px rgba(5, 150, 105, 0.1) !important;
+}
+
+[data-theme="light"] #content-area footer a span.text-\[10px\] {
+  color: #64748b !important;
+  font-weight: 600 !important;
+}
+
+[data-theme="light"] #content-area footer a span.text-xs {
+  color: #0f172a !important;
+  font-weight: 600 !important;
+}
+
+[data-theme="light"] #content-area footer a:hover span.text-xs {
+  color: #059669 !important;
+}
+
+[data-theme="light"] #content-area footer a i {
+  color: #64748b !important;
+}
+
+[data-theme="light"] #content-area footer a:hover i {
+  color: #059669 !important;
+}
+
+/* --------------------------------------------------------------------------
+   8. Modales (Búsqueda y Guía)
+   -------------------------------------------------------------------------- */
+[data-theme="light"] #search-modal > div,
+[data-theme="light"] #guide-modal > div {
+  background-color: #ffffff !important;
+  border-color: #cbd5e1 !important;
+  color: #0f172a !important;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
+}
+
+[data-theme="light"] #modal-search-input {
+  color: #0f172a !important;
+}
+
+[data-theme="light"] #modal-search-input::placeholder {
+  color: #94a3b8 !important;
+}
+
+[data-theme="light"] #search-results a:hover {
+  background-color: #f1f5f9 !important;
+}
+
+[data-theme="light"] #search-results a span.text-white {
+  color: #0f172a !important;
+}
+
+[data-theme="light"] #search-results a:hover span.text-white {
+  color: #059669 !important;
+}
+
+/* --------------------------------------------------------------------------
+   9. Catálogo de Asignaturas / Home
+   -------------------------------------------------------------------------- */
+[data-theme="light"] #content-area .from-\[\#101622\] {
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%) !important;
+  border-color: #cbd5e1 !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05) !important;
+}
+
+[data-theme="light"] #content-area .from-\[\#101622\] span.bg-emerald-500\/10 {
+  background-color: #ecfdf5 !important;
+  border-color: #a7f3d0 !important;
+  color: #047857 !important;
+}
+
+[data-theme="light"] #content-area .from-\[\#101622\] h1 {
+  color: #0f172a !important;
+}
+
+[data-theme="light"] #content-area .from-\[\#101622\] p {
+  color: #334155 !important;
+}
+
+/* ==========================================================================
+   ADAPTACIÓN RESPONSIVE ADICIONAL (MÓVIL Y TABLET)
+   ========================================================================== */
+.overflow-x-auto {
+  -webkit-overflow-scrolling: touch;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+@media (max-width: 767px) {
+  .widget-frame-container {
+    margin-left: -2px;
+    margin-right: -2px;
+    border-radius: 10px;
+  }
+  
+  .widget-iframe {
+    width: 100%;
+    min-height: 320px;
+    max-height: none !important;
+  }
+  
+  /* Alturas responsivas ajustadas para widgets con columnas apiladas en móvil */
+  .widget-iframe[src*="visualizer"] {
+    min-height: 880px !important;
+  }
+  .widget-iframe[src*="u01_comandos_pseudocodigo"] {
+    min-height: 740px !important;
+  }
+  .widget-iframe[src*="u01_simbolos_diagrama"] {
+    min-height: 660px !important;
+  }
+  .widget-iframe[src*="u01_ejercicio1_ordenar_pasos"] {
+    min-height: 520px !important;
+  }
+  .widget-iframe[src*="u01_recorrido_pasos"] {
+    min-height: 660px !important;
+  }
+  .widget-iframe[src*="u01_calculadora_algoritmo"] {
+    min-height: 510px !important;
+  }
+  .widget-iframe[src*="u09_calculo_complejidad"] {
+    min-height: 900px !important;
+  }
+  .widget-iframe[src*="u09_ejercicio2_escenarios"] {
+    min-height: 690px !important;
+  }
+
+  html, body {
+    max-width: 100vw;
+    overflow-x: hidden;
+  }
+
+  button, a, input, select {
+    touch-action: manipulation;
+  }
+}
+
+
+/* ==========================================================================
+   AJUSTES PUNTUALES: CONTRASTE EN LIGHT MODE (#materias) Y BADGES
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. SECCIÓN DE MATERIAS (#materias / Catálogo de Asignaturas)
+   -------------------------------------------------------------------------- */
+
+/* Encabezado Hero Banner de Asignaturas */
+[data-theme="light"] #content-area .bg-gradient-to-r.from-\[\#101622\] {
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 50%, #f1f5f9 100%) !important;
+  border: 1px solid #cbd5e1 !important;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.06), 0 8px 10px -6px rgba(0, 0, 0, 0.03) !important;
+}
+
+[data-theme="light"] #content-area .bg-gradient-to-r.from-\[\#101622\] h1 {
+  color: #0f172a !important;
+}
+
+[data-theme="light"] #content-area .bg-gradient-to-r.from-\[\#101622\] p {
+  color: #334155 !important;
+}
+
+[data-theme="light"] #content-area .bg-gradient-to-r.from-\[\#101622\] .bg-emerald-500\/10 {
+  background-color: #ecfdf5 !important;
+  border-color: #a7f3d0 !important;
+  color: #047857 !important;
+}
+
+/* Diapositivas de Asignaturas (Slider Track & Slides) */
+[data-theme="light"] #courses-slider-wrapper {
+  box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.08) !important;
+}
+
+/* Diapositiva 1: Programación */
+[data-theme="light"] #courses-slider-track > div:nth-child(1) {
+  background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 40%, #ffffff 100%) !important;
+  border: 1px solid #86efac !important;
+  box-shadow: 0 10px 25px -5px rgba(5, 150, 105, 0.1) !important;
+}
+
+/* Diapositiva 2: Introducción a las TICS */
+[data-theme="light"] #courses-slider-track > div:nth-child(2) {
+  background: linear-gradient(135deg, #faf5ff 0%, #f5f3ff 40%, #ffffff 100%) !important;
+  border: 1px solid #d8b4fe !important;
+  box-shadow: 0 10px 25px -5px rgba(124, 58, 237, 0.1) !important;
+}
+
+/* Elementos comunes dentro de las diapositivas en Light Mode */
+[data-theme="light"] #courses-slider-track h2 {
+  color: #0f172a !important;
+}
+
+[data-theme="light"] #courses-slider-track p.text-gray-300 {
+  color: #334155 !important;
+  font-weight: 600 !important;
+}
+
+[data-theme="light"] #courses-slider-track p.text-gray-400 {
+  color: #475569 !important;
+}
+
+[data-theme="light"] #courses-slider-track span.text-gray-400 {
+  color: #475569 !important;
+}
+
+/* Chips de Ejes Temáticos dentro de las diapositivas */
+[data-theme="light"] #courses-slider-track span.bg-\[\#0f141f\]\/80 {
+  background-color: #ffffff !important;
+  border: 1px solid #cbd5e1 !important;
+  color: #1e293b !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+  font-weight: 600 !important;
+}
+
+/* Barra inferior de estadísticas de la diapositiva */
+[data-theme="light"] #courses-slider-track .border-t {
+  border-top-color: #e2e8f0 !important;
+}
+
+[data-theme="light"] #courses-slider-track .border-t span {
+  color: #334155 !important;
+  font-weight: 600 !important;
+}
+
+/* Botón CTA dentro de las diapositivas (Preserva texto blanco de alto contraste sobre degradado) */
+[data-theme="light"] #courses-slider-track button[onclick*="switchCourse"] {
+  color: #ffffff !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15) !important;
+}
+
+[data-theme="light"] #courses-slider-track button[onclick*="switchCourse"] span,
+[data-theme="light"] #courses-slider-track button[onclick*="switchCourse"] i {
+  color: #ffffff !important;
+}
+
+/* Botones de navegación Anterior / Siguiente del Slider */
+[data-theme="light"] button[onclick="window.app.prevSlide()"],
+[data-theme="light"] button[onclick="window.app.nextSlide()"] {
+  background-color: #ffffff !important;
+  border: 1px solid #cbd5e1 !important;
+  color: #334155 !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+}
+
+[data-theme="light"] button[onclick="window.app.prevSlide()"]:hover,
+[data-theme="light"] button[onclick="window.app.nextSlide()"]:hover {
+  background-color: #f1f5f9 !important;
+  border-color: #059669 !important;
+  color: #059669 !important;
+}
+
+/* Indicadores de diapositiva (Dots) */
+[data-theme="light"] #courses-slider-dots .slider-dot.bg-gray-700 {
+  background-color: #cbd5e1 !important;
+}
+[data-theme="light"] #courses-slider-dots .slider-dot.bg-gray-700:hover {
+  background-color: #94a3b8 !important;
+}
+
+/* Tarjetas de Materias en el Grid Inferior */
+[data-theme="light"] #content-area .grid.grid-cols-1.md\:grid-cols-2 > div {
+  background-color: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04) !important;
+}
+
+[data-theme="light"] #content-area .grid.grid-cols-1.md\:grid-cols-2 > div:hover {
+  border-color: #cbd5e1 !important;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08) !important;
+}
+
+[data-theme="light"] #content-area .grid.grid-cols-1.md\:grid-cols-2 h3 {
+  color: #0f172a !important;
+}
+
+[data-theme="light"] #content-area .grid.grid-cols-1.md\:grid-cols-2 p {
+  color: #475569 !important;
+}
+
+[data-theme="light"] #content-area .grid.grid-cols-1.md\:grid-cols-2 .text-gray-500 {
+  color: #64748b !important;
+}
+
+/* Botón Explorar Asignatura en tarjetas del Grid */
+[data-theme="light"] #content-area .grid.grid-cols-1.md\:grid-cols-2 button[onclick*="switchCourse"] {
+  background-color: #f1f5f9 !important;
+  border: 1px solid #cbd5e1 !important;
+  color: #1e293b !important;
+  font-weight: 600 !important;
+}
+
+[data-theme="light"] #content-area .grid.grid-cols-1.md\:grid-cols-2 button[onclick*="switchCourse"]:hover {
+  background-color: #059669 !important;
+  border-color: #059669 !important;
+  color: #ffffff !important;
+}
+
+[data-theme="light"] #content-area .grid.grid-cols-1.md\:grid-cols-2 button[onclick*="switchCourse"]:hover span,
+[data-theme="light"] #content-area .grid.grid-cols-1.md\:grid-cols-2 button[onclick*="switchCourse"]:hover i {
+  color: #ffffff !important;
+}
+
+
+/* --------------------------------------------------------------------------
+   2. CONTRASTE DE ETIQUETAS (BADGES Y CHIPS) EN LIGHT MODE
+   -------------------------------------------------------------------------- */
+
+/* Insignias del Tema (Header Badges) */
+[data-theme="light"] .badge-easy {
+  background-color: #ecfdf5 !important;
+  color: #065f46 !important;
+  border: 1px solid #a7f3d0 !important;
+  font-weight: 600 !important;
+}
+
+[data-theme="light"] .badge-medium {
+  background-color: #fffbeb !important;
+  color: #92400e !important;
+  border: 1px solid #fde68a !important;
+  font-weight: 600 !important;
+}
+
+[data-theme="light"] .badge-hard {
+  background-color: #fff1f2 !important;
+  color: #9f1239 !important;
+  border: 1px solid #fecdd3 !important;
+  font-weight: 600 !important;
+}
+
+[data-theme="light"] .badge-teal,
+[data-theme="light"] .badge-emerald {
+  background-color: #ecfdf5 !important;
+  color: #065f46 !important;
+  border: 1px solid #a7f3d0 !important;
+  font-weight: 600 !important;
+}
+
+[data-theme="light"] .badge-purple {
+  background-color: #faf5ff !important;
+  color: #6b21a8 !important;
+  border: 1px solid #e9d5ff !important;
+  font-weight: 600 !important;
+}
+
+[data-theme="light"] .badge-sky,
+[data-theme="light"] .badge-blue {
+  background-color: #f0f9ff !important;
+  color: #0369a1 !important;
+  border: 1px solid #bae6fd !important;
+  font-weight: 600 !important;
+}
+
+[data-theme="light"] .badge-amber,
+[data-theme="light"] .badge-yellow {
+  background-color: #fffbeb !important;
+  color: #92400e !important;
+  border: 1px solid #fde68a !important;
+  font-weight: 600 !important;
+}
+
+[data-theme="light"] .badge-rose,
+[data-theme="light"] .badge-red {
+  background-color: #fff1f2 !important;
+  color: #9f1239 !important;
+  border: 1px solid #fecdd3 !important;
+  font-weight: 600 !important;
+}
+
+[data-theme="light"] .badge-neutral,
+[data-theme="light"] #content-area .bg-gray-800.text-gray-300 {
+  background-color: #f1f5f9 !important;
+  color: #334155 !important;
+  border: 1px solid #cbd5e1 !important;
+  font-weight: 600 !important;
+}
+
+/* Badges de clasificación en tarjetas explicativas */
+[data-theme="light"] #content-area .text-rose-400.bg-rose-500\/10 {
+  background-color: #fff1f2 !important;
+  color: #9f1239 !important;
+  border: 1px solid #fecdd3 !important;
+  font-weight: 700 !important;
+}
+
+[data-theme="light"] #content-area .text-amber-400.bg-amber-500\/10 {
+  background-color: #fffbeb !important;
+  color: #92400e !important;
+  border: 1px solid #fde68a !important;
+  font-weight: 700 !important;
+}
+
+[data-theme="light"] #content-area .text-emerald-400.bg-emerald-500\/10 {
+  background-color: #ecfdf5 !important;
+  color: #065f46 !important;
+  border: 1px solid #a7f3d0 !important;
+  font-weight: 700 !important;
+}
+
+[data-theme="light"] #content-area .text-sky-400.bg-sky-500\/10 {
+  background-color: #f0f9ff !important;
+  color: #0369a1 !important;
+  border: 1px solid #bae6fd !important;
+  font-weight: 700 !important;
+}
+
+[data-theme="light"] #content-area .text-purple-400.bg-purple-500\/10 {
+  background-color: #faf5ff !important;
+  color: #6b21a8 !important;
+  border: 1px solid #e9d5ff !important;
+  font-weight: 700 !important;
+}
+
+/* Badges numéricos circulares de pasos */
+[data-theme="light"] #content-area .rounded-full.bg-emerald-500\/20 {
+  background-color: #d1fae5 !important;
+  color: #065f46 !important;
+  font-weight: 700 !important;
+}
+
+[data-theme="light"] #content-area .rounded-full.bg-sky-500\/20 {
+  background-color: #e0f2fe !important;
+  color: #0369a1 !important;
+  font-weight: 700 !important;
+}
+
+[data-theme="light"] #content-area .rounded-full.bg-amber-500\/20 {
+  background-color: #fef3c7 !important;
+  color: #92400e !important;
+  font-weight: 700 !important;
+}
+
+[data-theme="light"] #content-area .rounded-full.bg-purple-500\/20 {
+  background-color: #f3e8ff !important;
+  color: #6b21a8 !important;
+  font-weight: 700 !important;
+}
+
+/* Botón Marcar como Completado en cabecera */
+[data-theme="light"] #completion-toggle-btn.bg-\[\#151b27\] {
+  background-color: #f8fafc !important;
+  border-color: #cbd5e1 !important;
+  color: #334155 !important;
+}
+
+[data-theme="light"] #completion-toggle-btn.bg-\[\#151b27\]:hover {
+  background-color: #f1f5f9 !important;
+  border-color: #059669 !important;
+  color: #059669 !important;
+}
+
+[data-theme="light"] #completion-toggle-btn.bg-emerald-500\/15 {
+  background-color: #ecfdf5 !important;
+  border-color: #a7f3d0 !important;
+  color: #065f46 !important;
+  font-weight: 700 !important;
+}
+
+/* ==========================================================================
+   AJUSTES PUNTUALES: UNIDAD 09 MODO LIGHT Y MARGEN EXTERIOR CABECERA
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. Margen exterior del bloque inicial de cada tema (topic-header)
+   -------------------------------------------------------------------------- */
+.topic-header {
+  margin-top: 1.5rem !important;
+  margin-bottom: 2.5rem !important;
+}
+
+@media (min-width: 640px) {
+  .topic-header {
+    margin-top: 2rem !important;
+    margin-bottom: 3rem !important;
+  }
+}
+
+@media (min-width: 1024px) {
+  .topic-header {
+    margin-top: 2.5rem !important;
+    margin-bottom: 3.5rem !important;
+  }
+}
+
+[data-theme="light"] .topic-header {
+  border-bottom-color: #e2e8f0 !important;
+}
+
+[data-theme="light"] .topic-header h1 {
+  color: #0f172a !important;
+}
+
+[data-theme="light"] .topic-header p {
+  color: #475569 !important;
+}
+
+/* --------------------------------------------------------------------------
+   2. Visibilidad y Contraste en Modo Light - Unidad 09
+   -------------------------------------------------------------------------- */
+
+/* Pasos Metodología de Cálculo Paso a Paso */
+[data-theme="light"] #content-area #sec-metodologia-calculo .bg-\[\#141923\] {
+  background-color: #ffffff !important;
+  border-color: #cbd5e1 !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04) !important;
+}
+
+[data-theme="light"] #content-area #sec-metodologia-calculo .bg-\[\#141923\] h4 {
+  color: #047857 !important;
+}
+
+[data-theme="light"] #content-area #sec-metodologia-calculo .bg-\[\#141923\] p {
+  color: #334155 !important;
+}
+
+/* Caso de Estudio: Sumatoria por Bucle vs Fórmula Cerrada de Gauss */
+[data-theme="light"] #content-area .bg-\[\#111422\] {
+  background-color: #f0fdfa !important;
+  border-color: #99f6e4 !important;
+  box-shadow: 0 4px 12px rgba(15, 118, 110, 0.06) !important;
+}
+
+[data-theme="light"] #content-area .bg-\[\#111422\] h4 {
+  color: #0f766e !important;
+}
+
+[data-theme="light"] #content-area .bg-\[\#111422\] p {
+  color: #334155 !important;
+}
+
+[data-theme="light"] #content-area .bg-\[\#111422\] .bg-\[\#090d13\] {
+  background-color: #ffffff !important;
+  border-color: #cbd5e1 !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+}
+
+[data-theme="light"] #content-area .bg-\[\#111422\] .bg-\[\#090d13\] span.text-amber-400 {
+  color: #b45309 !important;
+}
+
+[data-theme="light"] #content-area .bg-\[\#111422\] .bg-\[\#090d13\] span.text-emerald-400 {
+  color: #047857 !important;
+}
+
+[data-theme="light"] #content-area .bg-\[\#111422\] .bg-\[\#090d13\] span.text-gray-400 {
+  color: #475569 !important;
+}
+
+[data-theme="light"] #content-area .bg-\[\#111422\] .bg-\[\#090d13\] span.text-sky-300 {
+  color: #0284c7 !important;
+}
+
+[data-theme="light"] #content-area .bg-\[\#111422\] .bg-\[\#090d13\] span.text-emerald-300 {
+  color: #059669 !important;
+}
+
+/* Escenarios de Complejidad: Mejor Caso (Omega) */
+[data-theme="light"] #content-area .bg-\[\#0d1712\] {
+  background-color: #ecfdf5 !important;
+  border-color: #a7f3d0 !important;
+  box-shadow: 0 2px 8px rgba(6, 95, 70, 0.05) !important;
+}
+
+[data-theme="light"] #content-area .bg-\[\#0d1712\] h4 {
+  color: #065f46 !important;
+}
+
+[data-theme="light"] #content-area .bg-\[\#0d1712\] p {
+  color: #1e293b !important;
+}
+
+[data-theme="light"] #content-area .bg-\[\#0d1712\] .bg-\[\#09110d\] {
+  background-color: #ffffff !important;
+  border-color: #86efac !important;
+  color: #065f46 !important;
+  font-weight: 600 !important;
+}
+
+/* Escenarios de Complejidad: Caso Promedio (Theta) */
+[data-theme="light"] #content-area .bg-\[\#0d1622\] {
+  background-color: #f0f9ff !important;
+  border-color: #bae6fd !important;
+  box-shadow: 0 2px 8px rgba(3, 105, 161, 0.05) !important;
+}
+
+[data-theme="light"] #content-area .bg-\[\#0d1622\] h4 {
+  color: #0369a1 !important;
+}
+
+[data-theme="light"] #content-area .bg-\[\#0d1622\] p {
+  color: #1e293b !important;
+}
+
+[data-theme="light"] #content-area .bg-\[\#0d1622\] .bg-\[\#091018\] {
+  background-color: #ffffff !important;
+  border-color: #7dd3fc !important;
+  color: #0369a1 !important;
+  font-weight: 600 !important;
+}
+
+/* Escenarios de Complejidad: Peor Caso (Big-O) */
+[data-theme="light"] #content-area .bg-\[\#220f13\] {
+  background-color: #fff1f2 !important;
+  border-color: #fecdd3 !important;
+  box-shadow: 0 2px 8px rgba(159, 18, 57, 0.05) !important;
+}
+
+[data-theme="light"] #content-area .bg-\[\#220f13\] h4 {
+  color: #9f1239 !important;
+}
+
+[data-theme="light"] #content-area .bg-\[\#220f13\] p {
+  color: #1e293b !important;
+}
+
+[data-theme="light"] #content-area .bg-\[\#220f13\] .bg-\[\#160a0d\] {
+  background-color: #ffffff !important;
+  border-color: #fca5a5 !important;
+  color: #be123c !important;
+  font-weight: 600 !important;
+}
+
+/* Demostración Formal: Búsqueda Binaria y el Origen de O(log n) */
+[data-theme="light"] #content-area #sec-escenarios-complejidad .bg-\[\#141923\] {
+  background-color: #ffffff !important;
+  border-color: #cbd5e1 !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04) !important;
+}
+
+[data-theme="light"] #content-area #sec-escenarios-complejidad .bg-\[\#141923\] h4 {
+  color: #b45309 !important;
+}
+
+[data-theme="light"] #content-area #sec-escenarios-complejidad .bg-\[\#141923\] p {
+  color: #334155 !important;
+}
+
+[data-theme="light"] #content-area #sec-escenarios-complejidad .bg-\[\#0d1117\] {
+  background-color: #f8fafc !important;
+  border-color: #cbd5e1 !important;
+  color: #1e293b !important;
+}
+
+[data-theme="light"] #content-area #sec-escenarios-complejidad .bg-\[\#0d1117\] .text-emerald-400 {
+  color: #047857 !important;
+}
+
+[data-theme="light"] #content-area #sec-escenarios-complejidad .bg-\[\#0d1117\] .text-purple-300 {
+  color: #6b21a8 !important;
+}
+
+/* 1. Fibonacci Recursivo Directo (Fuerza Bruta) */
+[data-theme="light"] #content-area #sec-algoritmos-recursivos-fibonacci .border-rose-500\/30 {
+  background-color: #fff1f2 !important;
+  border-color: #fecdd3 !important;
+  box-shadow: 0 2px 8px rgba(159, 18, 57, 0.04) !important;
+}
+
+[data-theme="light"] #content-area #sec-algoritmos-recursivos-fibonacci .border-rose-500\/30 h4 {
+  color: #be123c !important;
+}
+
+[data-theme="light"] #content-area #sec-algoritmos-recursivos-fibonacci .border-rose-500\/30 p {
+  color: #334155 !important;
+}
+
+[data-theme="light"] #content-area #sec-algoritmos-recursivos-fibonacci .border-rose-500\/30 .bg-rose-500\/20 {
+  background-color: #ffe4e6 !important;
+  border-color: #fecdd3 !important;
+  color: #9f1239 !important;
+  font-weight: 600 !important;
+}
+
+[data-theme="light"] #content-area #sec-algoritmos-recursivos-fibonacci .border-rose-500\/30 .bg-amber-500\/20 {
+  background-color: #fef3c7 !important;
+  border-color: #fde68a !important;
+  color: #92400e !important;
+  font-weight: 600 !important;
+}
+
+/* 2. Fibonacci con Memoización (Programación Dinámica Top-Down) */
+[data-theme="light"] #content-area #sec-algoritmos-recursivos-fibonacci .border-sky-500\/30 {
+  background-color: #f0f9ff !important;
+  border-color: #bae6fd !important;
+  box-shadow: 0 2px 8px rgba(3, 105, 161, 0.04) !important;
+}
+
+[data-theme="light"] #content-area #sec-algoritmos-recursivos-fibonacci .border-sky-500\/30 h4 {
+  color: #0369a1 !important;
+}
+
+[data-theme="light"] #content-area #sec-algoritmos-recursivos-fibonacci .border-sky-500\/30 p {
+  color: #334155 !important;
+}
+
+[data-theme="light"] #content-area #sec-algoritmos-recursivos-fibonacci .border-sky-500\/30 .bg-emerald-500\/20 {
+  background-color: #d1fae5 !important;
+  border-color: #a7f3d0 !important;
+  color: #065f46 !important;
+  font-weight: 600 !important;
+}
+
+[data-theme="light"] #content-area #sec-algoritmos-recursivos-fibonacci .border-sky-500\/30 .bg-sky-500\/20 {
+  background-color: #e0f2fe !important;
+  border-color: #bae6fd !important;
+  color: #0369a1 !important;
+  font-weight: 600 !important;
+}
+
+/* 3. Fibonacci Iterativo (Bottom-Up con Espacio Constante) */
+[data-theme="light"] #content-area #sec-algoritmos-recursivos-fibonacci .border-emerald-500\/30 {
+  background-color: #ecfdf5 !important;
+  border-color: #a7f3d0 !important;
+  box-shadow: 0 2px 8px rgba(4, 120, 87, 0.04) !important;
+}
+
+[data-theme="light"] #content-area #sec-algoritmos-recursivos-fibonacci .border-emerald-500\/30 h4 {
+  color: #047857 !important;
+}
+
+[data-theme="light"] #content-area #sec-algoritmos-recursivos-fibonacci .border-emerald-500\/30 p {
+  color: #334155 !important;
+}
+
+[data-theme="light"] #content-area #sec-algoritmos-recursivos-fibonacci .border-emerald-500\/30 .bg-emerald-500\/20 {
+  background-color: #d1fae5 !important;
+  border-color: #a7f3d0 !important;
+  color: #065f46 !important;
+  font-weight: 600 !important;
+}
+

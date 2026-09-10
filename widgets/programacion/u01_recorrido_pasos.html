@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Recorrido Paso a Paso de Árboles de Expresión</title>
+  <style>
+    * { box-sizing: border-box; }
+    html, body {
+      background-color: #0e0e11 !important;
+      color: #ffffff;
+      margin: 0;
+      padding: 10px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+  </style>
+</head>
+<body>
+<style>
+  .tree-container {
+    background-color: #0e0e11;
+    color: #ffffff;
+    padding: 20px;
+    border-radius: 12px;
+    border: 1px solid #1f293d;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    user-select: none;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+    max-width: 680px;
+    margin: 0 auto;
+  }
+
+  .tree-header {
+    text-align: center;
+    margin-bottom: 16px;
+  }
+
+  .tree-title {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #00c8ff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .tree-subtitle {
+    font-size: 0.8rem;
+    color: #94a3b8;
+    margin-top: 2px;
+  }
+
+  /* Barra de Controles */
+  .control-bar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+
+  .btn-ctrl {
+    background: #181d28;
+    border: 1px solid #232d42;
+    color: #ffffff;
+    border-radius: 6px;
+    padding: 8px 14px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s;
+  }
+
+  .btn-ctrl:hover:not(:disabled) {
+    background: #232d42;
+    border-color: #00c8ff;
+  }
+
+  .btn-ctrl:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  .btn-primary {
+    background: #00c8ff;
+    color: #000;
+    border: none;
+  }
+  .btn-primary:hover:not(:disabled) {
+    background: #38bdf8;
+  }
+
+  .step-counter {
+    font-family: monospace;
+    font-size: 0.85rem;
+    color: #00c8ff;
+    background: #0f141d;
+    padding: 6px 12px;
+    border-radius: 6px;
+    border: 1px solid #1f293d;
+  }
+
+  /* Rejilla de Árboles */
+  .tree-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  .tree-card {
+    background: #141419;
+    border: 1px solid #1f293d;
+    border-radius: 8px;
+    padding: 12px 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .card-infija { border-top: 3px solid #00c8ff; }
+  .card-prefija { border-top: 3px solid #eab308; }
+  .card-postfija { border-top: 3px solid #c084fc; }
+
+  .card-header {
+    font-size: 0.8rem;
+    font-weight: 700;
+    margin-bottom: 2px;
+  }
+
+  .card-infija .card-header { color: #00c8ff; }
+  .card-prefija .card-header { color: #eab308; }
+  .card-postfija .card-header { color: #c084fc; }
+
+  .card-type {
+    font-size: 0.68rem;
+    color: #94a3b8;
+    margin-bottom: 8px;
+  }
+
+  /* SVG Canvas */
+  .tree-svg {
+    width: 100%;
+    height: 125px;
+  }
+
+  .node-circle {
+    fill: #181d28;
+    stroke-width: 2;
+    transition: fill 0.3s ease, filter 0.3s ease;
+  }
+
+  .node-op { stroke: #ff7676; }
+  .node-val { stroke: #4ade80; }
+
+  .node-text {
+    font-family: monospace;
+    font-size: 11px;
+    font-weight: bold;
+    text-anchor: middle;
+    dominant-baseline: central;
+  }
+
+  .text-op { fill: #ff7676; }
+  .text-val { fill: #4ade80; }
+
+  .tree-line {
+    stroke: #334155;
+    stroke-width: 1.5;
+  }
+
+  /* Contenedores de resultado */
+  .output-box {
+    font-family: monospace;
+    font-size: 0.75rem;
+    background: #0f141d;
+    padding: 6px 8px;
+    border-radius: 4px;
+    border: 1px solid #232d42;
+    width: 90%;
+    text-align: center;
+    margin-top: 6px;
+    min-height: 22px;
+    color: #cbd5e1;
+    letter-spacing: 2px;
+  }
+
+  .compare-info {
+    background: #181d28;
+    border-left: 3px solid #00c8ff;
+    border-radius: 0 8px 8px 0;
+    padding: 10px 14px;
+    font-size: 0.78rem;
+    color: #94a3b8;
+    line-height: 1.4;
+  }
+</style>
+
+<div class="tree-container">
+  <div class="tree-header">
+    <div class="tree-title">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#00c8ff" stroke-width="2.2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+      Recorrido Guiado Paso a Paso
+    </div>
+    <div class="tree-subtitle">Usa los botones para avanzar/retroceder sin duplicar caracteres</div>
+  </div>
+
+  <!-- Panel de Controles -->
+  <div class="control-bar">
+    <button class="btn-ctrl" id="btn-prev" onclick="changeStep(-1)" disabled>
+      ◀ Anterior
+    </button>
+    <div class="step-counter" id="step-counter">Paso: 0 / 5</div>
+    <button class="btn-ctrl btn-primary" id="btn-next" onclick="changeStep(1)">
+      Siguiente ▶
+    </button>
+  </div>
+
+  <div class="tree-grid">
+    <!-- Árbol Infijo -->
+    <div class="tree-card card-infija">
+      <div class="card-header">Infija (Infix)</div>
+      <div class="card-type">Inorden (Izq-R-Der)</div>
+
+      <svg class="tree-svg" viewBox="0 0 120 125">
+        <line x1="60" y1="20" x2="30" y2="58" class="tree-line"/>
+        <line x1="60" y1="20" x2="90" y2="58" class="tree-line"/>
+        <line x1="30" y1="58" x2="15" y2="96" class="tree-line"/>
+        <line x1="30" y1="58" x2="45" y2="96" class="tree-line"/>
+
+        <circle id="in-mult" cx="60" cy="20" r="11" class="node-circle node-op"/>
+        <text x="60" y="20" class="node-text text-op">*</text>
+
+        <circle id="in-plus" cx="30" cy="58" r="11" class="node-circle node-op"/>
+        <text x="30" y="58" class="node-text text-op">+</text>
+
+        <circle id="in-c" cx="90" cy="58" r="11" class="node-circle node-val"/>
+        <text x="90" y="58" class="node-text text-val">C</text>
+
+        <circle id="in-a" cx="15" cy="96" r="11" class="node-circle node-val"/>
+        <text x="15" y="96" class="node-text text-val">A</text>
+
+        <circle id="in-b" cx="45" cy="96" r="11" class="node-circle node-val"/>
+        <text x="45" y="96" class="node-text text-val">B</text>
+      </svg>
+
+      <div id="out-inorden" class="output-box">-</div>
+    </div>
+
+    <!-- Árbol Prefijo -->
+    <div class="tree-card card-prefija">
+      <div class="card-header">Prefija (Prefix)</div>
+      <div class="card-type">Preorden (R-Izq-Der)</div>
+
+      <svg class="tree-svg" viewBox="0 0 120 125">
+        <line x1="60" y1="20" x2="30" y2="58" class="tree-line"/>
+        <line x1="60" y1="20" x2="90" y2="58" class="tree-line"/>
+        <line x1="30" y1="58" x2="15" y2="96" class="tree-line"/>
+        <line x1="30" y1="58" x2="45" y2="96" class="tree-line"/>
+
+        <circle id="pre-mult" cx="60" cy="20" r="11" class="node-circle node-op"/>
+        <text x="60" y="20" class="node-text text-op">*</text>
+
+        <circle id="pre-plus" cx="30" cy="58" r="11" class="node-circle node-op"/>
+        <text x="30" y="58" class="node-text text-op">+</text>
+
+        <circle id="pre-c" cx="90" cy="58" r="11" class="node-circle node-val"/>
+        <text x="90" y="58" class="node-text text-val">C</text>
+
+        <circle id="pre-a" cx="15" cy="96" r="11" class="node-circle node-val"/>
+        <text x="15" y="96" class="node-text text-val">A</text>
+
+        <circle id="pre-b" cx="45" cy="96" r="11" class="node-circle node-val"/>
+        <text x="45" y="96" class="node-text text-val">B</text>
+      </svg>
+
+      <div id="out-preorden" class="output-box">-</div>
+    </div>
+
+    <!-- Árbol Postfijo -->
+    <div class="tree-card card-postfija">
+      <div class="card-header">Postfija (Postfix)</div>
+      <div class="card-type">Postorden (Izq-Der-R)</div>
+
+      <svg class="tree-svg" viewBox="0 0 120 125">
+        <line x1="60" y1="20" x2="30" y2="58" class="tree-line"/>
+        <line x1="60" y1="20" x2="90" y2="58" class="tree-line"/>
+        <line x1="30" y1="58" x2="15" y2="96" class="tree-line"/>
+        <line x1="30" y1="58" x2="45" y2="96" class="tree-line"/>
+
+        <circle id="post-mult" cx="60" cy="20" r="11" class="node-circle node-op"/>
+        <text x="60" y="20" class="node-text text-op">*</text>
+
+        <circle id="post-plus" cx="30" cy="58" r="11" class="node-circle node-op"/>
+        <text x="30" y="58" class="node-text text-op">+</text>
+
+        <circle id="post-c" cx="90" cy="58" r="11" class="node-circle node-val"/>
+        <text x="90" y="58" class="node-text text-val">C</text>
+
+        <circle id="post-a" cx="15" cy="96" r="11" class="node-circle node-val"/>
+        <text x="15" y="96" class="node-text text-val">A</text>
+
+        <circle id="post-b" cx="45" cy="96" r="11" class="node-circle node-val"/>
+        <text x="45" y="96" class="node-text text-val">B</text>
+      </svg>
+
+      <div id="out-postorden" class="output-box">-</div>
+    </div>
+  </div>
+
+  <div class="compare-info">
+    <b>Reglas de Recorrido:</b>
+    <br>• <b>Inorden (Infija):</b> Subárbol Izquierdo → Raíz → Subárbol Derecho.
+    <br>• <b>Preorden (Prefija):</b> Raíz → Subárbol Izquierdo → Subárbol Derecho.
+    <br>• <b>Postorden (Postfija):</b> Subárbol Izquierdo → Subárbol Derecho → Raíz.
+  </div>
+</div>
+
+<script>
+let currentStep = 0;
+const totalSteps = 5;
+
+const sequenceData = {
+  in: [
+    { id: 'in-a', val: 'A', color: '#00c8ff' },
+    { id: 'in-plus', val: '+', color: '#00c8ff' },
+    { id: 'in-b', val: 'B', color: '#00c8ff' },
+    { id: 'in-mult', val: '*', color: '#00c8ff' },
+    { id: 'in-c', val: 'C', color: '#00c8ff' }
+  ],
+  pre: [
+    { id: 'pre-mult', val: '*', color: '#eab308' },
+    { id: 'pre-plus', val: '+', color: '#eab308' },
+    { id: 'pre-a', val: 'A', color: '#eab308' },
+    { id: 'pre-b', val: 'B', color: '#eab308' },
+    { id: 'pre-c', val: 'C', color: '#eab308' }
+  ],
+  post: [
+    { id: 'post-a', val: 'A', color: '#c084fc' },
+    { id: 'post-b', val: 'B', color: '#c084fc' },
+    { id: 'post-plus', val: '+', color: '#c084fc' },
+    { id: 'post-c', val: 'C', color: '#c084fc' },
+    { id: 'post-mult', val: '*', color: '#c084fc' }
+  ]
+};
+
+function renderState() {
+  // Resetear estilos de todos los nodos
+  ['in', 'pre', 'post'].forEach(prefix => {
+    sequenceData[prefix].forEach(n => {
+      const el = document.getElementById(n.id);
+      el.style.fill = '#181d28';
+      el.style.filter = 'none';
+    });
+  });
+
+  // Reconstruir salidas exactas para el paso actual
+  let outIn = [];
+  let outPre = [];
+  let outPost = [];
+
+  for (let i = 0; i < currentStep; i++) {
+    highlightNode(sequenceData.in[i].id, sequenceData.in[i].color);
+    highlightNode(sequenceData.pre[i].id, sequenceData.pre[i].color);
+    highlightNode(sequenceData.post[i].id, sequenceData.post[i].color);
+
+    outIn.push(sequenceData.in[i].val);
+    outPre.push(sequenceData.pre[i].val);
+    outPost.push(sequenceData.post[i].val);
+  }
+
+  // Actualizar textos en pantalla
+  document.getElementById('out-inorden').innerText = outIn.length > 0 ? outIn.join(' ') : '-';
+  document.getElementById('out-preorden').innerText = outPre.length > 0 ? outPre.join(' ') : '-';
+  document.getElementById('out-postorden').innerText = outPost.length > 0 ? outPost.join(' ') : '-';
+
+  // Actualizar contador y botones
+  document.getElementById('step-counter').innerText = `Paso: ${currentStep} / ${totalSteps}`;
+  document.getElementById('btn-prev').disabled = currentStep === 0;
+  document.getElementById('btn-next').disabled = currentStep === totalSteps;
+}
+
+function highlightNode(id, color) {
+  const el = document.getElementById(id);
+  el.style.fill = color;
+  el.style.filter = `drop-shadow(0px 0px 6px ${color})`;
+}
+
+function changeStep(delta) {
+  currentStep = Math.min(Math.max(currentStep + delta, 0), totalSteps);
+  renderState();
+}
+
+// Estado inicial
+renderState();
+</script>
+</body>
+</html>

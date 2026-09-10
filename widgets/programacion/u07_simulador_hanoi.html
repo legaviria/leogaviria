@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simulador de Torres de Hanoi</title>
+  <style>
+    :root {
+      --bg: #0e0e11; --card: #141923; --border: #232d42; --text: #fff;
+      --muted: #94a3b8; --sky: #38bdf8; --amber: #f59e0b; --green: #10b981;
+    }
+    body.theme-light {
+      --bg: #f8fafc; --card: #ffffff; --border: #e2e8f0; --text: #0f172a;
+      --muted: #64748b; --sky: #0284c7; --amber: #d97706; --green: #059669;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { background: var(--bg); color: var(--text); padding: 14px; display: flex; justify-content: center; }
+    .container { width: 100%; max-width: 680px; background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 16px; }
+    .header { text-align: center; margin-bottom: 12px; }
+    .header h3 { font-size: 1.1rem; color: #38bdf8; margin-bottom: 4px; }
+    .hanoi-stage { display: flex; justify-content: space-around; align-items: flex-end; height: 160px; background: #080b10; border: 1px solid var(--border); border-radius: 8px; padding: 10px; position: relative; margin-bottom: 12px; }
+    .peg { width: 8px; height: 110px; background: #475569; border-radius: 4px 4px 0 0; position: relative; display: flex; flex-direction: column-reverse; align-items: center; }
+    .peg-base { position: absolute; bottom: 0; width: 80px; height: 6px; background: #334155; border-radius: 3px; left: -36px; }
+    .peg-label { position: absolute; bottom: -20px; font-size: 0.72rem; color: var(--muted); font-weight: bold; width: 60px; text-align: center; left: -26px; }
+    .disk { height: 16px; border-radius: 4px; margin-bottom: 2px; transition: all 0.3s ease; box-shadow: 0 2px 4px rgba(0,0,0,0.4); }
+    .disk-1 { width: 35px; background: #f87171; }
+    .disk-2 { width: 50px; background: #fbbf24; }
+    .disk-3 { width: 65px; background: #34d399; }
+    .disk-4 { width: 80px; background: #60a5fa; }
+    .stats-row { display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--muted); font-family: monospace; margin-bottom: 10px; }
+    .controls { display: flex; gap: 8px; justify-content: center; }
+    .btn { padding: 6px 14px; font-size: 0.78rem; font-weight: 600; border-radius: 6px; cursor: pointer; border: 1px solid var(--border); background: rgba(255,255,255,0.05); color: var(--text); }
+    .btn-act { background: #38bdf8; color: #0f172a; border: none; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h3>🗼 Simulador de las Torres de Hanoi (T(n) = 2ⁿ - 1)</h3>
+      <p style="font-size:0.75rem; color:var(--muted)">Descomposición recursiva: Mover n-1 discos al auxiliar, mover el mayor a destino, mover n-1 a destino.</p>
+    </div>
+
+    <div class="hanoi-stage">
+      <div class="peg" id="peg0"><div class="peg-base"></div><div class="peg-label">Origen (A)</div></div>
+      <div class="peg" id="peg1"><div class="peg-base"></div><div class="peg-label">Auxiliar (B)</div></div>
+      <div class="peg" id="peg2"><div class="peg-base"></div><div class="peg-label">Destino (C)</div></div>
+    </div>
+
+    <div class="stats-row">
+      <span id="moveCount">Movimiento: 0 / 7 (Mínimo óptimo: 2³ - 1 = 7)</span>
+      <span id="lastMove">Estado: Listo</span>
+    </div>
+
+    <div class="controls">
+      <button class="btn btn-act" onclick="nextHanoiMove()">Siguiente Movimiento ▶</button>
+      <button class="btn" onclick="autoPlay()">Auto Play ⚡</button>
+      <button class="btn" onclick="resetHanoi()">Reiniciar</button>
+    </div>
+  </div>
+
+  <script>
+    let moves = [];
+    let curMoveIdx = 0;
+    let pegs = [[], [], []];
+    let isPlaying = false;
+
+    function generateMoves(n, from, to, aux) {
+      if (n === 1) {
+        moves.push({ from, to });
+        return;
+      }
+      generateMoves(n - 1, from, aux, to);
+      moves.push({ from, to });
+      generateMoves(n - 1, aux, to, from);
+    }
+
+    function resetHanoi() {
+      moves = [];
+      curMoveIdx = 0;
+      isPlaying = false;
+      pegs = [[4, 3, 2, 1], [], []]; // 3 disks (3, 2, 1) or 4
+      pegs = [[3, 2, 1], [], []];
+      generateMoves(3, 0, 2, 1);
+      renderPegs();
+      document.getElementById('moveCount').textContent = `Movimiento: 0 / ${moves.length} (Mínimo óptimo: 2³ - 1 = ${moves.length})`;
+      document.getElementById('lastMove').textContent = "Estado: Reiniciado";
+    }
+
+    function renderPegs() {
+      for (let i = 0; i < 3; i++) {
+        const el = document.getElementById('peg' + i);
+        el.querySelectorAll('.disk').forEach(d => d.remove());
+        pegs[i].forEach(dSize => {
+          const d = document.createElement('div');
+          d.className = `disk disk-${dSize}`;
+          el.appendChild(d);
+        });
+      }
+    }
+
+    function nextHanoiMove() {
+      if (curMoveIdx >= moves.length) {
+        document.getElementById('lastMove').textContent = "¡Completado con éxito!";
+        return;
+      }
+      const m = moves[curMoveIdx];
+      const disk = pegs[m.from].pop();
+      pegs[m.to].push(disk);
+      curMoveIdx++;
+      renderPegs();
+      const pegNames = ["A", "B", "C"];
+      document.getElementById('lastMove').textContent = `Disco ${disk} de ${pegNames[m.from]} ➔ ${pegNames[m.to]}`;
+      document.getElementById('moveCount').textContent = `Movimiento: ${curMoveIdx} / ${moves.length}`;
+    }
+
+    function autoPlay() {
+      if (curMoveIdx >= moves.length) resetHanoi();
+      const interval = setInterval(() => {
+        if (curMoveIdx >= moves.length) {
+          clearInterval(interval);
+        } else {
+          nextHanoiMove();
+        }
+      }, 500);
+    }
+    resetHanoi();
+  </script>
+</body>
+</html>

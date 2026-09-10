@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ejemplo Interactivo de Diagrama de Flujo</title>
+  <style>
+    * { box-sizing: border-box; }
+    html, body {
+      background-color: #0e0e11 !important;
+      color: #ffffff;
+      margin: 0;
+      padding: 10px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+  </style>
+</head>
+<body>
+<style>
+  .flow-container {
+    background-color: #0e0e11;
+    color: #ffffff;
+    padding: 20px;
+    border-radius: 12px;
+    border: 1px solid #1f293d;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    user-select: none;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+    max-width: 480px;
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  .flow-header {
+    margin-bottom: 16px;
+  }
+
+  .flow-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #00c8ff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 4px;
+  }
+
+  .flow-subtitle {
+    font-size: 0.8rem;
+    color: #94a3b8;
+  }
+
+  /* Control de entrada */
+  .control-panel {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin: 16px 0;
+    background: #141419;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #1f293d;
+  }
+
+  .control-label {
+    font-size: 0.82rem;
+    color: #cbd5e1;
+    font-weight: 600;
+  }
+
+  .flow-input {
+    width: 60px;
+    background: #0f141d;
+    border: 1px solid #334155;
+    color: #ffffff;
+    font-weight: 700;
+    text-align: center;
+    padding: 5px;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    outline: none;
+    transition: all 0.2s;
+  }
+  .flow-input:focus {
+    border-color: #00c8ff;
+    box-shadow: 0 0 6px rgba(0, 200, 255, 0.3);
+  }
+
+  .btn-exec {
+    background: #10b981;
+    color: #000000;
+    border: none;
+    border-radius: 6px;
+    padding: 6px 14px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: background 0.2s, transform 0.1s;
+  }
+  .btn-exec:hover {
+    background: #4ade80;
+  }
+  .btn-exec:active {
+    transform: scale(0.96);
+  }
+
+  /* Estructura del Diagrama */
+  .diagram-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    margin-top: 10px;
+  }
+
+  /* Base para todos los nodos */
+  .node {
+    background: #181d28;
+    border: 1px solid #232d42;
+    color: #94a3b8;
+    font-size: 0.8rem;
+    font-weight: 600;
+    padding: 8px 16px;
+    transition: all 0.4s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+
+  /* Formas específicas de diagramación */
+  .node-pill {
+    border-radius: 20px;
+    padding: 6px 20px;
+  }
+
+  .node-rect {
+    border-radius: 6px;
+  }
+
+  .node-rhombus {
+    transform: rotate(0deg);
+    border-radius: 6px;
+    border-color: #334155;
+    background: #1e293b;
+    padding: 8px 16px;
+  }
+
+  /* Conectores */
+  .arrow-icon {
+    width: 16px;
+    height: 16px;
+    stroke: #334155;
+    stroke-width: 2.5;
+    transition: all 0.4s ease;
+  }
+
+  .branch-container {
+    display: flex;
+    gap: 30px;
+    width: 100%;
+    justify-content: center;
+    margin: 4px 0;
+  }
+
+  .branch-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .branch-tag {
+    font-size: 0.7rem;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+  }
+  .tag-yes { color: #4ade80; }
+  .tag-no { color: #ff7676; }
+</style>
+
+<div class="flow-container">
+  <div class="flow-header">
+    <div class="flow-title">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#00c8ff" stroke-width="2.2"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+      Mayor de edad
+    </div>
+    <div class="flow-subtitle">Simulador del algoritmo de mayoría de edad</div>
+  </div>
+
+  <div class="control-panel">
+    <span class="control-label">Tu edad:</span>
+    <input type="number" id="inputEdad" value="20" min="0" max="120" class="flow-input">
+    <button onclick="runSimulation()" class="btn-exec">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="#000"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+      Ejecutar
+    </button>
+  </div>
+
+  <div class="diagram-wrapper">
+    <!-- INICIO -->
+    <div id="step-start" class="node node-pill">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="#00c8ff"><circle cx="12" cy="12" r="10"/></svg>
+      INICIO
+    </div>
+
+    <svg id="arrow1" class="arrow-icon" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+
+    <!-- ENTRADA -->
+    <div id="step-input" class="node node-rect">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12"/><path d="m8 11 4 4 4-4"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+      Leer edad
+    </div>
+
+    <svg id="arrow2" class="arrow-icon" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+
+    <!-- DECISIÓN -->
+    <div id="step-decision" class="node node-rhombus">
+      ¿edad ≥ 18?
+    </div>
+
+    <!-- RAMAS SÍ / NO -->
+    <div class="branch-container">
+      <!-- RAMA SÍ -->
+      <div class="branch-col">
+        <span class="branch-tag tag-yes">SÍ</span>
+        <svg id="arrow-yes" class="arrow-icon" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+        <div id="step-yes" class="node node-rect">
+          "Mayor de edad"
+        </div>
+      </div>
+
+      <!-- RAMA NO -->
+      <div class="branch-col">
+        <span class="branch-tag tag-no">NO</span>
+        <svg id="arrow-no" class="arrow-icon" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+        <div id="step-no" class="node node-rect">
+          "Menor de edad"
+        </div>
+      </div>
+    </div>
+
+    <svg id="arrow3" class="arrow-icon" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+
+    <!-- FIN -->
+    <div id="step-end" class="node node-pill">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="#ff7676"><circle cx="12" cy="12" r="10"/></svg>
+      FIN
+    </div>
+  </div>
+</div>
+
+<script>
+function runSimulation() {
+  const edad = parseInt(document.getElementById('inputEdad').value) || 0;
+
+  const reset = () => {
+    document.querySelectorAll('.node').forEach(n => {
+      n.style.background = '#181d28';
+      n.style.borderColor = '#232d42';
+      n.style.boxShadow = 'none';
+      n.style.color = '#94a3b8';
+    });
+    document.querySelectorAll('.arrow-icon').forEach(a => {
+      a.style.stroke = '#334155';
+      a.style.filter = 'none';
+    });
+  };
+
+  const highlightNode = (id, bgColor, borderColor, glowColor) => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.style.background = bgColor;
+      el.style.borderColor = borderColor;
+      el.style.color = '#ffffff';
+      el.style.boxShadow = `0 0 12px ${glowColor}`;
+    }
+  };
+
+  const highlightArrow = (id, color) => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.style.stroke = color;
+      el.style.filter = `drop-shadow(0 0 4px ${color})`;
+    }
+  };
+
+  reset();
+
+  // Animación paso a paso mediante temporizadores
+  setTimeout(() => highlightNode('step-start', '#0284c7', '#00c8ff', 'rgba(0,200,255,0.4)'), 100);
+  setTimeout(() => highlightArrow('arrow1', '#00c8ff'), 500);
+
+  setTimeout(() => highlightNode('step-input', '#0284c7', '#00c8ff', 'rgba(0,200,255,0.4)'), 900);
+  setTimeout(() => highlightArrow('arrow2', '#00c8ff'), 1300);
+
+  setTimeout(() => highlightNode('step-decision', '#854d0e', '#eab308', 'rgba(234,179,8,0.4)'), 1700);
+
+  if (edad >= 18) {
+    setTimeout(() => highlightArrow('arrow-yes', '#4ade80'), 2100);
+    setTimeout(() => highlightNode('step-yes', '#15803d', '#4ade80', 'rgba(74,222,128,0.4)'), 2500);
+  } else {
+    setTimeout(() => highlightArrow('arrow-no', '#ff7676'), 2100);
+    setTimeout(() => highlightNode('step-no', '#991b1b', '#ff7676', 'rgba(255,118,118,0.4)'), 2500);
+  }
+
+  setTimeout(() => highlightArrow('arrow3', '#00c8ff'), 2900);
+  setTimeout(() => highlightNode('step-end', '#334155', '#64748b', 'rgba(100,116,139,0.3)'), 3300);
+}
+</script>
+</body>
+</html>

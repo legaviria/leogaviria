@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Explorador Interactivo de DataFrames de Pandas</title>
+  <style>
+    :root {
+      --bg: #0e0e11; --card: #141923; --border: #232d42; --text: #fff;
+      --muted: #94a3b8; --sky: #38bdf8; --purple: #a855f7; --green: #10b981;
+    }
+    body.theme-light {
+      --bg: #f8fafc; --card: #ffffff; --border: #e2e8f0; --text: #0f172a;
+      --muted: #64748b; --sky: #0284c7; --purple: #9333ea; --green: #059669;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { background: var(--bg); color: var(--text); padding: 14px; display: flex; justify-content: center; }
+    .container { width: 100%; max-width: 680px; background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 16px; }
+    .header { text-align: center; margin-bottom: 12px; }
+    .header h3 { font-size: 1.1rem; color: var(--sky); margin-bottom: 4px; }
+    .filter-bar { display: flex; gap: 8px; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; }
+    select { padding: 6px 10px; background: #080b10; border: 1px solid var(--border); border-radius: 6px; color: #a5f3fc; font-family: monospace; font-size: 0.78rem; outline: none; }
+    .dtable { width: 100%; border-collapse: collapse; font-family: monospace; font-size: 0.78rem; margin-bottom: 12px; }
+    .dtable th, .dtable td { padding: 6px 10px; border: 1px solid var(--border); text-align: left; }
+    .dtable th { background: #080b10; color: #38bdf8; }
+    .code-box { background: #080b10; border: 1px solid var(--border); border-radius: 6px; padding: 8px 12px; font-family: monospace; font-size: 0.78rem; color: #86efac; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h3>🐼 Explorador Interactivo de DataFrames (Pandas)</h3>
+      <p style="font-size:0.75rem; color:var(--muted)">Estructura tabular bidimensional (filas y columnas indexadas) con filtrado booleano.</p>
+    </div>
+
+    <div class="filter-bar">
+      <label style="font-size:0.75rem; color:var(--muted)">Filtro Booleano:</label>
+      <select id="pFilter" onchange="applyFilter()">
+        <option value="all">df (Todos los registros)</option>
+        <option value="high">df[df['Ventas'] &gt; 50] (Ventas altas)</option>
+        <option value="tech">df[df['Categoria'] == 'Tech'] (Solo Tecnología)</option>
+      </select>
+    </div>
+
+    <table class="dtable">
+      <thead>
+        <tr>
+          <th>Index</th>
+          <th>Producto</th>
+          <th>Categoria</th>
+          <th>Precio</th>
+          <th>Ventas</th>
+        </tr>
+      </thead>
+      <tbody id="dfBody"></tbody>
+    </table>
+
+    <div class="code-box" id="pCode">import pandas as pd<br>df = pd.read_csv("productos.csv")</div>
+  </div>
+
+  <script>
+    const data = [
+      { id: 0, prod: "Laptop Pro", cat: "Tech", precio: "$1,200", ventas: 85 },
+      { id: 1, prod: "Mouse RGB", cat: "Tech", precio: "$25", ventas: 140 },
+      { id: 2, prod: "Silla Ergo", cat: "Muebles", precio: "$250", ventas: 30 },
+      { id: 3, prod: "Teclado Mec", cat: "Tech", precio: "$95", ventas: 62 },
+      { id: 4, prod: "Escritorio L", cat: "Muebles", precio: "$340", ventas: 18 }
+    ];
+
+    function applyFilter() {
+      const f = document.getElementById('pFilter').value;
+      const tbody = document.getElementById('dfBody');
+      const code = document.getElementById('pCode');
+      tbody.innerHTML = '';
+
+      let filtered = data;
+      if (f === 'high') {
+        filtered = data.filter(d => d.ventas > 50);
+        code.innerHTML = 'filtro = df["Ventas"] &gt; 50<br>resultado = df[filtro]  # Indexación booleana';
+      } else if (f === 'tech') {
+        filtered = data.filter(d => d.cat === 'Tech');
+        code.innerHTML = 'resultado = df[df["Categoria"] == "Tech"]';
+      } else {
+        code.innerHTML = 'df.head()  # Vista general del DataFrame';
+      }
+
+      filtered.forEach(d => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${d.id}</td><td>${d.prod}</td><td>${d.cat}</td><td>${d.precio}</td><td><strong>${d.ventas}</strong></td>`;
+        tbody.appendChild(tr);
+      });
+    }
+    applyFilter();
+  </script>
+</body>
+</html>

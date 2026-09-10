@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      background-color: #0b0e14;
+      color: #e2e8f0;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      margin: 0;
+      padding: 12px;
+      transition: background-color 0.2s, color 0.2s;
+    }
+    [data-theme="light"] body { background-color: #ffffff; color: #0f172a; }
+    [data-theme="light"] .card-box { background-color: #f8fafc !important; border-color: #e2e8f0 !important; color: #0f172a !important; }
+    [data-theme="light"] .subcard-box { background-color: #ffffff !important; border-color: #cbd5e1 !important; color: #1e293b !important; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+    [data-theme="light"] .text-muted { color: #64748b !important; }
+    [data-theme="light"] .text-highlight { color: #0f766e !important; }
+    [data-theme="light"] input, [data-theme="light"] select { background-color: #ffffff !important; border-color: #cbd5e1 !important; color: #0f172a !important; }
+    .card-box { background-color: #121622; border: 1px solid #1f293d; border-radius: 12px; }
+    .subcard-box { background-color: #090d14; border: 1px solid #1a2233; border-radius: 8px; }
+    .text-muted { color: #94a3b8; }
+    .text-highlight { color: #2dd4bf; }
+  </style>
+  <script>
+    window.addEventListener('message', (event) => {
+      if (event.data && event.data.type === 'THEME_CHANGE') {
+        document.documentElement.setAttribute('data-theme', event.data.theme);
+      }
+    });
+    try {
+      const savedTheme = localStorage.getItem('leogaviria_theme') || 'dark';
+      document.documentElement.setAttribute('data-theme', savedTheme);
+    } catch(e) {}
+  </script>
+
+  <title>Permutaciones y Crecimiento Factorial</title>
+</head>
+<body>
+  <div class="max-w-4xl mx-auto space-y-4">
+    <div class="card-box p-4 sm:p-5">
+      <div class="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-gray-800/80 mb-4">
+        <div>
+          <h2 class="text-base sm:text-lg font-bold flex items-center gap-2 text-highlight">
+            <i class="fas fa-arrow-down-a-z"></i> Permutaciones: El Orden Importa
+          </h2>
+          <p class="text-xs text-muted">Fórmula: P(n, r) = n! / (n - r)! donde cada posición distinta cuenta como un arreglo diferente</p>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
+        <div>
+          <label class="text-xs font-semibold text-muted block mb-1">Total de Elementos Disponibles (n):</label>
+          <input type="number" id="perm-n" value="4" min="1" max="7" oninput="calcPerm()" class="w-full px-3 py-1.5 rounded bg-[#090d14] border border-gray-700 text-teal-400 font-mono font-bold text-xs">
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-muted block mb-1">Elementos a Ordenar (r):</label>
+          <input type="number" id="perm-r" value="3" min="1" max="7" oninput="calcPerm()" class="w-full px-3 py-1.5 rounded bg-[#090d14] border border-gray-700 text-sky-400 font-mono font-bold text-xs">
+        </div>
+      </div>
+
+      <!-- Tarjeta de Resultado Numérico -->
+      <div class="subcard-box p-4 text-center mb-4">
+        <span class="text-xs text-muted font-mono block">Fórmula de Permutación P(n, r):</span>
+        <div id="perm-formula" class="text-sm font-mono text-gray-300 my-1"></div>
+        <div id="perm-result" class="text-2xl font-black text-teal-300 font-mono">P(4, 3) = 24 arreglos</div>
+      </div>
+
+      <!-- Arreglos Generados -->
+      <div class="subcard-box p-4">
+        <h4 class="text-xs font-bold text-muted uppercase font-mono mb-2">Muestra de Arreglos Ordenados:</h4>
+        <div id="perm-sample-grid" class="flex flex-wrap gap-1.5 max-h-36 overflow-y-auto font-mono text-xs"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function factorial(n) {
+      let f = 1;
+      for (let i = 2; i <= n; i++) f *= i;
+      return f;
+    }
+
+    function generatePermutations(arr, r) {
+      let result = [];
+      function backtrack(current, remaining) {
+        if (current.length === r) {
+          result.push([...current]);
+          return;
+        }
+        for (let i = 0; i < remaining.length; i++) {
+          backtrack([...current, remaining[i]], remaining.filter((_, idx) => idx !== i));
+        }
+      }
+      backtrack([], arr);
+      return result;
+    }
+
+    function calcPerm() {
+      const n = Math.max(1, Math.min(7, parseInt(document.getElementById('perm-n').value) || 1));
+      let r = Math.max(1, parseInt(document.getElementById('perm-r').value) || 1);
+      if (r > n) {
+        r = n;
+        document.getElementById('perm-r').value = n;
+      }
+
+      const num = factorial(n);
+      const den = factorial(n - r);
+      const total = num / den;
+
+      document.getElementById('perm-formula').innerHTML = `P(${n}, ${r}) = ${n}! / (${n} - ${r})! = ${num} / ${den}`;
+      document.getElementById('perm-result').innerHTML = `P(${n}, ${r}) = <strong class="text-teal-400">${total}</strong> secuencias ordenadas`;
+
+      // Generar elementos
+      const symbols = ['A', 'B', 'C', 'D', 'E', 'F', 'G'].slice(0, n);
+      const perms = generatePermutations(symbols, r);
+
+      const grid = document.getElementById('perm-sample-grid');
+      grid.innerHTML = '';
+      perms.slice(0, 48).forEach(p => {
+        const tag = document.createElement('span');
+        tag.className = 'px-2 py-0.5 rounded bg-[#10141d] border border-gray-700 text-teal-300';
+        tag.textContent = p.join('');
+        grid.appendChild(tag);
+      });
+      if (perms.length > 48) {
+        grid.innerHTML += `<span class="text-gray-500 italic text-[11px] flex items-center">+ ${perms.length - 48} más...</span>`;
+      }
+    }
+
+    calcPerm();
+  </script>
+</body>
+</html>

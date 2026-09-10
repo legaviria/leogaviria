@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      background-color: #0b0e14;
+      color: #e2e8f0;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      margin: 0;
+      padding: 12px;
+      transition: background-color 0.2s, color 0.2s;
+    }
+    [data-theme="light"] body { background-color: #ffffff; color: #0f172a; }
+    [data-theme="light"] .card-box { background-color: #f8fafc !important; border-color: #e2e8f0 !important; color: #0f172a !important; }
+    [data-theme="light"] .subcard-box { background-color: #ffffff !important; border-color: #cbd5e1 !important; color: #1e293b !important; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+    [data-theme="light"] .text-muted { color: #64748b !important; }
+    [data-theme="light"] .text-highlight { color: #0f766e !important; }
+    [data-theme="light"] input, [data-theme="light"] select { background-color: #ffffff !important; border-color: #cbd5e1 !important; color: #0f172a !important; }
+    .card-box { background-color: #121622; border: 1px solid #1f293d; border-radius: 12px; }
+    .subcard-box { background-color: #090d14; border: 1px solid #1a2233; border-radius: 8px; }
+    .text-muted { color: #94a3b8; }
+    .text-highlight { color: #2dd4bf; }
+  </style>
+  <script>
+    window.addEventListener('message', (event) => {
+      if (event.data && event.data.type === 'THEME_CHANGE') {
+        document.documentElement.setAttribute('data-theme', event.data.theme);
+      }
+    });
+    try {
+      const savedTheme = localStorage.getItem('leogaviria_theme') || 'dark';
+      document.documentElement.setAttribute('data-theme', savedTheme);
+    } catch(e) {}
+  </script>
+
+  <title>Slide Animada: Principio de Inducción Matemática</title>
+</head>
+<body>
+  <div class="max-w-4xl mx-auto space-y-4">
+    <div class="card-box p-4 sm:p-5">
+      <div class="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-gray-800/80 mb-4">
+        <div>
+          <h2 class="text-base sm:text-lg font-bold flex items-center gap-2 text-highlight">
+            <i class="fas fa-dice-d6"></i> Inducción Matemática: La Analogía del Efecto Dominó
+          </h2>
+          <p class="text-xs text-muted">Caso Base &rarr; Hipótesis Inductiva &rarr; Paso Inductivo &rarr; Conclusión Universal</p>
+        </div>
+      </div>
+
+      <!-- Pasarelas de Fichas de Dominó Animadas -->
+      <div class="subcard-box p-5 flex flex-col items-center justify-center min-h-[160px] mb-4">
+        <div class="flex items-end justify-center gap-3 sm:gap-6 h-28 w-full" id="domino-row">
+          <!-- Fichas inyectadas por JS -->
+        </div>
+        <div class="text-[11px] font-mono text-muted mt-3" id="domino-status">Estado: Preparado para empujar la ficha 1</div>
+      </div>
+
+      <!-- Selector de Etapas del Principio de Inducción -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-4">
+        <button onclick="setStage(1)" id="stage-btn-1" class="stage-btn p-2.5 rounded-lg bg-[#141b29] border border-teal-500 text-left transition">
+          <span class="text-[10px] font-mono text-teal-400 block font-bold">1. CASO BASE</span>
+          <span class="text-xs font-semibold text-white">P(1) es verdadero</span>
+        </button>
+        <button onclick="setStage(2)" id="stage-btn-2" class="stage-btn p-2.5 rounded-lg bg-gray-800/80 border border-gray-700 text-left transition">
+          <span class="text-[10px] font-mono text-sky-400 block font-bold">2. HIPÓTESIS</span>
+          <span class="text-xs font-semibold text-white">Asumir P(k) cierto</span>
+        </button>
+        <button onclick="setStage(3)" id="stage-btn-3" class="stage-btn p-2.5 rounded-lg bg-gray-800/80 border border-gray-700 text-left transition">
+          <span class="text-[10px] font-mono text-amber-400 block font-bold">3. PASO INDUCTIVO</span>
+          <span class="text-xs font-semibold text-white">Demostrar P(k+1)</span>
+        </button>
+        <button onclick="setStage(4)" id="stage-btn-4" class="stage-btn p-2.5 rounded-lg bg-gray-800/80 border border-gray-700 text-left transition">
+          <span class="text-[10px] font-mono text-purple-400 block font-bold">4. CONCLUSIÓN</span>
+          <span class="text-xs font-semibold text-white">&forall; n &isin; ℕ, P(n)</span>
+        </button>
+      </div>
+
+      <!-- Tarjeta Explicativa Matemática con Demostración Formal -->
+      <div class="subcard-box p-4" id="stage-explanation">
+        <!-- Inyectado por JS -->
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let stage = 1;
+
+    const stagesData = {
+      1: {
+        title: "1. Caso Base: P(1)",
+        analogy: "Se empuja la primera ficha de dominó. Debe comprobarse que la propiedad se cumple explícitamente para el primer natural n = 1.",
+        math: "Para la suma 1 + 2 + ... + n = n(n+1)/2:<br>Lado izquierdo: 1.<br>Lado derecho: 1(1+1)/2 = 2/2 = 1.<br><strong class='text-teal-400'>&check; Se cumple P(1). La primera ficha cae.</strong>",
+        dominoesFallen: [1]
+      },
+      2: {
+        title: "2. Hipótesis Inductiva: P(k)",
+        analogy: "Suponemos que una ficha arbitraria en la posición k cae. Es nuestra herramienta de trabajo, no lo que queremos demostrar.",
+        math: "Asumimos como verdadero para un k &ge; 1 cualquiera:<br><code class='text-sky-300'>1 + 2 + 3 + ... + k = k(k+1)/2</code>",
+        dominoesFallen: [1, 2]
+      },
+      3: {
+        title: "3. Paso Inductivo: P(k) &rArr; P(k+1)",
+        analogy: "Si la ficha k cae, su caída derriba obligatoriamente a la ficha k+1 (la distancia entre ellas es correcta).",
+        math: "Queremos probar: 1 + ... + k + (k+1) = (k+1)(k+2)/2.<br>Sustituyendo la hipótesis:<br>[k(k+1)/2] + (k+1) = (k+1)[k/2 + 1] = <strong class='text-amber-400'>(k+1)(k+2)/2</strong>.<br><strong class='text-teal-400'>&check; Queda demostrado el paso inductivo.</strong>",
+        dominoesFallen: [1, 2, 3]
+      },
+      4: {
+        title: "4. Conclusión Universal",
+        analogy: "Como la primera ficha cayó y cada ficha derriba a la siguiente, todas las infinitas fichas del dominó caerán.",
+        math: "<strong class='text-purple-300 text-sm'>Por el Principio de Inducción Matemática: &forall; n &isin; ℕ, 1 + 2 + ... + n = n(n+1)/2 es verdadero.</strong>",
+        dominoesFallen: [1, 2, 3, 4, 5, 6]
+      }
+    };
+
+    function renderDominoes() {
+      const row = document.getElementById('domino-row');
+      row.innerHTML = '';
+      const fallen = stagesData[stage].dominoesFallen;
+
+      for (let i = 1; i <= 6; i++) {
+        const isFallen = fallen.includes(i);
+        const label = i === 1 ? '1' : i === 2 ? '2' : i === 3 ? 'k' : i === 4 ? 'k+1' : `${i}`;
+        const dom = document.createElement('div');
+        dom.className = `w-6 sm:w-8 h-20 rounded border border-gray-400 flex flex-col justify-between items-center py-2 transition-transform duration-500 origin-bottom-right ${isFallen ? 'rotate-[45deg] translate-x-2 bg-teal-600 border-teal-300 text-white' : 'bg-gray-800 text-gray-400'}`;
+        dom.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-white"></span><span class="text-xs font-mono font-bold">${label}</span><span class="w-1.5 h-1.5 rounded-full bg-white"></span>`;
+        row.appendChild(dom);
+      }
+    }
+
+    function setStage(st) {
+      stage = st;
+      for (let i = 1; i <= 4; i++) {
+        const btn = document.getElementById(`stage-btn-${i}`);
+        if (i === st) {
+          btn.className = 'stage-btn p-2.5 rounded-lg bg-[#141b29] border border-teal-500 text-left transition';
+        } else {
+          btn.className = 'stage-btn p-2.5 rounded-lg bg-gray-800/80 border border-gray-700 text-left transition';
+        }
+      }
+
+      const d = stagesData[st];
+      document.getElementById('domino-status').innerHTML = `Etapa ${st}: <strong class="text-teal-400">${d.title}</strong>`;
+      document.getElementById('stage-explanation').innerHTML = `
+        <h4 class="text-xs font-bold uppercase tracking-wider text-muted mb-1">${d.title}</h4>
+        <p class="text-xs text-gray-300 mb-2 leading-relaxed"><i class="fas fa-lightbulb text-amber-400 mr-1"></i> ${d.analogy}</p>
+        <div class="p-2.5 rounded-lg bg-[#0c1017] border border-gray-800 font-mono text-xs text-emerald-300 leading-relaxed">${d.math}</div>
+      `;
+      renderDominoes();
+    }
+
+    setStage(1);
+  </script>
+</body>
+</html>

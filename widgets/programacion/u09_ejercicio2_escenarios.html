@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Practica: Escenarios de Complejidad y Término Dominante</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      background-color: #0e0e11 !important;
+      color: #e2e8f0;
+      padding: 12px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      user-select: none;
+    }
+    .card {
+      background-color: #141419;
+      border: 1px solid #1f293d;
+      border-radius: 12px;
+      padding: 12px 14px;
+      max-width: 680px;
+      margin: 0 auto;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+    }
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid #21262d;
+      padding-bottom: 8px;
+      margin-bottom: 8px;
+    }
+    .title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #f59e0b;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .badge {
+      font-size: 0.7rem;
+      font-family: monospace;
+      padding: 2px 8px;
+      border-radius: 4px;
+      background: rgba(245, 158, 11, 0.15);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+      color: #fbbf24;
+      font-weight: bold;
+    }
+    .question-block {
+      background: #0d1117;
+      border: 1px solid #21262d;
+      border-radius: 8px;
+      padding: 9px 10px;
+      margin-bottom: 8px;
+    }
+    .q-text {
+      font-size: 0.82rem;
+      color: #e2e8f0;
+      margin-bottom: 8px;
+      line-height: 1.4;
+    }
+    .code-snippet {
+      font-family: monospace;
+      background: #161b22;
+      padding: 4px 8px;
+      border-radius: 4px;
+      color: #79c0ff;
+      font-size: 0.78rem;
+      display: inline-block;
+      margin: 2px 0;
+    }
+    .options-row {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .opt-btn {
+      background: #181d28;
+      border: 1px solid #232d42;
+      color: #94a3b8;
+      border-radius: 5px;
+      padding: 5px 10px;
+      font-size: 0.75rem;
+      font-family: monospace;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .opt-btn:hover {
+      border-color: #f59e0b;
+      color: #fff;
+    }
+    .opt-btn.active {
+      background: rgba(245, 158, 11, 0.2);
+      border-color: #f59e0b;
+      color: #fbbf24;
+      font-weight: bold;
+    }
+    .btn-verify {
+      background: #f59e0b;
+      color: #000;
+      border: none;
+      padding: 7px 16px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: block;
+      margin-left: auto;
+      transition: background 0.2s;
+    }
+    .btn-verify:hover {
+      background: #fbbf24;
+    }
+    .feedback {
+      margin-top: 10px;
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      display: none;
+      line-height: 1.45;
+    }
+    .feedback.success {
+      display: block;
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid #10b981;
+      color: #34d399;
+    }
+    .feedback.error {
+      display: block;
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid #ef4444;
+      color: #f87171;
+    }
+  </style>
+</head>
+<body>
+
+<div class="card">
+  <div class="header">
+    <div class="title">
+      <i class="fas fa-check-double"></i>
+      <span>Practica: Identificación de Escenarios y Término Dominante</span>
+    </div>
+    <span class="badge">PRACTICA</span>
+  </div>
+
+  <div class="question-block" id="qb1">
+    <div class="q-text">
+      <strong>Caso 1:</strong> En una búsqueda lineal sobre un arreglo de tamaño \(n\), si el elemento buscado se encuentra en la <strong>primera posición</strong> (\(A[0]\)), ¿cuál es la cota asintótica del <strong>Mejor Caso (\(\Omega\))</strong>?
+    </div>
+    <div class="options-row">
+      <button class="opt-btn" onclick="selectAnswer(1, 'o1')">Ω(1)</button>
+      <button class="opt-btn" onclick="selectAnswer(1, 'ologn')">Ω(log n)</button>
+      <button class="opt-btn" onclick="selectAnswer(1, 'on')">Ω(n)</button>
+      <button class="opt-btn" onclick="selectAnswer(1, 'on2')">Ω(n²)</button>
+    </div>
+  </div>
+
+  <div class="question-block" id="qb2">
+    <div class="q-text">
+      <strong>Caso 2:</strong> Al evaluar la función de tiempo <span class="code-snippet">T(n) = 7n³ + 250n² + 4000n + 99999</span>, ¿cuál es su <strong>orden asintótico Big-O dominante</strong> al tender \(n 	o \infty\)?
+    </div>
+    <div class="options-row">
+      <button class="opt-btn" onclick="selectAnswer(2, 'o1')">O(1)</button>
+      <button class="opt-btn" onclick="selectAnswer(2, 'on')">O(n)</button>
+      <button class="opt-btn" onclick="selectAnswer(2, 'on2')">O(n²)</button>
+      <button class="opt-btn" onclick="selectAnswer(2, 'on3')">O(n³)</button>
+    </div>
+  </div>
+
+  <div class="question-block" id="qb3">
+    <div class="q-text">
+      <strong>Caso 3:</strong> Un algoritmo recursivo divide el problema en dos subproblemas de igual tamaño en cada llamada (\(n 	o n/2 	o n/4 \dots\)) y en cada nivel realiza una sola comparación. ¿Qué complejidad temporal representa?
+    </div>
+    <div class="options-row">
+      <button class="opt-btn" onclick="selectAnswer(3, 'o1')">O(1)</button>
+      <button class="opt-btn" onclick="selectAnswer(3, 'ologn')">O(log n)</button>
+      <button class="opt-btn" onclick="selectAnswer(3, 'on')">O(n)</button>
+      <button class="opt-btn" onclick="selectAnswer(3, 'o2n')">O(2ⁿ)</button>
+    </div>
+  </div>
+
+  <button class="btn-verify" onclick="checkAnswers()"><i class="fas fa-check mr-1"></i> Comprobar Respuestas</button>
+
+  <div class="feedback" id="feedback"></div>
+</div>
+
+<script>
+const answers = { 1: null, 2: null, 3: null };
+const correct = { 1: 'o1', 2: 'on3', 3: 'ologn' };
+
+function selectAnswer(q, val) {
+  answers[q] = val;
+  const qb = document.getElementById(`qb${q}`);
+  const btns = qb.querySelectorAll('.opt-btn');
+  btns.forEach(b => {
+    b.classList.toggle('active', b.innerText.includes(val.replace('o', '').toUpperCase()) || (val === 'o1' && b.innerText.includes('(1)')) || (val === 'on3' && b.innerText.includes('(n³)')) || (val === 'ologn' && b.innerText.includes('(log n)')));
+  });
+}
+
+function checkAnswers() {
+  const fb = document.getElementById('feedback');
+  if (!answers[1] || !answers[2] || !answers[3]) {
+    fb.className = 'feedback error';
+    fb.innerHTML = `<i class="fas fa-exclamation-triangle"></i> Por favor selecciona una respuesta para cada uno de los 3 casos.`;
+    fb.style.display = 'block';
+    return;
+  }
+
+  const ok1 = answers[1] === correct[1];
+  const ok2 = answers[2] === correct[2];
+  const ok3 = answers[3] === correct[3];
+
+  if (ok1 && ok2 && ok3) {
+    fb.className = 'feedback success';
+    fb.innerHTML = `<i class="fas fa-check-circle"></i> <strong>¡Todas las respuestas son correctas!</strong><br>
+    &bull; Caso 1: En el mejor caso, el dato está al inicio del arreglo en solo 1 operación \(\Omega(1)\).<br>
+    &bull; Caso 2: El término cúbico \(7n^3\) domina completamente a las potencias menores cuando \(n\) crece, resultando en \(O(n^3)\).<br>
+    &bull; Caso 3: La división sucesiva a la mitad produce un número de pasos proporcional a \(\log_2(n)\), es decir, \(O(\log n)\).`;
+  } else {
+    fb.className = 'feedback error';
+    fb.innerHTML = `<i class="fas fa-times-circle"></i> Hay respuestas que necesitan revisión. Recuerda identificar el término con la mayor potencia en funciones polinómicas y asociar las divisiones sucesivas a la mitad con el crecimiento logarítmico.`;
+  }
+  fb.style.display = 'block';
+}
+</script>
+
+</body>
+</html>

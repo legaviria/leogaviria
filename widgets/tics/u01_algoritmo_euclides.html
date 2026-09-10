@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      background-color: #0b0e14;
+      color: #e2e8f0;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      margin: 0;
+      padding: 12px;
+      transition: background-color 0.2s, color 0.2s;
+    }
+    /* Light Mode */
+    [data-theme="light"] body {
+      background-color: #ffffff;
+      color: #0f172a;
+    }
+    [data-theme="light"] .card-box {
+      background-color: #f8fafc !important;
+      border-color: #e2e8f0 !important;
+      color: #0f172a !important;
+    }
+    [data-theme="light"] .subcard-box {
+      background-color: #ffffff !important;
+      border-color: #cbd5e1 !important;
+      color: #1e293b !important;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+    [data-theme="light"] .text-muted {
+      color: #64748b !important;
+    }
+    [data-theme="light"] .text-highlight {
+      color: #0f766e !important;
+    }
+    [data-theme="light"] input, [data-theme="light"] select {
+      background-color: #ffffff !important;
+      border-color: #cbd5e1 !important;
+      color: #0f172a !important;
+    }
+    /* Estilos base */
+    .card-box {
+      background-color: #121622;
+      border: 1px solid #1f293d;
+      border-radius: 12px;
+    }
+    .subcard-box {
+      background-color: #090d14;
+      border: 1px solid #1a2233;
+      border-radius: 8px;
+    }
+    .text-muted { color: #94a3b8; }
+    .text-highlight { color: #2dd4bf; }
+  </style>
+  <script>
+    window.addEventListener('message', (event) => {
+      if (event.data && event.data.type === 'THEME_CHANGE') {
+        document.documentElement.setAttribute('data-theme', event.data.theme);
+      }
+    });
+    try {
+      const savedTheme = localStorage.getItem('leogaviria_theme') || 'dark';
+      document.documentElement.setAttribute('data-theme', savedTheme);
+    } catch(e) {}
+  </script>
+
+  <title>Algoritmo de Euclides: MCD y MCM</title>
+</head>
+<body>
+  <div class="max-w-4xl mx-auto space-y-4">
+    <div class="card-box p-4 sm:p-5">
+      <div class="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-gray-800/80 mb-4">
+        <div>
+          <h2 class="text-base sm:text-lg font-bold flex items-center gap-2 text-highlight">
+            <i class="fas fa-sitemap"></i> Algoritmo de Euclides: MCD y MCM
+          </h2>
+          <p class="text-xs text-muted">Divisiones sucesivas: a = b · q + r con relación a · b = MCD · MCM</p>
+        </div>
+      </div>
+
+      <div class="flex flex-wrap items-center gap-3 mb-4">
+        <div>
+          <label class="text-xs font-semibold text-muted block mb-1">Número a:</label>
+          <input type="number" id="euc-a" value="252" min="1" oninput="runEuclid()" class="w-32 px-3 py-1.5 rounded-lg text-xs font-mono bg-[#090d14] border border-gray-700 text-emerald-400 font-bold">
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-muted block mb-1">Número b:</label>
+          <input type="number" id="euc-b" value="105" min="1" oninput="runEuclid()" class="w-32 px-3 py-1.5 rounded-lg text-xs font-mono bg-[#090d14] border border-gray-700 text-sky-400 font-bold">
+        </div>
+        <div class="flex items-end pt-5">
+          <button onclick="presetEuclid(48, 18)" class="px-2.5 py-1 text-[11px] rounded bg-gray-800 hover:bg-gray-700 text-gray-300 font-mono mr-1">48, 18</button>
+          <button onclick="presetEuclid(252, 105)" class="px-2.5 py-1 text-[11px] rounded bg-gray-800 hover:bg-gray-700 text-gray-300 font-mono mr-1">252, 105</button>
+          <button onclick="presetEuclid(1071, 462)" class="px-2.5 py-1 text-[11px] rounded bg-gray-800 hover:bg-gray-700 text-gray-300 font-mono">1071, 462</button>
+        </div>
+      </div>
+
+      <!-- Tabla de Pasos de Euclides -->
+      <div class="overflow-x-auto mb-4">
+        <table class="w-full text-xs text-left border border-gray-800 rounded-lg overflow-hidden">
+          <thead class="bg-[#141923] text-muted uppercase font-mono">
+            <tr>
+              <th class="py-2 px-3">Paso</th>
+              <th class="py-2 px-3">Dividendo (a)</th>
+              <th class="py-2 px-3">Divisor (b)</th>
+              <th class="py-2 px-3">Cociente (q)</th>
+              <th class="py-2 px-3 text-amber-400">Residuo (r)</th>
+              <th class="py-2 px-3">Ecuación de la División</th>
+            </tr>
+          </thead>
+          <tbody id="euc-tbody" class="divide-y divide-gray-800/80 font-mono"></tbody>
+        </table>
+      </div>
+
+      <!-- Tarjetas de Resultados -->
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        <div class="subcard-box p-3 text-center border-teal-500/40">
+          <span class="text-[10px] font-mono text-muted uppercase">Máximo Común Divisor</span>
+          <div id="res-mcd" class="text-xl font-black text-teal-400 font-mono mt-1">---</div>
+          <span class="text-[10px] text-gray-400">Último residuo no nulo</span>
+        </div>
+        <div class="subcard-box p-3 text-center border-sky-500/40">
+          <span class="text-[10px] font-mono text-muted uppercase">Mínimo Común Múltiplo</span>
+          <div id="res-mcm" class="text-xl font-black text-sky-400 font-mono mt-1">---</div>
+          <span class="text-[10px] text-gray-400">(a · b) / MCD</span>
+        </div>
+        <div class="subcard-box p-3 text-center border-purple-500/40">
+          <span class="text-[10px] font-mono text-muted uppercase">Comprobación del Teorema</span>
+          <div id="res-verif" class="text-xs font-mono text-purple-300 mt-1">---</div>
+          <span class="text-[10px] text-gray-400">a · b = MCD · MCM</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function presetEuclid(a, b) {
+      document.getElementById('euc-a').value = a;
+      document.getElementById('euc-b').value = b;
+      runEuclid();
+    }
+
+    function runEuclid() {
+      let a = parseInt(document.getElementById('euc-a').value);
+      let b = parseInt(document.getElementById('euc-b').value);
+
+      if (isNaN(a) || isNaN(b) || a <= 0 || b <= 0) return;
+
+      const origA = a;
+      const origB = b;
+
+      const tbody = document.getElementById('euc-tbody');
+      tbody.innerHTML = '';
+
+      let step = 1;
+      let lastNonZero = b;
+
+      while (b > 0) {
+        const q = Math.floor(a / b);
+        const r = a % b;
+        if (r !== 0) lastNonZero = r;
+
+        const tr = document.createElement('tr');
+        tr.className = r === 0 ? 'bg-teal-500/10' : '';
+        tr.innerHTML = `
+          <td class="py-2 px-3 text-muted">${step}</td>
+          <td class="py-2 px-3 font-bold text-white">${a}</td>
+          <td class="py-2 px-3 text-sky-300">${b}</td>
+          <td class="py-2 px-3 text-gray-400">${q}</td>
+          <td class="py-2 px-3 font-bold ${r === 0 ? 'text-teal-400' : 'text-amber-400'}">${r}</td>
+          <td class="py-2 px-3 text-gray-300">${a} = ${b} &times; ${q} + ${r}</td>
+        `;
+        tbody.appendChild(tr);
+
+        a = b;
+        b = r;
+        step++;
+      }
+
+      const mcd = a;
+      const mcm = (origA * origB) / mcd;
+
+      document.getElementById('res-mcd').textContent = `MCD = ${mcd}`;
+      document.getElementById('res-mcm').textContent = `MCM = ${mcm}`;
+      document.getElementById('res-verif').innerHTML = `${origA} &times; ${origB} = ${mcd} &times; ${mcm} = <strong>${origA * origB}</strong>`;
+    }
+
+    runEuclid();
+  </script>
+</body>
+</html>

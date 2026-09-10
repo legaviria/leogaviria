@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Del Código al Resultado</title>
+  <style>
+    :root {
+      --bg: #0e0e11; --card: #141923; --border: #232d42; --text: #fff;
+      --muted: #94a3b8; --sky: #38bdf8; --green: #10b981; --amber: #f59e0b;
+    }
+    body.theme-light {
+      --bg: #f8fafc; --card: #ffffff; --border: #e2e8f0; --text: #0f172a;
+      --muted: #64748b; --sky: #0284c7; --green: #059669; --amber: #d97706;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { background: var(--bg); color: var(--text); padding: 14px; display: flex; justify-content: center; }
+    .container { width: 100%; max-width: 680px; background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 16px; }
+    .header { text-align: center; margin-bottom: 14px; }
+    .header h3 { font-size: 1.1rem; color: var(--sky); margin-bottom: 4px; }
+    .pipeline { display: flex; align-items: center; justify-content: space-between; gap: 4px; margin-bottom: 16px; background: rgba(0,0,0,0.25); padding: 10px; border-radius: 10px; border: 1px solid var(--border); }
+    .pipe-step { flex: 1; text-align: center; padding: 8px 4px; border-radius: 8px; font-size: 0.72rem; font-weight: 600; color: var(--muted); border: 1px solid transparent; transition: all 0.3s; }
+    .pipe-step.active { background: rgba(56, 189, 248, 0.15); border-color: var(--sky); color: var(--sky); box-shadow: 0 0 10px rgba(56, 189, 248, 0.3); }
+    .pipe-arrow { font-size: 11px; color: var(--muted); }
+    .editor-section { display: grid; grid-template-columns: 1.2fr 1fr; gap: 12px; }
+    @media (max-width: 600px) { .editor-section { grid-template-columns: 1fr; } }
+    .code-box { display: flex; flex-direction: column; gap: 6px; }
+    .code-box label { font-size: 0.75rem; font-weight: 600; color: var(--muted); display: flex; justify-content: space-between; }
+    textarea { width: 100%; height: 140px; background: #080b10; color: #a5f3fc; border: 1px solid var(--border); border-radius: 8px; padding: 10px; font-family: monospace; font-size: 0.8rem; resize: none; outline: none; }
+    textarea:focus { border-color: var(--sky); }
+    .console-box { background: #080b10; border: 1px solid var(--border); border-radius: 8px; padding: 10px; font-family: monospace; font-size: 0.8rem; height: 140px; overflow-y: auto; color: #4ade80; }
+    .controls { display: flex; gap: 8px; margin-top: 12px; justify-content: flex-end; }
+    .btn { padding: 7px 14px; font-size: 0.8rem; font-weight: 600; border-radius: 6px; cursor: pointer; border: none; transition: 0.2s; }
+    .btn-run { background: linear-gradient(135deg, #10b981, #059669); color: white; }
+    .btn-run:hover { opacity: 0.9; }
+    .btn-preset { background: rgba(255,255,255,0.06); color: var(--text); border: 1px solid var(--border); }
+    .btn-preset:hover { background: rgba(255,255,255,0.12); }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h3>⚙️ Del Código al Resultado: El Ciclo de Ejecución</h3>
+      <p style="font-size:0.75rem; color:var(--muted)">Observa el flujo: Código fuente (.py) ➔ Compilación a Bytecode (.pyc) ➔ Máquina Virtual (PVM) ➔ Salida</p>
+    </div>
+
+    <div class="pipeline">
+      <div class="pipe-step active" id="step1">1. Código (.py)</div>
+      <div class="pipe-arrow">➔</div>
+      <div class="pipe-step" id="step2">2. Tokenizer & AST</div>
+      <div class="pipe-arrow">➔</div>
+      <div class="pipe-step" id="step3">3. Bytecode PVM</div>
+      <div class="pipe-arrow">➔</div>
+      <div class="pipe-step" id="step4">4. Salida Consola</div>
+    </div>
+
+    <div class="editor-section">
+      <div class="code-box">
+        <label>
+          <span>Editor Python</span>
+          <select id="presetSelect" onchange="loadPreset()" style="background:transparent; color:var(--sky); border:none; font-size:0.75rem; cursor:pointer;">
+            <option value="1">Ejemplo 1: Saludo</option>
+            <option value="2">Ejemplo 2: Operaciones</option>
+            <option value="3">Ejemplo 3: Variables</option>
+          </select>
+        </label>
+        <textarea id="codeEditor"># Mi primer programa
+nombre = "Estudiante"
+print("¡Bienvenido a Programación,", nombre, "!")</textarea>
+      </div>
+
+      <div class="code-box">
+        <label>Terminal / Salida Estándar (stdout)</label>
+        <div class="console-box" id="consoleOut">> Esperando ejecución...</div>
+      </div>
+    </div>
+
+    <div class="controls">
+      <button class="btn btn-run" id="btnRun" onclick="runCode()">▶ Ejecutar Programa</button>
+    </div>
+  </div>
+
+  <script>
+    const presets = {
+      1: '# Mi primer programa\nnombre = "Estudiante"\nprint("¡Bienvenido a Programación,", nombre, "!")',
+      2: '# Cálculo aritmético\nbase = 10\naltura = 5\narea = (base * altura) / 2\nprint("El área del triángulo es:", area)',
+      3: '# Entrada simulada\nhoras = 40\ntarifa = 15.5\npago = horas * tarifa\nprint("Total devengado: $" + str(pago))'
+    };
+
+    function loadPreset() {
+      const val = document.getElementById('presetSelect').value;
+      document.getElementById('codeEditor').value = presets[val].replace(/\\n/g, '\n');
+    }
+
+    function runCode() {
+      const btn = document.getElementById('btnRun');
+      btn.disabled = true;
+      const code = document.getElementById('codeEditor').value;
+      const steps = [document.getElementById('step1'), document.getElementById('step2'), document.getElementById('step3'), document.getElementById('step4')];
+
+      steps.forEach(s => s.classList.remove('active'));
+      steps[0].classList.add('active');
+
+      setTimeout(() => {
+        steps[0].classList.remove('active');
+        steps[1].classList.add('active');
+      }, 300);
+
+      setTimeout(() => {
+        steps[1].classList.remove('active');
+        steps[2].classList.add('active');
+      }, 650);
+
+      setTimeout(() => {
+        steps[2].classList.remove('active');
+        steps[3].classList.add('active');
+        executeSimulation(code);
+        btn.disabled = false;
+      }, 1000);
+    }
+
+    function executeSimulation(code) {
+      const lines = code.split('\n');
+      let out = '';
+      const vars = {};
+      try {
+        lines.forEach(line => {
+          let trimmed = line.trim();
+          if (!trimmed || trimmed.startsWith('#')) return;
+          if (trimmed.startsWith('print(') && trimmed.endsWith(')')) {
+            let inner = trimmed.substring(6, trimmed.length - 1);
+            let parts = inner.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
+            let printedParts = parts.map(p => {
+              p = p.trim();
+              if ((p.startsWith('"') && p.endsWith('"')) || (p.startsWith("'") && p.endsWith("'"))) {
+                return p.substring(1, p.length - 1);
+              }
+              if (vars[p] !== undefined) return vars[p];
+              try { return eval(p); } catch(e) { return p; }
+            });
+            out += printedParts.join(' ') + '\n';
+          } else if (trimmed.includes('=')) {
+            let [v, expr] = trimmed.split('=').map(s => s.trim());
+            if (expr.startsWith('"') || expr.startsWith("'")) {
+              vars[v] = expr.substring(1, expr.length - 1);
+            } else {
+              try {
+                let resolvedExpr = expr;
+                for (let k in vars) {
+                  resolvedExpr = resolvedExpr.replace(new RegExp('\\b' + k + '\\b', 'g'), vars[k]);
+                }
+                vars[v] = eval(resolvedExpr);
+              } catch(e) { vars[v] = expr; }
+            }
+          }
+        });
+        document.getElementById('consoleOut').textContent = out || '> [Programa ejecutado sin salida en stdout]';
+      } catch(err) {
+        document.getElementById('consoleOut').innerHTML = '<span style="color:#ef4444">SyntaxError: ' + err.message + '</span>';
+      }
+    }
+  </script>
+</body>
+</html>

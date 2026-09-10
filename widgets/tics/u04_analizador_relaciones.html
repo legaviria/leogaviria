@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      background-color: #0b0e14;
+      color: #e2e8f0;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      margin: 0;
+      padding: 12px;
+      transition: background-color 0.2s, color 0.2s;
+    }
+    [data-theme="light"] body { background-color: #ffffff; color: #0f172a; }
+    [data-theme="light"] .card-box { background-color: #f8fafc !important; border-color: #e2e8f0 !important; color: #0f172a !important; }
+    [data-theme="light"] .subcard-box { background-color: #ffffff !important; border-color: #cbd5e1 !important; color: #1e293b !important; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+    [data-theme="light"] .text-muted { color: #64748b !important; }
+    [data-theme="light"] .text-highlight { color: #0f766e !important; }
+    [data-theme="light"] input, [data-theme="light"] select { background-color: #ffffff !important; border-color: #cbd5e1 !important; color: #0f172a !important; }
+    .card-box { background-color: #121622; border: 1px solid #1f293d; border-radius: 12px; }
+    .subcard-box { background-color: #090d14; border: 1px solid #1a2233; border-radius: 8px; }
+    .text-muted { color: #94a3b8; }
+    .text-highlight { color: #2dd4bf; }
+  </style>
+  <script>
+    window.addEventListener('message', (event) => {
+      if (event.data && event.data.type === 'THEME_CHANGE') {
+        document.documentElement.setAttribute('data-theme', event.data.theme);
+      }
+    });
+    try {
+      const savedTheme = localStorage.getItem('leogaviria_theme') || 'dark';
+      document.documentElement.setAttribute('data-theme', savedTheme);
+    } catch(e) {}
+  </script>
+
+  <title>Analizador Interactivo de Relaciones</title>
+</head>
+<body>
+  <div class="max-w-4xl mx-auto space-y-4">
+    <div class="card-box p-4 sm:p-5">
+      <div class="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-gray-800/80 mb-4">
+        <div>
+          <h2 class="text-base sm:text-lg font-bold flex items-center gap-2 text-highlight">
+            <i class="fas fa-network-wired"></i> Analizador de Propiedades de Relaciones Binarias
+          </h2>
+          <p class="text-xs text-muted">Sobre el conjunto A = {1, 2, 3, 4}: Reflexiva, Simétrica, Antisimétrica y Transitiva</p>
+        </div>
+      </div>
+
+      <!-- Presets -->
+      <div class="flex flex-wrap gap-2 mb-4">
+        <span class="text-xs text-muted font-semibold flex items-center">Preajustes:</span>
+        <button onclick="setRelPreset('ident')" class="px-2.5 py-1 text-xs rounded bg-gray-800 hover:bg-teal-600 text-gray-200 transition font-mono">Identidad (x = y)</button>
+        <button onclick="setRelPreset('leq')" class="px-2.5 py-1 text-xs rounded bg-gray-800 hover:bg-teal-600 text-gray-200 transition font-mono">Orden (x &le; y)</button>
+        <button onclick="setRelPreset('equiv')" class="px-2.5 py-1 text-xs rounded bg-gray-800 hover:bg-teal-600 text-gray-200 transition font-mono">Equiv (x &equiv; y mod 2)</button>
+        <button onclick="setRelPreset('empty')" class="px-2.5 py-1 text-xs rounded bg-gray-800 hover:bg-teal-600 text-gray-200 transition font-mono">Vacía</button>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 items-center mb-4">
+        <!-- Matriz Booleana 4x4 Interactiva -->
+        <div class="subcard-box p-4 flex flex-col items-center">
+          <span class="text-xs font-bold text-muted font-mono mb-2">Matriz Booleana M_R:</span>
+          <div class="grid grid-cols-5 gap-1 font-mono text-xs text-center" id="matrix-grid">
+            <!-- Inyectado por JS -->
+          </div>
+        </div>
+
+        <!-- Diagnóstico de Propiedades -->
+        <div class="space-y-2 font-mono text-xs" id="props-diagnostics">
+          <!-- Inyectado por JS -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let M = [
+      [0, 0, 0, 0],
+      [0, 0, 0, 0],
+      [0, 0, 0, 0],
+      [0, 0, 0, 0]
+    ];
+
+    function setRelPreset(p) {
+      if (p === 'ident') {
+        M = [[1,0,0,0],[0,1,0,0],[0,0,1,0],[0,0,0,1]];
+      } else if (p === 'leq') {
+        M = [[1,1,1,1],[0,1,1,1],[0,0,1,1],[0,0,0,1]];
+      } else if (p === 'equiv') {
+        // pares: {2,4} / impares: {1,3}
+        M = [
+          [1,0,1,0],
+          [0,1,0,1],
+          [1,0,1,0],
+          [0,1,0,1]
+        ];
+      } else if (p === 'empty') {
+        M = [[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]];
+      }
+      renderMatrix();
+    }
+
+    function toggleCell(r, c) {
+      M[r][c] = M[r][c] === 1 ? 0 : 1;
+      renderMatrix();
+    }
+
+    function renderMatrix() {
+      const grid = document.getElementById('matrix-grid');
+      grid.innerHTML = '<span class="text-gray-500 font-bold">R</span>';
+      for (let j = 1; j <= 4; j++) grid.innerHTML += `<span class="text-teal-400 font-bold">${j}</span>`;
+
+      for (let i = 0; i < 4; i++) {
+        grid.innerHTML += `<span class="text-sky-400 font-bold">${i + 1}</span>`;
+        for (let j = 0; j < 4; j++) {
+          const val = M[i][j];
+          const btn = document.createElement('button');
+          btn.className = `w-7 h-7 rounded text-xs font-bold transition ${val === 1 ? 'bg-teal-500 text-black' : 'bg-[#1a2234] text-gray-400 border border-gray-700'}`;
+          btn.textContent = val;
+          btn.onclick = () => toggleCell(i, j);
+          grid.appendChild(btn);
+        }
+      }
+
+      evaluateProps();
+    }
+
+    function evaluateProps() {
+      // Reflexiva: diag principal todos 1
+      let refl = true;
+      for (let i = 0; i < 4; i++) if (M[i][i] !== 1) refl = false;
+
+      // Simétrica: M[i][j] == M[j][i]
+      let symm = true;
+      for (let i = 0; i < 4; i++) {
+        for (let j = 0; j < 4; j++) {
+          if (M[i][j] !== M[j][i]) symm = false;
+        }
+      }
+
+      // Antisimétrica: si i != j y M[i][j] == 1 => M[j][i] == 0
+      let antisymm = true;
+      for (let i = 0; i < 4; i++) {
+        for (let j = 0; j < 4; j++) {
+          if (i !== j && M[i][j] === 1 && M[j][i] === 1) antisymm = false;
+        }
+      }
+
+      // Transitiva: M^2 <= M
+      let trans = true;
+      for (let i = 0; i < 4; i++) {
+        for (let j = 0; j < 4; j++) {
+          for (let k = 0; k < 4; k++) {
+            if (M[i][j] === 1 && M[j][k] === 1 && M[i][k] !== 1) trans = false;
+          }
+        }
+      }
+
+      const isEquiv = refl && symm && trans;
+      const isPartialOrder = refl && antisymm && trans;
+
+      const diag = document.getElementById('props-diagnostics');
+      diag.innerHTML = `
+        <div class="p-2 rounded subcard-box border ${refl ? 'border-teal-500/50 text-teal-300' : 'border-gray-800 text-gray-500'}">
+          Reflexiva: <strong>${refl ? 'SÍ (∀x, (x,x) ∈ R)' : 'NO'}</strong>
+        </div>
+        <div class="p-2 rounded subcard-box border ${symm ? 'border-sky-500/50 text-sky-300' : 'border-gray-800 text-gray-500'}">
+          Simétrica: <strong>${symm ? 'SÍ ((x,y) ⇒ (y,x))' : 'NO'}</strong>
+        </div>
+        <div class="p-2 rounded subcard-box border ${antisymm ? 'border-amber-500/50 text-amber-300' : 'border-gray-800 text-gray-500'}">
+          Antisimétrica: <strong>${antisymm ? 'SÍ ((x,y) ∧ (y,x) ⇒ x=y)' : 'NO'}</strong>
+        </div>
+        <div class="p-2 rounded subcard-box border ${trans ? 'border-purple-500/50 text-purple-300' : 'border-gray-800 text-gray-500'}">
+          Transitiva: <strong>${trans ? 'SÍ ((x,y) ∧ (y,z) ⇒ (x,z))' : 'NO'}</strong>
+        </div>
+        <div class="p-2.5 rounded subcard-box border ${isEquiv ? 'border-emerald-500 bg-emerald-500/10 text-emerald-300' : isPartialOrder ? 'border-amber-500 bg-amber-500/10 text-amber-300' : 'border-gray-800 text-gray-400'} mt-2">
+          ${isEquiv ? '★ RELACIÓN DE EQUIVALENCIA (Particiona A)' : isPartialOrder ? '★ RELACIÓN DE ORDEN PARCIAL (Poset)' : 'Relación binaria ordinaria'}
+        </div>
+      `;
+    }
+
+    setRelPreset('leq');
+  </script>
+</body>
+</html>

@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calculadora con Flet</title>
+  <style>
+    :root {
+      --bg: #0e0e11; --card: #141923; --border: #232d42; --text: #fff;
+      --muted: #94a3b8; --sky: #38bdf8; --amber: #f59e0b;
+    }
+    body.theme-light {
+      --bg: #f8fafc; --card: #ffffff; --border: #e2e8f0; --text: #0f172a;
+      --muted: #64748b; --sky: #0284c7; --amber: #d97706;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { background: var(--bg); color: var(--text); padding: 14px; display: flex; justify-content: center; }
+    .container { width: 100%; max-width: 680px; background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 16px; }
+    .header { text-align: center; margin-bottom: 12px; }
+    .header h3 { font-size: 1.1rem; color: #38bdf8; margin-bottom: 4px; }
+    .calc-layout { display: flex; justify-content: center; gap: 14px; flex-wrap: wrap; }
+    .calc-body { width: 220px; background: #080b10; border: 1px solid var(--border); border-radius: 12px; padding: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
+    .display { width: 100%; height: 42px; background: #141923; border-radius: 6px; border: 1px solid var(--border); padding: 6px 10px; font-family: monospace; font-size: 1.2rem; text-align: right; color: #4ade80; overflow: hidden; margin-bottom: 10px; display: flex; align-items: center; justify-content: flex-end; }
+    .keypad { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+    .kbtn { padding: 10px 0; border-radius: 6px; border: 1px solid var(--border); background: rgba(255,255,255,0.04); color: var(--text); font-family: monospace; font-size: 0.9rem; font-weight: bold; cursor: pointer; text-align: center; }
+    .kbtn:hover { background: rgba(255,255,255,0.12); }
+    .kbtn.op { background: rgba(56, 189, 248, 0.15); color: #38bdf8; border-color: rgba(56, 189, 248, 0.4); }
+    .kbtn.eq { background: #0284c7; color: white; border: none; }
+    .kbtn.clr { background: rgba(239, 68, 68, 0.15); color: #f87171; }
+    .info-pane { flex: 1; min-width: 240px; background: #080b10; border: 1px solid var(--border); border-radius: 8px; padding: 10px; font-family: monospace; font-size: 0.74rem; color: #cbd5e1; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h3>🧮 Ejemplo Integral: Calculadora Modular con Flet</h3>
+      <p style="font-size:0.75rem; color:var(--muted)">Arquitectura: Display de estado + Rejilla de botones (Grid de Rows y Columns) + Dispatcher de eventos.</p>
+    </div>
+
+    <div class="calc-layout">
+      <div class="calc-body">
+        <div class="display" id="cDisp">0</div>
+        <div class="keypad">
+          <button class="kbtn clr" onclick="press('C')">C</button>
+          <button class="kbtn op" onclick="press('/')">/</button>
+          <button class="kbtn op" onclick="press('*')">*</button>
+          <button class="kbtn op" onclick="press('-')">-</button>
+          <button class="kbtn" onclick="press('7')">7</button>
+          <button class="kbtn" onclick="press('8')">8</button>
+          <button class="kbtn" onclick="press('9')">9</button>
+          <button class="kbtn op" onclick="press('+')">+</button>
+          <button class="kbtn" onclick="press('4')">4</button>
+          <button class="kbtn" onclick="press('5')">5</button>
+          <button class="kbtn" onclick="press('6')">6</button>
+          <button class="kbtn eq" onclick="press('=')">=</button>
+          <button class="kbtn" onclick="press('1')">1</button>
+          <button class="kbtn" onclick="press('2')">2</button>
+          <button class="kbtn" onclick="press('3')">3</button>
+          <button class="kbtn" onclick="press('0')">0</button>
+        </div>
+      </div>
+
+      <div class="info-pane">
+        <div style="color:#38bdf8; font-weight:bold; margin-bottom:6px;">Estructura del Código Flet:</div>
+        <div>class Calculadora(ft.Container):<br>&nbsp;&nbsp;def build(self):<br>&nbsp;&nbsp;&nbsp;&nbsp;self.txt = ft.Text("0")<br>&nbsp;&nbsp;&nbsp;&nbsp;return ft.Column([<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;self.txt,<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ft.Row([ft.Button("7"), ...])<br>&nbsp;&nbsp;&nbsp;&nbsp;])</div>
+        <div style="margin-top:8px; color:#4ade80;" id="eventLog">> Esperando clics...</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let expr = "0";
+    function press(k) {
+      const d = document.getElementById('cDisp');
+      const log = document.getElementById('eventLog');
+      if (k === 'C') {
+        expr = "0";
+        log.textContent = "> Evento: Limpiar buffer (Clear)";
+      } else if (k === '=') {
+        try {
+          const res = eval(expr);
+          log.textContent = `> Calculado: ${expr} = ${res}`;
+          expr = String(res);
+        } catch(e) {
+          expr = "Error";
+          log.textContent = "> Excepción en cálculo de expresión";
+        }
+      } else {
+        if (expr === "0" || expr === "Error") expr = k;
+        else expr += k;
+        log.textContent = `> Tecla presionada: '${k}' | Buffer: ${expr}`;
+      }
+      d.textContent = expr;
+    }
+  </script>
+</body>
+</html>

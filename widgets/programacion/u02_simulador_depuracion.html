@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simulador de Depuración de Errores</title>
+  <style>
+    :root {
+      --bg: #0e0e11; --card: #141923; --border: #232d42; --text: #fff;
+      --muted: #94a3b8; --red: #ef4444; --green: #10b981; --amber: #f59e0b;
+    }
+    body.theme-light {
+      --bg: #f8fafc; --card: #ffffff; --border: #e2e8f0; --text: #0f172a;
+      --muted: #64748b; --red: #dc2626; --green: #059669; --amber: #d97706;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { background: var(--bg); color: var(--text); padding: 14px; display: flex; justify-content: center; }
+    .container { width: 100%; max-width: 660px; background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 16px; }
+    .header { text-align: center; margin-bottom: 12px; }
+    .header h3 { font-size: 1.1rem; color: #f87171; margin-bottom: 4px; display: flex; align-items: center; justify-content: center; gap: 8px; }
+    .tabs { display: flex; gap: 6px; margin-bottom: 12px; overflow-x: auto; }
+    .tab-btn { flex: 1; padding: 7px 4px; font-size: 0.75rem; font-weight: 600; border-radius: 6px; background: rgba(255,255,255,0.05); color: var(--muted); border: 1px solid var(--border); cursor: pointer; text-align: center; white-space: nowrap; }
+    .tab-btn.active { background: rgba(239, 68, 68, 0.15); color: #fca5a5; border-color: var(--red); }
+    .code-viewer { background: #080b10; border: 1px solid var(--border); border-radius: 8px; padding: 12px; font-family: monospace; font-size: 0.82rem; margin-bottom: 12px; color: #fecaca; }
+    .traceback { background: rgba(239, 68, 68, 0.08); border-left: 3px solid var(--red); padding: 10px; font-family: monospace; font-size: 0.74rem; color: #fca5a5; margin-bottom: 12px; border-radius: 0 6px 6px 0; }
+    .question { font-size: 0.85rem; font-weight: 600; margin-bottom: 8px; }
+    .options { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
+    @media (max-width: 500px) { .options { grid-template-columns: 1fr; } }
+    .opt-btn { padding: 9px; border-radius: 6px; border: 1px solid var(--border); background: rgba(255,255,255,0.03); color: var(--text); font-size: 0.78rem; text-align: left; cursor: pointer; transition: 0.2s; }
+    .opt-btn:hover { border-color: var(--amber); background: rgba(245, 158, 11, 0.08); }
+    .opt-btn.correct { background: rgba(16, 185, 129, 0.2); border-color: var(--green); color: #86efac; font-weight: 600; }
+    .opt-btn.wrong { background: rgba(239, 68, 68, 0.2); border-color: var(--red); color: #fca5a5; }
+    .feedback { font-size: 0.78rem; padding: 10px; border-radius: 6px; display: none; margin-bottom: 10px; line-height: 1.4; }
+    .fix-box { background: rgba(16, 185, 129, 0.06); border: 1px solid var(--green); border-radius: 8px; padding: 10px; font-family: monospace; font-size: 0.8rem; color: #86efac; display: none; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h3>🔍 Simulador de Diagnóstico y Depuración</h3>
+      <p style="font-size:0.75rem; color:var(--muted)">Aprende a interpretar el Traceback, identificar la causa raíz y aplicar la solución correcta.</p>
+    </div>
+
+    <div class="tabs">
+      <button class="tab-btn active" onclick="loadCase(0)">Caso 1: Sintaxis</button>
+      <button class="tab-btn" onclick="loadCase(1)">Caso 2: División 0</button>
+      <button class="tab-btn" onclick="loadCase(2)">Caso 3: TypeError</button>
+      <button class="tab-btn" onclick="loadCase(3)">Caso 4: Error Lógico</button>
+    </div>
+
+    <div class="code-viewer" id="codeView"></div>
+    <div class="traceback" id="tracebackView"></div>
+
+    <div class="question" id="qTitle">¿Cuál es el tipo de error y la causa del fallo?</div>
+    <div class="options" id="optContainer"></div>
+    <div class="feedback" id="feedbackBox"></div>
+    <div class="fix-box" id="fixBox"></div>
+  </div>
+
+  <script>
+    const cases = [
+      {
+        code: 'edad = 18\nif edad >= 18\n    print("Mayor de edad")',
+        trace: '  File "app.py", line 2\n    if edad >= 18\n                 ^\nSyntaxError: expected ':'',
+        opts: [
+          { text: "SyntaxError: Olvido de los dos puntos (:) al final de la condición", correct: true },
+          { text: "NameError: La variable 'edad' no fue declarada antes", correct: false },
+          { text: "IndentationError: El print tiene exceso de sangría", correct: false },
+          { text: "TypeError: No se puede comparar entero con booleano", correct: false }
+        ],
+        expl: "En Python, las sentencias compuestas (como if, for, while, def) exigen terminar la línea del encabezado con dos puntos (:) antes de abrir el bloque indentado.",
+        fix: 'edad = 18\nif edad >= 18:  # Corrección: agregar los dos puntos\n    print("Mayor de edad")\n# Salida: Mayor de edad'
+      },
+      {
+        code: 'total = 100\ncantidad = 0\npromedio = total / cantidad\nprint("Promedio:", promedio)',
+        trace: 'Traceback (most recent call last):\n  File "app.py", line 3, in <module>\n    promedio = total / cantidad\nZeroDivisionError: division by zero',
+        opts: [
+          { text: "ValueError: El valor 0 no es un divisor legal", correct: false },
+          { text: "ZeroDivisionError: Se intenta dividir una cantidad entre cero", correct: true },
+          { text: "OverflowError: El resultado de la división supera el límite", correct: false },
+          { text: "SyntaxError: El operador / requiere decimales", correct: false }
+        ],
+        expl: "La división entre cero es una operación matemáticamente indefinida y provoca una excepción de ejecución ZeroDivisionError. Se previene validando que el divisor != 0.",
+        fix: 'total = 100\ncantidad = 0\nif cantidad > 0:\n    promedio = total / cantidad\nelse:\n    promedio = 0\nprint("Promedio seguro:", promedio)'
+      },
+      {
+        code: 'precio = 2500\nimpuesto = "19%"\ntotal = precio + impuesto\nprint("Total:", total)',
+        trace: 'Traceback (most recent call last):\n  File "app.py", line 3, in <module>\n    total = precio + impuesto\nTypeError: unsupported operand type(s) for +: 'int' and 'str'',
+        opts: [
+          { text: "SyntaxError: Faltan paréntesis en la suma", correct: false },
+          { text: "ValueError: No se puede convertir '19%' a float", correct: false },
+          { text: "TypeError: Intentar sumar un entero (int) con una cadena de texto (str)", correct: true },
+          { text: "NameError: Variable 'impuesto' no inicializada", correct: false }
+        ],
+        expl: "Python es un lenguaje fuertemente tipado. El operador + no concatena mágicamente números con cadenas; debes convertir o usar números decimales para cálculos matemáticos.",
+        fix: 'precio = 2500\ntasa_impuesto = 0.19  # Corrección: número decimal float\ntotal = precio + (precio * tasa_impuesto)\nprint("Total:", total)  # Salida: 2975.0'
+      },
+      {
+        code: '# Calcular el promedio de tres notas\nnota1 = 4.0\nnota2 = 3.5\nnota3 = 4.5\npromedio = nota1 + nota2 + nota3 / 3\nprint("Promedio:", promedio)',
+        trace: 'Salida del programa: Promedio: 9.0\n(¡No hay mensaje de error, pero el promedio supera la nota máxima de 5.0!)',
+        opts: [
+          { text: "ZeroDivisionError en la división por 3", correct: false },
+          { text: "Error de Sintaxis por omitir paréntesis", correct: false },
+          { text: "Error Lógico: Precedencia de operadores; solo nota3 se divide entre 3", correct: true },
+          { text: "TypeError: División flotante no permitida", correct: false }
+        ],
+        expl: "Los errores lógicos son los más difíciles de depurar porque el programa corre sin excepciones. Por precedencia, la división se ejecuta antes que la suma. Debe agruparse con paréntesis: (n1 + n2 + n3) / 3.",
+        fix: 'nota1 = 4.0\nnota2 = 3.5\nnota3 = 4.5\npromedio = (nota1 + nota2 + nota3) / 3  # Corrección de precedencia\nprint("Promedio correcto:", promedio)  # Salida: 4.0'
+      }
+    ];
+
+    let cur = 0;
+    function loadCase(idx) {
+      cur = idx;
+      document.querySelectorAll('.tab-btn').forEach((b, i) => b.classList.toggle('active', i === idx));
+      const c = cases[idx];
+      document.getElementById('codeView').textContent = c.code.replace(/\\n/g, '\n');
+      document.getElementById('tracebackView').textContent = c.trace.replace(/\\n/g, '\n');
+      const optBox = document.getElementById('optContainer');
+      optBox.innerHTML = '';
+      c.opts.forEach((o, i) => {
+        const btn = document.createElement('button');
+        btn.className = 'opt-btn';
+        btn.textContent = o.text;
+        btn.onclick = () => checkAnswer(i);
+        optBox.appendChild(btn);
+      });
+      document.getElementById('feedbackBox').style.display = 'none';
+      document.getElementById('fixBox').style.display = 'none';
+    }
+
+    function checkAnswer(chosenIdx) {
+      const c = cases[cur];
+      const btns = document.querySelectorAll('.opt-btn');
+      btns.forEach((b, i) => {
+        b.disabled = true;
+        if (c.opts[i].correct) b.classList.add('correct');
+        else if (i === chosenIdx) b.classList.add('wrong');
+      });
+      const fb = document.getElementById('feedbackBox');
+      fb.style.display = 'block';
+      if (c.opts[chosenIdx].correct) {
+        fb.style.background = 'rgba(16, 185, 129, 0.15)';
+        fb.style.color = '#86efac';
+        fb.innerHTML = '<strong>✅ ¡Diagnóstico Correcto!</strong> ' + c.expl;
+      } else {
+        fb.style.background = 'rgba(239, 68, 68, 0.15)';
+        fb.style.color = '#fca5a5';
+        fb.innerHTML = '<strong>❌ Diagnóstico Erróneo.</strong> ' + c.expl;
+      }
+      const fix = document.getElementById('fixBox');
+      fix.style.display = 'block';
+      fix.innerHTML = '<strong>Solución depurada:</strong><br>' + c.fix.replace(/\\n/g, '<br>');
+    }
+
+    loadCase(0);
+  </script>
+</body>
+</html>

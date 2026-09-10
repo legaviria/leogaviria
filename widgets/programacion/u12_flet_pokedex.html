@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Proyecto Integrador: Pokédex con Flet</title>
+  <style>
+    :root {
+      --bg: #0e0e11; --card: #141923; --border: #232d42; --text: #fff;
+      --muted: #94a3b8; --red: #ef4444; --green: #10b981; --sky: #38bdf8;
+    }
+    body.theme-light {
+      --bg: #f8fafc; --card: #ffffff; --border: #e2e8f0; --text: #0f172a;
+      --muted: #64748b; --red: #dc2626; --green: #059669; --sky: #0284c7;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { background: var(--bg); color: var(--text); padding: 14px; display: flex; justify-content: center; }
+    .container { width: 100%; max-width: 680px; background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 16px; }
+    .header { text-align: center; margin-bottom: 12px; }
+    .header h3 { font-size: 1.1rem; color: #ef4444; margin-bottom: 4px; }
+    .search-row { display: flex; gap: 8px; margin-bottom: 12px; }
+    input[type="text"] { flex: 1; padding: 8px 12px; background: #080b10; border: 1px solid var(--border); border-radius: 6px; color: white; font-size: 0.82rem; outline: none; }
+    .poke-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 12px; }
+    @media (max-width: 500px) { .poke-grid { grid-template-columns: 1fr; } }
+    .poke-card { background: #080b10; border: 1px solid var(--border); border-radius: 8px; padding: 10px; text-align: center; cursor: pointer; transition: 0.2s; }
+    .poke-card:hover { border-color: var(--sky); transform: translateY(-2px); }
+    .poke-card.active { border-color: var(--green); background: rgba(16, 185, 129, 0.1); }
+    .poke-type { font-size: 0.68rem; font-weight: bold; padding: 2px 6px; border-radius: 4px; display: inline-block; margin-top: 4px; }
+    .type-fire { background: rgba(239, 68, 68, 0.2); color: #f87171; }
+    .type-water { background: rgba(56, 189, 248, 0.2); color: #38bdf8; }
+    .type-grass { background: rgba(16, 185, 129, 0.2); color: #34d399; }
+    .detail-card { background: #080b10; border: 1px solid var(--border); border-radius: 8px; padding: 12px; font-size: 0.8rem; display: flex; justify-content: space-between; }
+    .stat-bar { background: rgba(255,255,255,0.08); height: 6px; border-radius: 3px; overflow: hidden; margin-top: 3px; width: 120px; }
+    .stat-fill { height: 100%; background: #38bdf8; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h3>🔴 Proyecto Integrador: Pokédex Reactiva en Flet</h3>
+      <p style="font-size:0.75rem; color:var(--muted)">Carga de datos JSON, filtrado en tiempo real y vista maestra-detalle reactiva.</p>
+    </div>
+
+    <div class="search-row">
+      <input type="text" id="pSearch" placeholder="Buscar por nombre (ej. Charmander, Bulbasaur)..." oninput="filterPoke()">
+    </div>
+
+    <div class="poke-grid" id="pGrid"></div>
+
+    <div class="detail-card" id="detailBox">
+      <div>
+        <h4 id="dName" style="color:#fde047; font-size:0.95rem">Charmander (#004)</h4>
+        <div id="dType" class="poke-type type-fire">Fuego</div>
+      </div>
+      <div>
+        <div style="font-size:0.7rem; color:var(--muted)">HP: 39 <div class="stat-bar"><div class="stat-fill" style="width:39%"></div></div></div>
+        <div style="font-size:0.7rem; color:var(--muted); margin-top:4px">Ataque: 52 <div class="stat-bar"><div class="stat-fill" style="width:52%"></div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const pkm = [
+      { id: "001", name: "Bulbasaur", type: "Planta / Veneno", tClass: "type-grass", hp: 45, atk: 49 },
+      { id: "004", name: "Charmander", type: "Fuego", tClass: "type-fire", hp: 39, atk: 52 },
+      { id: "007", name: "Squirtle", type: "Agua", tClass: "type-water", hp: 44, atk: 48 }
+    ];
+
+    function renderGrid(list) {
+      const g = document.getElementById('pGrid');
+      g.innerHTML = '';
+      list.forEach(p => {
+        const d = document.createElement('div');
+        d.className = 'poke-card';
+        d.onclick = () => showDetail(p);
+        d.innerHTML = `<div style="font-size:0.72rem; color:var(--muted)">#${p.id}</div><strong style="font-size:0.85rem">${p.name}</strong><br><span class="poke-type ${p.tClass}">${p.type}</span>`;
+        g.appendChild(d);
+      });
+    }
+
+    function showDetail(p) {
+      document.getElementById('dName').textContent = `${p.name} (#${p.id})`;
+      const dt = document.getElementById('dType');
+      dt.textContent = p.type;
+      dt.className = `poke-type ${p.tClass}`;
+      document.getElementById('detailBox').querySelector('div:last-child').innerHTML = `
+        <div style="font-size:0.7rem; color:var(--muted)">HP: ${p.hp} <div class="stat-bar"><div class="stat-fill" style="width:${p.hp}%"></div></div></div>
+        <div style="font-size:0.7rem; color:var(--muted); margin-top:4px">Ataque: ${p.atk} <div class="stat-bar"><div class="stat-fill" style="width:${p.atk}%"></div></div></div>
+      `;
+    }
+
+    function filterPoke() {
+      const q = document.getElementById('pSearch').value.toLowerCase();
+      const filtered = pkm.filter(p => p.name.toLowerCase().includes(q));
+      renderGrid(filtered);
+    }
+    renderGrid(pkm);
+  </script>
+</body>
+</html>

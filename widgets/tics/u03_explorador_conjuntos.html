@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      background-color: #0b0e14;
+      color: #e2e8f0;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      margin: 0;
+      padding: 12px;
+      transition: background-color 0.2s, color 0.2s;
+    }
+    [data-theme="light"] body { background-color: #ffffff; color: #0f172a; }
+    [data-theme="light"] .card-box { background-color: #f8fafc !important; border-color: #e2e8f0 !important; color: #0f172a !important; }
+    [data-theme="light"] .subcard-box { background-color: #ffffff !important; border-color: #cbd5e1 !important; color: #1e293b !important; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+    [data-theme="light"] .text-muted { color: #64748b !important; }
+    [data-theme="light"] .text-highlight { color: #0f766e !important; }
+    [data-theme="light"] input, [data-theme="light"] select { background-color: #ffffff !important; border-color: #cbd5e1 !important; color: #0f172a !important; }
+    .card-box { background-color: #121622; border: 1px solid #1f293d; border-radius: 12px; }
+    .subcard-box { background-color: #090d14; border: 1px solid #1a2233; border-radius: 8px; }
+    .text-muted { color: #94a3b8; }
+    .text-highlight { color: #2dd4bf; }
+  </style>
+  <script>
+    window.addEventListener('message', (event) => {
+      if (event.data && event.data.type === 'THEME_CHANGE') {
+        document.documentElement.setAttribute('data-theme', event.data.theme);
+      }
+    });
+    try {
+      const savedTheme = localStorage.getItem('leogaviria_theme') || 'dark';
+      document.documentElement.setAttribute('data-theme', savedTheme);
+    } catch(e) {}
+  </script>
+
+  <title>Explorador Interactivo de Conjuntos</title>
+</head>
+<body>
+  <div class="max-w-4xl mx-auto space-y-4">
+    <div class="card-box p-4 sm:p-5">
+      <div class="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-gray-800/80 mb-4">
+        <div>
+          <h2 class="text-base sm:text-lg font-bold flex items-center gap-2 text-highlight">
+            <i class="fas fa-shapes"></i> Explorador Interactivo de Conjuntos
+          </h2>
+          <p class="text-xs text-muted">Elementos, Pertenencia (∈), Inclusión (⊆), Cardinalidad |A| y Conjunto Vacío (∅)</p>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
+        <div>
+          <label class="text-xs font-semibold text-muted block mb-1">Conjunto A (separado por comas):</label>
+          <input type="text" id="set-a-in" value="1, 2, 3, 4" oninput="updateSets()" class="w-full px-3 py-1.5 rounded-lg text-xs font-mono bg-[#090d14] border border-gray-700 text-teal-400 font-bold">
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-muted block mb-1">Conjunto B (separado por comas):</label>
+          <input type="text" id="set-b-in" value="2, 4" oninput="updateSets()" class="w-full px-3 py-1.5 rounded-lg text-xs font-mono bg-[#090d14] border border-gray-700 text-sky-400 font-bold">
+        </div>
+      </div>
+
+      <!-- Tarjetas de Inspección de Conjuntos -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
+        <div class="subcard-box p-3 border-teal-500/30">
+          <div class="flex justify-between items-center mb-1">
+            <span class="text-xs font-bold text-teal-400 font-mono">Conjunto A</span>
+            <span id="card-a" class="text-xs font-mono text-muted">|A| = 4</span>
+          </div>
+          <div id="disp-a" class="flex flex-wrap gap-1.5 py-1"></div>
+        </div>
+        <div class="subcard-box p-3 border-sky-500/30">
+          <div class="flex justify-between items-center mb-1">
+            <span class="text-xs font-bold text-sky-400 font-mono">Conjunto B</span>
+            <span id="card-b" class="text-xs font-mono text-muted">|B| = 2</span>
+          </div>
+          <div id="disp-b" class="flex flex-wrap gap-1.5 py-1"></div>
+        </div>
+      </div>
+
+      <!-- Evaluador de Relaciones -->
+      <div class="subcard-box p-3 sm:p-4 mb-3">
+        <h4 class="text-xs font-bold text-muted uppercase tracking-wider mb-2">Relaciones de Inclusión y Pertenencia</h4>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 font-mono text-xs" id="rel-checks"></div>
+      </div>
+
+      <!-- Verificador de Elemento Específico -->
+      <div class="subcard-box p-3 flex flex-wrap items-center gap-3">
+        <label class="text-xs text-muted font-semibold">Probar elemento x:</label>
+        <input type="text" id="test-x" value="2" oninput="updateSets()" class="w-20 px-2.5 py-1 rounded bg-[#090d14] border border-gray-700 text-amber-400 text-xs font-mono text-center font-bold">
+        <div id="test-x-res" class="text-xs font-mono"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function parseSet(str) {
+      if (!str.trim()) return [];
+      const parts = str.split(',').map(s => s.trim()).filter(s => s.length > 0);
+      return Array.from(new Set(parts));
+    }
+
+    function updateSets() {
+      const setA = parseSet(document.getElementById('set-a-in').value);
+      const setB = parseSet(document.getElementById('set-b-in').value);
+
+      document.getElementById('card-a').textContent = `|A| = ${setA.length}`;
+      document.getElementById('card-b').textContent = `|B| = ${setB.length}`;
+
+      const dispA = document.getElementById('disp-a');
+      dispA.innerHTML = '';
+      if (setA.length === 0) dispA.innerHTML = '<span class="text-xs text-gray-500 font-mono">∅ (Conjunto Vacío)</span>';
+      setA.forEach(el => {
+        dispA.innerHTML += `<span class="px-2 py-0.5 rounded bg-teal-500/15 border border-teal-500/30 text-teal-300 text-xs font-mono">${el}</span>`;
+      });
+
+      const dispB = document.getElementById('disp-b');
+      dispB.innerHTML = '';
+      if (setB.length === 0) dispB.innerHTML = '<span class="text-xs text-gray-500 font-mono">∅ (Conjunto Vacío)</span>';
+      setB.forEach(el => {
+        dispB.innerHTML += `<span class="px-2 py-0.5 rounded bg-sky-500/15 border border-sky-500/30 text-sky-300 text-xs font-mono">${el}</span>`;
+      });
+
+      const isSubAB = setA.every(x => setB.includes(x));
+      const isSubBA = setB.every(x => setA.includes(x));
+      const isEqual = isSubAB && isSubBA && setA.length === setB.length;
+
+      const relCont = document.getElementById('rel-checks');
+      relCont.innerHTML = `
+        <div class="p-2 rounded bg-[#10141d] border ${isSubBA ? 'border-emerald-500/40 text-emerald-400' : 'border-gray-800 text-gray-400'}">
+          B &sube; A: <strong>${isSubBA ? 'VERDADERO (B es subconjunto de A)' : 'FALSO'}</strong>
+        </div>
+        <div class="p-2 rounded bg-[#10141d] border ${isSubAB ? 'border-emerald-500/40 text-emerald-400' : 'border-gray-800 text-gray-400'}">
+          A &sube; B: <strong>${isSubAB ? 'VERDADERO (A es subconjunto de B)' : 'FALSO'}</strong>
+        </div>
+        <div class="p-2 rounded bg-[#10141d] border ${isEqual ? 'border-teal-500/40 text-teal-300' : 'border-gray-800 text-gray-400'}">
+          A = B: <strong>${isEqual ? 'VERDADERO (Mismos elementos)' : 'FALSO'}</strong>
+        </div>
+      `;
+
+      // Probar elemento x
+      const x = document.getElementById('test-x').value.trim();
+      const inA = setA.includes(x);
+      const inB = setB.includes(x);
+      document.getElementById('test-x-res').innerHTML = `
+        <span class="${inA ? 'text-teal-400' : 'text-gray-500'} font-bold">${x} ${inA ? '&isin;' : '&notin;'} A</span> &nbsp;|&nbsp;
+        <span class="${inB ? 'text-sky-400' : 'text-gray-500'} font-bold">${x} ${inB ? '&isin;' : '&notin;'} B</span>
+      `;
+    }
+
+    updateSets();
+  </script>
+</body>
+</html>

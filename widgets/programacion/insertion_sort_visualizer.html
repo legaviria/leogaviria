@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; }
+    html, body {
+      background-color: #0e0e11 !important;
+      margin: 0;
+      padding: 6px;
+      overflow-x: hidden !important;
+      overflow-y: hidden;
+    }
+    /* Estilos de sintaxis de código */
+    .syn-keyword { color: #f472b6; font-weight: bold; }
+    .syn-func { color: #38bdf8; }
+    .syn-var { color: #facc15; }
+    .syn-num { color: #a78bfa; }
+    .syn-type { color: #4ade80; }
+    .syn-comment { color: #6b7280; font-style: italic; }
+  </style>
+</head>
+<body class="bg-[#0e0e11] text-gray-200 font-sans p-2 select-none">
+
+  <!-- PANEL PRINCIPAL -->
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
+
+    <!-- COLUMNA IZQUIERDA: CÓDIGO -->
+    <div class="lg:col-span-5 bg-[#141419] border border-gray-800 rounded-xl p-4 flex flex-col justify-between">
+      <div>
+        <div class="flex justify-between items-center mb-4 border-b border-gray-800 pb-3">
+          <div class="flex items-center gap-2 bg-[#1e1e24] border border-gray-700 rounded-lg px-2.5 py-1.5">
+            <img id="lang-logo" src="https://raw.githubusercontent.com/devicons/devicon/master/icons/python/python-original.svg" class="w-4 h-4" alt="Logo">
+            <select id="lang-select" onchange="changeLanguage()" class="bg-transparent text-emerald-400 font-semibold text-sm outline-none cursor-pointer">
+              <option value="python" class="bg-[#1e1e24] text-white">Python</option>
+              <option value="cpp" class="bg-[#1e1e24] text-white">C++</option>
+            </select>
+          </div>
+
+          <div class="flex gap-3 text-gray-500 text-sm">
+            <i class="fas fa-copy hover:text-white cursor-pointer" title="Copiar código"></i>
+          </div>
+        </div>
+
+        <div id="code-container" class="font-mono text-xs leading-tight space-y-0 overflow-x-auto"></div>
+      </div>
+    </div>
+
+    <!-- COLUMNA DERECHA: VISUALIZACIÓN Y CONTROLES -->
+    <div class="lg:col-span-7 space-y-4">
+
+      <!-- INPUTS -->
+      <div class="bg-[#141419] border border-gray-800 rounded-xl p-4">
+        <span class="text-xs font-semibold text-gray-400 block mb-3">Entrada de Datos</span>
+
+        <div class="flex flex-wrap gap-2 mb-3">
+          <button id="btn-estandar" onclick="loadPreset('estandar')" class="preset-btn px-3 py-1 bg-[#1e1e24] hover:bg-gray-800 border border-gray-700 rounded-md text-xs font-medium text-gray-300 transition">Estándar</button>
+          <button id="btn-iguales" onclick="loadPreset('iguales')" class="preset-btn px-3 py-1 bg-[#1e1e24] hover:bg-gray-800 border border-gray-700 rounded-md text-xs font-medium text-gray-300 transition">Todos Iguales</button>
+          <button id="btn-pequeno" onclick="loadPreset('pequeno')" class="preset-btn px-3 py-1 bg-[#1e1e24] hover:bg-gray-800 border border-gray-700 rounded-md text-xs font-medium text-gray-300 transition">Pequeño</button>
+          <button id="btn-invertido" onclick="loadPreset('invertido')" class="preset-btn px-3 py-1 bg-[#1e1e24] hover:bg-gray-800 border border-gray-700 rounded-md text-xs font-medium text-gray-300 transition">Invertido</button>
+          <button id="btn-custom" onclick="loadPreset('custom')" class="preset-btn px-3 py-1 bg-[#1e1e24] hover:bg-gray-800 border border-gray-700 rounded-md text-xs font-medium text-gray-300 transition">Custom</button>
+        </div>
+
+        <div class="bg-[#0e0e11] border border-gray-800 rounded-lg p-2.5 flex flex-wrap items-center gap-2">
+          <span class="text-xs text-gray-500 font-mono">arr =</span>
+          <div id="tags-container" class="flex flex-wrap gap-1.5 items-center"></div>
+
+          <input id="num-input" type="text" placeholder="Escribe un número..." class="flex-1 min-w-[110px] bg-transparent text-xs text-white outline-none font-mono" onkeydown="handleInputKey(event)">
+        </div>
+        <span class="text-[10px] text-gray-500 block mt-1">Presiona Enter, Coma o Espacio para agregar (máx. 10 elementos entre 1 y 99).</span>
+      </div>
+
+      <!-- CANVAS DE VISUALIZACIÓN DE BARRAS -->
+      <div class="bg-[#141419] border border-gray-800 rounded-xl p-5 flex flex-col justify-between min-h-[340px] relative overflow-visible">
+
+        <div class="flex justify-between items-center font-mono text-xs text-gray-400 font-semibold px-2">
+          <div>i = <span id="i-val" class="text-purple-400">0</span></div>
+          <div>key = <span id="key-val" class="text-amber-400">-</span></div>
+          <div>j = <span id="j-val" class="text-sky-400">-</span></div>
+        </div>
+
+        <div id="bars-container" class="flex justify-center items-end gap-3 w-full h-44 mt-6 border-b border-gray-800 pb-5 mb-8 overflow-visible relative"></div>
+
+        <div class="text-center my-1 h-6">
+          <span id="comparison-expression" class="font-mono text-sm font-bold text-gray-200"></span>
+        </div>
+
+      </div>
+
+      <!-- BARRA DE EXPLICACIÓN DEL PASO ACTUAL -->
+      <div class="bg-[#141419] border-l-4 border-emerald-500 border-y border-r border-gray-800 rounded-r-xl p-3 text-xs font-mono text-gray-300">
+        <span id="step-description">Inicializando el proceso...</span>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- BARRA INFERIOR DE REPRODUCCIÓN -->
+  <div class="mt-4 bg-[#141419] border border-gray-800 rounded-xl p-3 flex flex-wrap items-center justify-between gap-4">
+    <div class="flex items-center gap-2">
+      <button id="play-btn" onclick="togglePlay()" class="p-2 hover:bg-gray-800 rounded-lg text-gray-300 transition" title="Reproducir / Pausar">
+        <i id="play-icon" class="fas fa-play text-sm"></i>
+      </button>
+      <button onclick="stepBack()" class="p-2 hover:bg-gray-800 rounded-lg text-gray-300 transition" title="Paso Anterior">
+        <i class="fas fa-chevron-left text-sm"></i>
+      </button>
+      <button onclick="stepForward()" class="p-2 hover:bg-gray-800 rounded-lg text-gray-300 transition" title="Siguiente Paso">
+        <i class="fas fa-chevron-right text-sm"></i>
+      </button>
+    </div>
+
+    <div class="flex-1 flex items-center gap-3 mx-2">
+      <div class="w-full bg-gray-800 h-1.5 rounded-full overflow-hidden">
+        <div id="progress-bar" class="bg-emerald-500 h-full w-0 transition-all duration-200"></div>
+      </div>
+      <span id="step-counter" class="text-xs font-mono text-gray-400 min-w-[45px]">0/0</span>
+    </div>
+
+    <div class="flex items-center gap-2 bg-[#1e1e24] border border-gray-700 rounded-lg px-2 py-1">
+      <span class="text-xs font-mono text-gray-400">Speed:</span>
+      <select id="speed-select" onchange="changeSpeed()" class="bg-transparent text-emerald-400 font-mono text-xs font-semibold outline-none cursor-pointer">
+        <option value="1000" class="bg-[#1e1e24] text-white">0.5x</option>
+        <option value="600" selected class="bg-[#1e1e24] text-white">1x</option>
+        <option value="350" class="bg-[#1e1e24] text-white">1.5x</option>
+        <option value="150" class="bg-[#1e1e24] text-white">2x</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- LÓGICA JAVASCRIPT -->
+  <script>
+    const LOGOS = {
+      python: 'https://raw.githubusercontent.com/devicons/devicon/master/icons/python/python-original.svg',
+      cpp: 'https://raw.githubusercontent.com/devicons/devicon/master/icons/cplusplus/cplusplus-original.svg'
+    };
+
+    const CODES = {
+      python: [
+        { line: 1, html: '<span class="syn-keyword">def</span> <span class="syn-func">insertion_sort</span>(arr):' },
+        { line: 2, html: '    <span class="syn-keyword">for</span> i <span class="syn-keyword">in</span> <span class="syn-func">range</span>(<span class="syn-num">1</span>, <span class="syn-func">len</span>(arr)):' },
+        { line: 3, html: '        key = arr[i]' },
+        { line: 4, html: '        j = i - <span class="syn-num">1</span>' },
+        { line: 5, html: '        <span class="syn-keyword">while</span> j &gt;= <span class="syn-num">0</span> <span class="syn-keyword">and</span> key &lt; arr[j]:' },
+        { line: 6, html: '            arr[j + <span class="syn-num">1</span>] = arr[j]' },
+        { line: 7, html: '            j -= <span class="syn-num">1</span>' },
+        { line: 8, html: '        arr[j + <span class="syn-num">1</span>] = key' },
+        { line: 9, html: '<span class="syn-keyword">return</span> arr' }
+      ],
+      cpp: [
+        { line: 1, html: '<span class="syn-type">void</span> <span class="syn-func">insertionSort</span>(vector&lt;<span class="syn-type">int</span>&gt;&amp; arr) {' },
+        { line: 2, html: '    <span class="syn-type">int</span> n = arr.<span class="syn-func">size</span>();' },
+        { line: 3, html: '    <span class="syn-keyword">for</span> (<span class="syn-type">int</span> i = <span class="syn-num">1</span>; i &lt; n; i++) {' },
+        { line: 4, html: '        <span class="syn-type">int</span> key = arr[i];' },
+        { line: 5, html: '        <span class="syn-type">int</span> j = i - <span class="syn-num">1</span>;' },
+        { line: 6, html: '        <span class="syn-keyword">while</span> (j &gt;= <span class="syn-num">0</span> &amp;&amp; arr[j] &gt; key) {' },
+        { line: 7, html: '            arr[j + <span class="syn-num">1</span>] = arr[j];' },
+        { line: 8, html: '            j--;' },
+        { line: 9, html: '        }' },
+        { line: 10, html: '        arr[j + <span class="syn-num">1</span>] = key;' },
+        { line: 11, html: '    }' },
+        { line: 12, html: '}' }
+      ]
+    };
+
+    let currentArray = [42, 10, 25, 30, 18, 5];
+    let activePreset = 'estandar';
+    let steps = [];
+    let currentStep = 0;
+    let isPlaying = false;
+    let interval = null;
+    let animationSpeed = 600;
+
+    function renderCode(activeLine = -1) {
+      const lang = document.getElementById('lang-select').value;
+      const container = document.getElementById('code-container');
+      container.innerHTML = '';
+
+      CODES[lang].forEach(item => {
+        const row = document.createElement('div');
+        const isActive = item.line === activeLine;
+
+        const isShiftLine = (lang === 'python' && item.line === 6) || (lang === 'cpp' && item.line === 7);
+        const activeBg = isShiftLine ? 'bg-rose-950/70 text-rose-200 border-l-2 border-rose-500' : 'bg-emerald-950/60 text-emerald-200 border-l-2 border-emerald-400';
+
+        row.className = `flex gap-4 px-2 py-0 rounded ${isActive ? activeBg : 'text-gray-300'}`;
+        row.innerHTML = `<span class="w-4 text-right text-gray-600 select-none font-normal">${item.line}</span><pre>${item.html}</pre>`;
+        container.appendChild(row);
+      });
+    }
+
+    function generateSteps() {
+      steps = [];
+      let arr = [...currentArray];
+      let n = arr.length;
+      const isCpp = document.getElementById('lang-select').value === 'cpp';
+
+      steps.push({
+        arr: [...arr],
+        i: 0,
+        key: null,
+        j: null,
+        sortedBoundary: 1,
+        activeLine: 1,
+        description: 'Paso: Inicia el algoritmo Insertion Sort. El primer elemento ya se considera ordenado.',
+        expr: ''
+      });
+
+      for (let i = 1; i < n; i++) {
+        let key = arr[i];
+        let j = i - 1;
+
+        steps.push({
+          arr: [...arr],
+          i: i,
+          key: key,
+          keyIdx: i,
+          j: j,
+          sortedBoundary: i,
+          activeLine: isCpp ? 4 : 3,
+          description: `Paso: Seleccionar el elemento actual arr[${i}] = ${key} como la clave (key) a insertar.`,
+          expr: `<span class="text-amber-400">key = ${key}</span>`
+        });
+
+        while (j >= 0 && arr[j] > key) {
+          steps.push({
+            arr: [...arr],
+            i: i,
+            key: key,
+            keyIdx: j + 1,
+            j: j,
+            sortedBoundary: i,
+            activeLine: isCpp ? 6 : 5,
+            description: `Paso: Comparar key (${key}) con arr[${j}] (${arr[j]}). Como ${arr[j]} > ${key}, desplazamos ${arr[j]} a la derecha.`,
+            expr: `<span class="text-sky-400">${arr[j]}</span> &gt; <span class="text-amber-400">${key}</span>`
+          });
+
+          arr[j + 1] = arr[j];
+          j = j - 1;
+
+          steps.push({
+            arr: [...arr],
+            i: i,
+            key: key,
+            keyIdx: j + 1,
+            j: j,
+            isShift: true,
+            sortedBoundary: i,
+            activeLine: isCpp ? 7 : 6,
+            description: `Paso: Se desplaza el valor a la posición adyacente.`,
+            expr: `<span class="text-rose-400">Desplazando elemento a la derecha...</span>`
+          });
+        }
+
+        arr[j + 1] = key;
+
+        steps.push({
+          arr: [...arr],
+          i: i,
+          key: key,
+          keyIdx: j + 1,
+          j: j,
+          sortedBoundary: i + 1,
+          activeLine: isCpp ? 10 : 8,
+          description: `Paso: Se inserta key (${key}) en la posición ordenada ${j + 1}.`,
+          expr: `<span class="text-emerald-400">Insertado ${key} en pos ${j + 1}</span>`
+        });
+      }
+
+      steps.push({
+        arr: [...arr],
+        i: n - 1,
+        key: null,
+        j: null,
+        sortedBoundary: n,
+        sorted: true,
+        activeLine: isCpp ? 12 : 9,
+        description: 'Paso: Ordenamiento completado. El arreglo está totalmente ordenado.',
+        expr: ''
+      });
+
+      currentStep = 0;
+      updateUI();
+    }
+
+    function updateUI() {
+      if (steps.length === 0) return;
+      const step = steps[currentStep];
+
+      renderCode(step.activeLine);
+
+      document.getElementById('i-val').innerText = step.i !== undefined && step.i !== null ? step.i : '-';
+      document.getElementById('key-val').innerText = step.key !== undefined && step.key !== null ? step.key : '-';
+      document.getElementById('j-val').innerText = step.j !== undefined && step.j !== null ? step.j : '-';
+
+      document.getElementById('step-description').innerHTML = step.description;
+      document.getElementById('comparison-expression').innerHTML = step.expr || '';
+
+      const container = document.getElementById('bars-container');
+      container.innerHTML = '';
+      const maxVal = Math.max(...step.arr, step.key || 1, 1);
+
+      step.arr.forEach((val, idx) => {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'flex flex-col items-center relative overflow-visible';
+
+        const bar = document.createElement('div');
+        let barStyle = 'bg-[#1e1e28] border border-gray-700';
+
+        if (step.sorted || idx < step.sortedBoundary) {
+          barStyle = 'bg-emerald-500/20 border-2 border-emerald-400 text-emerald-300';
+        }
+
+        if (idx === step.keyIdx && step.key !== null) {
+          barStyle = step.isShift ? 'bg-rose-500/20 border-2 border-rose-400 text-rose-300' : 'bg-amber-500/20 border-2 border-amber-400 text-amber-300';
+        } else if (idx === step.j) {
+          barStyle = 'bg-sky-500/20 border-2 border-sky-400 text-sky-300';
+        }
+
+        bar.className = `w-10 sm:w-12 rounded-xl transition-all duration-300 flex items-center justify-center font-mono font-bold text-xs ${barStyle}`;
+        bar.style.height = `${(val / maxVal) * 110 + 35}px`;
+        bar.innerText = val;
+
+        const idxLabel = document.createElement('span');
+        idxLabel.className = 'text-[11px] font-mono text-gray-500 mt-2';
+        idxLabel.innerText = idx;
+
+        wrapper.appendChild(bar);
+        wrapper.appendChild(idxLabel);
+
+        // INDICADORES DE PUNTEROS (i, j, key)
+        const ptrs = [];
+        if (!step.sorted) {
+          if (idx === step.i) ptrs.push({ label: 'i', color: 'bg-purple-400 text-black' });
+          if (idx === step.j) ptrs.push({ label: 'j', color: 'bg-sky-400 text-black' });
+          if (idx === step.keyIdx && step.key !== null) ptrs.push({ label: 'key', color: 'bg-amber-400 text-black' });
+        }
+
+        if (ptrs.length > 0) {
+          const ptrContainer = document.createElement('div');
+          ptrContainer.className = 'absolute -bottom-7 flex gap-0.5 z-10';
+
+          ptrs.forEach(p => {
+            const ptr = document.createElement('span');
+            ptr.className = `px-1.5 py-0.5 rounded-md text-[9px] font-mono font-bold shadow-lg ${p.color}`;
+            ptr.innerText = p.label;
+            ptrContainer.appendChild(ptr);
+          });
+
+          wrapper.appendChild(ptrContainer);
+        }
+
+        container.appendChild(wrapper);
+      });
+
+      document.getElementById('step-counter').innerText = `${currentStep + 1}/${steps.length}`;
+      document.getElementById('progress-bar').style.width = `${((currentStep + 1) / steps.length) * 100}%`;
+      renderTags();
+      highlightActivePreset();
+    }
+
+    function renderTags() {
+      const container = document.getElementById('tags-container');
+      container.innerHTML = '';
+      currentArray.forEach((val, idx) => {
+        const tag = document.createElement('span');
+        tag.className = 'px-2 py-0.5 bg-[#1e1e24] text-xs font-mono text-gray-300 rounded border border-gray-700 flex items-center gap-1.5';
+        tag.innerHTML = `${val} <button onclick="removeElement(${idx})" class="text-gray-500 hover:text-rose-400 font-bold">×</button>`;
+        container.appendChild(tag);
+      });
+    }
+
+    function handleInputKey(e) {
+      if (['Enter', ',', ' ', 'Tab'].includes(e.key)) {
+        e.preventDefault();
+        const input = document.getElementById('num-input');
+        const val = parseInt(input.value.trim());
+
+        if (!isNaN(val) && val >= 1 && val <= 99) {
+          if (currentArray.length >= 10) {
+            alert('Máximo 10 elementos permitidos.');
+            return;
+          }
+          if (isPlaying) togglePlay();
+          currentArray.push(val);
+          activePreset = 'custom';
+          input.value = '';
+          generateSteps();
+        } else {
+          input.value = '';
+        }
+      }
+    }
+
+    function removeElement(index) {
+      if (currentArray.length <= 2) return alert('Debes mantener al menos 2 elementos.');
+      if (isPlaying) togglePlay();
+      currentArray.splice(index, 1);
+      activePreset = 'custom';
+      generateSteps();
+    }
+
+    function changeLanguage() {
+      const lang = document.getElementById('lang-select').value;
+      document.getElementById('lang-logo').src = LOGOS[lang];
+      generateSteps();
+    }
+
+    function loadPreset(type) {
+      if (isPlaying) togglePlay();
+      activePreset = type;
+
+      if (type === 'estandar') currentArray = [42, 10, 25, 30, 18, 5];
+      if (type === 'iguales') currentArray = [42, 42, 42, 42, 42, 42];
+      if (type === 'pequeno') currentArray = [12, 5, 8];
+      if (type === 'invertido') currentArray = [60, 50, 40, 30, 20, 10];
+      if (type === 'custom') {
+        currentArray = [15, 3, 99, 44];
+      }
+      generateSteps();
+    }
+
+    function highlightActivePreset() {
+      document.querySelectorAll('.preset-btn').forEach(btn => {
+        btn.className = 'preset-btn px-3 py-1 bg-[#1e1e24] hover:bg-gray-800 border border-gray-700 rounded-md text-xs font-medium text-gray-300 transition';
+      });
+
+      if (activePreset) {
+        const activeBtn = document.getElementById(`btn-${activePreset}`);
+        if (activeBtn) {
+          if (activePreset === 'custom') {
+            activeBtn.className = 'preset-btn px-3 py-1 bg-indigo-950/80 border border-indigo-500 text-indigo-300 rounded-md text-xs font-medium shadow-sm transition';
+          } else {
+            activeBtn.className = 'preset-btn px-3 py-1 bg-emerald-950/80 border border-emerald-500 text-emerald-400 rounded-md text-xs font-medium shadow-sm transition';
+          }
+        }
+      }
+    }
+
+    function startTimer() {
+      clearInterval(interval);
+      interval = setInterval(() => {
+        if (currentStep < steps.length - 1) {
+          currentStep++;
+          updateUI();
+        } else {
+          togglePlay();
+        }
+      }, animationSpeed);
+    }
+
+    function changeSpeed() {
+      animationSpeed = parseInt(document.getElementById('speed-select').value);
+      if (isPlaying) {
+        startTimer();
+      }
+    }
+
+    function togglePlay() {
+      isPlaying = !isPlaying;
+      const icon = document.getElementById('play-icon');
+      if (isPlaying) {
+        icon.className = 'fas fa-pause text-sm';
+        startTimer();
+      } else {
+        icon.className = 'fas fa-play text-sm';
+        clearInterval(interval);
+      }
+    }
+
+    function stepForward() {
+      if (currentStep < steps.length - 1) { currentStep++; updateUI(); }
+    }
+
+    function stepBack() {
+      if (currentStep > 0) { currentStep--; updateUI(); }
+    }
+
+    loadPreset('estandar');
+  </script>
+</body>
+</html>

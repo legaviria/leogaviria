@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Casillas de Verificación (Convenciones)</title>
+  <style>
+    * { box-sizing: border-box; }
+    html, body {
+      background-color: #0e0e11 !important;
+      color: #ffffff;
+      margin: 0;
+      padding: 10px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+  </style>
+</head>
+<body>
+<style>
+  .chk-box {
+    background: #0e0e11;
+    color: #ffffff;
+    padding: 14px 16px;
+    border-radius: 12px;
+    border: 1px solid #1f293d;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    max-width: 580px;
+    margin: 0 auto;
+  }
+  .chk-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #c084fc;
+    margin-bottom: 6px;
+  }
+  .chk-question {
+    font-size: 0.85rem;
+    color: #cbd5e1;
+    margin-bottom: 10px;
+  }
+  .chk-list {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    margin-bottom: 12px;
+  }
+  .chk-item {
+    background: #181d28;
+    border: 1px solid #232d42;
+    padding: 8px 10px;
+    border-radius: 6px;
+    font-size: 0.82rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+  }
+  .btn-check-chk {
+    background: #c084fc;
+    color: #000;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 16px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    cursor: pointer;
+    width: 100%;
+  }
+  .chk-feedback {
+    margin-top: 12px;
+    padding: 10px;
+    border-radius: 6px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    display: none;
+  }
+  .chk-feedback.correct { background: rgba(74, 222, 128, 0.15); color: #4ade80; border: 1px solid #4ade80; }
+  .chk-feedback.incorrect { background: rgba(255, 118, 118, 0.15); color: #ff7676; border: 1px solid #ff7676; }
+</style>
+
+<div class="chk-box">
+  <div class="chk-title">Selecciona las Opciones Correctas</div>
+  <div class="chk-question">Selecciona **todos** los lenguajes que corresponden a la categoría de Lenguajes de Alto Nivel:</div>
+
+  <div class="chk-list">
+    <label class="chk-item"><input type="checkbox" id="c-py"> Python</label>
+    <label class="chk-item"><input type="checkbox" id="c-bin"> Código Máquina (Binario)</label>
+    <label class="chk-item"><input type="checkbox" id="c-cpp"> C++</label>
+    <label class="chk-item"><input type="checkbox" id="c-asm"> Ensamblador</label>
+  </div>
+
+  <button class="btn-check-chk" onclick="checkCheckboxes()">Validar Selección</button>
+  <div class="chk-feedback" id="chk-fb"></div>
+</div>
+
+<script>
+function checkCheckboxes() {
+  const py = document.getElementById('c-py').checked;
+  const bin = document.getElementById('c-bin').checked;
+  const cpp = document.getElementById('c-cpp').checked;
+  const asm = document.getElementById('c-asm').checked;
+  const fb = document.getElementById('chk-fb');
+  fb.style.display = 'block';
+
+  if (py && cpp && !bin && !asm) {
+    fb.className = 'chk-feedback correct';
+    fb.innerText = '¡Correcto! Python y C++ son de alto nivel. El binario es de bajo nivel y el ensamblador de nivel medio.';
+  } else {
+    fb.className = 'chk-feedback incorrect';
+    fb.innerText = 'Selección incorrecta. Recuerda diferenciar entre bajo, medio y alto nivel.';
+  }
+}
+</script>
+</body>
+</html>

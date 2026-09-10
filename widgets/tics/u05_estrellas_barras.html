@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      background-color: #0b0e14;
+      color: #e2e8f0;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      margin: 0;
+      padding: 12px;
+      transition: background-color 0.2s, color 0.2s;
+    }
+    [data-theme="light"] body { background-color: #ffffff; color: #0f172a; }
+    [data-theme="light"] .card-box { background-color: #f8fafc !important; border-color: #e2e8f0 !important; color: #0f172a !important; }
+    [data-theme="light"] .subcard-box { background-color: #ffffff !important; border-color: #cbd5e1 !important; color: #1e293b !important; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+    [data-theme="light"] .text-muted { color: #64748b !important; }
+    [data-theme="light"] .text-highlight { color: #0f766e !important; }
+    [data-theme="light"] input, [data-theme="light"] select { background-color: #ffffff !important; border-color: #cbd5e1 !important; color: #0f172a !important; }
+    .card-box { background-color: #121622; border: 1px solid #1f293d; border-radius: 12px; }
+    .subcard-box { background-color: #090d14; border: 1px solid #1a2233; border-radius: 8px; }
+    .text-muted { color: #94a3b8; }
+    .text-highlight { color: #2dd4bf; }
+  </style>
+  <script>
+    window.addEventListener('message', (event) => {
+      if (event.data && event.data.type === 'THEME_CHANGE') {
+        document.documentElement.setAttribute('data-theme', event.data.theme);
+      }
+    });
+    try {
+      const savedTheme = localStorage.getItem('leogaviria_theme') || 'dark';
+      document.documentElement.setAttribute('data-theme', savedTheme);
+    } catch(e) {}
+  </script>
+
+  <title>Combinaciones con Repetición: Estrellas y Barras</title>
+</head>
+<body>
+  <div class="max-w-4xl mx-auto space-y-4">
+    <div class="card-box p-4 sm:p-5">
+      <div class="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-gray-800/80 mb-4">
+        <div>
+          <h2 class="text-base sm:text-lg font-bold flex items-center gap-2 text-highlight">
+            <i class="fas fa-star"></i> Combinaciones con Repetición: Método de Estrellas y Barras
+          </h2>
+          <p class="text-xs text-muted">Fórmula: CR(n, r) = C(n + r - 1, r) separando r objetos idénticos con n - 1 separadores</p>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
+        <div>
+          <label class="text-xs font-semibold text-muted block mb-1">Tipos de Categorías (n):</label>
+          <input type="number" id="cr-n" value="3" min="2" max="5" oninput="renderStarsBars()" class="w-full px-3 py-1.5 rounded bg-[#090d14] border border-gray-700 text-teal-400 font-mono font-bold text-xs">
+          <span class="text-[10px] text-muted">Genera (n - 1) barras separadoras</span>
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-muted block mb-1">Elementos a Seleccionar (r):</label>
+          <input type="number" id="cr-r" value="5" min="1" max="8" oninput="renderStarsBars()" class="w-full px-3 py-1.5 rounded bg-[#090d14] border border-gray-700 text-amber-400 font-mono font-bold text-xs">
+          <span class="text-[10px] text-muted">Representados por r estrellas (★)</span>
+        </div>
+      </div>
+
+      <!-- Representación Gráfica Estrellas y Barras -->
+      <div class="subcard-box p-4 text-center mb-4 font-mono">
+        <span class="text-xs text-muted block mb-2">Ejemplo visual de una distribución:</span>
+        <div id="stars-bars-visual" class="text-lg sm:text-xl text-amber-400 tracking-widest my-2"></div>
+        <div id="stars-bars-meaning" class="text-xs text-gray-300"></div>
+      </div>
+
+      <!-- Fórmula y Resultado -->
+      <div class="subcard-box p-4 text-center font-mono">
+        <div id="cr-formula" class="text-xs text-gray-300 mb-1"></div>
+        <div id="cr-total" class="text-2xl font-black text-teal-300">---</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function fact(n) {
+      let f = 1;
+      for (let i = 2; i <= n; i++) f *= i;
+      return f;
+    }
+
+    function renderStarsBars() {
+      const n = Math.max(2, Math.min(5, parseInt(document.getElementById('cr-n').value) || 2));
+      const r = Math.max(1, Math.min(8, parseInt(document.getElementById('cr-r').value) || 1));
+
+      const totalSlots = n + r - 1;
+      const num = fact(totalSlots);
+      const den = fact(r) * fact(n - 1);
+      const total = Math.round(num / den);
+
+      document.getElementById('cr-formula').innerHTML = `CR(${n}, ${r}) = C(${n} + ${r} - 1, ${r}) = C(${totalSlots}, ${r}) = ${totalSlots}! / (${r}! · ${n-1}!)`;
+      document.getElementById('cr-total').innerHTML = `Total de Combinaciones: <strong class="text-teal-400">${total}</strong>`;
+
+      // Visualización muestra
+      let sample = [];
+      for (let i = 0; i < r; i++) sample.push('★');
+      sample.splice(2, 0, '|');
+      if (n >= 3) sample.splice(5, 0, '|');
+
+      document.getElementById('stars-bars-visual').innerHTML = sample.map(s => s === '|' ? '<span class="text-sky-400 font-bold px-1">|</span>' : '<span class="text-amber-400">★</span>').join(' ');
+      document.getElementById('stars-bars-meaning').textContent = `Total de posiciones = ${r} estrellas + ${n-1} barras = ${totalSlots} posiciones en la secuencia.`;
+    }
+
+    renderStarsBars();
+  </script>
+</body>
+</html>
