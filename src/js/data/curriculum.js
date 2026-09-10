@@ -73,6 +73,15 @@ export const CURRICULUM = [
         "hasAnimation": true,
         "widgetFile": "widgets/programacion/u02_simulador_depuracion.html",
         "badge": "Depuración Visual"
+      },
+      {
+        "id": "prog-libreria-turtle",
+        "title": "2.4 Uso de la librería Turtle",
+        "duration": "30 min",
+        "difficulty": "Fácil",
+        "hasAnimation": true,
+        "widgetFile": "widgets/programacion/u02_turtle_secuencial.html",
+        "badge": "Turtle & Secuencial"
       }
     ]
   },
@@ -532,6 +541,9 @@ export const CURRICULUM = [
 ];
 
 export const TOPIC_ALIASES = {
+  "prog-libreria-turtle": "prog-libreria-turtle",
+  "prog-turtle-secuencial": "prog-libreria-turtle",
+  "prog-uso-libreria-turtle": "prog-libreria-turtle",
   "prog-intro-algoritmos": "prog-conceptos-basicos",
   "prog-tipos-datos": "prog-variables-constantes",
   "prog-operadores-expresiones": "prog-operadores-relacionales-logicos",

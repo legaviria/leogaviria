@@ -1,0 +1,1060 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simulador Interactivo de Turtle: Programación Secuencial</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --bg: #0e0e11;
+      --card: #141923;
+      --card-inner: #0b0e14;
+      --border: #232d42;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --accent: #10b981;
+      --accent-hover: #059669;
+      --sky: #38bdf8;
+      --purple: #a855f7;
+      --amber: #f59e0b;
+    }
+
+    [data-theme="light"], body.theme-light {
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --card-inner: #f1f5f9;
+      --border: #cbd5e1;
+      --text: #0f172a;
+      --text-muted: #64748b;
+      --accent: #059669;
+      --accent-hover: #047857;
+      --sky: #0284c7;
+      --purple: #7e22ce;
+      --amber: #d97706;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    html, body {
+      background-color: var(--bg);
+      color: var(--text);
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 10px;
+    }
+
+    .main-wrapper {
+      width: 100%;
+      max-width: 860px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    }
+
+    /* Header */
+    .widget-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+    .widget-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--accent);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .widget-subtitle {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+    }
+
+    /* Tabs */
+    .tabs-bar {
+      display: flex;
+      gap: 5px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+      scrollbar-width: none;
+    }
+    .tabs-bar::-webkit-scrollbar { display: none; }
+    .tab-btn {
+      padding: 5px 10px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s;
+    }
+    .tab-btn:hover {
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text);
+    }
+    .tab-btn.active {
+      background: var(--accent);
+      color: #ffffff;
+      border-color: var(--accent);
+      box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+    }
+
+    /* Body area: Canvas + Code */
+    .work-area {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    @media (max-width: 680px) {
+      .work-area { grid-template-columns: 1fr; }
+    }
+
+    /* Canvas box */
+    .canvas-card {
+      background: var(--card-inner);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      min-height: 280px;
+    }
+    canvas {
+      background: transparent;
+      display: block;
+    }
+    .grid-overlay {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(to right, rgba(255,255,255,0.03) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255,255,255,0.03) 1px, transparent 1px);
+      background-size: 20px 20px;
+    }
+
+    /* Telemetry HUD */
+    .telemetry-hud {
+      position: absolute;
+      top: 6px;
+      left: 6px;
+      right: 6px;
+      display: flex;
+      justify-content: space-between;
+      font-family: monospace;
+      font-size: 0.68rem;
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(4px);
+      padding: 3px 8px;
+      border-radius: 6px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      pointer-events: none;
+    }
+    .hud-item { display: flex; align-items: center; gap: 4px; }
+    .hud-val { color: var(--sky); font-weight: bold; }
+
+    /* Code Inspector */
+    .code-card {
+      background: var(--card-inner);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      font-family: monospace;
+      font-size: 0.75rem;
+      min-height: 280px;
+    }
+    .code-header {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 5px;
+      margin-bottom: 6px;
+      display: flex;
+      justify-content: space-between;
+    }
+    .code-lines-box {
+      flex: 1;
+      overflow-y: auto;
+      max-height: 210px;
+      line-height: 1.5;
+    }
+    .code-line {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 2px 6px;
+      border-radius: 4px;
+      color: var(--text-muted);
+      transition: background 0.2s, color 0.2s;
+    }
+    .line-num {
+      width: 22px;
+      text-align: right;
+      color: #64748b;
+      user-select: none;
+      font-size: 0.68rem;
+    }
+    .line-content { flex: 1; }
+    .code-line.active {
+      background: rgba(56, 189, 248, 0.18);
+      color: var(--sky);
+      font-weight: bold;
+      border-left: 3px solid var(--sky);
+    }
+    .code-line.executed {
+      color: var(--text);
+    }
+
+    /* Explanation alert */
+    .step-explain {
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.25);
+      border-radius: 6px;
+      padding: 6px 10px;
+      font-size: 0.72rem;
+      color: #34d399;
+      margin-top: 6px;
+      min-height: 32px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Controls */
+    .controls-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--card-inner);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 8px 12px;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .btn-group { display: flex; align-items: center; gap: 6px; }
+    .btn {
+      padding: 6px 12px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text);
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .btn:hover:not(:disabled) {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: #64748b;
+    }
+    .btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+    .btn-primary {
+      background: var(--accent);
+      color: white;
+      border-color: var(--accent);
+    }
+    .btn-primary:hover:not(:disabled) {
+      background: var(--accent-hover);
+    }
+
+    /* Sandbox controls */
+    .sandbox-panel {
+      display: none;
+      gap: 6px;
+      flex-wrap: wrap;
+      background: var(--card-inner);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px;
+      margin-top: 4px;
+    }
+    .sandbox-btn {
+      padding: 4px 8px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      border-radius: 5px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.06);
+      color: var(--text);
+      cursor: pointer;
+    }
+    .sandbox-btn:hover {
+      background: var(--sky);
+      color: #000;
+    }
+  </style>
+</head>
+<body>
+  <div class="main-wrapper">
+    <!-- Header -->
+    <div class="widget-header">
+      <div>
+        <h2 class="widget-title">
+          <i class="fas fa-turtle"></i> Simulador de Turtle: Programación Secuencial
+        </h2>
+        <p class="widget-subtitle">Observa la ejecución paso a paso: cada línea de Python produce una acción física en la tortuga.</p>
+      </div>
+      <span class="hud-item" style="font-size:0.7rem; color:var(--accent); font-weight:bold;">
+        <i class="fas fa-code"></i> Python 3
+      </span>
+    </div>
+
+    <!-- Scenarios Tabs -->
+    <div class="tabs-bar">
+      <button class="tab-btn active" onclick="loadScenario('forward')">1. forward(100)</button>
+      <button class="tab-btn" onclick="loadScenario('forward_left')">2. forward() + left()</button>
+      <button class="tab-btn" onclick="loadScenario('cuadrado')">3. Cuadrado Secuencial</button>
+      <button class="tab-btn" onclick="loadScenario('relleno')">4. Relleno de Figura</button>
+      <button class="tab-btn" onclick="loadScenario('rubik')">5. Reto Cubo rubik</button>
+      <button class="tab-btn" onclick="loadScenario('sandbox')">6. Explora (Modo Libre)</button>
+    </div>
+
+    <!-- Work Area -->
+    <div class="work-area">
+      <!-- Canvas Card -->
+      <div class="canvas-card">
+        <div class="grid-overlay"></div>
+        <div class="telemetry-hud">
+          <div class="hud-item">Pos: <span id="hudPos" class="hud-val">(0, 0)</span></div>
+          <div class="hud-item">Ángulo: <span id="hudAngle" class="hud-val">0°</span></div>
+          <div class="hud-item">Lápiz: <span id="hudPen" class="hud-val">Abajo</span></div>
+          <div class="hud-item">Color: <span id="hudColor" class="hud-val">#10b981</span></div>
+        </div>
+        <canvas id="tCanvas" width="380" height="260"></canvas>
+      </div>
+
+      <!-- Code Card -->
+      <div class="code-card">
+        <div class="code-header">
+          <span><i class="fas fa-file-code"></i> script.py (Secuencial)</span>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <button id="copyScriptBtn" onclick="copyWidgetScript()" title="Copiar código" style="background: rgba(255,255,255,0.06); border: 1px solid var(--border); color: var(--text-muted); border-radius: 4px; padding: 1px 7px; font-size: 0.65rem; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; transition: all 0.2s;">
+              <i class="fas fa-copy"></i> <span>Copiar</span>
+            </button>
+            <span id="stepCounter" style="color:var(--sky);">Paso 0 / 0</span>
+          </div>
+        </div>
+        <div class="code-lines-box" id="codeLines"></div>
+        <div class="step-explain" id="stepExplain">
+          <i class="fas fa-info-circle"></i>
+          <span id="explainText">Presiona "Siguiente Paso" o "Reproducir" para iniciar la secuencia.</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sandbox buttons (visible only in sandbox mode) -->
+    <div class="sandbox-panel" id="sandboxPanel">
+      <button class="sandbox-btn" onclick="execSandbox('forward', 50)">forward(50)</button>
+      <button class="sandbox-btn" onclick="execSandbox('forward', 100)">forward(100)</button>
+      <button class="sandbox-btn" onclick="execSandbox('left', 90)">left(90)</button>
+      <button class="sandbox-btn" onclick="execSandbox('left', 45)">left(45)</button>
+      <button class="sandbox-btn" onclick="execSandbox('right', 90)">right(90)</button>
+      <button class="sandbox-btn" onclick="execSandbox('penup')">penup()</button>
+      <button class="sandbox-btn" onclick="execSandbox('pendown')">pendown()</button>
+      <button class="sandbox-btn" onclick="execSandbox('color', '#38bdf8')">color("azul")</button>
+      <button class="sandbox-btn" onclick="execSandbox('color', '#10b981')">color("verde")</button>
+      <button class="sandbox-btn" onclick="execSandbox('color', '#ef4444')">color("rojo")</button>
+      <button class="sandbox-btn" onclick="execSandbox('begin_fill')">begin_fill()</button>
+      <button class="sandbox-btn" onclick="execSandbox('end_fill')">end_fill()</button>
+      <button class="sandbox-btn" onclick="resetCanvas()" style="background:#dc2626; color:#fff;">Limpiar</button>
+    </div>
+
+    <!-- Controls Bar -->
+    <div class="controls-bar">
+      <div class="btn-group">
+        <button class="btn btn-primary" id="playBtn" onclick="togglePlay()">
+          <i class="fas fa-play" id="playIcon"></i> <span id="playLabel">Reproducir</span>
+        </button>
+        <button class="btn" id="nextBtn" onclick="stepForward()">
+          <span>Siguiente Paso</span> <i class="fas fa-step-forward"></i>
+        </button>
+        <button class="btn" id="prevBtn" onclick="stepBackward()">
+          <i class="fas fa-step-backward"></i> <span>Anterior</span>
+        </button>
+        <button class="btn" onclick="restartScenario()">
+          <i class="fas fa-rotate-left"></i> <span>Reiniciar</span>
+        </button>
+      </div>
+
+      <div class="btn-group">
+        <span style="font-size:0.72rem; color:var(--text-muted);">Velocidad:</span>
+        <button class="btn" id="speedBtn" onclick="toggleSpeed()" style="font-family:monospace; min-width:44px;">1.0x</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Theme sync
+    window.addEventListener('message', (event) => {
+      if (event.data && event.data.type === 'THEME_CHANGE') {
+        document.documentElement.setAttribute('data-theme', event.data.theme);
+      }
+    });
+    try {
+      const savedTheme = localStorage.getItem('leogaviria_theme') || 'dark';
+      document.documentElement.setAttribute('data-theme', savedTheme);
+    } catch(e) {}
+
+    // Canvas & Turtle Engine
+    const canvas = document.getElementById('tCanvas');
+    const ctx = canvas.getContext('2d');
+    const originX = canvas.width / 2;
+    const originY = canvas.height / 2;
+
+    // Turtle State
+    let turtle = {
+      x: 0,
+      y: 0,
+      angle: 0, // 0 = right/east, 90 = up/north, 180 = left/west, 270 = down/south
+      penDown: true,
+      color: '#10b981',
+      filling: false,
+      fillPoly: []
+    };
+
+    let drawHistory = []; // list of {type: 'line', x1, y1, x2, y2, color} or {type: 'fill', poly, color}
+
+    // Scenarios Definition (Strictly Sequential - NO loops!)
+    const SCENARIOS = {
+      forward: {
+        title: "Primer movimiento con forward()",
+        code: [
+          { line: 'import turtle', action: null, explain: 'Importa el módulo gráfico Turtle de Python.' },
+          { line: 'tortuga = turtle.Turtle()', action: 'init', explain: 'Crea el objeto tortuga con lápiz en el centro (0, 0).' },
+          { line: 'tortuga.forward(100)', action: { type: 'fd', dist: 100 }, explain: 'Avanza 100 píxeles en dirección 0° (hacia la derecha) dejando trazo.' },
+          { line: 'tortuga.done()', action: null, explain: 'Finaliza el script manteniendo la ventana abierta.' }
+        ]
+      },
+      forward_left: {
+        title: "Avanzar y girar: forward() + left()",
+        code: [
+          { line: 'import turtle', action: null, explain: 'Importa la librería Turtle.' },
+          { line: 'tortuga = turtle.Turtle()', action: 'init', explain: 'Crea la tortuga en posición inicial (0, 0).' },
+          { line: 'tortuga.forward(100)', action: { type: 'fd', dist: 100 }, explain: 'Paso 1: Avanza 100 píxeles hacia la derecha.' },
+          { line: 'tortuga.left(90)', action: { type: 'lt', angle: 90 }, explain: 'Paso 2: Gira 90° hacia la izquierda sobre su propio eje. Ahora mira hacia arriba.' },
+          { line: 'tortuga.forward(100)', action: { type: 'fd', dist: 100 }, explain: 'Paso 3: Avanza 100 píxeles en la nueva dirección (hacia arriba).' },
+          { line: 'tortuga.done()', action: null, explain: 'La figura resultante muestra la ejecución estricta de la secuencia.' }
+        ]
+      },
+      cuadrado: {
+        title: "Construcción Secuencial de un Cuadrado (4 lados sin ciclos)",
+        code: [
+          { line: 'import turtle', action: null, explain: 'Importa la librería Turtle.' },
+          { line: 'tortuga = turtle.Turtle()', action: 'init_pos', x: -50, y: -50, explain: 'Posiciona la tortuga para centrar el cuadrado.' },
+          { line: '# Lado 1', action: null, explain: 'Iniciamos el primer lado del cuadrado.' },
+          { line: 'tortuga.forward(100)', action: { type: 'fd', dist: 100 }, explain: '1. Avanza 100 píxeles (Lado inferior).' },
+          { line: 'tortuga.left(90)', action: { type: 'lt', angle: 90 }, explain: '2. Gira 90° a la izquierda.' },
+          { line: '# Lado 2', action: null, explain: 'Segundo lado del cuadrado.' },
+          { line: 'tortuga.forward(100)', action: { type: 'fd', dist: 100 }, explain: '3. Avanza 100 píxeles (Lado derecho).' },
+          { line: 'tortuga.left(90)', action: { type: 'lt', angle: 90 }, explain: '4. Gira 90° a la izquierda.' },
+          { line: '# Lado 3', action: null, explain: 'Tercer lado del cuadrado.' },
+          { line: 'tortuga.forward(100)', action: { type: 'fd', dist: 100 }, explain: '5. Avanza 100 píxeles (Lado superior).' },
+          { line: 'tortuga.left(90)', action: { type: 'lt', angle: 90 }, explain: '6. Gira 90° a la izquierda.' },
+          { line: '# Lado 4', action: null, explain: 'Cuarto y último lado.' },
+          { line: 'tortuga.forward(100)', action: { type: 'fd', dist: 100 }, explain: '7. Avanza 100 píxeles (Lado izquierdo, cierra la figura).' },
+          { line: 'tortuga.left(90)', action: { type: 'lt', angle: 90 }, explain: '8. Gira 90° para regresar a la orientación inicial.' },
+          { line: 'tortuga.done()', action: null, explain: '¡Cuadrado completado con 8 órdenes secuenciales directas!' }
+        ]
+      },
+      relleno: {
+        title: "Cuadrado con Relleno de Color (begin_fill / end_fill)",
+        code: [
+          { line: 'import turtle', action: null, explain: 'Importa la librería Turtle.' },
+          { line: 'tortuga = turtle.Turtle()', action: 'init_pos', x: -45, y: -45, explain: 'Crea la tortuga en posición adecuada.' },
+          { line: 'tortuga.color("blue")', action: { type: 'color', color: '#38bdf8' }, explain: 'Define el color azul tanto para el trazo como para el relleno.' },
+          { line: 'tortuga.begin_fill()', action: { type: 'begin_fill' }, explain: 'Indica a Python: "Comienza a recordar los vértices para rellenar".' },
+          { line: 'tortuga.forward(90)', action: { type: 'fd', dist: 90 }, explain: 'Traza lado 1.' },
+          { line: 'tortuga.left(90)', action: { type: 'lt', angle: 90 }, explain: 'Gira 90°.' },
+          { line: 'tortuga.forward(90)', action: { type: 'fd', dist: 90 }, explain: 'Traza lado 2.' },
+          { line: 'tortuga.left(90)', action: { type: 'lt', angle: 90 }, explain: 'Gira 90°.' },
+          { line: 'tortuga.forward(90)', action: { type: 'fd', dist: 90 }, explain: 'Traza lado 3.' },
+          { line: 'tortuga.left(90)', action: { type: 'lt', angle: 90 }, explain: 'Gira 90°.' },
+          { line: 'tortuga.forward(90)', action: { type: 'fd', dist: 90 }, explain: 'Traza lado 4 y cierra la figura.' },
+          { line: 'tortuga.left(90)', action: { type: 'lt', angle: 90 }, explain: 'Giro final.' },
+          { line: 'tortuga.end_fill()', action: { type: 'end_fill' }, explain: '¡Aplica el relleno de color al interior de la figura cerrada!' },
+          { line: 'tortuga.done()', action: null, explain: 'Figura rellenada con éxito.' }
+        ]
+      },
+      rubik: {
+        title: "Reto Final: Cubo rubik (Cuadrícula 3x3 Multicolor)",
+        code: [
+          { line: 'import turtle', action: null, explain: 'Inicia el reto integrador del Cubo Rubik.' },
+          { line: 'tortuga = turtle.Turtle()', action: 'init_pos', x: -54, y: -54, explain: 'Posicionamos la tortuga en (-54, -54) para centrar la cuadrícula 3x3.' },
+          { line: '# === FILA 1: INFERIOR (y = -54) ===', action: null, explain: 'Iniciamos la fila inferior del Cubo Rubik.' },
+          { line: '# Pegatina 1.1 (Rojo)', action: null, explain: 'Trazamos y rellenamos pegatina Rojo.' },
+          { line: 'tortuga.color("#ef4444")', action: { type: 'color', color: '#ef4444' }, explain: 'Color Rojo.' },
+          { line: 'tortuga.begin_fill()', action: { type: 'begin_fill' }, explain: 'Inicia relleno de la pegatina Rojo.' },
+          { line: 'tortuga.forward(36)', action: { type: 'fd', dist: 36 }, explain: 'Lado 1.' },
+          { line: 'tortuga.left(90)', action: { type: 'lt', angle: 90 }, explain: 'Giro 90°.' },
+          { line: 'tortuga.forward(36)', action: { type: 'fd', dist: 36 }, explain: 'Lado 2.' },
+          { line: 'tortuga.left(90)', action: { type: 'lt', angle: 90 }, explain: 'Giro 90°.' },
+          { line: 'tortuga.forward(36)', action: { type: 'fd', dist: 36 }, explain: 'Lado 3.' },
+          { line: 'tortuga.left(90)', action: { type: 'lt', angle: 90 }, explain: 'Giro 90°.' },
+          { line: 'tortuga.forward(36)', action: { type: 'fd', dist: 36 }, explain: 'Lado 4.' },
+          { line: 'tortuga.left(90)', action: { type: 'lt', angle: 90 }, explain: 'Giro final.' },
+          { line: 'tortuga.end_fill()', action: { type: 'end_fill' }, explain: 'Aplica relleno Rojo.' },
+          { line: 'tortuga.forward(36)', action: { type: 'fd', dist: 36 }, explain: 'Avanza a la base de la siguiente pegatina.' },
+          { line: '# Pegatina 1.2 (Azul)', action: null, explain: 'Trazamos y rellenamos pegatina Azul.' },
+          { line: 'tortuga.color("#3b82f6")', action: { type: 'color', color: '#3b82f6' }, explain: 'Color Azul.' },
+          { line: 'tortuga.begin_fill()', action: { type: 'begin_fill' }, explain: 'Inicia relleno de la pegatina Azul.' },
+          { line: 'tortuga.forward(36)', action: { type: 'fd', dist: 36 }, explain: 'Lado 1.' },
+          { line: 'tortuga.left(90)', action: { type: 'lt', angle: 90 }, explain: 'Giro 90°.' },
+          { line: 'tortuga.forward(36)', action: { type: 'fd', dist: 36 }, explain: 'Lado 2.' },
+          { line: 'tortuga.left(90)', action: { type: 'lt', angle: 90 }, explain: 'Giro 90°.' },
+          { line: 'tortuga.forward(36)', action: { type: 'fd', dist: 36 }, explain: 'Lado 3.' },
+          { line: 'tortuga.left(90)', action: { type: 'lt', angle: 90 }, explain: 'Giro 90°.' },
+          { line: 'tortuga.forward(36)', action: { type: 'fd', dist: 36 }, explain: 'Lado 4.' },
+          { line: 'tortuga.left(90)', action: { type: 'lt', angle: 90 }, explain: 'Giro final.' },
+          { line: 'tortuga.end_fill()', action: { type: 'end_fill' }, explain: 'Aplica relleno Azul.' },
+          { line: 'tortuga.forward(36)', action: { type: 'fd', dist: 36 }, explain: 'Avanza a la base de la siguiente pegatina.' },
+          { line: '# Pegatina 1.3 (Blanco)', action: null, explain: 'Trazamos y rellenamos pegatina Blanco.' },
+          { line: 'tortuga.color("#f8fafc")', action: { type: 'color', color: '#f8fafc' }, explain: 'Color Blanco.' },
+          { line: 'tortuga.begin_fill()', action: { type: 'begin_fill' }, explain: 'Inicia relleno de la pegatina Blanco.' },
+          { line: 'tortuga.forward(36)', action: { type: 'fd', dist: 36 }, explain: 'Lado 1.' },
+          { line: 'tortuga.left(90)', action: { type: 'lt', angle: 90 }, explain: 'Giro 90°.' },
+          { line: 'tortuga.forward(36)', action: { type: 'fd', dist: 36 }, explain: 'Lado 2.' },
+          { line: 'tortuga.left(90)', action: { type: 'lt', angle: 90 }, explain: 'Giro 90°.' },
+          { line: 'tortuga.forward(36)', action: { type: 'fd', dist: 36 }, explain: 'Lado 3.' },
+          { line: 'tortuga.left(90)', action: { type: 'lt', angle: 90 }, explain: 'Giro 90°.' },
+          { line: 'tortuga.forward(36)', action: { type: 'fd', dist: 36 }, explain: 'Lado 4.' },
+          { line: 'tortuga.left(90)', action: { type: 'lt', angle: 90 }, explain: 'Giro final.' },
+          { line: 'tortuga.end_fill()', action: { type: 'end_fill' }, explain: 'Aplica relleno Blanco.' },
+          { line: '# === FILA 2 (y = -18) ===', action: null, explain: 'Iniciamos la fila 2 del Cubo Rubik.' },
+          { line: 'tortuga.penup()', action: { type: 'penup' }, explain: 'Levanta el lápiz para saltar a la fila 2.' },
+          { line: 'tortuga.goto(-54, -18)', action: { x: -54, y: -18 }, explain: 'Se posiciona al inicio de la fila 2.' },
+          { line: 'tortuga.pendown()', action: { type: 'pendown' }, explain: 'Baja el lápiz para comenzar a trazar.' },
+          { line: '# Pegatina 2.1 (Naranja)', action: null, explain: 'Trazamos y rellenamos pegatina Naranja.' },
+          { line: 'tortuga.color("#f97316")', action: { type: 'color', color: '#f97316' }, explain: 'Color Naranja.' },
+          { line: 'tortuga.begin_fill()', action: { type: 'begin_fill' }, explain: 'Inicia relleno de la pegatina Naranja.' },
+          { line: 'tortuga.forward(36)', action: { type: 'fd', dist: 36 }, explain: 'Lado 1.' },
+          { line: 'tortuga.left(90)', action: { type: 'lt', angle: 90 }, explain: 'Giro 90°.' },
+          { line: 'tortuga.forward(36)', action: { type: 'fd', dist: 36 }, explain: 'Lado 2.' },
+          { line: 'tortuga.left(90)', action: { type: 'lt', angle: 90 }, explain: 'Giro 90°.' },
+          { line: 'tortuga.forward(36)', action: { type: 'fd', dist: 36 }, explain: 'Lado 3.' },
+          { line: 'tortuga.left(90)', action: { type: 'lt', angle: 90 }, explain: 'Giro 90°.' },
+          { line: 'tortuga.forward(36)', action: { type: 'fd', dist: 36 }, explain: 'Lado 4.' },
+          { line: 'tortuga.left(90)', action: { type: 'lt', angle: 90 }, explain: 'Giro final.' },
+          { line: 'tortuga.end_fill()', action: { type: 'end_fill' }, explain: 'Aplica relleno Naranja.' },
+          { line: 'tortuga.forward(36)', action: { type: 'fd', dist: 36 }, explain: 'Avanza a la base de la siguiente pegatina.' },
+          { line: '# Pegatina 2.2 (Amarillo)', action: null, explain: 'Trazamos y rellenamos pegatina Amarillo.' },
+          { line: 'tortuga.color("#eab308")', action: { type: 'color', color: '#eab308' }, explain: 'Color Amarillo.' },
+          { line: 'tortuga.begin_fill()', action: { type: 'begin_fill' }, explain: 'Inicia relleno de la pegatina Amarillo.' },
+          { line: 'tortuga.forward(36)', action: { type: 'fd', dist: 36 }, explain: 'Lado 1.' },
+          { line: 'tortuga.left(90)', action: { type: 'lt', angle: 90 }, explain: 'Giro 90°.' },
+          { line: 'tortuga.forward(36)', action: { type: 'fd', dist: 36 }, explain: 'Lado 2.' },
+          { line: 'tortuga.left(90)', action: { type: 'lt', angle: 90 }, explain: 'Giro 90°.' },
+          { line: 'tortuga.forward(36)', action: { type: 'fd', dist: 36 }, explain: 'Lado 3.' },
+          { line: 'tortuga.left(90)', action: { type: 'lt', angle: 90 }, explain: 'Giro 90°.' },
+          { line: 'tortuga.forward(36)', action: { type: 'fd', dist: 36 }, explain: 'Lado 4.' },
+          { line: 'tortuga.left(90)', action: { type: 'lt', angle: 90 }, explain: 'Giro final.' },
+          { line: 'tortuga.end_fill()', action: { type: 'end_fill' }, explain: 'Aplica relleno Amarillo.' },
+          { line: 'tortuga.forward(36)', action: { type: 'fd', dist: 36 }, explain: 'Avanza a la base de la siguiente pegatina.' },
+          { line: '# Pegatina 2.3 (Verde)', action: null, explain: 'Trazamos y rellenamos pegatina Verde.' },
+          { line: 'tortuga.color("#22c55e")', action: { type: 'color', color: '#22c55e' }, explain: 'Color Verde.' },
+          { line: 'tortuga.begin_fill()', action: { type: 'begin_fill' }, explain: 'Inicia relleno de la pegatina Verde.' },
+          { line: 'tortuga.forward(36)', action: { type: 'fd', dist: 36 }, explain: 'Lado 1.' },
+          { line: 'tortuga.left(90)', action: { type: 'lt', angle: 90 }, explain: 'Giro 90°.' },
+          { line: 'tortuga.forward(36)', action: { type: 'fd', dist: 36 }, explain: 'Lado 2.' },
+          { line: 'tortuga.left(90)', action: { type: 'lt', angle: 90 }, explain: 'Giro 90°.' },
+          { line: 'tortuga.forward(36)', action: { type: 'fd', dist: 36 }, explain: 'Lado 3.' },
+          { line: 'tortuga.left(90)', action: { type: 'lt', angle: 90 }, explain: 'Giro 90°.' },
+          { line: 'tortuga.forward(36)', action: { type: 'fd', dist: 36 }, explain: 'Lado 4.' },
+          { line: 'tortuga.left(90)', action: { type: 'lt', angle: 90 }, explain: 'Giro final.' },
+          { line: 'tortuga.end_fill()', action: { type: 'end_fill' }, explain: 'Aplica relleno Verde.' },
+          { line: '# === FILA 3 (y = 18) ===', action: null, explain: 'Iniciamos la fila 3 del Cubo Rubik.' },
+          { line: 'tortuga.penup()', action: { type: 'penup' }, explain: 'Levanta el lápiz para saltar a la fila 3.' },
+          { line: 'tortuga.goto(-54, 18)', action: { x: -54, y: 18 }, explain: 'Se posiciona al inicio de la fila 3.' },
+          { line: 'tortuga.pendown()', action: { type: 'pendown' }, explain: 'Baja el lápiz para comenzar a trazar.' },
+          { line: '# Pegatina 3.1 (Azul)', action: null, explain: 'Trazamos y rellenamos pegatina Azul.' },
+          { line: 'tortuga.color("#3b82f6")', action: { type: 'color', color: '#3b82f6' }, explain: 'Color Azul.' },
+          { line: 'tortuga.begin_fill()', action: { type: 'begin_fill' }, explain: 'Inicia relleno de la pegatina Azul.' },
+          { line: 'tortuga.forward(36)', action: { type: 'fd', dist: 36 }, explain: 'Lado 1.' },
+          { line: 'tortuga.left(90)', action: { type: 'lt', angle: 90 }, explain: 'Giro 90°.' },
+          { line: 'tortuga.forward(36)', action: { type: 'fd', dist: 36 }, explain: 'Lado 2.' },
+          { line: 'tortuga.left(90)', action: { type: 'lt', angle: 90 }, explain: 'Giro 90°.' },
+          { line: 'tortuga.forward(36)', action: { type: 'fd', dist: 36 }, explain: 'Lado 3.' },
+          { line: 'tortuga.left(90)', action: { type: 'lt', angle: 90 }, explain: 'Giro 90°.' },
+          { line: 'tortuga.forward(36)', action: { type: 'fd', dist: 36 }, explain: 'Lado 4.' },
+          { line: 'tortuga.left(90)', action: { type: 'lt', angle: 90 }, explain: 'Giro final.' },
+          { line: 'tortuga.end_fill()', action: { type: 'end_fill' }, explain: 'Aplica relleno Azul.' },
+          { line: 'tortuga.forward(36)', action: { type: 'fd', dist: 36 }, explain: 'Avanza a la base de la siguiente pegatina.' },
+          { line: '# Pegatina 3.2 (Rojo)', action: null, explain: 'Trazamos y rellenamos pegatina Rojo.' },
+          { line: 'tortuga.color("#ef4444")', action: { type: 'color', color: '#ef4444' }, explain: 'Color Rojo.' },
+          { line: 'tortuga.begin_fill()', action: { type: 'begin_fill' }, explain: 'Inicia relleno de la pegatina Rojo.' },
+          { line: 'tortuga.forward(36)', action: { type: 'fd', dist: 36 }, explain: 'Lado 1.' },
+          { line: 'tortuga.left(90)', action: { type: 'lt', angle: 90 }, explain: 'Giro 90°.' },
+          { line: 'tortuga.forward(36)', action: { type: 'fd', dist: 36 }, explain: 'Lado 2.' },
+          { line: 'tortuga.left(90)', action: { type: 'lt', angle: 90 }, explain: 'Giro 90°.' },
+          { line: 'tortuga.forward(36)', action: { type: 'fd', dist: 36 }, explain: 'Lado 3.' },
+          { line: 'tortuga.left(90)', action: { type: 'lt', angle: 90 }, explain: 'Giro 90°.' },
+          { line: 'tortuga.forward(36)', action: { type: 'fd', dist: 36 }, explain: 'Lado 4.' },
+          { line: 'tortuga.left(90)', action: { type: 'lt', angle: 90 }, explain: 'Giro final.' },
+          { line: 'tortuga.end_fill()', action: { type: 'end_fill' }, explain: 'Aplica relleno Rojo.' },
+          { line: 'tortuga.forward(36)', action: { type: 'fd', dist: 36 }, explain: 'Avanza a la base de la siguiente pegatina.' },
+          { line: '# Pegatina 3.3 (Amarillo)', action: null, explain: 'Trazamos y rellenamos pegatina Amarillo.' },
+          { line: 'tortuga.color("#eab308")', action: { type: 'color', color: '#eab308' }, explain: 'Color Amarillo.' },
+          { line: 'tortuga.begin_fill()', action: { type: 'begin_fill' }, explain: 'Inicia relleno de la pegatina Amarillo.' },
+          { line: 'tortuga.forward(36)', action: { type: 'fd', dist: 36 }, explain: 'Lado 1.' },
+          { line: 'tortuga.left(90)', action: { type: 'lt', angle: 90 }, explain: 'Giro 90°.' },
+          { line: 'tortuga.forward(36)', action: { type: 'fd', dist: 36 }, explain: 'Lado 2.' },
+          { line: 'tortuga.left(90)', action: { type: 'lt', angle: 90 }, explain: 'Giro 90°.' },
+          { line: 'tortuga.forward(36)', action: { type: 'fd', dist: 36 }, explain: 'Lado 3.' },
+          { line: 'tortuga.left(90)', action: { type: 'lt', angle: 90 }, explain: 'Giro 90°.' },
+          { line: 'tortuga.forward(36)', action: { type: 'fd', dist: 36 }, explain: 'Lado 4.' },
+          { line: 'tortuga.left(90)', action: { type: 'lt', angle: 90 }, explain: 'Giro final.' },
+          { line: 'tortuga.end_fill()', action: { type: 'end_fill' }, explain: 'Aplica relleno Amarillo.' },
+          { line: 'tortuga.done()', action: null, explain: '¡Reto superado! Cara del Cubo Rubik 3x3 completada.' }
+        ]
+      }    };
+
+    let currentScenarioKey = 'forward';
+    let currentStep = 0;
+    let isPlaying = false;
+    let timerId = null;
+    let speeds = [1.0, 1.5, 2.5];
+    let speedIndex = 0;
+
+    function resetCanvas(initX = 0, initY = 0) {
+      turtle = {
+        x: initX,
+        y: initY,
+        angle: 0,
+        penDown: true,
+        color: '#10b981',
+        filling: false,
+        fillPoly: []
+      };
+      drawHistory = [];
+      render();
+    }
+
+    function render() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Draw all history
+      for (const item of drawHistory) {
+        if (item.type === 'fill') {
+          ctx.fillStyle = item.color;
+          ctx.beginPath();
+          for (let i = 0; i < item.poly.length; i++) {
+            const pt = toCanvasCoords(item.poly[i].x, item.poly[i].y);
+            if (i === 0) ctx.moveTo(pt.x, pt.y);
+            else ctx.lineTo(pt.x, pt.y);
+          }
+          ctx.closePath();
+          ctx.fill();
+        } else if (item.type === 'line') {
+          ctx.strokeStyle = item.color;
+          ctx.lineWidth = 2.5;
+          ctx.lineCap = 'round';
+          ctx.beginPath();
+          const p1 = toCanvasCoords(item.x1, item.y1);
+          const p2 = toCanvasCoords(item.x2, item.y2);
+          ctx.moveTo(p1.x, p1.y);
+          ctx.lineTo(p2.x, p2.y);
+          ctx.stroke();
+        }
+      }
+
+      // Draw active fill poly if currently filling
+      if (turtle.filling && turtle.fillPoly.length > 1) {
+        ctx.fillStyle = turtle.color + '44'; // semi-transparent
+        ctx.beginPath();
+        for (let i = 0; i < turtle.fillPoly.length; i++) {
+          const pt = toCanvasCoords(turtle.fillPoly[i].x, turtle.fillPoly[i].y);
+          if (i === 0) ctx.moveTo(pt.x, pt.y);
+          else ctx.lineTo(pt.x, pt.y);
+        }
+        ctx.closePath();
+        ctx.fill();
+      }
+
+      // Draw Turtle Character
+      drawTurtleIcon(turtle.x, turtle.y, turtle.angle, turtle.color, turtle.penDown);
+
+      // Update HUD
+      document.getElementById('hudPos').innerText = `(${Math.round(turtle.x)}, ${Math.round(turtle.y)})`;
+      document.getElementById('hudAngle').innerText = `${((turtle.angle % 360) + 360) % 360}°`;
+      document.getElementById('hudPen').innerText = turtle.penDown ? 'Abajo' : 'Arriba';
+      document.getElementById('hudColor').innerText = turtle.color;
+    }
+
+    function toCanvasCoords(x, y) {
+      return {
+        x: originX + x,
+        y: originY - y // invert Y so +Y is up like standard Cartesian/Turtle
+      };
+    }
+
+    function drawTurtleIcon(x, y, angleDeg, color, penDown) {
+      const pt = toCanvasCoords(x, y);
+      ctx.save();
+      ctx.translate(pt.x, pt.y);
+      ctx.rotate(-angleDeg * Math.PI / 180); // in canvas coords, clockwise is positive
+
+      // Turtle Shell Body
+      ctx.fillStyle = color;
+      ctx.strokeStyle = '#ffffff';
+      ctx.lineWidth = 1.5;
+
+      // Shell oval
+      ctx.beginPath();
+      ctx.ellipse(0, 0, 11, 8, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+
+      // Head
+      ctx.beginPath();
+      ctx.arc(13, 0, 4.5, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+
+      // Eyes
+      ctx.fillStyle = '#ffffff';
+      ctx.beginPath();
+      ctx.arc(14, -2, 1.2, 0, Math.PI * 2);
+      ctx.arc(14, 2, 1.2, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Four feet
+      ctx.fillStyle = color;
+      ctx.beginPath();
+      ctx.arc(5, -9, 3, 0, Math.PI * 2);
+      ctx.arc(5, 9, 3, 0, Math.PI * 2);
+      ctx.arc(-6, -8, 2.5, 0, Math.PI * 2);
+      ctx.arc(-6, 8, 2.5, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+
+      // Tail
+      ctx.beginPath();
+      ctx.moveTo(-11, 0);
+      ctx.lineTo(-15, 0);
+      ctx.stroke();
+
+      // Pen dot if pen is down
+      if (penDown) {
+        ctx.fillStyle = '#fde047'; // bright yellow pen tip
+        ctx.beginPath();
+        ctx.arc(0, 0, 2.5, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      ctx.restore();
+    }
+
+    // Execution logic
+    function applyAction(act) {
+      if (!act) return;
+      if (typeof act === 'string') {
+        if (act === 'init') {
+          turtle.x = 0; turtle.y = 0; turtle.angle = 0; turtle.penDown = true;
+          if (turtle.filling) turtle.fillPoly.push({x: 0, y: 0});
+        }
+        return;
+      }
+      if (act === 'init_pos' || act.x !== undefined) {
+        turtle.x = act.x || 0;
+        turtle.y = act.y || 0;
+        turtle.angle = 0;
+        turtle.penDown = true;
+        if (turtle.filling) turtle.fillPoly.push({x: turtle.x, y: turtle.y});
+        return;
+      }
+
+      if (act.type === 'fd') {
+        const rad = turtle.angle * Math.PI / 180;
+        const newX = turtle.x + act.dist * Math.cos(rad);
+        const newY = turtle.y + act.dist * Math.sin(rad);
+        if (turtle.penDown) {
+          drawHistory.push({
+            type: 'line',
+            x1: turtle.x, y1: turtle.y,
+            x2: newX, y2: newY,
+            color: turtle.color
+          });
+        }
+        turtle.x = newX;
+        turtle.y = newY;
+        if (turtle.filling) turtle.fillPoly.push({x: newX, y: newY});
+      } else if (act.type === 'lt') {
+        turtle.angle += act.angle;
+      } else if (act.type === 'color') {
+        turtle.color = act.color;
+      } else if (act.type === 'penup') {
+        turtle.penDown = false;
+      } else if (act.type === 'pendown') {
+        turtle.penDown = true;
+      } else if (act.type === 'begin_fill') {
+        turtle.filling = true;
+        turtle.fillPoly = [{x: turtle.x, y: turtle.y}];
+      } else if (act.type === 'end_fill') {
+        if (turtle.filling && turtle.fillPoly.length > 2) {
+          drawHistory.push({
+            type: 'fill',
+            poly: [...turtle.fillPoly],
+            color: turtle.color
+          });
+        }
+        turtle.filling = false;
+        turtle.fillPoly = [];
+      }
+    }
+
+    function loadScenario(key) {
+      pause();
+      currentScenarioKey = key;
+      document.querySelectorAll('.tab-btn').forEach((b, idx) => {
+        b.classList.toggle('active', Object.keys(SCENARIOS)[idx] === key || (key === 'sandbox' && idx === Object.keys(SCENARIOS).length));
+      });
+
+      const isSandbox = key === 'sandbox';
+      document.getElementById('sandboxPanel').style.display = isSandbox ? 'flex' : 'none';
+
+      if (isSandbox) {
+        resetCanvas(0, 0);
+        document.getElementById('codeLines').innerHTML = '<div style="color:var(--text-muted); padding:10px; font-style:italic;">Modo Libre activado. Usa los botones de comando inferiores para mover la tortuga y experimentar interactivamente.</div>';
+        document.getElementById('stepCounter').innerText = 'Modo Libre';
+        document.getElementById('explainText').innerText = 'Experimenta libremente con distancias, ángulos, colores y rellenos.';
+        document.getElementById('playBtn').disabled = true;
+        document.getElementById('nextBtn').disabled = true;
+        document.getElementById('prevBtn').disabled = true;
+        return;
+      }
+
+      document.getElementById('playBtn').disabled = false;
+      document.getElementById('nextBtn').disabled = false;
+      document.getElementById('prevBtn').disabled = false;
+
+      currentStep = 0;
+      const sc = SCENARIOS[key];
+
+      // Build Code View
+      const linesBox = document.getElementById('codeLines');
+      linesBox.innerHTML = '';
+      sc.code.forEach((item, idx) => {
+        const div = document.createElement('div');
+        div.className = 'code-line';
+        div.id = `line-${idx}`;
+        div.innerHTML = `<span class="line-num">${idx + 1}</span><span class="line-content">${escapeHtml(item.line)}</span>`;
+        linesBox.appendChild(div);
+      });
+
+      // Initial Canvas setup
+      const firstAction = sc.code[1] && sc.code[1].action;
+      if (firstAction && typeof firstAction === 'object' && firstAction.x !== undefined) {
+        resetCanvas(firstAction.x, firstAction.y);
+      } else {
+        resetCanvas(0, 0);
+      }
+
+      updateStepUI();
+    }
+
+    function escapeHtml(str) {
+      return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+
+    function copyWidgetScript() {
+      const sc = SCENARIOS[currentScenarioKey];
+      if (!sc || !sc.code) return;
+      const codeText = sc.code.map(item => item.line).join('\n');
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(codeText).then(() => {
+          showCopySuccess();
+        }).catch(() => {
+          fallbackCopy(codeText);
+        });
+      } else {
+        fallbackCopy(codeText);
+      }
+    }
+
+    function showCopySuccess() {
+      const btn = document.getElementById('copyScriptBtn');
+      if (btn) {
+        btn.innerHTML = '<i class="fas fa-check" style="color:#10b981;"></i> <span>Copiado</span>';
+        setTimeout(() => {
+          btn.innerHTML = '<i class="fas fa-copy"></i> <span>Copiar</span>';
+        }, 2000);
+      }
+    }
+
+    function fallbackCopy(text) {
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.select();
+      try {
+        document.execCommand('copy');
+        showCopySuccess();
+      } catch (e) {
+        console.error('Fallback copy failed', e);
+      }
+      document.body.removeChild(ta);
+    }
+
+    function updateStepUI() {
+      const sc = SCENARIOS[currentScenarioKey];
+      if (!sc) return;
+
+      document.getElementById('stepCounter').innerText = `Paso ${currentStep} / ${sc.code.length}`;
+
+      // Update code line highlights
+      for (let i = 0; i < sc.code.length; i++) {
+        const el = document.getElementById(`line-${i}`);
+        if (!el) continue;
+        el.classList.remove('active', 'executed');
+        if (i === currentStep - 1) el.classList.add('active');
+        else if (i < currentStep - 1) el.classList.add('executed');
+      }
+
+      // Scroll active line into view
+      const activeLine = document.getElementById(`line-${currentStep - 1}`);
+      if (activeLine) {
+        activeLine.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+      }
+
+      // Update Explanation
+      const currentItem = sc.code[Math.max(0, currentStep - 1)];
+      if (currentStep === 0) {
+        document.getElementById('explainText').innerText = 'Presiona "Siguiente Paso" o "Reproducir" para observar la ejecución.';
+      } else if (currentItem) {
+        document.getElementById('explainText').innerText = currentItem.explain;
+      }
+
+      document.getElementById('prevBtn').disabled = (currentStep === 0);
+      document.getElementById('nextBtn').disabled = (currentStep >= sc.code.length);
+    }
+
+    function stepForward() {
+      const sc = SCENARIOS[currentScenarioKey];
+      if (!sc || currentStep >= sc.code.length) {
+        pause();
+        return;
+      }
+      const item = sc.code[currentStep];
+      currentStep++;
+      applyAction(item.action);
+      render();
+      updateStepUI();
+    }
+
+    function stepBackward() {
+      if (currentStep <= 0) return;
+      const targetStep = currentStep - 1;
+      restartScenario();
+      for (let i = 0; i < targetStep; i++) {
+        stepForward();
+      }
+    }
+
+    function restartScenario() {
+      pause();
+      const sc = SCENARIOS[currentScenarioKey];
+      currentStep = 0;
+      const firstAction = sc.code[1] && sc.code[1].action;
+      if (firstAction && typeof firstAction === 'object' && firstAction.x !== undefined) {
+        resetCanvas(firstAction.x, firstAction.y);
+      } else {
+        resetCanvas(0, 0);
+      }
+      updateStepUI();
+    }
+
+    function togglePlay() {
+      if (isPlaying) {
+        pause();
+      } else {
+        play();
+      }
+    }
+
+    function play() {
+      const sc = SCENARIOS[currentScenarioKey];
+      if (currentStep >= sc.code.length) {
+        restartScenario();
+      }
+      isPlaying = true;
+      document.getElementById('playIcon').className = 'fas fa-pause';
+      document.getElementById('playLabel').innerText = 'Pausar';
+
+      const intervalMs = 1200 / speeds[speedIndex];
+      timerId = setInterval(() => {
+        if (currentStep < sc.code.length) {
+          stepForward();
+        } else {
+          pause();
+        }
+      }, intervalMs);
+    }
+
+    function pause() {
+      isPlaying = false;
+      if (timerId) clearInterval(timerId);
+      timerId = null;
+      document.getElementById('playIcon').className = 'fas fa-play';
+      document.getElementById('playLabel').innerText = 'Reproducir';
+    }
+
+    function toggleSpeed() {
+      speedIndex = (speedIndex + 1) % speeds.length;
+      document.getElementById('speedBtn').innerText = speeds[speedIndex].toFixed(1) + 'x';
+      if (isPlaying) {
+        pause();
+        play();
+      }
+    }
+
+    // Sandbox execution
+    function execSandbox(cmd, arg) {
+      if (cmd === 'forward') applyAction({type: 'fd', dist: arg});
+      else if (cmd === 'left') applyAction({type: 'lt', angle: arg});
+      else if (cmd === 'right') applyAction({type: 'lt', angle: -arg});
+      else if (cmd === 'penup') applyAction({type: 'penup'});
+      else if (cmd === 'pendown') applyAction({type: 'pendown'});
+      else if (cmd === 'color') applyAction({type: 'color', color: arg});
+      else if (cmd === 'begin_fill') applyAction({type: 'begin_fill'});
+      else if (cmd === 'end_fill') applyAction({type: 'end_fill'});
+      render();
+    }
+
+    // Init on load
+    document.addEventListener('DOMContentLoaded', () => {
+      loadScenario('forward');
+    });
+  </script>
+</body>
+</html>

@@ -337,5 +337,682 @@ export const PROG_U02_TOPICS = {
         ]
       }
     ]
+  },
+
+  "prog-libreria-turtle": {
+    id: "prog-libreria-turtle",
+    title: "2.4 Uso de la librería Turtle",
+    subtitle: "Programación secuencial paso a paso con gráficos por computadora: instrucciones, orientación, lápiz virtual y figuras geométricas.",
+    unit: 2,
+    unitTitle: "Unidad 02: Entorno de desarrollo",
+    week: 2,
+    weekTitle: "Unidad 02: Entorno de desarrollo",
+    difficulty: "Fácil",
+    category: "Gráficos y Secuencias",
+    timeEstimate: "30 minutos",
+    badges: [
+      { text: "Unidad 02", type: "neutral" },
+      { text: "Fácil", type: "easy" },
+      { text: "Turtle", type: "emerald" },
+      { text: "Secuencial", type: "blue" }
+    ],
+    sections: [
+      {
+        id: "sec-turtle-conociendo",
+        title: "1. Conociendo Turtle y la Ventana Gráfica",
+        shortTitle: "Conociendo Turtle",
+        icon: "fa-compass",
+        contentHtml: `
+          <p class="text-base text-gray-300 leading-relaxed mb-4">
+            La librería <strong>turtle</strong> es uno de los módulos gráficos más intuitivos y didácticos del ecosistema de Python. Inspirada en la tortuga robótica del lenguaje <em>Logo</em> creada por Seymour Papert en el MIT, nos permite visualizar físicamente cómo el computador ejecuta las instrucciones en tiempo real.
+          </p>
+          <div class="bg-[#10141d] border border-gray-800 rounded-xl p-3 sm:p-4 my-4 code-block-card">
+            <div class="flex items-center justify-between border-b border-gray-800/80 pb-2.5 mb-3">
+              <div class="flex items-center gap-2">
+                <span class="text-xs font-mono font-bold text-sky-400 flex items-center gap-1.5">
+                  <i class="fab fa-python text-sm"></i> Python
+                </span>
+                <span class="text-[11px] text-gray-500 font-mono">01_conociendo_turtle.py</span>
+              </div>
+              <button 
+                type="button" 
+                onclick="window.copyCodeToClipboard(this)" 
+                class="flex items-center gap-1.5 px-2.5 py-1 text-xs text-gray-300 hover:text-white bg-[#1e2430] hover:bg-gray-700/80 border border-gray-700/70 hover:border-gray-600 rounded-md transition cursor-pointer shadow-sm"
+                title="Copiar código al portapapeles"
+              >
+                <i class="fas fa-copy text-xs"></i>
+                <span class="text-[11px] font-medium">Copiar</span>
+              </button>
+            </div>
+            <pre class="bg-[#0a0d14] p-3.5 rounded-lg font-mono text-xs text-gray-200 overflow-x-auto border border-gray-800/80 leading-relaxed"><code><span class="text-purple-400 font-semibold">import</span> <span class="text-yellow-300">turtle</span>
+
+<span class="text-gray-500 italic"># 1. Crear el objeto gráfico de la tortuga</span>
+tortuga = <span class="text-yellow-300">turtle</span>.<span class="text-cyan-300 font-semibold">Turtle</span>()
+
+<span class="text-gray-500 italic"># 2. Mantener la ventana gráfica abierta al terminar</span>
+<span class="text-yellow-300">turtle</span>.<span class="text-sky-400">done</span>()</code></pre>
+          </div>
+          <div class="overflow-x-auto my-4 border border-gray-800 rounded-xl">
+            <table class="w-full text-xs text-left complexity-table">
+              <thead>
+                <tr>
+                  <th class="py-2.5 px-3 bg-[#141923] text-emerald-400 font-bold">Elemento</th>
+                  <th class="py-2.5 px-3 bg-[#141923] text-gray-200 font-bold">Propósito en el Programa</th>
+                  <th class="py-2.5 px-3 bg-[#141923] text-gray-200 font-bold">Detalle Pedagógico</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-gray-800/60">
+                <tr>
+                  <td class="font-bold text-yellow-400 py-2.5 px-3">import turtle</td>
+                  <td class="py-2.5 px-3">Carga el módulo gráfico integrado de Python.</td>
+                  <td class="py-2.5 px-3">Viene incluido por defecto en Python, sin requerir <code>pip install</code>.</td>
+                </tr>
+                <tr>
+                  <td class="font-bold text-sky-400 py-2.5 px-3">tortuga = turtle.Turtle()</td>
+                  <td class="py-2.5 px-3">Crea nuestro actor gráfico o lienzo interactivo.</td>
+                  <td class="py-2.5 px-3">Tiene un estado propio: posición <code>(x, y)</code>, ángulo y lápiz.</td>
+                </tr>
+                <tr>
+                  <td class="font-bold text-purple-400 py-2.5 px-3">turtle.done()</td>
+                  <td class="py-2.5 px-3">Mantiene la ventana visible a la espera del usuario.</td>
+                  <td class="py-2.5 px-3">Evita que el sistema operativo cierre la ventana al terminar el script.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="bg-[#141923] border border-blue-500/30 rounded-xl p-4 my-4">
+            <h4 class="text-blue-400 font-semibold text-sm mb-2 flex items-center gap-2">
+              <i class="fas fa-lightbulb"></i> Idea Principal: El Modelo Mental de la Tortuga
+            </h4>
+            <p class="text-xs text-gray-300 leading-relaxed">
+              Imagina una pequeña tortuga robótica parada sobre una hoja de papel blanca. La tortuga sostiene un marcador en su cola. El centro exacto de la pantalla es el punto cartesiano <strong>(0, 0)</strong>. Al nacer, la tortuga se encuentra mirando directamente hacia la derecha (hacia el <strong>Este, ángulo 0°</strong>). Para dibujar, no le decimos "pinta un cuadrado": debemos ordenarle <em>camina hacia adelante</em>, <em>gira</em>, <em>vuelve a caminar</em>, instrucción por instrucción.
+            </p>
+          </div>
+        `
+      },
+      {
+        id: "sec-turtle-primer-movimiento",
+        title: "2. Primer Movimiento: forward(distancia)",
+        shortTitle: "forward(100)",
+        icon: "fa-arrow-right",
+        contentHtml: `
+          <p class="text-base text-gray-300 leading-relaxed mb-4">
+            La instrucción fundamental de avance es <code>forward(distancia)</code> (o su versión corta <code>fd()</code>). Recibe un número como argumento, el cual representa la cantidad de <strong>píxeles</strong> que la tortuga debe recorrer en la dirección hacia la que está apuntando.
+          </p>
+          <div class="bg-[#10141d] border border-gray-800 rounded-xl p-3 sm:p-4 my-4 code-block-card">
+            <div class="flex items-center justify-between border-b border-gray-800/80 pb-2.5 mb-3">
+              <div class="flex items-center gap-2">
+                <span class="text-xs font-mono font-bold text-sky-400 flex items-center gap-1.5">
+                  <i class="fab fa-python text-sm"></i> Python
+                </span>
+                <span class="text-[11px] text-gray-500 font-mono">02_primer_movimiento.py</span>
+              </div>
+              <button 
+                type="button" 
+                onclick="window.copyCodeToClipboard(this)" 
+                class="flex items-center gap-1.5 px-2.5 py-1 text-xs text-gray-300 hover:text-white bg-[#1e2430] hover:bg-gray-700/80 border border-gray-700/70 hover:border-gray-600 rounded-md transition cursor-pointer shadow-sm"
+                title="Copiar código al portapapeles"
+              >
+                <i class="fas fa-copy text-xs"></i>
+                <span class="text-[11px] font-medium">Copiar</span>
+              </button>
+            </div>
+            <pre class="bg-[#0a0d14] p-3.5 rounded-lg font-mono text-xs text-gray-200 overflow-x-auto border border-gray-800/80 leading-relaxed"><code><span class="text-purple-400 font-semibold">import</span> <span class="text-yellow-300">turtle</span>
+
+tortuga = <span class="text-yellow-300">turtle</span>.<span class="text-cyan-300 font-semibold">Turtle</span>()
+
+<span class="text-gray-500 italic"># Avanzar 100 píxeles hacia adelante en línea recta</span>
+tortuga.<span class="text-sky-400">forward</span>(<span class="text-amber-300">100</span>)
+
+<span class="text-yellow-300">turtle</span>.<span class="text-sky-400">done</span>()</code></pre>
+          </div>
+          <div class="bg-[#141923] border border-emerald-500/30 rounded-xl p-4 my-4">
+            <h4 class="text-emerald-400 font-semibold text-sm mb-2 flex items-center gap-2">
+              <i class="fas fa-microscope"></i> ¿Qué está pasando en este instante?
+            </h4>
+            <ul class="list-disc list-inside text-xs text-gray-300 space-y-1.5 leading-relaxed">
+              <li>La tortuga inicia en el origen <code>(0, 0)</code> mirando al Este (0°).</li>
+              <li>El lápiz virtual está apoyado en el papel de manera predeterminada.</li>
+              <li>Al recibir <code>forward(100)</code>, la tortuga camina 100 píxeles hacia la derecha hasta alcanzar la coordenada <code>(100, 0)</code>.</li>
+              <li>Mientras avanza, el marcador arrastra tinta, dejando una línea continua trazada sobre el lienzo blanco.</li>
+            </ul>
+          </div>
+          <div class="bg-[#141923] border border-sky-500/30 rounded-xl p-4 my-4">
+            <h4 class="text-sky-400 font-semibold text-sm mb-2 flex items-center gap-2">
+              <i class="fas fa-pencil-alt"></i> A Practicar
+            </h4>
+            <p class="text-xs text-gray-300 leading-relaxed">
+              ¿Qué ocurre si cambias <code>tortuga.forward(100)</code> por <code>tortuga.forward(50)</code> o <code>tortuga.forward(250)</code>? La longitud de la línea responde de forma estrictamente proporcional a la distancia enviada como argumento numérico.
+            </p>
+          </div>
+        `
+      },
+      {
+        id: "sec-turtle-giros",
+        title: "3. Giros y Orientación: left(grados) y la Importancia del Orden",
+        shortTitle: "left(90) y Orden",
+        icon: "fa-redo-alt",
+        contentHtml: `
+          <p class="text-base text-gray-300 leading-relaxed mb-4">
+            Para cambiar el rumbo de la tortuga utilizamos las instrucciones de giro: <code>left(grados)</code> (gira hacia la izquierda / antihorario) y <code>right(grados)</code> (gira hacia la derecha / horario). Un detalle crucial: <strong>el giro ocurre sobre el propio eje de la tortuga</strong>, sin alterar su posición en las coordenadas <code>(x, y)</code>.
+          </p>
+          <div class="bg-[#10141d] border border-gray-800 rounded-xl p-3 sm:p-4 my-4 code-block-card">
+            <div class="flex items-center justify-between border-b border-gray-800/80 pb-2.5 mb-3">
+              <div class="flex items-center gap-2">
+                <span class="text-xs font-mono font-bold text-sky-400 flex items-center gap-1.5">
+                  <i class="fab fa-python text-sm"></i> Python
+                </span>
+                <span class="text-[11px] text-gray-500 font-mono">03_giros_orientacion.py</span>
+              </div>
+              <button 
+                type="button" 
+                onclick="window.copyCodeToClipboard(this)" 
+                class="flex items-center gap-1.5 px-2.5 py-1 text-xs text-gray-300 hover:text-white bg-[#1e2430] hover:bg-gray-700/80 border border-gray-700/70 hover:border-gray-600 rounded-md transition cursor-pointer shadow-sm"
+                title="Copiar código al portapapeles"
+              >
+                <i class="fas fa-copy text-xs"></i>
+                <span class="text-[11px] font-medium">Copiar</span>
+              </button>
+            </div>
+            <pre class="bg-[#0a0d14] p-3.5 rounded-lg font-mono text-xs text-gray-200 overflow-x-auto border border-gray-800/80 leading-relaxed"><code><span class="text-purple-400 font-semibold">import</span> <span class="text-yellow-300">turtle</span>
+
+tortuga = <span class="text-yellow-300">turtle</span>.<span class="text-cyan-300 font-semibold">Turtle</span>()
+
+<span class="text-gray-500 italic"># 1. Avanzar 100 píxeles horizontalmente</span>
+tortuga.<span class="text-sky-400">forward</span>(<span class="text-amber-300">100</span>)
+
+<span class="text-gray-500 italic"># 2. Girar 90 grados a la izquierda (ahora mira hacia el Norte, 90°)</span>
+tortuga.<span class="text-sky-400">left</span>(<span class="text-amber-300">90</span>)
+
+<span class="text-gray-500 italic"># 3. Avanzar otros 100 píxeles hacia arriba</span>
+tortuga.<span class="text-sky-400">forward</span>(<span class="text-amber-300">100</span>)
+
+<span class="text-yellow-300">turtle</span>.<span class="text-sky-400">done</span>()</code></pre>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-4">
+            <div class="bg-[#141923] border border-amber-500/30 rounded-xl p-4 code-block-card">
+              <div class="flex items-center justify-between border-b border-gray-800/80 pb-2 mb-2.5">
+                <h5 class="text-amber-400 font-bold text-xs uppercase flex items-center gap-1.5">
+                  <i class="fas fa-sort-numeric-down"></i> Secuencia A (Avanzar y luego Girar)
+                </h5>
+                <button 
+                  type="button" 
+                  onclick="window.copyCodeToClipboard(this)" 
+                  class="flex items-center gap-1 px-2 py-0.5 text-[10px] text-gray-300 hover:text-white bg-[#1e2430] hover:bg-gray-700/80 border border-gray-700/70 rounded transition cursor-pointer"
+                  title="Copiar código"
+                >
+                  <i class="fas fa-copy"></i>
+                  <span>Copiar</span>
+                </button>
+              </div>
+              <pre class="bg-[#0b0e14] p-2.5 rounded-lg text-xs font-mono text-gray-200 mb-2 border border-gray-800/60"><code>tortuga.<span class="text-sky-400">forward</span>(<span class="text-amber-300">100</span>)
+tortuga.<span class="text-sky-400">left</span>(<span class="text-amber-300">90</span>)</code></pre>
+              <p class="text-xs text-gray-300 leading-relaxed">
+                Traza una línea horizontal en el eje X de 100 píxeles y concluye mirando verticalmente hacia arriba (Norte).
+              </p>
+            </div>
+            <div class="bg-[#141923] border border-rose-500/30 rounded-xl p-4 code-block-card">
+              <div class="flex items-center justify-between border-b border-gray-800/80 pb-2 mb-2.5">
+                <h5 class="text-rose-400 font-bold text-xs uppercase flex items-center gap-1.5">
+                  <i class="fas fa-exclamation-triangle"></i> Secuencia B (Girar y luego Avanzar)
+                </h5>
+                <button 
+                  type="button" 
+                  onclick="window.copyCodeToClipboard(this)" 
+                  class="flex items-center gap-1 px-2 py-0.5 text-[10px] text-gray-300 hover:text-white bg-[#1e2430] hover:bg-gray-700/80 border border-gray-700/70 rounded transition cursor-pointer"
+                  title="Copiar código"
+                >
+                  <i class="fas fa-copy"></i>
+                  <span>Copiar</span>
+                </button>
+              </div>
+              <pre class="bg-[#0b0e14] p-2.5 rounded-lg text-xs font-mono text-gray-200 mb-2 border border-gray-800/60"><code>tortuga.<span class="text-sky-400">left</span>(<span class="text-amber-300">90</span>)
+tortuga.<span class="text-sky-400">forward</span>(<span class="text-amber-300">100</span>)</code></pre>
+              <p class="text-xs text-gray-300 leading-relaxed">
+                Gira primero hacia el Norte en el origen (0,0) y luego traza una línea vertical sobre el eje Y. ¡El orden altera por completo la figura!
+              </p>
+            </div>
+          </div>
+          <p class="text-xs text-gray-400 leading-relaxed">
+            Esta es la regla de oro de la <strong>programación secuencial</strong>: el estado del sistema en cada paso determina el comportamiento del paso siguiente.
+          </p>
+        `
+      },
+      {
+        id: "sec-turtle-cuadrado",
+        title: "4. Construyendo un Cuadrado: Secuencia Estricta sin Bucles",
+        shortTitle: "Construir Cuadrado",
+        icon: "fa-vector-square",
+        contentHtml: `
+          <p class="text-base text-gray-300 leading-relaxed mb-4">
+            Para construir un cuadrado perfecto, debemos trazar cuatro lados de igual longitud y girar cuatro veces en ángulo recto (90°). Como la suma de los ángulos exteriores de un polígono cerrado es <strong>360°</strong>, cuatro giros de 90° (\(4 \times 90° = 360°\)) devolverán a la tortuga a su orientación inicial.
+          </p>
+          <div class="bg-[#141923] border border-emerald-500/30 rounded-xl p-4 my-4">
+            <h4 class="text-emerald-400 font-semibold text-sm mb-2 flex items-center gap-2">
+              <i class="fas fa-graduation-cap"></i> Principio Pedagógico: ¿Por qué sin bucles for?
+            </h4>
+            <p class="text-xs text-gray-300 leading-relaxed">
+              En esta etapa de formación, no recurrimos a bucles repetitivos como <code>for</code> o <code>while</code>. Escribir las ocho instrucciones secuenciales una por una permite entender con total claridad la causa y el efecto: <strong>cada línea de código produce exactamente una acción física visible</strong>.
+            </p>
+          </div>
+          <div class="bg-[#10141d] border border-gray-800 rounded-xl p-3 sm:p-4 my-4 code-block-card">
+            <div class="flex items-center justify-between border-b border-gray-800/80 pb-2.5 mb-3">
+              <div class="flex items-center gap-2">
+                <span class="text-xs font-mono font-bold text-sky-400 flex items-center gap-1.5">
+                  <i class="fab fa-python text-sm"></i> Python
+                </span>
+                <span class="text-[11px] text-gray-500 font-mono">04_cuadrado_secuencial.py</span>
+              </div>
+              <button 
+                type="button" 
+                onclick="window.copyCodeToClipboard(this)" 
+                class="flex items-center gap-1.5 px-2.5 py-1 text-xs text-gray-300 hover:text-white bg-[#1e2430] hover:bg-gray-700/80 border border-gray-700/70 hover:border-gray-600 rounded-md transition cursor-pointer shadow-sm"
+                title="Copiar código al portapapeles"
+              >
+                <i class="fas fa-copy text-xs"></i>
+                <span class="text-[11px] font-medium">Copiar</span>
+              </button>
+            </div>
+            <pre class="bg-[#0a0d14] p-3.5 rounded-lg font-mono text-xs text-gray-200 overflow-x-auto border border-gray-800/80 leading-relaxed"><code><span class="text-purple-400 font-semibold">import</span> <span class="text-yellow-300">turtle</span>
+
+tortuga = <span class="text-yellow-300">turtle</span>.<span class="text-cyan-300 font-semibold">Turtle</span>()
+
+<span class="text-gray-500 italic"># Lado 1 (horizontal inferior) y giro hacia arriba</span>
+tortuga.<span class="text-sky-400">forward</span>(<span class="text-amber-300">100</span>)
+tortuga.<span class="text-sky-400">left</span>(<span class="text-amber-300">90</span>)
+
+<span class="text-gray-500 italic"># Lado 2 (vertical derecho) y giro a la izquierda</span>
+tortuga.<span class="text-sky-400">forward</span>(<span class="text-amber-300">100</span>)
+tortuga.<span class="text-sky-400">left</span>(<span class="text-amber-300">90</span>)
+
+<span class="text-gray-500 italic"># Lado 3 (horizontal superior) y giro hacia abajo</span>
+tortuga.<span class="text-sky-400">forward</span>(<span class="text-amber-300">100</span>)
+tortuga.<span class="text-sky-400">left</span>(<span class="text-amber-300">90</span>)
+
+<span class="text-gray-500 italic"># Lado 4 (vertical izquierdo) y giro final (cierra la figura)</span>
+tortuga.<span class="text-sky-400">forward</span>(<span class="text-amber-300">100</span>)
+tortuga.<span class="text-sky-400">left</span>(<span class="text-amber-300">90</span>)
+
+<span class="text-yellow-300">turtle</span>.<span class="text-sky-400">done</span>()</code></pre>
+          </div>
+        `,
+        interactive: [
+          {
+            category: "explora",
+            title: "Laboratorio Interactivo de Turtle Secuencial",
+            description: "Observa la tortuga desplazarse paso a paso en tiempo real, inspecciona el código Python sincronizado y pon a prueba los distintos modos de ejecución:",
+            widget: {
+              file: "widgets/programacion/u02_turtle_secuencial.html",
+              title: "Visualizador Turtle Secuencial",
+              height: "540px"
+            }
+          }
+        ]
+      },
+      {
+        id: "sec-turtle-relleno",
+        title: "5. Color y Relleno de Figuras: color(), begin_fill() y end_fill()",
+        shortTitle: "Relleno de Figuras",
+        icon: "fa-fill-drip",
+        contentHtml: `
+          <p class="text-base text-gray-300 leading-relaxed mb-4">
+            Turtle nos permite dotar de vida a nuestros dibujos personalizando el color del trazo y rellenando el interior de figuras cerradas con colores sólidos mediante la técnica del <strong>bloque delimitador</strong>.
+          </p>
+          <div class="overflow-x-auto my-4 border border-gray-800 rounded-xl">
+            <table class="w-full text-xs text-left complexity-table">
+              <thead>
+                <tr>
+                  <th class="py-2.5 px-3 bg-[#141923] text-emerald-400 font-bold">Instrucción</th>
+                  <th class="py-2.5 px-3 bg-[#141923] text-gray-200 font-bold">Función</th>
+                  <th class="py-2.5 px-3 bg-[#141923] text-gray-200 font-bold">Ejemplo</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-gray-800/60">
+                <tr>
+                  <td class="font-bold text-sky-400 py-2.5 px-3">color("borde", "relleno")</td>
+                  <td class="py-2.5 px-3">Configura simultáneamente el color del lápiz y el del relleno.</td>
+                  <td class="py-2.5 px-3"><code>tortuga.color("black", "#38bdf8")</code></td>
+                </tr>
+                <tr>
+                  <td class="font-bold text-amber-400 py-2.5 px-3">begin_fill()</td>
+                  <td class="py-2.5 px-3">Inicia la grabación del perímetro para el coloreado.</td>
+                  <td class="py-2.5 px-3">Se invoca <strong>antes</strong> de trazar el primer lado.</td>
+                </tr>
+                <tr>
+                  <td class="font-bold text-emerald-400 py-2.5 px-3">end_fill()</td>
+                  <td class="py-2.5 px-3">Rellena la figura geométrica cerrada trazada.</td>
+                  <td class="py-2.5 px-3">Se invoca <strong>después</strong> de cerrar la figura.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="bg-[#10141d] border border-gray-800 rounded-xl p-3 sm:p-4 my-4 code-block-card">
+            <div class="flex items-center justify-between border-b border-gray-800/80 pb-2.5 mb-3">
+              <div class="flex items-center gap-2">
+                <span class="text-xs font-mono font-bold text-sky-400 flex items-center gap-1.5">
+                  <i class="fab fa-python text-sm"></i> Python
+                </span>
+                <span class="text-[11px] text-gray-500 font-mono">05_cuadrado_relleno.py</span>
+              </div>
+              <button 
+                type="button" 
+                onclick="window.copyCodeToClipboard(this)" 
+                class="flex items-center gap-1.5 px-2.5 py-1 text-xs text-gray-300 hover:text-white bg-[#1e2430] hover:bg-gray-700/80 border border-gray-700/70 hover:border-gray-600 rounded-md transition cursor-pointer shadow-sm"
+                title="Copiar código al portapapeles"
+              >
+                <i class="fas fa-copy text-xs"></i>
+                <span class="text-[11px] font-medium">Copiar</span>
+              </button>
+            </div>
+            <pre class="bg-[#0a0d14] p-3.5 rounded-lg font-mono text-xs text-gray-200 overflow-x-auto border border-gray-800/80 leading-relaxed"><code><span class="text-purple-400 font-semibold">import</span> <span class="text-yellow-300">turtle</span>
+
+tortuga = <span class="text-yellow-300">turtle</span>.<span class="text-cyan-300 font-semibold">Turtle</span>()
+
+<span class="text-gray-500 italic"># Configurar colores: contorno oscuro y relleno azul cielo</span>
+tortuga.<span class="text-sky-400">color</span>(<span class="text-emerald-300">"#1e293b"</span>, <span class="text-emerald-300">"#38bdf8"</span>)
+
+<span class="text-gray-500 italic"># 1. Avisar que iniciaremos una figura para rellenar</span>
+tortuga.<span class="text-sky-400">begin_fill</span>()
+
+<span class="text-gray-500 italic"># 2. Trazar secuencialmente los 4 lados del cuadrado</span>
+tortuga.<span class="text-sky-400">forward</span>(<span class="text-amber-300">100</span>)
+tortuga.<span class="text-sky-400">left</span>(<span class="text-amber-300">90</span>)
+tortuga.<span class="text-sky-400">forward</span>(<span class="text-amber-300">100</span>)
+tortuga.<span class="text-sky-400">left</span>(<span class="text-amber-300">90</span>)
+tortuga.<span class="text-sky-400">forward</span>(<span class="text-amber-300">100</span>)
+tortuga.<span class="text-sky-400">left</span>(<span class="text-amber-300">90</span>)
+tortuga.<span class="text-sky-400">forward</span>(<span class="text-amber-300">100</span>)
+tortuga.<span class="text-sky-400">left</span>(<span class="text-amber-300">90</span>)
+
+<span class="text-gray-500 italic"># 3. Consolidar el relleno</span>
+tortuga.<span class="text-sky-400">end_fill</span>()
+
+<span class="text-yellow-300">turtle</span>.<span class="text-sky-400">done</span>()</code></pre>
+          </div>
+        `
+      },
+      {
+        id: "sec-turtle-cruz-lapiz",
+        title: "6. Levantando el Lápiz: penup(), pendown() y Trazos Compuestos",
+        shortTitle: "penup, pendown y Cruz",
+        icon: "fa-pen-fancy",
+        contentHtml: `
+          <p class="text-base text-gray-300 leading-relaxed mb-4">
+            ¿Cómo dibujamos figuras independientes o trazamos patrones desconectados sin que una línea indeseada una los puntos? Para ello controlamos el estado del lápiz con <code>penup()</code> y <code>pendown()</code>.
+          </p>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-4">
+            <div class="bg-[#141923] border border-blue-500/30 rounded-xl p-4">
+              <h5 class="text-blue-400 font-bold text-xs uppercase mb-2 flex items-center gap-2">
+                <i class="fas fa-hand-paper"></i> tortuga.penup() (o up())
+              </h5>
+              <p class="text-xs text-gray-300 leading-relaxed">
+                Levanta el lápiz de la hoja. Cualquier desplazamiento posterior cambiará la ubicación <code>(x, y)</code> de la tortuga sin rayar ni manchar el papel.
+              </p>
+            </div>
+            <div class="bg-[#141923] border border-emerald-500/30 rounded-xl p-4">
+              <h5 class="text-emerald-400 font-bold text-xs uppercase mb-2 flex items-center gap-2">
+                <i class="fas fa-pen"></i> tortuga.pendown() (o down())
+              </h5>
+              <p class="text-xs text-gray-300 leading-relaxed">
+                Apoya el lápiz nuevamente sobre el papel. Las siguientes instrucciones <code>forward()</code> volverán a dibujar líneas visibles.
+              </p>
+            </div>
+          </div>
+          <div class="bg-[#10141d] border border-gray-800 rounded-xl p-3 sm:p-4 my-4 code-block-card">
+            <div class="flex items-center justify-between border-b border-gray-800/80 pb-2.5 mb-3">
+              <div class="flex items-center gap-2">
+                <span class="text-xs font-mono font-bold text-sky-400 flex items-center gap-1.5">
+                  <i class="fab fa-python text-sm"></i> Python
+                </span>
+                <span class="text-[11px] text-gray-500 font-mono">06_cruz_lapiz.py</span>
+              </div>
+              <button 
+                type="button" 
+                onclick="window.copyCodeToClipboard(this)" 
+                class="flex items-center gap-1.5 px-2.5 py-1 text-xs text-gray-300 hover:text-white bg-[#1e2430] hover:bg-gray-700/80 border border-gray-700/70 hover:border-gray-600 rounded-md transition cursor-pointer shadow-sm"
+                title="Copiar código al portapapeles"
+              >
+                <i class="fas fa-copy text-xs"></i>
+                <span class="text-[11px] font-medium">Copiar</span>
+              </button>
+            </div>
+            <pre class="bg-[#0a0d14] p-3.5 rounded-lg font-mono text-xs text-gray-200 overflow-x-auto border border-gray-800/80 leading-relaxed"><code><span class="text-purple-400 font-semibold">import</span> <span class="text-yellow-300">turtle</span>
+
+tortuga = <span class="text-yellow-300">turtle</span>.<span class="text-cyan-300 font-semibold">Turtle</span>()
+tortuga.<span class="text-sky-400">pensize</span>(<span class="text-amber-300">4</span>)
+
+<span class="text-gray-500 italic"># Trazo 1: Barra horizontal de la cruz</span>
+tortuga.<span class="text-sky-400">forward</span>(<span class="text-amber-300">60</span>)
+tortuga.<span class="text-sky-400">backward</span>(<span class="text-amber-300">120</span>)
+
+<span class="text-gray-500 italic"># Regresar al centro sin dibujar</span>
+tortuga.<span class="text-sky-400">penup</span>()
+tortuga.<span class="text-sky-400">forward</span>(<span class="text-amber-300">60</span>)
+tortuga.<span class="text-sky-400">left</span>(<span class="text-amber-300">90</span>)
+tortuga.<span class="text-sky-400">pendown</span>()
+
+<span class="text-gray-500 italic"># Trazo 2: Barra vertical de la cruz</span>
+tortuga.<span class="text-sky-400">forward</span>(<span class="text-amber-300">60</span>)
+tortuga.<span class="text-sky-400">backward</span>(<span class="text-amber-300">120</span>)
+
+<span class="text-yellow-300">turtle</span>.<span class="text-sky-400">done</span>()</code></pre>
+          </div>
+        `
+      },
+      {
+        id: "sec-turtle-reto-rubik",
+        title: "7. Reto Integrador: Cubo rubik",
+        shortTitle: "Reto: Cubo rubik",
+        icon: "fa-cube",
+        contentHtml: `
+          <p class="text-base text-gray-300 leading-relaxed mb-4">
+            Es hora de consolidar todo lo aprendido creando un programa secuencial que dibuje la cara frontal de un <strong>Cubo Rubik</strong>, compuesta por una cuadrícula de <strong>3 &times; 3 pegatinas cuadradas</strong> de colores icónicos (<strong>Rojo</strong>, <strong>Azul</strong>, <strong>Blanco</strong>, <strong>Naranja</strong>, <strong>Amarillo</strong> y <strong>Verde</strong>) con bordes oscuros nítidos.
+          </p>
+          <div class="bg-[#141923] border border-amber-500/30 rounded-xl p-4 my-4">
+            <h4 class="text-amber-400 font-semibold text-sm mb-2 flex items-center gap-2">
+              <i class="fas fa-brain"></i> Preguntas de Reflexión (¡Responde mentalmente antes de codificar!)
+            </h4>
+            <ol class="list-decimal list-inside text-xs text-gray-300 space-y-2 leading-relaxed">
+              <li><strong>Descomposición geométrica:</strong> Cada una de las 9 pegatinas es un cuadrado de 36 píxeles de lado. ¿Cuántos giros de 90° y avances de 36 píxeles requiere cada cuadrado?</li>
+              <li><strong>Desplazamiento horizontal secuencial:</strong> Al terminar de rellenar cada cuadrado con <code>end_fill()</code>, la tortuga queda lista para avanzar a la base del siguiente con <code>forward(36)</code> sin necesidad de cambiar de orientación. ¿Cómo nos ayuda esto en cada fila?</li>
+              <li><strong>Salto de fila con penup y pendown:</strong> Al completar los 3 cuadrados de una fila, ¿qué secuencia de <code>penup()</code>, <code>goto(x, y)</code>, <code>setheading(0)</code> y <code>pendown()</code> te permite iniciar la fila superior sin dejar trazos no deseados?</li>
+            </ol>
+          </div>
+          <details class="group bg-[#10141d] border border-emerald-500/30 rounded-xl p-4 my-4">
+            <summary class="font-semibold text-sm text-emerald-400 cursor-pointer flex items-center justify-between list-none">
+              <span class="flex items-center gap-2"><i class="fas fa-code"></i> Ver Código de Solución Paso a Paso (Cubo rubik)</span>
+              <span class="text-xs text-gray-400 group-open:rotate-180 transition-transform">▼</span>
+            </summary>
+            <div class="mt-4 pt-3 border-t border-gray-800">
+              <p class="text-xs text-gray-300 mb-3">
+                A continuación tienes la solución secuencial completa, sin bucles, comentada paso a paso:
+              </p>
+              <div class="bg-[#0b0e14] border border-gray-800 rounded-xl p-3 sm:p-4 my-2 code-block-card">
+                <div class="flex items-center justify-between border-b border-gray-800/80 pb-2.5 mb-3">
+                  <div class="flex items-center gap-2">
+                    <span class="text-xs font-mono font-bold text-sky-400 flex items-center gap-1.5">
+                      <i class="fab fa-python text-sm"></i> Python
+                    </span>
+                    <span class="text-[11px] text-gray-500 font-mono">07_cubo_rubik.py</span>
+                  </div>
+                  <button 
+                    type="button" 
+                    onclick="window.copyCodeToClipboard(this)" 
+                    class="flex items-center gap-1.5 px-2.5 py-1 text-xs text-gray-300 hover:text-white bg-[#1e2430] hover:bg-gray-700/80 border border-gray-700/70 hover:border-gray-600 rounded-md transition cursor-pointer shadow-sm"
+                    title="Copiar solución completa al portapapeles"
+                  >
+                    <i class="fas fa-copy text-xs"></i>
+                    <span class="text-[11px] font-medium">Copiar Solución</span>
+                  </button>
+                </div>
+                <pre class="bg-[#07090e] p-3.5 rounded-lg font-mono text-[11px] text-gray-200 overflow-x-auto border border-gray-800/80 leading-relaxed"><code><span class="text-purple-400 font-semibold">import</span> <span class="text-yellow-300">turtle</span>
+
+t = <span class="text-yellow-300">turtle</span>.<span class="text-cyan-300 font-semibold">Turtle</span>()
+t.<span class="text-sky-400">speed</span>(<span class="text-amber-300">3</span>)
+
+<span class="text-gray-500 italic"># ==========================================</span>
+<span class="text-gray-500 italic"># FILA 1: INFERIOR (y = -54)</span>
+<span class="text-gray-500 italic"># ==========================================</span>
+
+<span class="text-gray-500 italic"># 1.1 Pegatina 1: Rojo (izquierda)</span>
+t.<span class="text-sky-400">penup</span>()
+t.<span class="text-sky-400">goto</span>(-<span class="text-amber-300">54</span>, -<span class="text-amber-300">54</span>)
+t.<span class="text-sky-400">setheading</span>(<span class="text-amber-300">0</span>)
+t.<span class="text-sky-400">pendown</span>()
+t.<span class="text-sky-400">color</span>(<span class="text-emerald-300">"#0f172a"</span>, <span class="text-emerald-300">"#ef4444"</span>)
+t.<span class="text-sky-400">begin_fill</span>()
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">36</span>)
+t.<span class="text-sky-400">left</span>(<span class="text-amber-300">90</span>)
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">36</span>)
+t.<span class="text-sky-400">left</span>(<span class="text-amber-300">90</span>)
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">36</span>)
+t.<span class="text-sky-400">left</span>(<span class="text-amber-300">90</span>)
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">36</span>)
+t.<span class="text-sky-400">left</span>(<span class="text-amber-300">90</span>)
+t.<span class="text-sky-400">end_fill</span>()
+
+<span class="text-gray-500 italic"># 1.2 Pegatina 2: Azul (centro)</span>
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">36</span>)
+t.<span class="text-sky-400">color</span>(<span class="text-emerald-300">"#0f172a"</span>, <span class="text-emerald-300">"#3b82f6"</span>)
+t.<span class="text-sky-400">begin_fill</span>()
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">36</span>)
+t.<span class="text-sky-400">left</span>(<span class="text-amber-300">90</span>)
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">36</span>)
+t.<span class="text-sky-400">left</span>(<span class="text-amber-300">90</span>)
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">36</span>)
+t.<span class="text-sky-400">left</span>(<span class="text-amber-300">90</span>)
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">36</span>)
+t.<span class="text-sky-400">left</span>(<span class="text-amber-300">90</span>)
+t.<span class="text-sky-400">end_fill</span>()
+
+<span class="text-gray-500 italic"># 1.3 Pegatina 3: Blanco (derecha)</span>
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">36</span>)
+t.<span class="text-sky-400">color</span>(<span class="text-emerald-300">"#0f172a"</span>, <span class="text-emerald-300">"#f8fafc"</span>)
+t.<span class="text-sky-400">begin_fill</span>()
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">36</span>)
+t.<span class="text-sky-400">left</span>(<span class="text-amber-300">90</span>)
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">36</span>)
+t.<span class="text-sky-400">left</span>(<span class="text-amber-300">90</span>)
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">36</span>)
+t.<span class="text-sky-400">left</span>(<span class="text-amber-300">90</span>)
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">36</span>)
+t.<span class="text-sky-400">left</span>(<span class="text-amber-300">90</span>)
+t.<span class="text-sky-400">end_fill</span>()
+
+<span class="text-gray-500 italic"># ==========================================</span>
+<span class="text-gray-500 italic"># FILA 2: CENTRAL (y = -18)</span>
+<span class="text-gray-500 italic"># ==========================================</span>
+
+<span class="text-gray-500 italic"># 2.1 Pegatina 4: Naranja (izquierda)</span>
+t.<span class="text-sky-400">penup</span>()
+t.<span class="text-sky-400">goto</span>(-<span class="text-amber-300">54</span>, -<span class="text-amber-300">18</span>)
+t.<span class="text-sky-400">setheading</span>(<span class="text-amber-300">0</span>)
+t.<span class="text-sky-400">pendown</span>()
+t.<span class="text-sky-400">color</span>(<span class="text-emerald-300">"#0f172a"</span>, <span class="text-emerald-300">"#f97316"</span>)
+t.<span class="text-sky-400">begin_fill</span>()
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">36</span>)
+t.<span class="text-sky-400">left</span>(<span class="text-amber-300">90</span>)
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">36</span>)
+t.<span class="text-sky-400">left</span>(<span class="text-amber-300">90</span>)
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">36</span>)
+t.<span class="text-sky-400">left</span>(<span class="text-amber-300">90</span>)
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">36</span>)
+t.<span class="text-sky-400">left</span>(<span class="text-amber-300">90</span>)
+t.<span class="text-sky-400">end_fill</span>()
+
+<span class="text-gray-500 italic"># 2.2 Pegatina 5: Amarillo (centro)</span>
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">36</span>)
+t.<span class="text-sky-400">color</span>(<span class="text-emerald-300">"#0f172a"</span>, <span class="text-emerald-300">"#eab308"</span>)
+t.<span class="text-sky-400">begin_fill</span>()
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">36</span>)
+t.<span class="text-sky-400">left</span>(<span class="text-amber-300">90</span>)
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">36</span>)
+t.<span class="text-sky-400">left</span>(<span class="text-amber-300">90</span>)
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">36</span>)
+t.<span class="text-sky-400">left</span>(<span class="text-amber-300">90</span>)
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">36</span>)
+t.<span class="text-sky-400">left</span>(<span class="text-amber-300">90</span>)
+t.<span class="text-sky-400">end_fill</span>()
+
+<span class="text-gray-500 italic"># 2.3 Pegatina 6: Verde (derecha)</span>
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">36</span>)
+t.<span class="text-sky-400">color</span>(<span class="text-emerald-300">"#0f172a"</span>, <span class="text-emerald-300">"#22c55e"</span>)
+t.<span class="text-sky-400">begin_fill</span>()
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">36</span>)
+t.<span class="text-sky-400">left</span>(<span class="text-amber-300">90</span>)
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">36</span>)
+t.<span class="text-sky-400">left</span>(<span class="text-amber-300">90</span>)
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">36</span>)
+t.<span class="text-sky-400">left</span>(<span class="text-amber-300">90</span>)
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">36</span>)
+t.<span class="text-sky-400">left</span>(<span class="text-amber-300">90</span>)
+t.<span class="text-sky-400">end_fill</span>()
+
+<span class="text-gray-500 italic"># ==========================================</span>
+<span class="text-gray-500 italic"># FILA 3: SUPERIOR (y = 18)</span>
+<span class="text-gray-500 italic"># ==========================================</span>
+
+<span class="text-gray-500 italic"># 3.1 Pegatina 7: Azul (izquierda)</span>
+t.<span class="text-sky-400">penup</span>()
+t.<span class="text-sky-400">goto</span>(-<span class="text-amber-300">54</span>, <span class="text-amber-300">18</span>)
+t.<span class="text-sky-400">setheading</span>(<span class="text-amber-300">0</span>)
+t.<span class="text-sky-400">pendown</span>()
+t.<span class="text-sky-400">color</span>(<span class="text-emerald-300">"#0f172a"</span>, <span class="text-emerald-300">"#3b82f6"</span>)
+t.<span class="text-sky-400">begin_fill</span>()
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">36</span>)
+t.<span class="text-sky-400">left</span>(<span class="text-amber-300">90</span>)
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">36</span>)
+t.<span class="text-sky-400">left</span>(<span class="text-amber-300">90</span>)
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">36</span>)
+t.<span class="text-sky-400">left</span>(<span class="text-amber-300">90</span>)
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">36</span>)
+t.<span class="text-sky-400">left</span>(<span class="text-amber-300">90</span>)
+t.<span class="text-sky-400">end_fill</span>()
+
+<span class="text-gray-500 italic"># 3.2 Pegatina 8: Rojo (centro)</span>
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">36</span>)
+t.<span class="text-sky-400">color</span>(<span class="text-emerald-300">"#0f172a"</span>, <span class="text-emerald-300">"#ef4444"</span>)
+t.<span class="text-sky-400">begin_fill</span>()
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">36</span>)
+t.<span class="text-sky-400">left</span>(<span class="text-amber-300">90</span>)
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">36</span>)
+t.<span class="text-sky-400">left</span>(<span class="text-amber-300">90</span>)
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">36</span>)
+t.<span class="text-sky-400">left</span>(<span class="text-amber-300">90</span>)
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">36</span>)
+t.<span class="text-sky-400">left</span>(<span class="text-amber-300">90</span>)
+t.<span class="text-sky-400">end_fill</span>()
+
+<span class="text-gray-500 italic"># 3.3 Pegatina 9: Amarillo (derecha)</span>
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">36</span>)
+t.<span class="text-sky-400">color</span>(<span class="text-emerald-300">"#0f172a"</span>, <span class="text-emerald-300">"#eab308"</span>)
+t.<span class="text-sky-400">begin_fill</span>()
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">36</span>)
+t.<span class="text-sky-400">left</span>(<span class="text-amber-300">90</span>)
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">36</span>)
+t.<span class="text-sky-400">left</span>(<span class="text-amber-300">90</span>)
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">36</span>)
+t.<span class="text-sky-400">left</span>(<span class="text-amber-300">90</span>)
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">36</span>)
+t.<span class="text-sky-400">left</span>(<span class="text-amber-300">90</span>)
+t.<span class="text-sky-400">end_fill</span>()
+
+t.<span class="text-sky-400">hideturtle</span>()
+<span class="text-yellow-300">turtle</span>.<span class="text-sky-400">done</span>()</code></pre>
+              </div>
+            </div>
+          </details>
+        `
+      }
+    ],
+    comprueba: {
+      title: "Evaluación: Dominio de Turtle y Programación Secuencial",
+      description: "Pon a prueba tus conocimientos sobre comandos básicos, sistema de coordenadas, estados del lápiz y ejecución secuencial respondiendo el siguiente cuestionario evaluativo de 8 preguntas:",
+      widget: {
+        file: "widgets/programacion/u02_turtle_quiz.html",
+        title: "Quiz Interactivo - Turtle y Secuencias",
+        height: "580px"
+      }
+    }
   }
 };

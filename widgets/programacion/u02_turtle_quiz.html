@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quiz Interactivo - Unidad 02: Uso de la Librería Turtle</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      background-color: #0e0e11 !important;
+      color: #c9d1d9;
+      margin: 0;
+      padding: 10px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      overflow-x: hidden;
+    }
+    .quiz-container {
+      background-color: #141419;
+      color: #c9d1d9;
+      padding: 20px 24px;
+      border-radius: 12px;
+      border: 1px solid #232d42;
+      max-width: 100%;
+      margin: 0 auto;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+    }
+    .quiz-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #21262d;
+      padding-bottom: 12px;
+      margin-bottom: 16px;
+    }
+    .quiz-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #f0f6fc;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .quiz-counter {
+      background-color: #21262d;
+      color: #8b949e;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 500;
+    }
+    .question-text {
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: #ffffff;
+      margin-bottom: 16px;
+      line-height: 1.45;
+    }
+    .question-text code {
+      background-color: #1e2430;
+      color: #38bdf8;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: monospace;
+      font-size: 0.95em;
+    }
+    .options-container {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .option-btn {
+      display: flex;
+      align-items: center;
+      background-color: #161b22;
+      border: 1px solid #30363d;
+      border-radius: 8px;
+      padding: 12px 14px;
+      color: #c9d1d9;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-align: left;
+      font-size: 0.93rem;
+      line-height: 1.4;
+    }
+    .option-btn:hover:not(:disabled) {
+      border-color: #8b949e;
+      background-color: #21262d;
+    }
+    .option-badge {
+      background-color: #21262d;
+      color: #f0f6fc;
+      font-weight: bold;
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 12px;
+      flex-shrink: 0;
+      font-size: 0.85rem;
+    }
+    .option-btn.correct {
+      border-color: #238636 !important;
+      background-color: rgba(46, 160, 67, 0.15) !important;
+      color: #ffffff;
+    }
+    .option-btn.correct .option-badge {
+      background-color: #238636;
+      color: #ffffff;
+    }
+    .option-btn.wrong {
+      border-color: #da3633 !important;
+      background-color: rgba(218, 54, 51, 0.15) !important;
+      color: #ffffff;
+    }
+    .option-btn.wrong .option-badge {
+      background-color: #da3633;
+      color: #ffffff;
+    }
+    .feedback-box {
+      margin-top: 14px;
+      padding: 12px 16px;
+      border-radius: 8px;
+      font-size: 0.88rem;
+      line-height: 1.45;
+      display: none;
+      animation: fadeInExp 0.2s ease-out;
+    }
+    @keyframes fadeInExp {
+      from { opacity: 0; transform: translateY(-3px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .feedback-box.show { display: block; }
+    .feedback-box.correct {
+      background-color: rgba(46, 160, 67, 0.15);
+      border: 1px solid #238636;
+      border-left: 4px solid #238636;
+      color: #7ee787;
+    }
+    .feedback-box.wrong {
+      background-color: rgba(218, 54, 51, 0.15);
+      border: 1px solid #da3633;
+      border-left: 4px solid #da3633;
+      color: #ff7b72;
+    }
+    .quiz-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 18px;
+      border-top: 1px solid #21262d;
+      padding-top: 14px;
+    }
+    .nav-btn {
+      background-color: #21262d;
+      color: #c9d1d9;
+      border: 1px solid #30363d;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+    .nav-btn:hover:not(:disabled) {
+      background-color: #30363d;
+      color: #f0f6fc;
+    }
+    .nav-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    .nav-btn.primary {
+      background-color: #10b981;
+      color: #05160e;
+      border-color: #10b981;
+      font-weight: 700;
+    }
+    .nav-btn.primary:hover:not(:disabled) {
+      background-color: #34d399;
+    }
+    .results-box {
+      display: none;
+      text-align: center;
+      padding: 24px 10px;
+    }
+    .results-box h2 {
+      font-size: 1.4rem;
+      color: #ffffff;
+      margin-bottom: 10px;
+    }
+    .score-badge {
+      font-size: 2.4rem;
+      font-weight: bold;
+      color: #34d399;
+      margin: 12px 0;
+    }
+    .score-message {
+      font-size: 0.95rem;
+      color: #8b949e;
+      margin-bottom: 20px;
+      line-height: 1.5;
+    }
+
+    /* SOPORTE LIGHT MODE */
+    [data-theme="light"] html, [data-theme="light"] body {
+      background-color: #ffffff !important;
+      color: #0f172a !important;
+    }
+    [data-theme="light"] .quiz-container {
+      background-color: #ffffff !important;
+      border-color: #cbd5e1 !important;
+      color: #0f172a !important;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.06) !important;
+    }
+    [data-theme="light"] .quiz-header {
+      border-bottom-color: #e2e8f0 !important;
+    }
+    [data-theme="light"] .quiz-title {
+      color: #0f172a !important;
+    }
+    [data-theme="light"] .quiz-counter {
+      background-color: #e2e8f0 !important;
+      color: #475569 !important;
+    }
+    [data-theme="light"] .question-text {
+      color: #0f172a !important;
+    }
+    [data-theme="light"] .question-text code {
+      background-color: #e2e8f0 !important;
+      color: #0369a1 !important;
+    }
+    [data-theme="light"] .option-btn {
+      background-color: #f8fafc !important;
+      border-color: #cbd5e1 !important;
+      color: #1e293b !important;
+    }
+    [data-theme="light"] .option-btn:hover:not(:disabled) {
+      background-color: #f1f5f9 !important;
+      border-color: #059669 !important;
+    }
+    [data-theme="light"] .option-badge {
+      background-color: #e2e8f0 !important;
+      color: #334155 !important;
+    }
+    [data-theme="light"] .option-btn.correct {
+      background-color: #d1fae5 !important;
+      border-color: #059669 !important;
+      color: #065f46 !important;
+    }
+    [data-theme="light"] .option-btn.wrong {
+      background-color: #fee2e2 !important;
+      border-color: #dc2626 !important;
+      color: #991b1b !important;
+    }
+    [data-theme="light"] .feedback-box.correct {
+      background-color: #ecfdf5 !important;
+      border: 1px solid #a7f3d0 !important;
+      border-left: 4px solid #059669 !important;
+      color: #065f46 !important;
+    }
+    [data-theme="light"] .feedback-box.wrong {
+      background-color: #fef2f2 !important;
+      border: 1px solid #fecaca !important;
+      border-left: 4px solid #dc2626 !important;
+      color: #991b1b !important;
+    }
+    [data-theme="light"] .results-box h2 {
+      color: #0f172a !important;
+    }
+    [data-theme="light"] .score-message {
+      color: #475569 !important;
+    }
+    [data-theme="light"] .nav-btn.primary {
+      background-color: #059669 !important;
+      color: #ffffff !important;
+    }
+  </style>
+</head>
+<body>
+
+<div class="quiz-container">
+  <div id="quiz-view">
+    <div class="quiz-header">
+      <div class="quiz-title">
+        <span>🐢 Evaluación: Turtle y Programación Secuencial</span>
+      </div>
+      <div class="quiz-counter" id="question-counter">Pregunta 1 de 8</div>
+    </div>
+
+    <div class="question-text" id="question-text">Cargando pregunta...</div>
+
+    <div class="options-container" id="options-container"></div>
+
+    <div class="feedback-box" id="feedback-box"></div>
+
+    <div class="quiz-footer">
+      <button class="nav-btn" id="prev-btn" onclick="prevQuestion()" disabled>❮ Anterior</button>
+      <button class="nav-btn primary" id="next-btn" onclick="nextQuestion()" disabled>Siguiente ❯</button>
+    </div>
+  </div>
+
+  <div class="results-box" id="results-view">
+    <h2>¡Quiz Finalizado!</h2>
+    <div class="score-badge" id="score-text">0 / 8</div>
+    <p class="score-message" id="score-msg"></p>
+    <button class="nav-btn primary" onclick="restartQuiz()">Reintentar Cuestionario</button>
+  </div>
+</div>
+
+<script>
+const questions = [
+  {
+    question: "¿Cuál es la función principal de la instrucción <code>tortuga.forward(distancia)</code>?",
+    options: [
+      "Hace girar la tortuga sobre su eje hacia adelante sin trazar ninguna línea.",
+      "Mueve la tortuga hacia adelante la cantidad de pasos indicada, trazando una línea si el lápiz está apoyado.",
+      "Configura el color del trazo hacia el color indicado entre paréntesis.",
+      "Teletransporta a la tortuga al origen (0, 0) inmediatamente sin dibujar."
+    ],
+    correct: 1,
+    explanation: "<b>¡Correcto!</b> <code>forward(distancia)</code> (o <code>fd()</code>) desplaza a la tortuga en línea recta según su ángulo actual la cantidad de píxeles indicada, dejando un trazo si el lápiz está abajo."
+  },
+  {
+    question: "Si ejecutas la instrucción <code>tortuga.left(90)</code>, ¿qué acción realiza la tortuga?",
+    options: [
+      "Se desplaza 90 píxeles hacia el lado izquierdo de la ventana sin girar.",
+      "Gira sobre su propio eje 90 grados en sentido antihorario (hacia la izquierda) sin desplazarse.",
+      "Dibuja un arco de círculo de 90 grados hacia adelante.",
+      "Borra las últimas 90 líneas que dibujó previamente."
+    ],
+    correct: 1,
+    explanation: "<b>¡Correcto!</b> <code>left(grados)</code> (o <code>lt()</code>) rota la orientación de la tortuga sin modificar su posición espacial (x, y)."
+  },
+  {
+    question: "¿Qué principio fundamental define a la <strong>programación secuencial</strong>?",
+    options: [
+      "Las instrucciones se ejecutan todas en paralelo al mismo tiempo sin importar el orden.",
+      "Python reorganiza el código de forma automática para optimizar el dibujo.",
+      "Las instrucciones se ejecutan estrictamente una tras otra, de arriba hacia abajo, en el orden exacto en que fueron escritas.",
+      "El programa solo se ejecuta si se encierran todas las líneas en un bucle for."
+    ],
+    correct: 2,
+    explanation: "<b>¡Correcto!</b> La programación secuencial es el modelo fundamental donde el computador procesa la primera instrucción, espera que termine la acción y procede con la siguiente de manera ordenada y predecible."
+  },
+  {
+    question: "¿Para qué se utiliza el comando <code>tortuga.penup()</code> (o <code>up()</code>)?",
+    options: [
+      "Levanta el lápiz virtual para que la tortuga pueda desplazarse sin dejar trazo en el lienzo.",
+      "Aumenta el grosor de la línea dibujada hacia arriba.",
+      "Apunta la cabeza de la tortuga directamente hacia el norte (90°).",
+      "Reinicia la ventana gráfica y borra todo el lienzo."
+    ],
+    correct: 0,
+    explanation: "<b>¡Correcto!</b> <code>penup()</code> (o <code>up()</code>) separa el lápiz del lienzo. Al mover la tortuga después de esto, no se pintará ninguna línea."
+  },
+  {
+    question: "Después de haber usado <code>penup()</code> para desplazarte, ¿qué comando debes invocar para volver a pintar trazos?",
+    options: [
+      "<code>tortuga.draw()</code>",
+      "<code>tortuga.start_pen()</code>",
+      "<code>tortuga.pendown()</code>",
+      "<code>tortuga.fill()</code>"
+    ],
+    correct: 2,
+    explanation: "<b>¡Correcto!</b> <code>pendown()</code> (o <code>down()</code>) vuelve a apoyar el lápiz sobre el lienzo virtual para reanudar el dibujo en los siguientes desplazamientos."
+  },
+  {
+    question: "¿Cuál es la forma correcta y secuencial de rellenar una figura cerrada con color en Turtle?",
+    options: [
+      "Llamar a <code>tortuga.fill()</code> únicamente al final del programa.",
+      "Invocar <code>tortuga.begin_fill()</code> antes de trazar el contorno y <code>tortuga.end_fill()</code> inmediatamente después de cerrarlo.",
+      "Repetir <code>forward(1)</code> cientos de veces hasta cubrir el interior manualmente.",
+      "Solo llamar a <code>tortuga.color('color')</code>; Turtle rellena todo el fondo automáticamente."
+    ],
+    correct: 1,
+    explanation: "<b>¡Correcto!</b> <code>begin_fill()</code> marca el punto de partida del polígono a rellenar, y <code>end_fill()</code> colorea su interior una vez que el contorno ha sido completado."
+  },
+  {
+    question: "En Python, si intercambias el orden entre <code>tortuga.forward(100)</code> y <code>tortuga.left(90)</code>, ¿qué ocurre con el resultado?",
+    options: [
+      "El dibujo final es exactamente idéntico, ya que el orden de las líneas no altera el resultado.",
+      "El resultado visual cambia radicalmente, porque la orientación previa determina hacia dónde avanza la tortuga.",
+      "Python produce un error de sintaxis y el script se detiene.",
+      "La tortuga siempre avanza primero sin importar la posición de las líneas de código."
+    ],
+    correct: 1,
+    explanation: "<b>¡Correcto!</b> En programación secuencial, cambiar el orden de las operaciones cambia el estado en cada paso. Girar antes de avanzar genera una trayectoria completamente diferente a avanzar y luego girar."
+  },
+  {
+    question: "Predicción de código: Si la tortuga inicia en el centro (0,0) mirando al este (0°) y ejecuta:<br><br><code>tortuga.forward(100)</code><br><code>tortuga.left(90)</code><br><code>tortuga.forward(100)</code><br><br>¿Qué trazo se produce y hacia dónde queda mirando la tortuga?",
+    options: [
+      "Se forma un cuadrado cerrado mirando al este (0°).",
+      "Se forma una sola línea recta de 200 pasos hacia el este.",
+      "Se dibuja una esquina en ángulo recto ('L' invertida) y la tortuga queda mirando al norte (90°).",
+      "Se forma un triángulo equilátero mirando al sur."
+    ],
+    correct: 2,
+    explanation: "<b>¡Correcto!</b> Primero avanza 100 pasos al este (horizontal derecha), gira 90° hacia la izquierda (quedando orientada al norte/arriba), y avanza 100 pasos hacia arriba, formando una figura en 'L' y terminando con ángulo de 90°."
+  }
+];
+
+let currentIndex = 0;
+let score = 0;
+let userAnswers = new Array(questions.length).fill(null);
+
+function renderQuestion() {
+  const q = questions[currentIndex];
+  document.getElementById('question-counter').innerText = `Pregunta ${currentIndex + 1} de ${questions.length}`;
+  document.getElementById('question-text').innerHTML = q.question;
+
+  const optContainer = document.getElementById('options-container');
+  optContainer.innerHTML = '';
+
+  const fbBox = document.getElementById('feedback-box');
+  fbBox.className = 'feedback-box';
+  fbBox.style.display = 'none';
+  fbBox.innerHTML = '';
+
+  const letters = ['A', 'B', 'C', 'D'];
+  const hasAnswered = userAnswers[currentIndex] !== null;
+
+  q.options.forEach((optText, idx) => {
+    const btn = document.createElement('button');
+    btn.className = 'option-btn';
+    btn.disabled = hasAnswered;
+
+    let badgeClass = 'option-badge';
+    if (hasAnswered) {
+      if (idx === q.correct) {
+        btn.classList.add('correct');
+      } else if (idx === userAnswers[currentIndex]) {
+        btn.classList.add('wrong');
+      }
+    }
+
+    btn.innerHTML = `<span class="${badgeClass}">${letters[idx]}</span><span>${optText}</span>`;
+    btn.onclick = () => selectOption(idx);
+    optContainer.appendChild(btn);
+  });
+
+  if (hasAnswered) {
+    const isCorrect = userAnswers[currentIndex] === q.correct;
+    fbBox.className = `feedback-box show ${isCorrect ? 'correct' : 'wrong'}`;
+    fbBox.innerHTML = (isCorrect ? '✅ ' : '❌ ') + q.explanation;
+  }
+
+  document.getElementById('prev-btn').disabled = currentIndex === 0;
+  document.getElementById('next-btn').disabled = !hasAnswered;
+  document.getElementById('next-btn').innerText = currentIndex === questions.length - 1 ? 'Ver Resultados 🏆' : 'Siguiente ❯';
+}
+
+function selectOption(index) {
+  if (userAnswers[currentIndex] !== null) return;
+  userAnswers[currentIndex] = index;
+  if (index === questions[currentIndex].correct) {
+    score++;
+  }
+  renderQuestion();
+}
+
+function prevQuestion() {
+  if (currentIndex > 0) {
+    currentIndex--;
+    renderQuestion();
+  }
+}
+
+function nextQuestion() {
+  if (currentIndex < questions.length - 1) {
+    currentIndex++;
+    renderQuestion();
+  } else {
+    showResults();
+  }
+}
+
+function showResults() {
+  document.getElementById('quiz-view').style.display = 'none';
+  const resultsView = document.getElementById('results-view');
+  resultsView.style.display = 'block';
+
+  document.getElementById('score-text').innerText = `${score} / ${questions.length}`;
+  const pct = Math.round((score / questions.length) * 100);
+  let msg = '';
+  if (pct === 100) {
+    msg = '¡Excelente! Dominas perfectamente los comandos fundamentales de Turtle y la programación secuencial.';
+  } else if (pct >= 75) {
+    msg = '¡Muy buen trabajo! Tienes una comprensión sólida del flujo de ejecución paso a paso y la orientación gráfica.';
+  } else if (pct >= 50) {
+    msg = 'Buen intento. Te recomendamos repasar el uso de left(), penup(), pendown() y el orden estricto de ejecución.';
+  } else {
+    msg = 'Sigue practicando. Prueba ejecutar las instrucciones paso a paso en el simulador interactivo y vuelve a intentarlo.';
+  }
+  document.getElementById('score-msg').innerHTML = `${msg}<br><br><strong>Aciertos:</strong> ${score} de ${questions.length} (${pct}%)`;
+}
+
+function restartQuiz() {
+  currentIndex = 0;
+  score = 0;
+  userAnswers = new Array(questions.length).fill(null);
+  document.getElementById('results-view').style.display = 'none';
+  document.getElementById('quiz-view').style.display = 'block';
+  renderQuestion();
+}
+
+// Inicializar
+renderQuestion();
+</script>
+
+<script>
+  (function() {
+    function applyWidgetTheme(t) {
+      if (t) document.documentElement.setAttribute('data-theme', t);
+    }
+    try {
+      var saved = localStorage.getItem('leogaviria_theme') || 'dark';
+      applyWidgetTheme(saved);
+    } catch(e) {}
+    window.addEventListener('message', function(e) {
+      if (e.data && e.data.type === 'THEME_CHANGE') {
+        applyWidgetTheme(e.data.theme);
+      }
+    });
+  })();
+</script>
+
+</body>
+</html>

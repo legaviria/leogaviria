@@ -9,7 +9,54 @@ import { getTopicData } from './data/topics/index.js';
 import { getCompletedTopics, isTopicCompleted, toggleTopicCompleted, getThemePreference, setThemePreference } from './utils/storage.js';
 import { searchCurriculum } from './utils/search.js';
 
-class LeoGaviriaApp {
+  // =========================================================================
+  // HELPER GLOBAL: COPIAR CÓDIGO AL PORTAPAPELES
+  // =========================================================================
+  window.copyCodeToClipboard = function(btn) {
+    if (!btn) return;
+    const card = btn.closest('.code-block-card, .code-card-wrapper') || btn.parentElement.parentElement;
+    const codeEl = card ? card.querySelector('code, pre') : null;
+    const text = codeEl ? (codeEl.innerText || codeEl.textContent).trim() : '';
+    if (!text) return;
+
+    const setCopied = () => {
+      const originalHtml = btn.innerHTML;
+      btn.innerHTML = '<i class="fas fa-check text-emerald-400"></i><span class="text-emerald-400 font-medium text-[11px] ml-1">¡Copiado!</span>';
+      btn.classList.add('border-emerald-500/60');
+      if (window.app && typeof window.app.showToast === 'function') {
+        window.app.showToast('Código copiado al portapapeles', 'success');
+      }
+      setTimeout(() => {
+        btn.innerHTML = originalHtml;
+        btn.classList.remove('border-emerald-500/60');
+      }, 2000);
+    };
+
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(setCopied).catch(() => {
+        fallbackCopy(text);
+        setCopied();
+      });
+    } else {
+      fallbackCopy(text);
+      setCopied();
+    }
+
+    function fallbackCopy(str) {
+      const ta = document.createElement('textarea');
+      ta.value = str;
+      ta.style.position = 'fixed';
+      ta.style.left = '-9999px';
+      ta.style.top = '-9999px';
+      document.body.appendChild(ta);
+      ta.focus();
+      ta.select();
+      try { document.execCommand('copy'); } catch(e) {}
+      document.body.removeChild(ta);
+    }
+  };
+
+  class LeoGaviriaApp {
   constructor() {
     this.currentTopicId = null;
     this.activeWeekId = null;
