@@ -835,7 +835,7 @@ tortuga.<span class="text-sky-400">backward</span>(<span class="text-amber-300">
 
           <details class="group bg-[#10141d] border border-emerald-500/30 rounded-xl p-4 my-4">
             <summary class="font-semibold text-sm text-emerald-400 cursor-pointer flex items-center justify-between list-none">
-              <span class="flex items-center gap-2"><i class="fas fa-code"></i> Ver Código de Solución Paso a Paso (Cubo rubik 3D: 3 Caras)</span>
+              <span class="flex items-center gap-2"><i class="fas fa-code"></i> Ver Código de Solución Paso a Paso (Cubo Rubik 3D: 3 Caras)</span>
               <span class="text-xs text-gray-400 group-open:rotate-180 transition-transform">▼</span>
             </summary>
             <div class="mt-4 pt-3 border-t border-gray-800">

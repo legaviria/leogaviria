@@ -287,31 +287,6 @@
       background: var(--accent-hover);
     }
 
-    /* Sandbox controls */
-    .sandbox-panel {
-      display: none;
-      gap: 6px;
-      flex-wrap: wrap;
-      background: var(--card-inner);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 8px;
-      margin-top: 4px;
-    }
-    .sandbox-btn {
-      padding: 4px 8px;
-      font-size: 0.7rem;
-      font-weight: 600;
-      border-radius: 5px;
-      border: 1px solid var(--border);
-      background: rgba(255,255,255,0.06);
-      color: var(--text);
-      cursor: pointer;
-    }
-    .sandbox-btn:hover {
-      background: var(--sky);
-      color: #000;
-    }
   </style>
 </head>
 <body>
@@ -335,8 +310,7 @@
       <button class="tab-btn" onclick="loadScenario('forward_left')">2. forward() + left()</button>
       <button class="tab-btn" onclick="loadScenario('cuadrado')">3. Cuadrado Secuencial</button>
       <button class="tab-btn" onclick="loadScenario('relleno')">4. Relleno de Figura</button>
-      <button class="tab-btn" onclick="loadScenario('rubik')">5. Reto Cubo rubik</button>
-      <button class="tab-btn" onclick="loadScenario('sandbox')">6. Explora (Modo Libre)</button>
+      <button class="tab-btn" onclick="loadScenario('rubik')">5. Reto Cubo Rubik</button>
     </div>
 
     <!-- Work Area -->
@@ -370,23 +344,6 @@
           <span id="explainText">Presiona "Siguiente Paso" o "Reproducir" para iniciar la secuencia.</span>
         </div>
       </div>
-    </div>
-
-    <!-- Sandbox buttons (visible only in sandbox mode) -->
-    <div class="sandbox-panel" id="sandboxPanel">
-      <button class="sandbox-btn" onclick="execSandbox('forward', 50)">forward(50)</button>
-      <button class="sandbox-btn" onclick="execSandbox('forward', 100)">forward(100)</button>
-      <button class="sandbox-btn" onclick="execSandbox('left', 90)">left(90)</button>
-      <button class="sandbox-btn" onclick="execSandbox('left', 45)">left(45)</button>
-      <button class="sandbox-btn" onclick="execSandbox('right', 90)">right(90)</button>
-      <button class="sandbox-btn" onclick="execSandbox('penup')">penup()</button>
-      <button class="sandbox-btn" onclick="execSandbox('pendown')">pendown()</button>
-      <button class="sandbox-btn" onclick="execSandbox('color', '#38bdf8')">color("azul")</button>
-      <button class="sandbox-btn" onclick="execSandbox('color', '#10b981')">color("verde")</button>
-      <button class="sandbox-btn" onclick="execSandbox('color', '#ef4444')">color("rojo")</button>
-      <button class="sandbox-btn" onclick="execSandbox('begin_fill')">begin_fill()</button>
-      <button class="sandbox-btn" onclick="execSandbox('end_fill')">end_fill()</button>
-      <button class="sandbox-btn" onclick="resetCanvas()" style="background:#dc2626; color:#fff;">Limpiar</button>
     </div>
 
     <!-- Controls Bar -->
@@ -506,56 +463,372 @@
         ]
       },
       rubik: {
-        title: "Reto Final: Cubo rubik 3D (Silueta y 27 Celdas Multicolor)",
+        title: "Reto Final: Cubo Rubik 3D (3 Caras)",
         code: [
-          { line: 'import turtle', action: null, explain: 'Importa el módulo gráfico Turtle.' },
-          { line: 't = turtle.Turtle()', action: {"type": "init_pos", "x": 0, "y": -70}, explain: 'Inicia la tortuga en el centro (0, 0) con ángulo 0°.' },
-          { line: 't.speed(20)', action: null, explain: 'Configura la velocidad de dibujo rápida.' },
-          { line: '# "silueta del cubo"', action: null, explain: 'Fase 1: Trazamos la silueta exterior e interior del cubo 3D.' },
-          { line: 't.left(30); t.forward(90)', action: [{"type": "lt", "angle": 30}, {"type": "fd", "dist": 90}], explain: 'Silueta: arista a 30°' },
-          { line: 't.left(60); t.forward(90)', action: [{"type": "lt", "angle": 60}, {"type": "fd", "dist": 90}], explain: 'Silueta: arista a 90°' },
-          { line: 't.left(120); t.forward(90)', action: [{"type": "lt", "angle": 120}, {"type": "fd", "dist": 90}], explain: 'Silueta: arista a 210°' },
-          { line: 't.left(60); t.forward(90)', action: [{"type": "lt", "angle": 60}, {"type": "fd", "dist": 90}], explain: 'Silueta: arista a 270°' },
-          { line: 't.right(120); t.forward(90)', action: [{"type": "rt", "angle": 120}, {"type": "fd", "dist": 90}], explain: 'Silueta: arista a 150°' },
-          { line: 't.right(60); t.forward(90)', action: [{"type": "rt", "angle": 60}, {"type": "fd", "dist": 90}], explain: 'Silueta: arista a 90°' },
-          { line: 't.right(120); t.forward(90)', action: [{"type": "rt", "angle": 120}, {"type": "fd", "dist": 90}], explain: 'Silueta: arista a 330°' },
-          { line: 't.left(60); t.forward(90)', action: [{"type": "lt", "angle": 60}, {"type": "fd", "dist": 90}], explain: 'Silueta: arista a 30°' },
-          { line: 't.left(120); t.forward(90)', action: [{"type": "lt", "angle": 120}, {"type": "fd", "dist": 90}], explain: 'Silueta: arista a 150°' },
-          { line: 't.left(60); t.forward(90)', action: [{"type": "lt", "angle": 60}, {"type": "fd", "dist": 90}], explain: 'Silueta: arista a 210°' },
-          { line: 't.left(120); t.forward(90)', action: [{"type": "lt", "angle": 120}, {"type": "fd", "dist": 90}], explain: 'Silueta: arista a 330°' },
-          { line: 't.right(60); t.forward(90)', action: [{"type": "rt", "angle": 60}, {"type": "fd", "dist": 90}], explain: 'Silueta: arista central vertical a 270°' },
-          { line: '# "celdas una por una para cambiar su color"', action: null, explain: 'Fase 2: Coloreamos las 27 celdas secuencialmente.' },
-          { line: 't.fillcolor(\'white\')  # Celda 1: Blanco', action: [{"type": "fillcolor", "color": "white"}, {"type": "begin_fill"}, {"type": "lt", "angle": 120}, {"type": "fd", "dist": 30}, {"type": "lt", "angle": 60}, {"type": "fd", "dist": 30}, {"type": "lt", "angle": 120}, {"type": "fd", "dist": 30}, {"type": "end_fill"}, {"type": "bk", "dist": 30}], explain: 'Celda 1 de 27 (Blanco): relleno y navegación.' },
-          { line: 't.fillcolor(\'red\')  # Celda 2: Rojo', action: [{"type": "fillcolor", "color": "red"}, {"type": "begin_fill"}, {"type": "rt", "angle": 180}, {"type": "fd", "dist": 30}, {"type": "rt", "angle": 120}, {"type": "fd", "dist": 30}, {"type": "rt", "angle": 60}, {"type": "fd", "dist": 30}, {"type": "end_fill"}, {"type": "bk", "dist": 30}], explain: 'Celda 2 de 27 (Rojo): relleno y navegación.' },
-          { line: 't.fillcolor(\'blue\')  # Celda 3: Azul', action: [{"type": "fillcolor", "color": "blue"}, {"type": "begin_fill"}, {"type": "lt", "angle": 180}, {"type": "fd", "dist": 30}, {"type": "lt", "angle": 60}, {"type": "fd", "dist": 30}, {"type": "lt", "angle": 120}, {"type": "fd", "dist": 30}, {"type": "end_fill"}, {"type": "fd", "dist": 60}, {"type": "rt", "angle": 60}], explain: 'Celda 3 de 27 (Azul): relleno y navegación.' },
-          { line: 't.fillcolor(\'orange\')  # Celda 4: Naranja', action: [{"type": "fillcolor", "color": "orange"}, {"type": "begin_fill"}, {"type": "fd", "dist": 30}, {"type": "lt", "angle": 120}, {"type": "fd", "dist": 30}, {"type": "lt", "angle": 60}, {"type": "fd", "dist": 30}, {"type": "lt", "angle": 120}, {"type": "fd", "dist": 30}, {"type": "end_fill"}, {"type": "lt", "angle": 60}, {"type": "fd", "dist": 30}], explain: 'Celda 4 de 27 (Naranja): relleno y navegación.' },
-          { line: 't.fillcolor(\'yellow\')  # Celda 5: Amarillo', action: [{"type": "fillcolor", "color": "yellow"}, {"type": "begin_fill"}, {"type": "fd", "dist": 30}, {"type": "lt", "angle": 120}, {"type": "fd", "dist": 30}, {"type": "lt", "angle": 60}, {"type": "fd", "dist": 30}, {"type": "lt", "angle": 120}, {"type": "fd", "dist": 30}, {"type": "end_fill"}, {"type": "lt", "angle": 60}, {"type": "fd", "dist": 30}], explain: 'Celda 5 de 27 (Amarillo): relleno y navegación.' },
-          { line: 't.fillcolor(\'green\')  # Celda 6: Verde', action: [{"type": "fillcolor", "color": "green"}, {"type": "begin_fill"}, {"type": "fd", "dist": 30}, {"type": "lt", "angle": 120}, {"type": "fd", "dist": 30}, {"type": "lt", "angle": 60}, {"type": "fd", "dist": 30}, {"type": "lt", "angle": 120}, {"type": "fd", "dist": 30}, {"type": "end_fill"}, {"type": "lt", "angle": 60}, {"type": "fd", "dist": 30}], explain: 'Celda 6 de 27 (Verde): relleno y navegación.' },
-          { line: 't.fillcolor(\'orange\')  # Celda 7: Naranja', action: [{"type": "fillcolor", "color": "orange"}, {"type": "begin_fill"}, {"type": "rt", "angle": 60}, {"type": "fd", "dist": 30}, {"type": "rt", "angle": 120}, {"type": "fd", "dist": 30}, {"type": "rt", "angle": 60}, {"type": "fd", "dist": 30}, {"type": "rt", "angle": 120}, {"type": "fd", "dist": 30}, {"type": "end_fill"}, {"type": "bk", "dist": 60}], explain: 'Celda 7 de 27 (Naranja): relleno y navegación.' },
-          { line: 't.fillcolor(\'red\')  # Celda 8: Rojo', action: [{"type": "fillcolor", "color": "red"}, {"type": "begin_fill"}, {"type": "fd", "dist": 30}, {"type": "rt", "angle": 60}, {"type": "fd", "dist": 30}, {"type": "rt", "angle": 120}, {"type": "fd", "dist": 30}, {"type": "rt", "angle": 60}, {"type": "fd", "dist": 30}, {"type": "end_fill"}, {"type": "bk", "dist": 30}], explain: 'Celda 8 de 27 (Rojo): relleno y navegación.' },
-          { line: 't.fillcolor(\'green\')  # Celda 9: Verde', action: [{"type": "fillcolor", "color": "green"}, {"type": "begin_fill"}, {"type": "lt", "angle": 60}, {"type": "fd", "dist": 30}, {"type": "rt", "angle": 60}, {"type": "fd", "dist": 30}, {"type": "rt", "angle": 120}, {"type": "fd", "dist": 30}, {"type": "end_fill"}, {"type": "bk", "dist": 30}, {"type": "rt", "angle": 120}], explain: 'Celda 9 de 27 (Verde): relleno y navegación.' },
-          { line: 't.fillcolor(\'orange\')  # Celda 10: Naranja', action: [{"type": "fillcolor", "color": "orange"}, {"type": "begin_fill"}, {"type": "fd", "dist": 30}, {"type": "lt", "angle": 60}, {"type": "fd", "dist": 30}, {"type": "lt", "angle": 120}, {"type": "fd", "dist": 30}, {"type": "end_fill"}, {"type": "bk", "dist": 30}, {"type": "rt", "angle": 180}], explain: 'Celda 10 de 27 (Naranja): relleno y navegación.' },
-          { line: 't.fillcolor(\'green\')  # Celda 11: Verde', action: [{"type": "fillcolor", "color": "green"}, {"type": "begin_fill"}, {"type": "fd", "dist": 30}, {"type": "rt", "angle": 120}, {"type": "fd", "dist": 30}, {"type": "rt", "angle": 60}, {"type": "fd", "dist": 30}, {"type": "end_fill"}, {"type": "bk", "dist": 60}], explain: 'Celda 11 de 27 (Verde): relleno y navegación.' },
-          { line: 't.fillcolor(\'white\')  # Celda 12: Blanco', action: [{"type": "fillcolor", "color": "white"}, {"type": "begin_fill"}, {"type": "rt", "angle": 120}, {"type": "fd", "dist": 30}, {"type": "lt", "angle": 120}, {"type": "fd", "dist": 30}, {"type": "lt", "angle": 60}, {"type": "fd", "dist": 30}, {"type": "end_fill"}, {"type": "bk", "dist": 30}, {"type": "lt", "angle": 120}], explain: 'Celda 12 de 27 (Blanco): relleno y navegación.' },
-          { line: 't.fillcolor(\'yellow\')  # Celda 13: Amarillo', action: [{"type": "fillcolor", "color": "yellow"}, {"type": "begin_fill"}, {"type": "fd", "dist": 30}, {"type": "lt", "angle": 60}, {"type": "fd", "dist": 30}, {"type": "lt", "angle": 120}, {"type": "fd", "dist": 30}, {"type": "lt", "angle": 60}, {"type": "fd", "dist": 30}, {"type": "end_fill"}], explain: 'Celda 13 de 27 (Amarillo): relleno y navegación.' },
-          { line: 't.fillcolor(\'orange\')  # Celda 14: Naranja', action: [{"type": "fillcolor", "color": "orange"}, {"type": "begin_fill"}, {"type": "rt", "angle": 60}, {"type": "fd", "dist": 30}, {"type": "rt", "angle": 120}, {"type": "fd", "dist": 30}, {"type": "rt", "angle": 60}, {"type": "fd", "dist": 30}, {"type": "end_fill"}, {"type": "bk", "dist": 30}], explain: 'Celda 14 de 27 (Naranja): relleno y navegación.' },
-          { line: 't.fillcolor(\'white\')  # Celda 15: Blanco', action: [{"type": "fillcolor", "color": "white"}, {"type": "begin_fill"}, {"type": "rt", "angle": 120}, {"type": "fd", "dist": 30}, {"type": "rt", "angle": 60}, {"type": "fd", "dist": 30}, {"type": "rt", "angle": 120}, {"type": "fd", "dist": 30}, {"type": "rt", "angle": 60}, {"type": "fd", "dist": 30}, {"type": "end_fill"}, {"type": "bk", "dist": 30}, {"type": "lt", "angle": 180}], explain: 'Celda 15 de 27 (Blanco): relleno y navegación.' },
-          { line: 't.fillcolor(\'blue\')  # Celda 16: Azul', action: [{"type": "fillcolor", "color": "blue"}, {"type": "begin_fill"}, {"type": "rt", "angle": 60}, {"type": "fd", "dist": 30}, {"type": "lt", "angle": 120}, {"type": "fd", "dist": 30}, {"type": "lt", "angle": 60}, {"type": "fd", "dist": 30}, {"type": "lt", "angle": 120}, {"type": "fd", "dist": 30}, {"type": "end_fill"}, {"type": "lt", "angle": 60}, {"type": "fd", "dist": 30}], explain: 'Celda 16 de 27 (Azul): relleno y navegación.' },
-          { line: 't.fillcolor(\'green\')  # Celda 17: Verde', action: [{"type": "fillcolor", "color": "green"}, {"type": "begin_fill"}, {"type": "fd", "dist": 30}, {"type": "lt", "angle": 120}, {"type": "fd", "dist": 30}, {"type": "lt", "angle": 60}, {"type": "fd", "dist": 30}, {"type": "lt", "angle": 120}, {"type": "fd", "dist": 30}, {"type": "end_fill"}, {"type": "lt", "angle": 60}, {"type": "fd", "dist": 30}], explain: 'Celda 17 de 27 (Verde): relleno y navegación.' },
-          { line: 't.fillcolor(\'yellow\')  # Celda 18: Amarillo', action: [{"type": "fillcolor", "color": "yellow"}, {"type": "begin_fill"}, {"type": "fd", "dist": 30}, {"type": "lt", "angle": 120}, {"type": "fd", "dist": 30}, {"type": "lt", "angle": 60}, {"type": "fd", "dist": 30}, {"type": "lt", "angle": 120}, {"type": "fd", "dist": 30}, {"type": "end_fill"}, {"type": "lt", "angle": 60}, {"type": "fd", "dist": 30}], explain: 'Celda 18 de 27 (Amarillo): relleno y navegación.' },
-          { line: 't.fillcolor(\'blue\')  # Celda 19: Azul', action: [{"type": "fillcolor", "color": "blue"}, {"type": "begin_fill"}, {"type": "rt", "angle": 120}, {"type": "fd", "dist": 30}, {"type": "rt", "angle": 60}, {"type": "fd", "dist": 30}, {"type": "rt", "angle": 120}, {"type": "fd", "dist": 30}, {"type": "rt", "angle": 60}, {"type": "fd", "dist": 30}, {"type": "end_fill"}, {"type": "rt", "angle": 120}, {"type": "fd", "dist": 30}], explain: 'Celda 19 de 27 (Azul): relleno y navegación.' },
-          { line: 't.fillcolor(\'white\')  # Celda 20: Blanco', action: [{"type": "fillcolor", "color": "white"}, {"type": "begin_fill"}, {"type": "fd", "dist": 30}, {"type": "rt", "angle": 60}, {"type": "fd", "dist": 30}, {"type": "rt", "angle": 120}, {"type": "fd", "dist": 30}, {"type": "rt", "angle": 60}, {"type": "fd", "dist": 30}, {"type": "end_fill"}, {"type": "rt", "angle": 120}, {"type": "fd", "dist": 30}], explain: 'Celda 20 de 27 (Blanco): relleno y navegación.' },
-          { line: 't.fillcolor(\'green\')  # Celda 21: Verde', action: [{"type": "fillcolor", "color": "green"}, {"type": "begin_fill"}, {"type": "fd", "dist": 30}, {"type": "rt", "angle": 60}, {"type": "fd", "dist": 30}, {"type": "rt", "angle": 120}, {"type": "fd", "dist": 30}, {"type": "rt", "angle": 60}, {"type": "fd", "dist": 30}, {"type": "end_fill"}, {"type": "rt", "angle": 120}, {"type": "fd", "dist": 30}, {"type": "rt", "angle": 60}, {"type": "fd", "dist": 30}], explain: 'Celda 21 de 27 (Verde): relleno y navegación.' },
-          { line: 't.fillcolor(\'red\')  # Celda 22: Rojo', action: [{"type": "fillcolor", "color": "red"}, {"type": "begin_fill"}, {"type": "rt", "angle": 120}, {"type": "fd", "dist": 30}, {"type": "lt", "angle": 120}, {"type": "fd", "dist": 30}, {"type": "lt", "angle": 60}, {"type": "fd", "dist": 30}, {"type": "end_fill"}, {"type": "rt", "angle": 60}], explain: 'Celda 22 de 27 (Rojo): relleno y navegación.' },
-          { line: 't.fillcolor(\'orange\')  # Celda 23: Naranja', action: [{"type": "fillcolor", "color": "orange"}, {"type": "begin_fill"}, {"type": "fd", "dist": 30}, {"type": "rt", "angle": 120}, {"type": "fd", "dist": 30}, {"type": "rt", "angle": 60}, {"type": "fd", "dist": 30}, {"type": "end_fill"}, {"type": "lt", "angle": 60}], explain: 'Celda 23 de 27 (Naranja): relleno y navegación.' },
-          { line: 't.fillcolor(\'blue\')  # Celda 24: Azul', action: [{"type": "fillcolor", "color": "blue"}, {"type": "begin_fill"}, {"type": "fd", "dist": 30}, {"type": "lt", "angle": 120}, {"type": "fd", "dist": 30}, {"type": "lt", "angle": 60}, {"type": "fd", "dist": 30}, {"type": "end_fill"}, {"type": "lt", "angle": 120}, {"type": "fd", "dist": 30}], explain: 'Celda 24 de 27 (Azul): relleno y navegación.' },
-          { line: 't.fillcolor(\'yellow\')  # Celda 25: Amarillo', action: [{"type": "fillcolor", "color": "yellow"}, {"type": "begin_fill"}, {"type": "fd", "dist": 30}, {"type": "lt", "angle": 60}, {"type": "fd", "dist": 30}, {"type": "lt", "angle": 120}, {"type": "fd", "dist": 30}, {"type": "lt", "angle": 60}, {"type": "fd", "dist": 30}, {"type": "end_fill"}, {"type": "bk", "dist": 60}], explain: 'Celda 25 de 27 (Amarillo): relleno y navegación.' },
-          { line: 't.fillcolor(\'white\')  # Celda 26: Blanco', action: [{"type": "fillcolor", "color": "white"}, {"type": "begin_fill"}, {"type": "lt", "angle": 120}, {"type": "fd", "dist": 30}, {"type": "rt", "angle": 120}, {"type": "fd", "dist": 30}, {"type": "rt", "angle": 60}, {"type": "fd", "dist": 30}, {"type": "end_fill"}], explain: 'Celda 26 de 27 (Blanco): relleno y navegación.' },
-          { line: 't.fillcolor(\'red\')  # Celda 27: Rojo', action: [{"type": "fillcolor", "color": "red"}, {"type": "begin_fill"}, {"type": "fd", "dist": 30}, {"type": "rt", "angle": 120}, {"type": "fd", "dist": 30}, {"type": "rt", "angle": 60}, {"type": "fd", "dist": 30}, {"type": "end_fill"}], explain: 'Celda 27 de 27 (Rojo): relleno y navegación.' },
-          { line: 't.hideturtle()', action: null, explain: '¡Reto completado! Cubo Rubik 3D coloreado celda por celda.' },
-          { line: 'turtle.done()', action: null, explain: 'Fin de la ejecución del programa.' }
+          { line: 'import turtle', action: null, explain: 'Importa la librería Turtle.' },
+          { line: '# Configuración inicial de la tortuga', action: null, explain: 'Configuración inicial de la tortuga' },
+          { line: 't = turtle.Turtle()', action: {"type": "init_pos", "x": 0, "y": -90}, explain: 'Crea la tortuga en posición inicial centrada (0, -90).' },
+          { line: 't.speed(20)', action: null, explain: 'Configura la velocidad de animación de la tortuga.' },
+          { line: 't.pensize(2)', action: {"type": "pensize", "size": 2}, explain: 'Configura el grosor del lápiz en 2 píxeles.' },
+          { line: '# ========================================================', action: null, explain: '========================================================' },
+          { line: '# 1. Silueta tridimensional del cubo', action: null, explain: '1. Silueta tridimensional del cubo' },
+          { line: '# ========================================================', action: null, explain: '========================================================' },
+          { line: 't.left(30)', action: {"type": "lt", "angle": 30}, explain: 'Gira 30° a la izquierda.' },
+          { line: 't.forward(90)', action: {"type": "fd", "dist": 90}, explain: 'Avanza 90 px trazando arista.' },
+          { line: 't.left(60)', action: {"type": "lt", "angle": 60}, explain: 'Gira 60° a la izquierda.' },
+          { line: 't.forward(90)', action: {"type": "fd", "dist": 90}, explain: 'Avanza 90 px trazando arista.' },
+          { line: 't.left(120)', action: {"type": "lt", "angle": 120}, explain: 'Gira 120° a la izquierda.' },
+          { line: 't.forward(90)', action: {"type": "fd", "dist": 90}, explain: 'Avanza 90 px trazando arista.' },
+          { line: 't.left(60)', action: {"type": "lt", "angle": 60}, explain: 'Gira 60° a la izquierda.' },
+          { line: 't.forward(90)', action: {"type": "fd", "dist": 90}, explain: 'Avanza 90 px trazando arista.' },
+          { line: 't.right(120)', action: {"type": "rt", "angle": 120}, explain: 'Gira 120° a la derecha.' },
+          { line: 't.forward(90)  ', action: {"type": "fd", "dist": 90}, explain: 'Avanza 90 px trazando arista.' },
+          { line: 't.right(60)', action: {"type": "rt", "angle": 60}, explain: 'Gira 60° a la derecha.' },
+          { line: 't.forward(90) ', action: {"type": "fd", "dist": 90}, explain: 'Avanza 90 px trazando arista.' },
+          { line: 't.right(120)', action: {"type": "rt", "angle": 120}, explain: 'Gira 120° a la derecha.' },
+          { line: 't.forward(90)', action: {"type": "fd", "dist": 90}, explain: 'Avanza 90 px trazando arista.' },
+          { line: 't.left(60)', action: {"type": "lt", "angle": 60}, explain: 'Gira 60° a la izquierda.' },
+          { line: 't.forward(90)', action: {"type": "fd", "dist": 90}, explain: 'Avanza 90 px trazando arista.' },
+          { line: 't.left(120)', action: {"type": "lt", "angle": 120}, explain: 'Gira 120° a la izquierda.' },
+          { line: 't.forward(90)', action: {"type": "fd", "dist": 90}, explain: 'Avanza 90 px trazando arista.' },
+          { line: 't.left(60)', action: {"type": "lt", "angle": 60}, explain: 'Gira 60° a la izquierda.' },
+          { line: 't.forward(90)', action: {"type": "fd", "dist": 90}, explain: 'Avanza 90 px trazando arista.' },
+          { line: 't.left(120)', action: {"type": "lt", "angle": 120}, explain: 'Gira 120° a la izquierda.' },
+          { line: 't.forward(90)', action: {"type": "fd", "dist": 90}, explain: 'Avanza 90 px trazando arista.' },
+          { line: 't.right(60)', action: {"type": "rt", "angle": 60}, explain: 'Gira 60° a la derecha.' },
+          { line: 't.forward(90)', action: {"type": "fd", "dist": 90}, explain: 'Avanza 90 px trazando arista.' },
+          { line: '# ========================================================', action: null, explain: '========================================================' },
+          { line: '# 2. Celdas una por una para cambiar su color (27 celdas)', action: null, explain: 'Inicia el coloreado de la 2. Celdas una por una para cambiar su color (27 celdas).' },
+          { line: '# ========================================================', action: null, explain: '========================================================' },
+          { line: '# Celda 1', action: null, explain: 'Inicia el coloreado de la Celda 1.' },
+          { line: 't.fillcolor("white")', action: {"type": "fillcolor", "color": "white"}, explain: 'Define color de relleno: Blanco ("white").' },
+          { line: 't.begin_fill()', action: {"type": "begin_fill"}, explain: 'Inicia el registro del polígono para rellenar la celda.' },
+          { line: 't.left(120)', action: {"type": "lt", "angle": 120}, explain: 'Gira 120° a la izquierda.' },
+          { line: 't.forward(30)', action: {"type": "fd", "dist": 30}, explain: 'Avanza 30 px trazando arista.' },
+          { line: 't.left(60)', action: {"type": "lt", "angle": 60}, explain: 'Gira 60° a la izquierda.' },
+          { line: 't.forward(30)', action: {"type": "fd", "dist": 30}, explain: 'Avanza 30 px trazando arista.' },
+          { line: 't.left(120)', action: {"type": "lt", "angle": 120}, explain: 'Gira 120° a la izquierda.' },
+          { line: 't.forward(30)   ', action: {"type": "fd", "dist": 30}, explain: 'Avanza 30 px trazando arista.' },
+          { line: 't.end_fill()', action: {"type": "end_fill"}, explain: '¡Aplica el relleno de color al interior de la celda cerrada!' },
+          { line: 't.backward(30)', action: {"type": "bk", "dist": 30}, explain: 'Retrocede 30 px para reposicionarse hacia la siguiente celda.' },
+          { line: '# Celda 2', action: null, explain: 'Inicia el coloreado de la Celda 2.' },
+          { line: 't.fillcolor("red")', action: {"type": "fillcolor", "color": "red"}, explain: 'Define color de relleno: Rojo ("red").' },
+          { line: 't.begin_fill()', action: {"type": "begin_fill"}, explain: 'Inicia el registro del polígono para rellenar la celda.' },
+          { line: 't.right(180)', action: {"type": "rt", "angle": 180}, explain: 'Gira 180° a la derecha.' },
+          { line: 't.forward(30)   ', action: {"type": "fd", "dist": 30}, explain: 'Avanza 30 px trazando arista.' },
+          { line: 't.right(120) ', action: {"type": "rt", "angle": 120}, explain: 'Gira 120° a la derecha.' },
+          { line: 't.forward(30)', action: {"type": "fd", "dist": 30}, explain: 'Avanza 30 px trazando arista.' },
+          { line: 't.right(60)', action: {"type": "rt", "angle": 60}, explain: 'Gira 60° a la derecha.' },
+          { line: 't.forward(30)', action: {"type": "fd", "dist": 30}, explain: 'Avanza 30 px trazando arista.' },
+          { line: 't.end_fill()', action: {"type": "end_fill"}, explain: '¡Aplica el relleno de color al interior de la celda cerrada!' },
+          { line: 't.backward(30)', action: {"type": "bk", "dist": 30}, explain: 'Retrocede 30 px para reposicionarse hacia la siguiente celda.' },
+          { line: '# Celda 3', action: null, explain: 'Inicia el coloreado de la Celda 3.' },
+          { line: 't.fillcolor("blue")', action: {"type": "fillcolor", "color": "blue"}, explain: 'Define color de relleno: Azul ("blue").' },
+          { line: 't.begin_fill()', action: {"type": "begin_fill"}, explain: 'Inicia el registro del polígono para rellenar la celda.' },
+          { line: 't.left(180)', action: {"type": "lt", "angle": 180}, explain: 'Gira 180° a la izquierda.' },
+          { line: 't.forward(30)   ', action: {"type": "fd", "dist": 30}, explain: 'Avanza 30 px trazando arista.' },
+          { line: 't.left(60) ', action: {"type": "lt", "angle": 60}, explain: 'Gira 60° a la izquierda.' },
+          { line: 't.forward(30)', action: {"type": "fd", "dist": 30}, explain: 'Avanza 30 px trazando arista.' },
+          { line: 't.left(120)', action: {"type": "lt", "angle": 120}, explain: 'Gira 120° a la izquierda.' },
+          { line: 't.forward(30)', action: {"type": "fd", "dist": 30}, explain: 'Avanza 30 px trazando arista.' },
+          { line: 't.end_fill()', action: {"type": "end_fill"}, explain: '¡Aplica el relleno de color al interior de la celda cerrada!' },
+          { line: 't.forward(60)', action: {"type": "fd", "dist": 60}, explain: 'Avanza 60 px trazando arista.' },
+          { line: 't.right(60)', action: {"type": "rt", "angle": 60}, explain: 'Gira 60° a la derecha.' },
+          { line: '# Celda 4', action: null, explain: 'Inicia el coloreado de la Celda 4.' },
+          { line: 't.fillcolor("orange")', action: {"type": "fillcolor", "color": "orange"}, explain: 'Define color de relleno: Naranja ("orange").' },
+          { line: 't.begin_fill()', action: {"type": "begin_fill"}, explain: 'Inicia el registro del polígono para rellenar la celda.' },
+          { line: 't.forward(30)', action: {"type": "fd", "dist": 30}, explain: 'Avanza 30 px trazando arista.' },
+          { line: 't.left(120)', action: {"type": "lt", "angle": 120}, explain: 'Gira 120° a la izquierda.' },
+          { line: 't.forward(30)', action: {"type": "fd", "dist": 30}, explain: 'Avanza 30 px trazando arista.' },
+          { line: 't.left(60)', action: {"type": "lt", "angle": 60}, explain: 'Gira 60° a la izquierda.' },
+          { line: 't.forward(30)', action: {"type": "fd", "dist": 30}, explain: 'Avanza 30 px trazando arista.' },
+          { line: 't.left(120)', action: {"type": "lt", "angle": 120}, explain: 'Gira 120° a la izquierda.' },
+          { line: 't.forward(30)', action: {"type": "fd", "dist": 30}, explain: 'Avanza 30 px trazando arista.' },
+          { line: 't.end_fill()', action: {"type": "end_fill"}, explain: '¡Aplica el relleno de color al interior de la celda cerrada!' },
+          { line: 't.left(60)', action: {"type": "lt", "angle": 60}, explain: 'Gira 60° a la izquierda.' },
+          { line: 't.forward(30)', action: {"type": "fd", "dist": 30}, explain: 'Avanza 30 px trazando arista.' },
+          { line: '# Celda 5', action: null, explain: 'Inicia el coloreado de la Celda 5.' },
+          { line: 't.fillcolor("yellow")', action: {"type": "fillcolor", "color": "yellow"}, explain: 'Define color de relleno: Amarillo ("yellow").' },
+          { line: 't.begin_fill()', action: {"type": "begin_fill"}, explain: 'Inicia el registro del polígono para rellenar la celda.' },
+          { line: 't.forward(30)', action: {"type": "fd", "dist": 30}, explain: 'Avanza 30 px trazando arista.' },
+          { line: 't.left(120)', action: {"type": "lt", "angle": 120}, explain: 'Gira 120° a la izquierda.' },
+          { line: 't.forward(30)', action: {"type": "fd", "dist": 30}, explain: 'Avanza 30 px trazando arista.' },
+          { line: 't.left(60)', action: {"type": "lt", "angle": 60}, explain: 'Gira 60° a la izquierda.' },
+          { line: 't.forward(30)', action: {"type": "fd", "dist": 30}, explain: 'Avanza 30 px trazando arista.' },
+          { line: 't.left(120)', action: {"type": "lt", "angle": 120}, explain: 'Gira 120° a la izquierda.' },
+          { line: 't.forward(30)', action: {"type": "fd", "dist": 30}, explain: 'Avanza 30 px trazando arista.' },
+          { line: 't.end_fill()', action: {"type": "end_fill"}, explain: '¡Aplica el relleno de color al interior de la celda cerrada!' },
+          { line: 't.left(60)', action: {"type": "lt", "angle": 60}, explain: 'Gira 60° a la izquierda.' },
+          { line: 't.forward(30)', action: {"type": "fd", "dist": 30}, explain: 'Avanza 30 px trazando arista.' },
+          { line: '# Celda 6', action: null, explain: 'Inicia el coloreado de la Celda 6.' },
+          { line: 't.fillcolor("green")', action: {"type": "fillcolor", "color": "green"}, explain: 'Define color de relleno: Verde ("green").' },
+          { line: 't.begin_fill()', action: {"type": "begin_fill"}, explain: 'Inicia el registro del polígono para rellenar la celda.' },
+          { line: 't.forward(30)', action: {"type": "fd", "dist": 30}, explain: 'Avanza 30 px trazando arista.' },
+          { line: 't.left(120)', action: {"type": "lt", "angle": 120}, explain: 'Gira 120° a la izquierda.' },
+          { line: 't.forward(30)', action: {"type": "fd", "dist": 30}, explain: 'Avanza 30 px trazando arista.' },
+          { line: 't.left(60)', action: {"type": "lt", "angle": 60}, explain: 'Gira 60° a la izquierda.' },
+          { line: 't.forward(30)', action: {"type": "fd", "dist": 30}, explain: 'Avanza 30 px trazando arista.' },
+          { line: 't.left(120)', action: {"type": "lt", "angle": 120}, explain: 'Gira 120° a la izquierda.' },
+          { line: 't.forward(30)', action: {"type": "fd", "dist": 30}, explain: 'Avanza 30 px trazando arista.' },
+          { line: 't.end_fill()', action: {"type": "end_fill"}, explain: '¡Aplica el relleno de color al interior de la celda cerrada!' },
+          { line: 't.left(60)', action: {"type": "lt", "angle": 60}, explain: 'Gira 60° a la izquierda.' },
+          { line: 't.forward(30)', action: {"type": "fd", "dist": 30}, explain: 'Avanza 30 px trazando arista.' },
+          { line: '# Celda 7', action: null, explain: 'Inicia el coloreado de la Celda 7.' },
+          { line: 't.fillcolor("orange")', action: {"type": "fillcolor", "color": "orange"}, explain: 'Define color de relleno: Naranja ("orange").' },
+          { line: 't.begin_fill()', action: {"type": "begin_fill"}, explain: 'Inicia el registro del polígono para rellenar la celda.' },
+          { line: 't.right(60)', action: {"type": "rt", "angle": 60}, explain: 'Gira 60° a la derecha.' },
+          { line: 't.forward(30)', action: {"type": "fd", "dist": 30}, explain: 'Avanza 30 px trazando arista.' },
+          { line: 't.right(120)', action: {"type": "rt", "angle": 120}, explain: 'Gira 120° a la derecha.' },
+          { line: 't.forward(30)', action: {"type": "fd", "dist": 30}, explain: 'Avanza 30 px trazando arista.' },
+          { line: 't.right(60)', action: {"type": "rt", "angle": 60}, explain: 'Gira 60° a la derecha.' },
+          { line: 't.forward(30)', action: {"type": "fd", "dist": 30}, explain: 'Avanza 30 px trazando arista.' },
+          { line: 't.right(120)', action: {"type": "rt", "angle": 120}, explain: 'Gira 120° a la derecha.' },
+          { line: 't.forward(30)', action: {"type": "fd", "dist": 30}, explain: 'Avanza 30 px trazando arista.' },
+          { line: 't.end_fill()', action: {"type": "end_fill"}, explain: '¡Aplica el relleno de color al interior de la celda cerrada!' },
+          { line: 't.backward(60) ', action: {"type": "bk", "dist": 60}, explain: 'Retrocede 60 px para reposicionarse hacia la siguiente celda.' },
+          { line: '# Celda 8', action: null, explain: 'Inicia el coloreado de la Celda 8.' },
+          { line: 't.fillcolor("red")', action: {"type": "fillcolor", "color": "red"}, explain: 'Define color de relleno: Rojo ("red").' },
+          { line: 't.begin_fill()', action: {"type": "begin_fill"}, explain: 'Inicia el registro del polígono para rellenar la celda.' },
+          { line: 't.forward(30)', action: {"type": "fd", "dist": 30}, explain: 'Avanza 30 px trazando arista.' },
+          { line: 't.right(60)', action: {"type": "rt", "angle": 60}, explain: 'Gira 60° a la derecha.' },
+          { line: 't.forward(30)', action: {"type": "fd", "dist": 30}, explain: 'Avanza 30 px trazando arista.' },
+          { line: 't.right(120)', action: {"type": "rt", "angle": 120}, explain: 'Gira 120° a la derecha.' },
+          { line: 't.forward(30)', action: {"type": "fd", "dist": 30}, explain: 'Avanza 30 px trazando arista.' },
+          { line: 't.right(60)', action: {"type": "rt", "angle": 60}, explain: 'Gira 60° a la derecha.' },
+          { line: 't.forward(30)', action: {"type": "fd", "dist": 30}, explain: 'Avanza 30 px trazando arista.' },
+          { line: 't.end_fill()', action: {"type": "end_fill"}, explain: '¡Aplica el relleno de color al interior de la celda cerrada!' },
+          { line: 't.backward(30)', action: {"type": "bk", "dist": 30}, explain: 'Retrocede 30 px para reposicionarse hacia la siguiente celda.' },
+          { line: '# Celda 9', action: null, explain: 'Inicia el coloreado de la Celda 9.' },
+          { line: 't.fillcolor("green")', action: {"type": "fillcolor", "color": "green"}, explain: 'Define color de relleno: Verde ("green").' },
+          { line: 't.begin_fill()', action: {"type": "begin_fill"}, explain: 'Inicia el registro del polígono para rellenar la celda.' },
+          { line: 't.left(60)', action: {"type": "lt", "angle": 60}, explain: 'Gira 60° a la izquierda.' },
+          { line: 't.forward(30)', action: {"type": "fd", "dist": 30}, explain: 'Avanza 30 px trazando arista.' },
+          { line: 't.right(60)', action: {"type": "rt", "angle": 60}, explain: 'Gira 60° a la derecha.' },
+          { line: 't.forward(30)', action: {"type": "fd", "dist": 30}, explain: 'Avanza 30 px trazando arista.' },
+          { line: 't.right(120)', action: {"type": "rt", "angle": 120}, explain: 'Gira 120° a la derecha.' },
+          { line: 't.forward(30)', action: {"type": "fd", "dist": 30}, explain: 'Avanza 30 px trazando arista.' },
+          { line: 't.end_fill()', action: {"type": "end_fill"}, explain: '¡Aplica el relleno de color al interior de la celda cerrada!' },
+          { line: 't.backward(30)', action: {"type": "bk", "dist": 30}, explain: 'Retrocede 30 px para reposicionarse hacia la siguiente celda.' },
+          { line: 't.right(120)', action: {"type": "rt", "angle": 120}, explain: 'Gira 120° a la derecha.' },
+          { line: '# Celda 10', action: null, explain: 'Inicia el coloreado de la Celda 10.' },
+          { line: 't.fillcolor("orange")', action: {"type": "fillcolor", "color": "orange"}, explain: 'Define color de relleno: Naranja ("orange").' },
+          { line: 't.begin_fill()', action: {"type": "begin_fill"}, explain: 'Inicia el registro del polígono para rellenar la celda.' },
+          { line: 't.forward(30)', action: {"type": "fd", "dist": 30}, explain: 'Avanza 30 px trazando arista.' },
+          { line: 't.left(60)', action: {"type": "lt", "angle": 60}, explain: 'Gira 60° a la izquierda.' },
+          { line: 't.forward(30)', action: {"type": "fd", "dist": 30}, explain: 'Avanza 30 px trazando arista.' },
+          { line: 't.left(120)', action: {"type": "lt", "angle": 120}, explain: 'Gira 120° a la izquierda.' },
+          { line: 't.forward(30)', action: {"type": "fd", "dist": 30}, explain: 'Avanza 30 px trazando arista.' },
+          { line: 't.end_fill()', action: {"type": "end_fill"}, explain: '¡Aplica el relleno de color al interior de la celda cerrada!' },
+          { line: 't.backward(30)', action: {"type": "bk", "dist": 30}, explain: 'Retrocede 30 px para reposicionarse hacia la siguiente celda.' },
+          { line: 't.right(180)', action: {"type": "rt", "angle": 180}, explain: 'Gira 180° a la derecha.' },
+          { line: '# Celda 11', action: null, explain: 'Inicia el coloreado de la Celda 11.' },
+          { line: 't.fillcolor("green")', action: {"type": "fillcolor", "color": "green"}, explain: 'Define color de relleno: Verde ("green").' },
+          { line: 't.begin_fill()', action: {"type": "begin_fill"}, explain: 'Inicia el registro del polígono para rellenar la celda.' },
+          { line: 't.forward(30)', action: {"type": "fd", "dist": 30}, explain: 'Avanza 30 px trazando arista.' },
+          { line: 't.right(120)', action: {"type": "rt", "angle": 120}, explain: 'Gira 120° a la derecha.' },
+          { line: 't.forward(30)', action: {"type": "fd", "dist": 30}, explain: 'Avanza 30 px trazando arista.' },
+          { line: 't.right(60)', action: {"type": "rt", "angle": 60}, explain: 'Gira 60° a la derecha.' },
+          { line: 't.forward(30)', action: {"type": "fd", "dist": 30}, explain: 'Avanza 30 px trazando arista.' },
+          { line: 't.end_fill()', action: {"type": "end_fill"}, explain: '¡Aplica el relleno de color al interior de la celda cerrada!' },
+          { line: 't.backward(60)', action: {"type": "bk", "dist": 60}, explain: 'Retrocede 60 px para reposicionarse hacia la siguiente celda.' },
+          { line: '# Celda 12', action: null, explain: 'Inicia el coloreado de la Celda 12.' },
+          { line: 't.fillcolor("white")', action: {"type": "fillcolor", "color": "white"}, explain: 'Define color de relleno: Blanco ("white").' },
+          { line: 't.begin_fill()', action: {"type": "begin_fill"}, explain: 'Inicia el registro del polígono para rellenar la celda.' },
+          { line: 't.right(120)', action: {"type": "rt", "angle": 120}, explain: 'Gira 120° a la derecha.' },
+          { line: 't.forward(30)', action: {"type": "fd", "dist": 30}, explain: 'Avanza 30 px trazando arista.' },
+          { line: 't.left(120)', action: {"type": "lt", "angle": 120}, explain: 'Gira 120° a la izquierda.' },
+          { line: 't.forward(30)', action: {"type": "fd", "dist": 30}, explain: 'Avanza 30 px trazando arista.' },
+          { line: 't.left(60)', action: {"type": "lt", "angle": 60}, explain: 'Gira 60° a la izquierda.' },
+          { line: 't.forward(30)', action: {"type": "fd", "dist": 30}, explain: 'Avanza 30 px trazando arista.' },
+          { line: 't.end_fill()', action: {"type": "end_fill"}, explain: '¡Aplica el relleno de color al interior de la celda cerrada!' },
+          { line: 't.backward(30)', action: {"type": "bk", "dist": 30}, explain: 'Retrocede 30 px para reposicionarse hacia la siguiente celda.' },
+          { line: 't.left(120)', action: {"type": "lt", "angle": 120}, explain: 'Gira 120° a la izquierda.' },
+          { line: '# Celda 13', action: null, explain: 'Inicia el coloreado de la Celda 13.' },
+          { line: 't.fillcolor("yellow")', action: {"type": "fillcolor", "color": "yellow"}, explain: 'Define color de relleno: Amarillo ("yellow").' },
+          { line: 't.begin_fill()', action: {"type": "begin_fill"}, explain: 'Inicia el registro del polígono para rellenar la celda.' },
+          { line: 't.forward(30)', action: {"type": "fd", "dist": 30}, explain: 'Avanza 30 px trazando arista.' },
+          { line: 't.left(60)', action: {"type": "lt", "angle": 60}, explain: 'Gira 60° a la izquierda.' },
+          { line: 't.forward(30)', action: {"type": "fd", "dist": 30}, explain: 'Avanza 30 px trazando arista.' },
+          { line: 't.left(120)', action: {"type": "lt", "angle": 120}, explain: 'Gira 120° a la izquierda.' },
+          { line: 't.forward(30)', action: {"type": "fd", "dist": 30}, explain: 'Avanza 30 px trazando arista.' },
+          { line: 't.left(60)', action: {"type": "lt", "angle": 60}, explain: 'Gira 60° a la izquierda.' },
+          { line: 't.forward(30)', action: {"type": "fd", "dist": 30}, explain: 'Avanza 30 px trazando arista.' },
+          { line: 't.end_fill()', action: {"type": "end_fill"}, explain: '¡Aplica el relleno de color al interior de la celda cerrada!' },
+          { line: '# Celda 14', action: null, explain: 'Inicia el coloreado de la Celda 14.' },
+          { line: 't.fillcolor("orange")', action: {"type": "fillcolor", "color": "orange"}, explain: 'Define color de relleno: Naranja ("orange").' },
+          { line: 't.begin_fill()', action: {"type": "begin_fill"}, explain: 'Inicia el registro del polígono para rellenar la celda.' },
+          { line: 't.right(60)', action: {"type": "rt", "angle": 60}, explain: 'Gira 60° a la derecha.' },
+          { line: 't.forward(30)', action: {"type": "fd", "dist": 30}, explain: 'Avanza 30 px trazando arista.' },
+          { line: 't.right(120)', action: {"type": "rt", "angle": 120}, explain: 'Gira 120° a la derecha.' },
+          { line: 't.forward(30)', action: {"type": "fd", "dist": 30}, explain: 'Avanza 30 px trazando arista.' },
+          { line: 't.right(60)', action: {"type": "rt", "angle": 60}, explain: 'Gira 60° a la derecha.' },
+          { line: 't.forward(30)', action: {"type": "fd", "dist": 30}, explain: 'Avanza 30 px trazando arista.' },
+          { line: 't.end_fill()', action: {"type": "end_fill"}, explain: '¡Aplica el relleno de color al interior de la celda cerrada!' },
+          { line: 't.backward(30)', action: {"type": "bk", "dist": 30}, explain: 'Retrocede 30 px para reposicionarse hacia la siguiente celda.' },
+          { line: '# Celda 15', action: null, explain: 'Inicia el coloreado de la Celda 15.' },
+          { line: 't.fillcolor("white")', action: {"type": "fillcolor", "color": "white"}, explain: 'Define color de relleno: Blanco ("white").' },
+          { line: 't.begin_fill()', action: {"type": "begin_fill"}, explain: 'Inicia el registro del polígono para rellenar la celda.' },
+          { line: 't.right(120)', action: {"type": "rt", "angle": 120}, explain: 'Gira 120° a la derecha.' },
+          { line: 't.forward(30)', action: {"type": "fd", "dist": 30}, explain: 'Avanza 30 px trazando arista.' },
+          { line: 't.right(60)', action: {"type": "rt", "angle": 60}, explain: 'Gira 60° a la derecha.' },
+          { line: 't.forward(30)', action: {"type": "fd", "dist": 30}, explain: 'Avanza 30 px trazando arista.' },
+          { line: 't.right(120)', action: {"type": "rt", "angle": 120}, explain: 'Gira 120° a la derecha.' },
+          { line: 't.forward(30)', action: {"type": "fd", "dist": 30}, explain: 'Avanza 30 px trazando arista.' },
+          { line: 't.right(60)', action: {"type": "rt", "angle": 60}, explain: 'Gira 60° a la derecha.' },
+          { line: 't.forward(30)', action: {"type": "fd", "dist": 30}, explain: 'Avanza 30 px trazando arista.' },
+          { line: 't.end_fill()', action: {"type": "end_fill"}, explain: '¡Aplica el relleno de color al interior de la celda cerrada!' },
+          { line: 't.backward(30)', action: {"type": "bk", "dist": 30}, explain: 'Retrocede 30 px para reposicionarse hacia la siguiente celda.' },
+          { line: 't.left(180)', action: {"type": "lt", "angle": 180}, explain: 'Gira 180° a la izquierda.' },
+          { line: '# Celda 16', action: null, explain: 'Inicia el coloreado de la Celda 16.' },
+          { line: 't.fillcolor("blue")', action: {"type": "fillcolor", "color": "blue"}, explain: 'Define color de relleno: Azul ("blue").' },
+          { line: 't.begin_fill()', action: {"type": "begin_fill"}, explain: 'Inicia el registro del polígono para rellenar la celda.' },
+          { line: 't.right(60)', action: {"type": "rt", "angle": 60}, explain: 'Gira 60° a la derecha.' },
+          { line: 't.forward(30)', action: {"type": "fd", "dist": 30}, explain: 'Avanza 30 px trazando arista.' },
+          { line: 't.left(120)', action: {"type": "lt", "angle": 120}, explain: 'Gira 120° a la izquierda.' },
+          { line: 't.forward(30)', action: {"type": "fd", "dist": 30}, explain: 'Avanza 30 px trazando arista.' },
+          { line: 't.left(60)', action: {"type": "lt", "angle": 60}, explain: 'Gira 60° a la izquierda.' },
+          { line: 't.forward(30)', action: {"type": "fd", "dist": 30}, explain: 'Avanza 30 px trazando arista.' },
+          { line: 't.left(120)', action: {"type": "lt", "angle": 120}, explain: 'Gira 120° a la izquierda.' },
+          { line: 't.forward(30)', action: {"type": "fd", "dist": 30}, explain: 'Avanza 30 px trazando arista.' },
+          { line: 't.end_fill()', action: {"type": "end_fill"}, explain: '¡Aplica el relleno de color al interior de la celda cerrada!' },
+          { line: 't.left(60)', action: {"type": "lt", "angle": 60}, explain: 'Gira 60° a la izquierda.' },
+          { line: 't.forward(30)', action: {"type": "fd", "dist": 30}, explain: 'Avanza 30 px trazando arista.' },
+          { line: '# Celda 17', action: null, explain: 'Inicia el coloreado de la Celda 17.' },
+          { line: 't.fillcolor("green")', action: {"type": "fillcolor", "color": "green"}, explain: 'Define color de relleno: Verde ("green").' },
+          { line: 't.begin_fill()', action: {"type": "begin_fill"}, explain: 'Inicia el registro del polígono para rellenar la celda.' },
+          { line: 't.forward(30)', action: {"type": "fd", "dist": 30}, explain: 'Avanza 30 px trazando arista.' },
+          { line: 't.left(120)', action: {"type": "lt", "angle": 120}, explain: 'Gira 120° a la izquierda.' },
+          { line: 't.forward(30)', action: {"type": "fd", "dist": 30}, explain: 'Avanza 30 px trazando arista.' },
+          { line: 't.left(60)', action: {"type": "lt", "angle": 60}, explain: 'Gira 60° a la izquierda.' },
+          { line: 't.forward(30)', action: {"type": "fd", "dist": 30}, explain: 'Avanza 30 px trazando arista.' },
+          { line: 't.left(120)', action: {"type": "lt", "angle": 120}, explain: 'Gira 120° a la izquierda.' },
+          { line: 't.forward(30)', action: {"type": "fd", "dist": 30}, explain: 'Avanza 30 px trazando arista.' },
+          { line: 't.end_fill()', action: {"type": "end_fill"}, explain: '¡Aplica el relleno de color al interior de la celda cerrada!' },
+          { line: 't.left(60)', action: {"type": "lt", "angle": 60}, explain: 'Gira 60° a la izquierda.' },
+          { line: 't.forward(30)', action: {"type": "fd", "dist": 30}, explain: 'Avanza 30 px trazando arista.' },
+          { line: '# Celda 18', action: null, explain: 'Inicia el coloreado de la Celda 18.' },
+          { line: 't.fillcolor("yellow")', action: {"type": "fillcolor", "color": "yellow"}, explain: 'Define color de relleno: Amarillo ("yellow").' },
+          { line: 't.begin_fill()', action: {"type": "begin_fill"}, explain: 'Inicia el registro del polígono para rellenar la celda.' },
+          { line: 't.forward(30)', action: {"type": "fd", "dist": 30}, explain: 'Avanza 30 px trazando arista.' },
+          { line: 't.left(120)', action: {"type": "lt", "angle": 120}, explain: 'Gira 120° a la izquierda.' },
+          { line: 't.forward(30)', action: {"type": "fd", "dist": 30}, explain: 'Avanza 30 px trazando arista.' },
+          { line: 't.left(60)', action: {"type": "lt", "angle": 60}, explain: 'Gira 60° a la izquierda.' },
+          { line: 't.forward(30)', action: {"type": "fd", "dist": 30}, explain: 'Avanza 30 px trazando arista.' },
+          { line: 't.left(120)', action: {"type": "lt", "angle": 120}, explain: 'Gira 120° a la izquierda.' },
+          { line: 't.forward(30)', action: {"type": "fd", "dist": 30}, explain: 'Avanza 30 px trazando arista.' },
+          { line: 't.end_fill()', action: {"type": "end_fill"}, explain: '¡Aplica el relleno de color al interior de la celda cerrada!' },
+          { line: 't.left(60)', action: {"type": "lt", "angle": 60}, explain: 'Gira 60° a la izquierda.' },
+          { line: 't.forward(30)', action: {"type": "fd", "dist": 30}, explain: 'Avanza 30 px trazando arista.' },
+          { line: '# Celda 19', action: null, explain: 'Inicia el coloreado de la Celda 19.' },
+          { line: 't.fillcolor("blue")', action: {"type": "fillcolor", "color": "blue"}, explain: 'Define color de relleno: Azul ("blue").' },
+          { line: 't.begin_fill()', action: {"type": "begin_fill"}, explain: 'Inicia el registro del polígono para rellenar la celda.' },
+          { line: 't.right(120)', action: {"type": "rt", "angle": 120}, explain: 'Gira 120° a la derecha.' },
+          { line: 't.forward(30)', action: {"type": "fd", "dist": 30}, explain: 'Avanza 30 px trazando arista.' },
+          { line: 't.right(60)', action: {"type": "rt", "angle": 60}, explain: 'Gira 60° a la derecha.' },
+          { line: 't.forward(30)', action: {"type": "fd", "dist": 30}, explain: 'Avanza 30 px trazando arista.' },
+          { line: 't.right(120)', action: {"type": "rt", "angle": 120}, explain: 'Gira 120° a la derecha.' },
+          { line: 't.forward(30)', action: {"type": "fd", "dist": 30}, explain: 'Avanza 30 px trazando arista.' },
+          { line: 't.right(60)', action: {"type": "rt", "angle": 60}, explain: 'Gira 60° a la derecha.' },
+          { line: 't.forward(30)', action: {"type": "fd", "dist": 30}, explain: 'Avanza 30 px trazando arista.' },
+          { line: 't.end_fill()', action: {"type": "end_fill"}, explain: '¡Aplica el relleno de color al interior de la celda cerrada!' },
+          { line: 't.right(120)', action: {"type": "rt", "angle": 120}, explain: 'Gira 120° a la derecha.' },
+          { line: 't.forward(30)', action: {"type": "fd", "dist": 30}, explain: 'Avanza 30 px trazando arista.' },
+          { line: '# Celda 20', action: null, explain: 'Inicia el coloreado de la Celda 20.' },
+          { line: 't.fillcolor("white")', action: {"type": "fillcolor", "color": "white"}, explain: 'Define color de relleno: Blanco ("white").' },
+          { line: 't.begin_fill()', action: {"type": "begin_fill"}, explain: 'Inicia el registro del polígono para rellenar la celda.' },
+          { line: 't.forward(30)', action: {"type": "fd", "dist": 30}, explain: 'Avanza 30 px trazando arista.' },
+          { line: 't.right(60)', action: {"type": "rt", "angle": 60}, explain: 'Gira 60° a la derecha.' },
+          { line: 't.forward(30)', action: {"type": "fd", "dist": 30}, explain: 'Avanza 30 px trazando arista.' },
+          { line: 't.right(120)', action: {"type": "rt", "angle": 120}, explain: 'Gira 120° a la derecha.' },
+          { line: 't.forward(30)', action: {"type": "fd", "dist": 30}, explain: 'Avanza 30 px trazando arista.' },
+          { line: 't.right(60)', action: {"type": "rt", "angle": 60}, explain: 'Gira 60° a la derecha.' },
+          { line: 't.forward(30)', action: {"type": "fd", "dist": 30}, explain: 'Avanza 30 px trazando arista.' },
+          { line: 't.end_fill()', action: {"type": "end_fill"}, explain: '¡Aplica el relleno de color al interior de la celda cerrada!' },
+          { line: 't.right(120)', action: {"type": "rt", "angle": 120}, explain: 'Gira 120° a la derecha.' },
+          { line: 't.forward(30)', action: {"type": "fd", "dist": 30}, explain: 'Avanza 30 px trazando arista.' },
+          { line: '# Celda 21', action: null, explain: 'Inicia el coloreado de la Celda 21.' },
+          { line: 't.fillcolor("green")', action: {"type": "fillcolor", "color": "green"}, explain: 'Define color de relleno: Verde ("green").' },
+          { line: 't.begin_fill()', action: {"type": "begin_fill"}, explain: 'Inicia el registro del polígono para rellenar la celda.' },
+          { line: 't.forward(30)', action: {"type": "fd", "dist": 30}, explain: 'Avanza 30 px trazando arista.' },
+          { line: 't.right(60)', action: {"type": "rt", "angle": 60}, explain: 'Gira 60° a la derecha.' },
+          { line: 't.forward(30)', action: {"type": "fd", "dist": 30}, explain: 'Avanza 30 px trazando arista.' },
+          { line: 't.right(120)', action: {"type": "rt", "angle": 120}, explain: 'Gira 120° a la derecha.' },
+          { line: 't.forward(30)', action: {"type": "fd", "dist": 30}, explain: 'Avanza 30 px trazando arista.' },
+          { line: 't.right(60)', action: {"type": "rt", "angle": 60}, explain: 'Gira 60° a la derecha.' },
+          { line: 't.forward(30)', action: {"type": "fd", "dist": 30}, explain: 'Avanza 30 px trazando arista.' },
+          { line: 't.end_fill()', action: {"type": "end_fill"}, explain: '¡Aplica el relleno de color al interior de la celda cerrada!' },
+          { line: 't.right(120)', action: {"type": "rt", "angle": 120}, explain: 'Gira 120° a la derecha.' },
+          { line: 't.forward(30)', action: {"type": "fd", "dist": 30}, explain: 'Avanza 30 px trazando arista.' },
+          { line: 't.right(60)', action: {"type": "rt", "angle": 60}, explain: 'Gira 60° a la derecha.' },
+          { line: 't.forward(30)', action: {"type": "fd", "dist": 30}, explain: 'Avanza 30 px trazando arista.' },
+          { line: '# Celda 22', action: null, explain: 'Inicia el coloreado de la Celda 22.' },
+          { line: 't.fillcolor("red")', action: {"type": "fillcolor", "color": "red"}, explain: 'Define color de relleno: Rojo ("red").' },
+          { line: 't.begin_fill()', action: {"type": "begin_fill"}, explain: 'Inicia el registro del polígono para rellenar la celda.' },
+          { line: 't.right(120)', action: {"type": "rt", "angle": 120}, explain: 'Gira 120° a la derecha.' },
+          { line: 't.forward(30)', action: {"type": "fd", "dist": 30}, explain: 'Avanza 30 px trazando arista.' },
+          { line: 't.left(120)', action: {"type": "lt", "angle": 120}, explain: 'Gira 120° a la izquierda.' },
+          { line: 't.forward(30)', action: {"type": "fd", "dist": 30}, explain: 'Avanza 30 px trazando arista.' },
+          { line: 't.left(60)', action: {"type": "lt", "angle": 60}, explain: 'Gira 60° a la izquierda.' },
+          { line: 't.forward(30)', action: {"type": "fd", "dist": 30}, explain: 'Avanza 30 px trazando arista.' },
+          { line: 't.end_fill()', action: {"type": "end_fill"}, explain: '¡Aplica el relleno de color al interior de la celda cerrada!' },
+          { line: 't.right(60)', action: {"type": "rt", "angle": 60}, explain: 'Gira 60° a la derecha.' },
+          { line: '# Celda 23', action: null, explain: 'Inicia el coloreado de la Celda 23.' },
+          { line: 't.fillcolor("orange") ', action: {"type": "fillcolor", "color": "orange"}, explain: 'Define color de relleno: Naranja ("orange").' },
+          { line: 't.begin_fill()', action: {"type": "begin_fill"}, explain: 'Inicia el registro del polígono para rellenar la celda.' },
+          { line: 't.forward(30)', action: {"type": "fd", "dist": 30}, explain: 'Avanza 30 px trazando arista.' },
+          { line: 't.right(120)', action: {"type": "rt", "angle": 120}, explain: 'Gira 120° a la derecha.' },
+          { line: 't.forward(30)', action: {"type": "fd", "dist": 30}, explain: 'Avanza 30 px trazando arista.' },
+          { line: 't.right(60)', action: {"type": "rt", "angle": 60}, explain: 'Gira 60° a la derecha.' },
+          { line: 't.forward(30)', action: {"type": "fd", "dist": 30}, explain: 'Avanza 30 px trazando arista.' },
+          { line: 't.end_fill()  ', action: {"type": "end_fill"}, explain: '¡Aplica el relleno de color al interior de la celda cerrada!' },
+          { line: 't.left(60)', action: {"type": "lt", "angle": 60}, explain: 'Gira 60° a la izquierda.' },
+          { line: '# Celda 24', action: null, explain: 'Inicia el coloreado de la Celda 24.' },
+          { line: 't.fillcolor("blue")', action: {"type": "fillcolor", "color": "blue"}, explain: 'Define color de relleno: Azul ("blue").' },
+          { line: 't.begin_fill()', action: {"type": "begin_fill"}, explain: 'Inicia el registro del polígono para rellenar la celda.' },
+          { line: 't.forward(30)', action: {"type": "fd", "dist": 30}, explain: 'Avanza 30 px trazando arista.' },
+          { line: 't.left(120)', action: {"type": "lt", "angle": 120}, explain: 'Gira 120° a la izquierda.' },
+          { line: 't.forward(30)', action: {"type": "fd", "dist": 30}, explain: 'Avanza 30 px trazando arista.' },
+          { line: 't.left(60)', action: {"type": "lt", "angle": 60}, explain: 'Gira 60° a la izquierda.' },
+          { line: 't.forward(30)', action: {"type": "fd", "dist": 30}, explain: 'Avanza 30 px trazando arista.' },
+          { line: 't.end_fill()', action: {"type": "end_fill"}, explain: '¡Aplica el relleno de color al interior de la celda cerrada!' },
+          { line: 't.left(120)', action: {"type": "lt", "angle": 120}, explain: 'Gira 120° a la izquierda.' },
+          { line: 't.forward(30)', action: {"type": "fd", "dist": 30}, explain: 'Avanza 30 px trazando arista.' },
+          { line: '# Celda 25', action: null, explain: 'Inicia el coloreado de la Celda 25.' },
+          { line: 't.fillcolor("yellow")', action: {"type": "fillcolor", "color": "yellow"}, explain: 'Define color de relleno: Amarillo ("yellow").' },
+          { line: 't.begin_fill()', action: {"type": "begin_fill"}, explain: 'Inicia el registro del polígono para rellenar la celda.' },
+          { line: 't.forward(30)', action: {"type": "fd", "dist": 30}, explain: 'Avanza 30 px trazando arista.' },
+          { line: 't.left(60)', action: {"type": "lt", "angle": 60}, explain: 'Gira 60° a la izquierda.' },
+          { line: 't.forward(30)', action: {"type": "fd", "dist": 30}, explain: 'Avanza 30 px trazando arista.' },
+          { line: 't.left(120)', action: {"type": "lt", "angle": 120}, explain: 'Gira 120° a la izquierda.' },
+          { line: 't.forward(30)', action: {"type": "fd", "dist": 30}, explain: 'Avanza 30 px trazando arista.' },
+          { line: 't.left(60)', action: {"type": "lt", "angle": 60}, explain: 'Gira 60° a la izquierda.' },
+          { line: 't.forward(30)', action: {"type": "fd", "dist": 30}, explain: 'Avanza 30 px trazando arista.' },
+          { line: 't.end_fill()', action: {"type": "end_fill"}, explain: '¡Aplica el relleno de color al interior de la celda cerrada!' },
+          { line: 't.backward(60)', action: {"type": "bk", "dist": 60}, explain: 'Retrocede 60 px para reposicionarse hacia la siguiente celda.' },
+          { line: '# Celda 26', action: null, explain: 'Inicia el coloreado de la Celda 26.' },
+          { line: 't.fillcolor("white")', action: {"type": "fillcolor", "color": "white"}, explain: 'Define color de relleno: Blanco ("white").' },
+          { line: 't.begin_fill()', action: {"type": "begin_fill"}, explain: 'Inicia el registro del polígono para rellenar la celda.' },
+          { line: 't.left(120)', action: {"type": "lt", "angle": 120}, explain: 'Gira 120° a la izquierda.' },
+          { line: 't.forward(30)', action: {"type": "fd", "dist": 30}, explain: 'Avanza 30 px trazando arista.' },
+          { line: 't.right(120)', action: {"type": "rt", "angle": 120}, explain: 'Gira 120° a la derecha.' },
+          { line: 't.forward(30)', action: {"type": "fd", "dist": 30}, explain: 'Avanza 30 px trazando arista.' },
+          { line: 't.right(60)', action: {"type": "rt", "angle": 60}, explain: 'Gira 60° a la derecha.' },
+          { line: 't.forward(30)', action: {"type": "fd", "dist": 30}, explain: 'Avanza 30 px trazando arista.' },
+          { line: 't.end_fill()', action: {"type": "end_fill"}, explain: '¡Aplica el relleno de color al interior de la celda cerrada!' },
+          { line: '# Celda 27', action: null, explain: 'Inicia el coloreado de la Celda 27.' },
+          { line: 't.fillcolor("red")', action: {"type": "fillcolor", "color": "red"}, explain: 'Define color de relleno: Rojo ("red").' },
+          { line: 't.begin_fill()', action: {"type": "begin_fill"}, explain: 'Inicia el registro del polígono para rellenar la celda.' },
+          { line: 't.forward(30)', action: {"type": "fd", "dist": 30}, explain: 'Avanza 30 px trazando arista.' },
+          { line: 't.right(120)', action: {"type": "rt", "angle": 120}, explain: 'Gira 120° a la derecha.' },
+          { line: 't.forward(30)', action: {"type": "fd", "dist": 30}, explain: 'Avanza 30 px trazando arista.' },
+          { line: 't.right(60)', action: {"type": "rt", "angle": 60}, explain: 'Gira 60° a la derecha.' },
+          { line: 't.forward(30)', action: {"type": "fd", "dist": 30}, explain: 'Avanza 30 px trazando arista.' },
+          { line: 't.end_fill()', action: {"type": "end_fill"}, explain: '¡Aplica el relleno de color al interior de la celda cerrada!' },
+          { line: 't.hideturtle()', action: {"type": "hideturtle"}, explain: 'Oculta la tortuga para mostrar el Cubo Rubik 3D terminado.' },
+          { line: 'turtle.done()', action: null, explain: '¡Reto Cubo Rubik 3D completado con éxito!' }
         ]
-      }    };
+      }
+    };
 
     let currentScenarioKey = 'forward';
     let currentStep = 0;
@@ -574,7 +847,8 @@
         penColor: '#0f172a',
         fillColor: '#ffffff',
         filling: false,
-        fillPoly: []
+        fillPoly: [],
+        visible: true
       };
       drawHistory = [];
       render();
@@ -598,11 +872,11 @@
         }
       }
 
-      // Draw all lines on top
+      // Draw all stroke lines on top
       for (const item of drawHistory) {
         if (item.type === 'line') {
           ctx.strokeStyle = item.color;
-          ctx.lineWidth = 2.5;
+          ctx.lineWidth = 2.0;
           ctx.lineCap = 'round';
           ctx.beginPath();
           const p1 = toCanvasCoords(item.x1, item.y1);
@@ -615,7 +889,7 @@
 
       // Draw active fill poly if currently filling
       if (turtle.filling && turtle.fillPoly.length > 1) {
-        ctx.fillStyle = turtle.color + '44'; // semi-transparent
+        ctx.fillStyle = (turtle.fillColor || turtle.color) + '55';
         ctx.beginPath();
         for (let i = 0; i < turtle.fillPoly.length; i++) {
           const pt = toCanvasCoords(turtle.fillPoly[i].x, turtle.fillPoly[i].y);
@@ -626,14 +900,16 @@
         ctx.fill();
       }
 
-      // Draw Turtle Character
-      drawTurtleIcon(turtle.x, turtle.y, turtle.angle, turtle.color, turtle.penDown);
+      // Draw Turtle Character only if visible
+      if (turtle.visible !== false) {
+        drawTurtleIcon(turtle.x, turtle.y, turtle.angle, turtle.fillColor || turtle.color, turtle.penDown);
+      }
 
       // Update HUD
       document.getElementById('hudPos').innerText = `(${Math.round(turtle.x)}, ${Math.round(turtle.y)})`;
-      document.getElementById('hudAngle').innerText = `${((turtle.angle % 360) + 360) % 360}°`;
+      document.getElementById('hudAngle').innerText = `${((Math.round(turtle.angle) % 360) + 360) % 360}°`;
       document.getElementById('hudPen').innerText = turtle.penDown ? 'Abajo' : 'Arriba';
-      document.getElementById('hudColor').innerText = turtle.color;
+      document.getElementById('hudColor').innerText = turtle.fillColor || turtle.color;
     }
 
     function toCanvasCoords(x, y) {
@@ -709,16 +985,17 @@
       }
       if (typeof act === 'string') {
         if (act === 'init') {
-          turtle.x = 0; turtle.y = 0; turtle.angle = 0; turtle.penDown = true;
+          turtle.x = 0; turtle.y = 0; turtle.angle = 0; turtle.penDown = true; turtle.visible = true;
           if (turtle.filling) turtle.fillPoly.push({x: 0, y: 0});
         }
         return;
       }
-      if (act === 'init_pos' || (act.type === undefined && act.x !== undefined)) {
+      if (act.type === 'init_pos' || (act.type === undefined && act.x !== undefined)) {
         turtle.x = act.x || 0;
         turtle.y = act.y || 0;
         turtle.angle = act.angle || 0;
         turtle.penDown = true;
+        turtle.visible = true;
         if (turtle.filling) turtle.fillPoly.push({x: turtle.x, y: turtle.y});
         return;
       }
@@ -733,7 +1010,7 @@
         turtle.angle += act.angle;
       } else if (act.type === 'rt') {
         turtle.angle -= act.angle;
-      } else if (act.type === 'fillcolor' || act.type === 'color') {
+      } else if (act.type === 'fillcolor') {
         const colorMap = {
           'white': '#f8fafc',
           'red': '#dc2626',
@@ -742,9 +1019,12 @@
           'yellow': '#facc15',
           'green': '#16a34a'
         };
-        const c = colorMap[act.color] || act.fillColor || act.color;
+        const c = colorMap[act.color] || act.color;
         turtle.fillColor = c;
-        if (act.penColor) turtle.penColor = act.penColor;
+      } else if (act.type === 'color') {
+        turtle.color = act.color;
+        turtle.penColor = act.penColor || act.color;
+        turtle.fillColor = act.fillColor || act.color;
       } else if (act.type === 'begin_fill') {
         turtle.filling = true;
         turtle.fillPoly = [{x: turtle.x, y: turtle.y}];
@@ -802,6 +1082,10 @@
         turtle.x = newX;
         turtle.y = newY;
         if (turtle.filling) turtle.fillPoly.push({x: newX, y: newY});
+      } else if (act.type === 'hideturtle') {
+        turtle.visible = false;
+      } else if (act.type === 'showturtle') {
+        turtle.visible = true;
       }
     }
 
@@ -809,22 +1093,8 @@
       pause();
       currentScenarioKey = key;
       document.querySelectorAll('.tab-btn').forEach((b, idx) => {
-        b.classList.toggle('active', Object.keys(SCENARIOS)[idx] === key || (key === 'sandbox' && idx === Object.keys(SCENARIOS).length));
+        b.classList.toggle('active', Object.keys(SCENARIOS)[idx] === key);
       });
-
-      const isSandbox = key === 'sandbox';
-      document.getElementById('sandboxPanel').style.display = isSandbox ? 'flex' : 'none';
-
-      if (isSandbox) {
-        resetCanvas(0, 0);
-        document.getElementById('codeLines').innerHTML = '<div style="color:var(--text-muted); padding:10px; font-style:italic;">Modo Libre activado. Usa los botones de comando inferiores para mover la tortuga y experimentar interactivamente.</div>';
-        document.getElementById('stepCounter').innerText = 'Modo Libre';
-        document.getElementById('explainText').innerText = 'Experimenta libremente con distancias, ángulos, colores y rellenos.';
-        document.getElementById('playBtn').disabled = true;
-        document.getElementById('nextBtn').disabled = true;
-        document.getElementById('prevBtn').disabled = true;
-        return;
-      }
 
       document.getElementById('playBtn').disabled = false;
       document.getElementById('nextBtn').disabled = false;
@@ -845,9 +1115,9 @@
       });
 
       // Initial Canvas setup
-      const firstAction = sc.code[1] && sc.code[1].action;
-      if (firstAction && typeof firstAction === 'object' && firstAction.x !== undefined) {
-        resetCanvas(firstAction.x, firstAction.y);
+      const initItem = sc.code.find(item => item.action && typeof item.action === 'object' && item.action.x !== undefined);
+      if (initItem) {
+        resetCanvas(initItem.action.x, initItem.action.y);
       } else {
         resetCanvas(0, 0);
       }
@@ -948,20 +1218,25 @@
 
     function stepBackward() {
       if (currentStep <= 0) return;
+      const sc = SCENARIOS[currentScenarioKey];
       const targetStep = currentStep - 1;
       restartScenario();
       for (let i = 0; i < targetStep; i++) {
-        stepForward();
+        applyAction(sc.code[i].action);
       }
+      currentStep = targetStep;
+      render();
+      updateStepUI();
     }
 
     function restartScenario() {
       pause();
       const sc = SCENARIOS[currentScenarioKey];
       currentStep = 0;
-      const firstAction = sc.code[1] && sc.code[1].action;
-      if (firstAction && typeof firstAction === 'object' && firstAction.x !== undefined) {
-        resetCanvas(firstAction.x, firstAction.y);
+      // Initial Canvas setup
+      const initItem = sc.code.find(item => item.action && typeof item.action === 'object' && item.action.x !== undefined);
+      if (initItem) {
+        resetCanvas(initItem.action.x, initItem.action.y);
       } else {
         resetCanvas(0, 0);
       }
@@ -1010,19 +1285,6 @@
         pause();
         play();
       }
-    }
-
-    // Sandbox execution
-    function execSandbox(cmd, arg) {
-      if (cmd === 'forward') applyAction({type: 'fd', dist: arg});
-      else if (cmd === 'left') applyAction({type: 'lt', angle: arg});
-      else if (cmd === 'right') applyAction({type: 'lt', angle: -arg});
-      else if (cmd === 'penup') applyAction({type: 'penup'});
-      else if (cmd === 'pendown') applyAction({type: 'pendown'});
-      else if (cmd === 'color') applyAction({type: 'color', color: arg});
-      else if (cmd === 'begin_fill') applyAction({type: 'begin_fill'});
-      else if (cmd === 'end_fill') applyAction({type: 'end_fill'});
-      render();
     }
 
     // Init on load
