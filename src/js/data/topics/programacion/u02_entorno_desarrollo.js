@@ -806,34 +806,50 @@ tortuga.<span class="text-sky-400">backward</span>(<span class="text-amber-300">
         icon: "fa-cube",
         contentHtml: `
           <p class="text-base text-gray-300 leading-relaxed mb-4">
-            Es hora de consolidar todo lo aprendido creando un programa secuencial que dibuje la cara frontal de un <strong>Cubo Rubik</strong>, compuesta por una cuadrícula de <strong>3 &times; 3 pegatinas cuadradas</strong> de colores icónicos (<strong>Rojo</strong>, <strong>Azul</strong>, <strong>Blanco</strong>, <strong>Naranja</strong>, <strong>Amarillo</strong> y <strong>Verde</strong>) con bordes oscuros nítidos.
+            Consolidamos todo lo aprendido en este tema construyendo con <strong>turtle</strong> un <strong>Cubo Rubik en perspectiva 3D</strong> que exhibe sus <strong>tres caras visibles</strong> (<strong>Superior</strong>, <strong>Izquierda</strong> y <strong>Derecha</strong>), donde <strong>cada celda pequeña cuenta con los colores exactos del cubo desordenado</strong> (rojo, azul, naranja, blanco, amarillo y verde).
           </p>
+
+          <div class="bg-[#141923] border border-blue-500/30 rounded-xl p-4 my-4">
+            <h4 class="text-sky-400 font-semibold text-sm mb-2 flex items-center gap-2">
+              <i class="fas fa-cubes"></i> Estructura del Programa: Silueta y Coloreado Celda por Celda
+            </h4>
+            <p class="text-xs text-gray-300 leading-relaxed">
+              El programa se desarrolla en dos fases puramente secuenciales:
+              <br><br>
+              <strong>1. Silueta del cubo:</strong> La tortuga parte del vértice inicial trazando todas las aristas exteriores y de unión central del cubo mediante giros precisos (<code>left</code> y <code>right</code> de 30°, 60° y 120°) y avances de <code>forward(90)</code>.
+              <br><br>
+              <strong>2. Celdas una por una para cambiar su color:</strong> A continuación, la tortuga visita secuencialmente cada una de las <strong>27 celdas</strong> del cubo, aplicando <code>t.fillcolor("color")</code>, <code>t.begin_fill()</code>, recorriendo los lados de cada celda con <code>forward(30)</code> y cerrando con <code>t.end_fill()</code>, para luego desplazarse con <code>backward(30)</code> o avances relativos hacia la siguiente celda.
+            </p>
+          </div>
+
           <div class="bg-[#141923] border border-amber-500/30 rounded-xl p-4 my-4">
             <h4 class="text-amber-400 font-semibold text-sm mb-2 flex items-center gap-2">
               <i class="fas fa-brain"></i> Preguntas de Reflexión (¡Responde mentalmente antes de codificar!)
             </h4>
             <ol class="list-decimal list-inside text-xs text-gray-300 space-y-2 leading-relaxed">
-              <li><strong>Descomposición geométrica:</strong> Cada una de las 9 pegatinas es un cuadrado de 36 píxeles de lado. ¿Cuántos giros de 90° y avances de 36 píxeles requiere cada cuadrado?</li>
-              <li><strong>Desplazamiento horizontal secuencial:</strong> Al terminar de rellenar cada cuadrado con <code>end_fill()</code>, la tortuga queda lista para avanzar a la base del siguiente con <code>forward(36)</code> sin necesidad de cambiar de orientación. ¿Cómo nos ayuda esto en cada fila?</li>
-              <li><strong>Salto de fila con penup y pendown:</strong> Al completar los 3 cuadrados de una fila, ¿qué secuencia de <code>penup()</code>, <code>goto(x, y)</code>, <code>setheading(0)</code> y <code>pendown()</code> te permite iniciar la fila superior sin dejar trazos no deseados?</li>
+              <li><strong>Estructura secuencial continua:</strong> ¿Por qué trazar primero la silueta completa del cubo nos ayuda a verificar la perspectiva isométrica antes de comenzar a colorear las 27 celdas?</li>
+              <li><strong>Navegación con forward y backward:</strong> Al terminar de rellenar una celda con <code>end_fill()</code>, ¿por qué es útil retroceder con <code>backward(30)</code> para quedar en la arista de referencia y dirigirse a la siguiente celda?</li>
+              <li><strong>Uso de fillcolor y bloques begin_fill / end_fill:</strong> ¿Cómo interactúa <code>fillcolor()</code> con cada bloque de <code>begin_fill()</code> y <code>end_fill()</code> para garantizar que cada celda tenga exactamente su color correspondiente?</li>
             </ol>
           </div>
+
           <details class="group bg-[#10141d] border border-emerald-500/30 rounded-xl p-4 my-4">
             <summary class="font-semibold text-sm text-emerald-400 cursor-pointer flex items-center justify-between list-none">
-              <span class="flex items-center gap-2"><i class="fas fa-code"></i> Ver Código de Solución Paso a Paso (Cubo rubik)</span>
+              <span class="flex items-center gap-2"><i class="fas fa-code"></i> Ver Código de Solución Paso a Paso (Cubo rubik 3D: 3 Caras)</span>
               <span class="text-xs text-gray-400 group-open:rotate-180 transition-transform">▼</span>
             </summary>
             <div class="mt-4 pt-3 border-t border-gray-800">
               <p class="text-xs text-gray-300 mb-3">
-                A continuación tienes la solución secuencial completa, sin bucles, comentada paso a paso:
+                A continuación tienes la solución completa comentada paso a paso para construir el Cubo Rubik 3D con su silueta y sus 27 celdas coloreadas una por una:
               </p>
+
               <div class="bg-[#0b0e14] border border-gray-800 rounded-xl p-3 sm:p-4 my-2 code-block-card">
                 <div class="flex items-center justify-between border-b border-gray-800/80 pb-2.5 mb-3">
                   <div class="flex items-center gap-2">
                     <span class="text-xs font-mono font-bold text-sky-400 flex items-center gap-1.5">
                       <i class="fab fa-python text-sm"></i> Python
                     </span>
-                    <span class="text-[11px] text-gray-500 font-mono">07_cubo_rubik.py</span>
+                    <span class="text-[11px] text-gray-500 font-mono">07_cubo_rubik_3d.py</span>
                   </div>
                   <button 
                     type="button" 
@@ -845,174 +861,426 @@ tortuga.<span class="text-sky-400">backward</span>(<span class="text-amber-300">
                     <span class="text-[11px] font-medium">Copiar Solución</span>
                   </button>
                 </div>
-                <pre class="bg-[#07090e] p-3.5 rounded-lg font-mono text-[11px] text-gray-200 overflow-x-auto border border-gray-800/80 leading-relaxed"><code><span class="text-purple-400 font-semibold">import</span> <span class="text-yellow-300">turtle</span>
+                <pre class="bg-[#07090e] p-3.5 rounded-lg font-mono text-[11px] text-gray-200 overflow-x-auto border border-gray-800/80 leading-relaxed"><code><span class="text-purple-400 font-semibold">import</span> <span class="text-yellow-300 font-semibold">turtle</span>
 
-t = <span class="text-yellow-300">turtle</span>.<span class="text-cyan-300 font-semibold">Turtle</span>()
-t.<span class="text-sky-400">speed</span>(<span class="text-amber-300">3</span>)
+<span class="text-gray-500 italic"># Configuración inicial de la tortuga</span>
+t = <span class="text-yellow-300 font-semibold">turtle</span>.<span class="text-yellow-300 font-semibold">Turtle</span>()
+t.<span class="text-sky-400">speed</span>(<span class="text-amber-300">20</span>)
+t.<span class="text-sky-400">pensize</span>(<span class="text-amber-300">2</span>)
 
-<span class="text-gray-500 italic"># ==========================================</span>
-<span class="text-gray-500 italic"># FILA 1: INFERIOR (y = -54)</span>
-<span class="text-gray-500 italic"># ==========================================</span>
+<span class="text-gray-500 italic"># ========================================================</span>
+<span class="text-gray-500 italic"># 1. Silueta tridimensional del cubo</span>
+<span class="text-gray-500 italic"># ========================================================</span>
+t.<span class="text-sky-400">left</span>(<span class="text-amber-300">30</span>)
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">90</span>)
+t.<span class="text-sky-400">left</span>(<span class="text-amber-300">60</span>)
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">90</span>)
+t.<span class="text-sky-400">left</span>(<span class="text-amber-300">120</span>)
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">90</span>)
+t.<span class="text-sky-400">left</span>(<span class="text-amber-300">60</span>)
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">90</span>)
+t.<span class="text-sky-400">right</span>(<span class="text-amber-300">120</span>)
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">90</span>)  
+t.<span class="text-sky-400">right</span>(<span class="text-amber-300">60</span>)
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">90</span>) 
+t.<span class="text-sky-400">right</span>(<span class="text-amber-300">120</span>)
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">90</span>)
+t.<span class="text-sky-400">left</span>(<span class="text-amber-300">60</span>)
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">90</span>)
+t.<span class="text-sky-400">left</span>(<span class="text-amber-300">120</span>)
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">90</span>)
+t.<span class="text-sky-400">left</span>(<span class="text-amber-300">60</span>)
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">90</span>)
+t.<span class="text-sky-400">left</span>(<span class="text-amber-300">120</span>)
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">90</span>)
+t.<span class="text-sky-400">right</span>(<span class="text-amber-300">60</span>)
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">90</span>)
 
-<span class="text-gray-500 italic"># 1.1 Pegatina 1: Rojo (izquierda)</span>
-t.<span class="text-sky-400">penup</span>()
-t.<span class="text-sky-400">goto</span>(-<span class="text-amber-300">54</span>, -<span class="text-amber-300">54</span>)
-t.<span class="text-sky-400">setheading</span>(<span class="text-amber-300">0</span>)
-t.<span class="text-sky-400">pendown</span>()
-t.<span class="text-sky-400">color</span>(<span class="text-emerald-300">"#0f172a"</span>, <span class="text-emerald-300">"#ef4444"</span>)
+<span class="text-gray-500 italic"># ========================================================</span>
+<span class="text-gray-500 italic"># 2. Celdas una por una para cambiar su color (27 celdas)</span>
+<span class="text-gray-500 italic"># ========================================================</span>
+<span class="text-gray-500 italic"># Celda 1</span>
+t.<span class="text-sky-400">fillcolor</span>(<span class="text-emerald-300">"white"</span>)
 t.<span class="text-sky-400">begin_fill</span>()
-t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">36</span>)
-t.<span class="text-sky-400">left</span>(<span class="text-amber-300">90</span>)
-t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">36</span>)
-t.<span class="text-sky-400">left</span>(<span class="text-amber-300">90</span>)
-t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">36</span>)
-t.<span class="text-sky-400">left</span>(<span class="text-amber-300">90</span>)
-t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">36</span>)
-t.<span class="text-sky-400">left</span>(<span class="text-amber-300">90</span>)
+t.<span class="text-sky-400">left</span>(<span class="text-amber-300">120</span>)
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">30</span>)
+t.<span class="text-sky-400">left</span>(<span class="text-amber-300">60</span>)
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">30</span>)
+t.<span class="text-sky-400">left</span>(<span class="text-amber-300">120</span>)
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">30</span>)   
+t.<span class="text-sky-400">end_fill</span>()
+t.<span class="text-sky-400">backward</span>(<span class="text-amber-300">30</span>)
+
+<span class="text-gray-500 italic"># Celda 2</span>
+t.<span class="text-sky-400">fillcolor</span>(<span class="text-emerald-300">"red"</span>)
+t.<span class="text-sky-400">begin_fill</span>()
+t.<span class="text-sky-400">right</span>(<span class="text-amber-300">180</span>)
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">30</span>)   
+t.<span class="text-sky-400">right</span>(<span class="text-amber-300">120</span>) 
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">30</span>)
+t.<span class="text-sky-400">right</span>(<span class="text-amber-300">60</span>)
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">30</span>)
+t.<span class="text-sky-400">end_fill</span>()
+t.<span class="text-sky-400">backward</span>(<span class="text-amber-300">30</span>)
+
+<span class="text-gray-500 italic"># Celda 3</span>
+t.<span class="text-sky-400">fillcolor</span>(<span class="text-emerald-300">"blue"</span>)
+t.<span class="text-sky-400">begin_fill</span>()
+t.<span class="text-sky-400">left</span>(<span class="text-amber-300">180</span>)
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">30</span>)   
+t.<span class="text-sky-400">left</span>(<span class="text-amber-300">60</span>) 
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">30</span>)
+t.<span class="text-sky-400">left</span>(<span class="text-amber-300">120</span>)
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">30</span>)
+t.<span class="text-sky-400">end_fill</span>()
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">60</span>)
+t.<span class="text-sky-400">right</span>(<span class="text-amber-300">60</span>)
+
+<span class="text-gray-500 italic"># Celda 4</span>
+t.<span class="text-sky-400">fillcolor</span>(<span class="text-emerald-300">"orange"</span>)
+t.<span class="text-sky-400">begin_fill</span>()
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">30</span>)
+t.<span class="text-sky-400">left</span>(<span class="text-amber-300">120</span>)
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">30</span>)
+t.<span class="text-sky-400">left</span>(<span class="text-amber-300">60</span>)
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">30</span>)
+t.<span class="text-sky-400">left</span>(<span class="text-amber-300">120</span>)
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">30</span>)
+t.<span class="text-sky-400">end_fill</span>()
+t.<span class="text-sky-400">left</span>(<span class="text-amber-300">60</span>)
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">30</span>)
+
+<span class="text-gray-500 italic"># Celda 5</span>
+t.<span class="text-sky-400">fillcolor</span>(<span class="text-emerald-300">"yellow"</span>)
+t.<span class="text-sky-400">begin_fill</span>()
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">30</span>)
+t.<span class="text-sky-400">left</span>(<span class="text-amber-300">120</span>)
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">30</span>)
+t.<span class="text-sky-400">left</span>(<span class="text-amber-300">60</span>)
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">30</span>)
+t.<span class="text-sky-400">left</span>(<span class="text-amber-300">120</span>)
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">30</span>)
+t.<span class="text-sky-400">end_fill</span>()
+t.<span class="text-sky-400">left</span>(<span class="text-amber-300">60</span>)
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">30</span>)
+
+<span class="text-gray-500 italic"># Celda 6</span>
+t.<span class="text-sky-400">fillcolor</span>(<span class="text-emerald-300">"green"</span>)
+t.<span class="text-sky-400">begin_fill</span>()
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">30</span>)
+t.<span class="text-sky-400">left</span>(<span class="text-amber-300">120</span>)
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">30</span>)
+t.<span class="text-sky-400">left</span>(<span class="text-amber-300">60</span>)
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">30</span>)
+t.<span class="text-sky-400">left</span>(<span class="text-amber-300">120</span>)
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">30</span>)
+t.<span class="text-sky-400">end_fill</span>()
+t.<span class="text-sky-400">left</span>(<span class="text-amber-300">60</span>)
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">30</span>)
+
+<span class="text-gray-500 italic"># Celda 7</span>
+t.<span class="text-sky-400">fillcolor</span>(<span class="text-emerald-300">"orange"</span>)
+t.<span class="text-sky-400">begin_fill</span>()
+t.<span class="text-sky-400">right</span>(<span class="text-amber-300">60</span>)
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">30</span>)
+t.<span class="text-sky-400">right</span>(<span class="text-amber-300">120</span>)
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">30</span>)
+t.<span class="text-sky-400">right</span>(<span class="text-amber-300">60</span>)
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">30</span>)
+t.<span class="text-sky-400">right</span>(<span class="text-amber-300">120</span>)
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">30</span>)
+t.<span class="text-sky-400">end_fill</span>()
+t.<span class="text-sky-400">backward</span>(<span class="text-amber-300">60</span>) 
+
+<span class="text-gray-500 italic"># Celda 8</span>
+t.<span class="text-sky-400">fillcolor</span>(<span class="text-emerald-300">"red"</span>)
+t.<span class="text-sky-400">begin_fill</span>()
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">30</span>)
+t.<span class="text-sky-400">right</span>(<span class="text-amber-300">60</span>)
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">30</span>)
+t.<span class="text-sky-400">right</span>(<span class="text-amber-300">120</span>)
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">30</span>)
+t.<span class="text-sky-400">right</span>(<span class="text-amber-300">60</span>)
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">30</span>)
+t.<span class="text-sky-400">end_fill</span>()
+t.<span class="text-sky-400">backward</span>(<span class="text-amber-300">30</span>)
+
+<span class="text-gray-500 italic"># Celda 9</span>
+t.<span class="text-sky-400">fillcolor</span>(<span class="text-emerald-300">"green"</span>)
+t.<span class="text-sky-400">begin_fill</span>()
+t.<span class="text-sky-400">left</span>(<span class="text-amber-300">60</span>)
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">30</span>)
+t.<span class="text-sky-400">right</span>(<span class="text-amber-300">60</span>)
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">30</span>)
+t.<span class="text-sky-400">right</span>(<span class="text-amber-300">120</span>)
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">30</span>)
+t.<span class="text-sky-400">end_fill</span>()
+t.<span class="text-sky-400">backward</span>(<span class="text-amber-300">30</span>)
+t.<span class="text-sky-400">right</span>(<span class="text-amber-300">120</span>)
+
+<span class="text-gray-500 italic"># Celda 10</span>
+t.<span class="text-sky-400">fillcolor</span>(<span class="text-emerald-300">"orange"</span>)
+t.<span class="text-sky-400">begin_fill</span>()
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">30</span>)
+t.<span class="text-sky-400">left</span>(<span class="text-amber-300">60</span>)
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">30</span>)
+t.<span class="text-sky-400">left</span>(<span class="text-amber-300">120</span>)
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">30</span>)
+t.<span class="text-sky-400">end_fill</span>()
+t.<span class="text-sky-400">backward</span>(<span class="text-amber-300">30</span>)
+t.<span class="text-sky-400">right</span>(<span class="text-amber-300">180</span>)
+
+<span class="text-gray-500 italic"># Celda 11</span>
+t.<span class="text-sky-400">fillcolor</span>(<span class="text-emerald-300">"green"</span>)
+t.<span class="text-sky-400">begin_fill</span>()
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">30</span>)
+t.<span class="text-sky-400">right</span>(<span class="text-amber-300">120</span>)
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">30</span>)
+t.<span class="text-sky-400">right</span>(<span class="text-amber-300">60</span>)
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">30</span>)
+t.<span class="text-sky-400">end_fill</span>()
+t.<span class="text-sky-400">backward</span>(<span class="text-amber-300">60</span>)
+
+<span class="text-gray-500 italic"># Celda 12</span>
+t.<span class="text-sky-400">fillcolor</span>(<span class="text-emerald-300">"white"</span>)
+t.<span class="text-sky-400">begin_fill</span>()
+t.<span class="text-sky-400">right</span>(<span class="text-amber-300">120</span>)
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">30</span>)
+t.<span class="text-sky-400">left</span>(<span class="text-amber-300">120</span>)
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">30</span>)
+t.<span class="text-sky-400">left</span>(<span class="text-amber-300">60</span>)
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">30</span>)
+t.<span class="text-sky-400">end_fill</span>()
+t.<span class="text-sky-400">backward</span>(<span class="text-amber-300">30</span>)
+t.<span class="text-sky-400">left</span>(<span class="text-amber-300">120</span>)
+
+<span class="text-gray-500 italic"># Celda 13</span>
+t.<span class="text-sky-400">fillcolor</span>(<span class="text-emerald-300">"yellow"</span>)
+t.<span class="text-sky-400">begin_fill</span>()
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">30</span>)
+t.<span class="text-sky-400">left</span>(<span class="text-amber-300">60</span>)
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">30</span>)
+t.<span class="text-sky-400">left</span>(<span class="text-amber-300">120</span>)
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">30</span>)
+t.<span class="text-sky-400">left</span>(<span class="text-amber-300">60</span>)
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">30</span>)
 t.<span class="text-sky-400">end_fill</span>()
 
-<span class="text-gray-500 italic"># 1.2 Pegatina 2: Azul (centro)</span>
-t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">36</span>)
-t.<span class="text-sky-400">color</span>(<span class="text-emerald-300">"#0f172a"</span>, <span class="text-emerald-300">"#3b82f6"</span>)
+<span class="text-gray-500 italic"># Celda 14</span>
+t.<span class="text-sky-400">fillcolor</span>(<span class="text-emerald-300">"orange"</span>)
 t.<span class="text-sky-400">begin_fill</span>()
-t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">36</span>)
-t.<span class="text-sky-400">left</span>(<span class="text-amber-300">90</span>)
-t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">36</span>)
-t.<span class="text-sky-400">left</span>(<span class="text-amber-300">90</span>)
-t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">36</span>)
-t.<span class="text-sky-400">left</span>(<span class="text-amber-300">90</span>)
-t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">36</span>)
-t.<span class="text-sky-400">left</span>(<span class="text-amber-300">90</span>)
+t.<span class="text-sky-400">right</span>(<span class="text-amber-300">60</span>)
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">30</span>)
+t.<span class="text-sky-400">right</span>(<span class="text-amber-300">120</span>)
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">30</span>)
+t.<span class="text-sky-400">right</span>(<span class="text-amber-300">60</span>)
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">30</span>)
+t.<span class="text-sky-400">end_fill</span>()
+t.<span class="text-sky-400">backward</span>(<span class="text-amber-300">30</span>)
+
+<span class="text-gray-500 italic"># Celda 15</span>
+t.<span class="text-sky-400">fillcolor</span>(<span class="text-emerald-300">"white"</span>)
+t.<span class="text-sky-400">begin_fill</span>()
+t.<span class="text-sky-400">right</span>(<span class="text-amber-300">120</span>)
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">30</span>)
+t.<span class="text-sky-400">right</span>(<span class="text-amber-300">60</span>)
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">30</span>)
+t.<span class="text-sky-400">right</span>(<span class="text-amber-300">120</span>)
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">30</span>)
+t.<span class="text-sky-400">right</span>(<span class="text-amber-300">60</span>)
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">30</span>)
+t.<span class="text-sky-400">end_fill</span>()
+t.<span class="text-sky-400">backward</span>(<span class="text-amber-300">30</span>)
+t.<span class="text-sky-400">left</span>(<span class="text-amber-300">180</span>)
+
+<span class="text-gray-500 italic"># Celda 16</span>
+t.<span class="text-sky-400">fillcolor</span>(<span class="text-emerald-300">"blue"</span>)
+t.<span class="text-sky-400">begin_fill</span>()
+t.<span class="text-sky-400">right</span>(<span class="text-amber-300">60</span>)
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">30</span>)
+t.<span class="text-sky-400">left</span>(<span class="text-amber-300">120</span>)
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">30</span>)
+t.<span class="text-sky-400">left</span>(<span class="text-amber-300">60</span>)
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">30</span>)
+t.<span class="text-sky-400">left</span>(<span class="text-amber-300">120</span>)
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">30</span>)
+t.<span class="text-sky-400">end_fill</span>()
+t.<span class="text-sky-400">left</span>(<span class="text-amber-300">60</span>)
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">30</span>)
+
+<span class="text-gray-500 italic"># Celda 17</span>
+t.<span class="text-sky-400">fillcolor</span>(<span class="text-emerald-300">"green"</span>)
+t.<span class="text-sky-400">begin_fill</span>()
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">30</span>)
+t.<span class="text-sky-400">left</span>(<span class="text-amber-300">120</span>)
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">30</span>)
+t.<span class="text-sky-400">left</span>(<span class="text-amber-300">60</span>)
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">30</span>)
+t.<span class="text-sky-400">left</span>(<span class="text-amber-300">120</span>)
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">30</span>)
+t.<span class="text-sky-400">end_fill</span>()
+t.<span class="text-sky-400">left</span>(<span class="text-amber-300">60</span>)
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">30</span>)
+
+<span class="text-gray-500 italic"># Celda 18</span>
+t.<span class="text-sky-400">fillcolor</span>(<span class="text-emerald-300">"yellow"</span>)
+t.<span class="text-sky-400">begin_fill</span>()
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">30</span>)
+t.<span class="text-sky-400">left</span>(<span class="text-amber-300">120</span>)
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">30</span>)
+t.<span class="text-sky-400">left</span>(<span class="text-amber-300">60</span>)
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">30</span>)
+t.<span class="text-sky-400">left</span>(<span class="text-amber-300">120</span>)
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">30</span>)
+t.<span class="text-sky-400">end_fill</span>()
+t.<span class="text-sky-400">left</span>(<span class="text-amber-300">60</span>)
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">30</span>)
+
+<span class="text-gray-500 italic"># Celda 19</span>
+t.<span class="text-sky-400">fillcolor</span>(<span class="text-emerald-300">"blue"</span>)
+t.<span class="text-sky-400">begin_fill</span>()
+t.<span class="text-sky-400">right</span>(<span class="text-amber-300">120</span>)
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">30</span>)
+t.<span class="text-sky-400">right</span>(<span class="text-amber-300">60</span>)
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">30</span>)
+t.<span class="text-sky-400">right</span>(<span class="text-amber-300">120</span>)
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">30</span>)
+t.<span class="text-sky-400">right</span>(<span class="text-amber-300">60</span>)
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">30</span>)
+t.<span class="text-sky-400">end_fill</span>()
+t.<span class="text-sky-400">right</span>(<span class="text-amber-300">120</span>)
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">30</span>)
+
+<span class="text-gray-500 italic"># Celda 20</span>
+t.<span class="text-sky-400">fillcolor</span>(<span class="text-emerald-300">"white"</span>)
+t.<span class="text-sky-400">begin_fill</span>()
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">30</span>)
+t.<span class="text-sky-400">right</span>(<span class="text-amber-300">60</span>)
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">30</span>)
+t.<span class="text-sky-400">right</span>(<span class="text-amber-300">120</span>)
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">30</span>)
+t.<span class="text-sky-400">right</span>(<span class="text-amber-300">60</span>)
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">30</span>)
+t.<span class="text-sky-400">end_fill</span>()
+t.<span class="text-sky-400">right</span>(<span class="text-amber-300">120</span>)
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">30</span>)
+
+<span class="text-gray-500 italic"># Celda 21</span>
+t.<span class="text-sky-400">fillcolor</span>(<span class="text-emerald-300">"green"</span>)
+t.<span class="text-sky-400">begin_fill</span>()
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">30</span>)
+t.<span class="text-sky-400">right</span>(<span class="text-amber-300">60</span>)
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">30</span>)
+t.<span class="text-sky-400">right</span>(<span class="text-amber-300">120</span>)
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">30</span>)
+t.<span class="text-sky-400">right</span>(<span class="text-amber-300">60</span>)
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">30</span>)
+t.<span class="text-sky-400">end_fill</span>()
+t.<span class="text-sky-400">right</span>(<span class="text-amber-300">120</span>)
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">30</span>)
+t.<span class="text-sky-400">right</span>(<span class="text-amber-300">60</span>)
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">30</span>)
+
+<span class="text-gray-500 italic"># Celda 22</span>
+t.<span class="text-sky-400">fillcolor</span>(<span class="text-emerald-300">"red"</span>)
+t.<span class="text-sky-400">begin_fill</span>()
+t.<span class="text-sky-400">right</span>(<span class="text-amber-300">120</span>)
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">30</span>)
+t.<span class="text-sky-400">left</span>(<span class="text-amber-300">120</span>)
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">30</span>)
+t.<span class="text-sky-400">left</span>(<span class="text-amber-300">60</span>)
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">30</span>)
+t.<span class="text-sky-400">end_fill</span>()
+t.<span class="text-sky-400">right</span>(<span class="text-amber-300">60</span>)
+
+<span class="text-gray-500 italic"># Celda 23</span>
+t.<span class="text-sky-400">fillcolor</span>(<span class="text-emerald-300">"orange"</span>) 
+t.<span class="text-sky-400">begin_fill</span>()
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">30</span>)
+t.<span class="text-sky-400">right</span>(<span class="text-amber-300">120</span>)
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">30</span>)
+t.<span class="text-sky-400">right</span>(<span class="text-amber-300">60</span>)
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">30</span>)
+t.<span class="text-sky-400">end_fill</span>()  
+t.<span class="text-sky-400">left</span>(<span class="text-amber-300">60</span>)
+
+<span class="text-gray-500 italic"># Celda 24</span>
+t.<span class="text-sky-400">fillcolor</span>(<span class="text-emerald-300">"blue"</span>)
+t.<span class="text-sky-400">begin_fill</span>()
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">30</span>)
+t.<span class="text-sky-400">left</span>(<span class="text-amber-300">120</span>)
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">30</span>)
+t.<span class="text-sky-400">left</span>(<span class="text-amber-300">60</span>)
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">30</span>)
+t.<span class="text-sky-400">end_fill</span>()
+t.<span class="text-sky-400">left</span>(<span class="text-amber-300">120</span>)
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">30</span>)
+
+<span class="text-gray-500 italic"># Celda 25</span>
+t.<span class="text-sky-400">fillcolor</span>(<span class="text-emerald-300">"yellow"</span>)
+t.<span class="text-sky-400">begin_fill</span>()
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">30</span>)
+t.<span class="text-sky-400">left</span>(<span class="text-amber-300">60</span>)
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">30</span>)
+t.<span class="text-sky-400">left</span>(<span class="text-amber-300">120</span>)
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">30</span>)
+t.<span class="text-sky-400">left</span>(<span class="text-amber-300">60</span>)
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">30</span>)
+t.<span class="text-sky-400">end_fill</span>()
+t.<span class="text-sky-400">backward</span>(<span class="text-amber-300">60</span>)
+
+<span class="text-gray-500 italic"># Celda 26</span>
+t.<span class="text-sky-400">fillcolor</span>(<span class="text-emerald-300">"white"</span>)
+t.<span class="text-sky-400">begin_fill</span>()
+t.<span class="text-sky-400">left</span>(<span class="text-amber-300">120</span>)
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">30</span>)
+t.<span class="text-sky-400">right</span>(<span class="text-amber-300">120</span>)
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">30</span>)
+t.<span class="text-sky-400">right</span>(<span class="text-amber-300">60</span>)
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">30</span>)
 t.<span class="text-sky-400">end_fill</span>()
 
-<span class="text-gray-500 italic"># 1.3 Pegatina 3: Blanco (derecha)</span>
-t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">36</span>)
-t.<span class="text-sky-400">color</span>(<span class="text-emerald-300">"#0f172a"</span>, <span class="text-emerald-300">"#f8fafc"</span>)
+<span class="text-gray-500 italic"># Celda 27</span>
+t.<span class="text-sky-400">fillcolor</span>(<span class="text-emerald-300">"red"</span>)
 t.<span class="text-sky-400">begin_fill</span>()
-t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">36</span>)
-t.<span class="text-sky-400">left</span>(<span class="text-amber-300">90</span>)
-t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">36</span>)
-t.<span class="text-sky-400">left</span>(<span class="text-amber-300">90</span>)
-t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">36</span>)
-t.<span class="text-sky-400">left</span>(<span class="text-amber-300">90</span>)
-t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">36</span>)
-t.<span class="text-sky-400">left</span>(<span class="text-amber-300">90</span>)
-t.<span class="text-sky-400">end_fill</span>()
-
-<span class="text-gray-500 italic"># ==========================================</span>
-<span class="text-gray-500 italic"># FILA 2: CENTRAL (y = -18)</span>
-<span class="text-gray-500 italic"># ==========================================</span>
-
-<span class="text-gray-500 italic"># 2.1 Pegatina 4: Naranja (izquierda)</span>
-t.<span class="text-sky-400">penup</span>()
-t.<span class="text-sky-400">goto</span>(-<span class="text-amber-300">54</span>, -<span class="text-amber-300">18</span>)
-t.<span class="text-sky-400">setheading</span>(<span class="text-amber-300">0</span>)
-t.<span class="text-sky-400">pendown</span>()
-t.<span class="text-sky-400">color</span>(<span class="text-emerald-300">"#0f172a"</span>, <span class="text-emerald-300">"#f97316"</span>)
-t.<span class="text-sky-400">begin_fill</span>()
-t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">36</span>)
-t.<span class="text-sky-400">left</span>(<span class="text-amber-300">90</span>)
-t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">36</span>)
-t.<span class="text-sky-400">left</span>(<span class="text-amber-300">90</span>)
-t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">36</span>)
-t.<span class="text-sky-400">left</span>(<span class="text-amber-300">90</span>)
-t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">36</span>)
-t.<span class="text-sky-400">left</span>(<span class="text-amber-300">90</span>)
-t.<span class="text-sky-400">end_fill</span>()
-
-<span class="text-gray-500 italic"># 2.2 Pegatina 5: Amarillo (centro)</span>
-t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">36</span>)
-t.<span class="text-sky-400">color</span>(<span class="text-emerald-300">"#0f172a"</span>, <span class="text-emerald-300">"#eab308"</span>)
-t.<span class="text-sky-400">begin_fill</span>()
-t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">36</span>)
-t.<span class="text-sky-400">left</span>(<span class="text-amber-300">90</span>)
-t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">36</span>)
-t.<span class="text-sky-400">left</span>(<span class="text-amber-300">90</span>)
-t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">36</span>)
-t.<span class="text-sky-400">left</span>(<span class="text-amber-300">90</span>)
-t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">36</span>)
-t.<span class="text-sky-400">left</span>(<span class="text-amber-300">90</span>)
-t.<span class="text-sky-400">end_fill</span>()
-
-<span class="text-gray-500 italic"># 2.3 Pegatina 6: Verde (derecha)</span>
-t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">36</span>)
-t.<span class="text-sky-400">color</span>(<span class="text-emerald-300">"#0f172a"</span>, <span class="text-emerald-300">"#22c55e"</span>)
-t.<span class="text-sky-400">begin_fill</span>()
-t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">36</span>)
-t.<span class="text-sky-400">left</span>(<span class="text-amber-300">90</span>)
-t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">36</span>)
-t.<span class="text-sky-400">left</span>(<span class="text-amber-300">90</span>)
-t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">36</span>)
-t.<span class="text-sky-400">left</span>(<span class="text-amber-300">90</span>)
-t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">36</span>)
-t.<span class="text-sky-400">left</span>(<span class="text-amber-300">90</span>)
-t.<span class="text-sky-400">end_fill</span>()
-
-<span class="text-gray-500 italic"># ==========================================</span>
-<span class="text-gray-500 italic"># FILA 3: SUPERIOR (y = 18)</span>
-<span class="text-gray-500 italic"># ==========================================</span>
-
-<span class="text-gray-500 italic"># 3.1 Pegatina 7: Azul (izquierda)</span>
-t.<span class="text-sky-400">penup</span>()
-t.<span class="text-sky-400">goto</span>(-<span class="text-amber-300">54</span>, <span class="text-amber-300">18</span>)
-t.<span class="text-sky-400">setheading</span>(<span class="text-amber-300">0</span>)
-t.<span class="text-sky-400">pendown</span>()
-t.<span class="text-sky-400">color</span>(<span class="text-emerald-300">"#0f172a"</span>, <span class="text-emerald-300">"#3b82f6"</span>)
-t.<span class="text-sky-400">begin_fill</span>()
-t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">36</span>)
-t.<span class="text-sky-400">left</span>(<span class="text-amber-300">90</span>)
-t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">36</span>)
-t.<span class="text-sky-400">left</span>(<span class="text-amber-300">90</span>)
-t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">36</span>)
-t.<span class="text-sky-400">left</span>(<span class="text-amber-300">90</span>)
-t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">36</span>)
-t.<span class="text-sky-400">left</span>(<span class="text-amber-300">90</span>)
-t.<span class="text-sky-400">end_fill</span>()
-
-<span class="text-gray-500 italic"># 3.2 Pegatina 8: Rojo (centro)</span>
-t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">36</span>)
-t.<span class="text-sky-400">color</span>(<span class="text-emerald-300">"#0f172a"</span>, <span class="text-emerald-300">"#ef4444"</span>)
-t.<span class="text-sky-400">begin_fill</span>()
-t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">36</span>)
-t.<span class="text-sky-400">left</span>(<span class="text-amber-300">90</span>)
-t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">36</span>)
-t.<span class="text-sky-400">left</span>(<span class="text-amber-300">90</span>)
-t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">36</span>)
-t.<span class="text-sky-400">left</span>(<span class="text-amber-300">90</span>)
-t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">36</span>)
-t.<span class="text-sky-400">left</span>(<span class="text-amber-300">90</span>)
-t.<span class="text-sky-400">end_fill</span>()
-
-<span class="text-gray-500 italic"># 3.3 Pegatina 9: Amarillo (derecha)</span>
-t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">36</span>)
-t.<span class="text-sky-400">color</span>(<span class="text-emerald-300">"#0f172a"</span>, <span class="text-emerald-300">"#eab308"</span>)
-t.<span class="text-sky-400">begin_fill</span>()
-t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">36</span>)
-t.<span class="text-sky-400">left</span>(<span class="text-amber-300">90</span>)
-t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">36</span>)
-t.<span class="text-sky-400">left</span>(<span class="text-amber-300">90</span>)
-t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">36</span>)
-t.<span class="text-sky-400">left</span>(<span class="text-amber-300">90</span>)
-t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">36</span>)
-t.<span class="text-sky-400">left</span>(<span class="text-amber-300">90</span>)
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">30</span>)
+t.<span class="text-sky-400">right</span>(<span class="text-amber-300">120</span>)
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">30</span>)
+t.<span class="text-sky-400">right</span>(<span class="text-amber-300">60</span>)
+t.<span class="text-sky-400">forward</span>(<span class="text-amber-300">30</span>)
 t.<span class="text-sky-400">end_fill</span>()
 
 t.<span class="text-sky-400">hideturtle</span>()
-<span class="text-yellow-300">turtle</span>.<span class="text-sky-400">done</span>()</code></pre>
+<span class="text-yellow-300 font-semibold">turtle</span>.<span class="text-sky-400">done</span>()</code></pre>
+              </div>
+
+              <div class="overflow-x-auto my-4 border border-gray-800 rounded-xl">
+                <table class="w-full text-xs text-left complexity-table">
+                  <thead>
+                    <tr>
+                      <th class="py-2.5 px-3 bg-[#141923] text-emerald-400 font-bold">Fase</th>
+                      <th class="py-2.5 px-3 bg-[#141923] text-gray-200 font-bold">Descripción</th>
+                      <th class="py-2.5 px-3 bg-[#141923] text-gray-200 font-bold">Comandos Principales</th>
+                    </tr>
+                  </thead>
+                  <tbody class="divide-y divide-gray-800/60">
+                    <tr>
+                      <td class="font-bold text-sky-400 py-2.5 px-3">Fase 1</td>
+                      <td class="py-2.5 px-3">Silueta del cubo</td>
+                      <td class="py-2.5 px-3">Trazo de las aristas exteriores e internas con <code>forward(90)</code> y giros de 30°, 60° y 120°.</td>
+                    </tr>
+                    <tr>
+                      <td class="font-bold text-emerald-400 py-2.5 px-3">Fase 2</td>
+                      <td class="py-2.5 px-3">Coloreado de las 27 celdas</td>
+                      <td class="py-2.5 px-3">Relleno secuencial de cada celda con <code>fillcolor()</code>, <code>begin_fill()</code>, lados de 30 px, <code>end_fill()</code> y <code>backward(30)</code>.</td>
+                    </tr>
+                  </tbody>
+                </table>
               </div>
             </div>
           </details>
         `
       }
-    ],
-    comprueba: {
-      title: "Evaluación: Dominio de Turtle y Programación Secuencial",
-      description: "Pon a prueba tus conocimientos sobre comandos básicos, sistema de coordenadas, estados del lápiz y ejecución secuencial respondiendo el siguiente cuestionario evaluativo de 8 preguntas:",
-      widget: {
-        file: "widgets/programacion/u02_turtle_quiz.html",
-        title: "Quiz Interactivo - Turtle y Secuencias",
-        height: "580px"
-      }
-    }
-  }
-};
+    ]
+  };
+}

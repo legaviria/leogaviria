@@ -506,134 +506,54 @@
         ]
       },
       rubik: {
-        title: "Reto Final: Cubo rubik (Cuadrícula 3x3 Multicolor)",
+        title: "Reto Final: Cubo rubik 3D (Silueta y 27 Celdas Multicolor)",
         code: [
-          { line: 'import turtle', action: null, explain: 'Inicia el reto integrador del Cubo Rubik.' },
-          { line: 'tortuga = turtle.Turtle()', action: 'init_pos', x: -54, y: -54, explain: 'Posicionamos la tortuga en (-54, -54) para centrar la cuadrícula 3x3.' },
-          { line: '# === FILA 1: INFERIOR (y = -54) ===', action: null, explain: 'Iniciamos la fila inferior del Cubo Rubik.' },
-          { line: '# Pegatina 1.1 (Rojo)', action: null, explain: 'Trazamos y rellenamos pegatina Rojo.' },
-          { line: 'tortuga.color("#ef4444")', action: { type: 'color', color: '#ef4444' }, explain: 'Color Rojo.' },
-          { line: 'tortuga.begin_fill()', action: { type: 'begin_fill' }, explain: 'Inicia relleno de la pegatina Rojo.' },
-          { line: 'tortuga.forward(36)', action: { type: 'fd', dist: 36 }, explain: 'Lado 1.' },
-          { line: 'tortuga.left(90)', action: { type: 'lt', angle: 90 }, explain: 'Giro 90°.' },
-          { line: 'tortuga.forward(36)', action: { type: 'fd', dist: 36 }, explain: 'Lado 2.' },
-          { line: 'tortuga.left(90)', action: { type: 'lt', angle: 90 }, explain: 'Giro 90°.' },
-          { line: 'tortuga.forward(36)', action: { type: 'fd', dist: 36 }, explain: 'Lado 3.' },
-          { line: 'tortuga.left(90)', action: { type: 'lt', angle: 90 }, explain: 'Giro 90°.' },
-          { line: 'tortuga.forward(36)', action: { type: 'fd', dist: 36 }, explain: 'Lado 4.' },
-          { line: 'tortuga.left(90)', action: { type: 'lt', angle: 90 }, explain: 'Giro final.' },
-          { line: 'tortuga.end_fill()', action: { type: 'end_fill' }, explain: 'Aplica relleno Rojo.' },
-          { line: 'tortuga.forward(36)', action: { type: 'fd', dist: 36 }, explain: 'Avanza a la base de la siguiente pegatina.' },
-          { line: '# Pegatina 1.2 (Azul)', action: null, explain: 'Trazamos y rellenamos pegatina Azul.' },
-          { line: 'tortuga.color("#3b82f6")', action: { type: 'color', color: '#3b82f6' }, explain: 'Color Azul.' },
-          { line: 'tortuga.begin_fill()', action: { type: 'begin_fill' }, explain: 'Inicia relleno de la pegatina Azul.' },
-          { line: 'tortuga.forward(36)', action: { type: 'fd', dist: 36 }, explain: 'Lado 1.' },
-          { line: 'tortuga.left(90)', action: { type: 'lt', angle: 90 }, explain: 'Giro 90°.' },
-          { line: 'tortuga.forward(36)', action: { type: 'fd', dist: 36 }, explain: 'Lado 2.' },
-          { line: 'tortuga.left(90)', action: { type: 'lt', angle: 90 }, explain: 'Giro 90°.' },
-          { line: 'tortuga.forward(36)', action: { type: 'fd', dist: 36 }, explain: 'Lado 3.' },
-          { line: 'tortuga.left(90)', action: { type: 'lt', angle: 90 }, explain: 'Giro 90°.' },
-          { line: 'tortuga.forward(36)', action: { type: 'fd', dist: 36 }, explain: 'Lado 4.' },
-          { line: 'tortuga.left(90)', action: { type: 'lt', angle: 90 }, explain: 'Giro final.' },
-          { line: 'tortuga.end_fill()', action: { type: 'end_fill' }, explain: 'Aplica relleno Azul.' },
-          { line: 'tortuga.forward(36)', action: { type: 'fd', dist: 36 }, explain: 'Avanza a la base de la siguiente pegatina.' },
-          { line: '# Pegatina 1.3 (Blanco)', action: null, explain: 'Trazamos y rellenamos pegatina Blanco.' },
-          { line: 'tortuga.color("#f8fafc")', action: { type: 'color', color: '#f8fafc' }, explain: 'Color Blanco.' },
-          { line: 'tortuga.begin_fill()', action: { type: 'begin_fill' }, explain: 'Inicia relleno de la pegatina Blanco.' },
-          { line: 'tortuga.forward(36)', action: { type: 'fd', dist: 36 }, explain: 'Lado 1.' },
-          { line: 'tortuga.left(90)', action: { type: 'lt', angle: 90 }, explain: 'Giro 90°.' },
-          { line: 'tortuga.forward(36)', action: { type: 'fd', dist: 36 }, explain: 'Lado 2.' },
-          { line: 'tortuga.left(90)', action: { type: 'lt', angle: 90 }, explain: 'Giro 90°.' },
-          { line: 'tortuga.forward(36)', action: { type: 'fd', dist: 36 }, explain: 'Lado 3.' },
-          { line: 'tortuga.left(90)', action: { type: 'lt', angle: 90 }, explain: 'Giro 90°.' },
-          { line: 'tortuga.forward(36)', action: { type: 'fd', dist: 36 }, explain: 'Lado 4.' },
-          { line: 'tortuga.left(90)', action: { type: 'lt', angle: 90 }, explain: 'Giro final.' },
-          { line: 'tortuga.end_fill()', action: { type: 'end_fill' }, explain: 'Aplica relleno Blanco.' },
-          { line: '# === FILA 2 (y = -18) ===', action: null, explain: 'Iniciamos la fila 2 del Cubo Rubik.' },
-          { line: 'tortuga.penup()', action: { type: 'penup' }, explain: 'Levanta el lápiz para saltar a la fila 2.' },
-          { line: 'tortuga.goto(-54, -18)', action: { x: -54, y: -18 }, explain: 'Se posiciona al inicio de la fila 2.' },
-          { line: 'tortuga.pendown()', action: { type: 'pendown' }, explain: 'Baja el lápiz para comenzar a trazar.' },
-          { line: '# Pegatina 2.1 (Naranja)', action: null, explain: 'Trazamos y rellenamos pegatina Naranja.' },
-          { line: 'tortuga.color("#f97316")', action: { type: 'color', color: '#f97316' }, explain: 'Color Naranja.' },
-          { line: 'tortuga.begin_fill()', action: { type: 'begin_fill' }, explain: 'Inicia relleno de la pegatina Naranja.' },
-          { line: 'tortuga.forward(36)', action: { type: 'fd', dist: 36 }, explain: 'Lado 1.' },
-          { line: 'tortuga.left(90)', action: { type: 'lt', angle: 90 }, explain: 'Giro 90°.' },
-          { line: 'tortuga.forward(36)', action: { type: 'fd', dist: 36 }, explain: 'Lado 2.' },
-          { line: 'tortuga.left(90)', action: { type: 'lt', angle: 90 }, explain: 'Giro 90°.' },
-          { line: 'tortuga.forward(36)', action: { type: 'fd', dist: 36 }, explain: 'Lado 3.' },
-          { line: 'tortuga.left(90)', action: { type: 'lt', angle: 90 }, explain: 'Giro 90°.' },
-          { line: 'tortuga.forward(36)', action: { type: 'fd', dist: 36 }, explain: 'Lado 4.' },
-          { line: 'tortuga.left(90)', action: { type: 'lt', angle: 90 }, explain: 'Giro final.' },
-          { line: 'tortuga.end_fill()', action: { type: 'end_fill' }, explain: 'Aplica relleno Naranja.' },
-          { line: 'tortuga.forward(36)', action: { type: 'fd', dist: 36 }, explain: 'Avanza a la base de la siguiente pegatina.' },
-          { line: '# Pegatina 2.2 (Amarillo)', action: null, explain: 'Trazamos y rellenamos pegatina Amarillo.' },
-          { line: 'tortuga.color("#eab308")', action: { type: 'color', color: '#eab308' }, explain: 'Color Amarillo.' },
-          { line: 'tortuga.begin_fill()', action: { type: 'begin_fill' }, explain: 'Inicia relleno de la pegatina Amarillo.' },
-          { line: 'tortuga.forward(36)', action: { type: 'fd', dist: 36 }, explain: 'Lado 1.' },
-          { line: 'tortuga.left(90)', action: { type: 'lt', angle: 90 }, explain: 'Giro 90°.' },
-          { line: 'tortuga.forward(36)', action: { type: 'fd', dist: 36 }, explain: 'Lado 2.' },
-          { line: 'tortuga.left(90)', action: { type: 'lt', angle: 90 }, explain: 'Giro 90°.' },
-          { line: 'tortuga.forward(36)', action: { type: 'fd', dist: 36 }, explain: 'Lado 3.' },
-          { line: 'tortuga.left(90)', action: { type: 'lt', angle: 90 }, explain: 'Giro 90°.' },
-          { line: 'tortuga.forward(36)', action: { type: 'fd', dist: 36 }, explain: 'Lado 4.' },
-          { line: 'tortuga.left(90)', action: { type: 'lt', angle: 90 }, explain: 'Giro final.' },
-          { line: 'tortuga.end_fill()', action: { type: 'end_fill' }, explain: 'Aplica relleno Amarillo.' },
-          { line: 'tortuga.forward(36)', action: { type: 'fd', dist: 36 }, explain: 'Avanza a la base de la siguiente pegatina.' },
-          { line: '# Pegatina 2.3 (Verde)', action: null, explain: 'Trazamos y rellenamos pegatina Verde.' },
-          { line: 'tortuga.color("#22c55e")', action: { type: 'color', color: '#22c55e' }, explain: 'Color Verde.' },
-          { line: 'tortuga.begin_fill()', action: { type: 'begin_fill' }, explain: 'Inicia relleno de la pegatina Verde.' },
-          { line: 'tortuga.forward(36)', action: { type: 'fd', dist: 36 }, explain: 'Lado 1.' },
-          { line: 'tortuga.left(90)', action: { type: 'lt', angle: 90 }, explain: 'Giro 90°.' },
-          { line: 'tortuga.forward(36)', action: { type: 'fd', dist: 36 }, explain: 'Lado 2.' },
-          { line: 'tortuga.left(90)', action: { type: 'lt', angle: 90 }, explain: 'Giro 90°.' },
-          { line: 'tortuga.forward(36)', action: { type: 'fd', dist: 36 }, explain: 'Lado 3.' },
-          { line: 'tortuga.left(90)', action: { type: 'lt', angle: 90 }, explain: 'Giro 90°.' },
-          { line: 'tortuga.forward(36)', action: { type: 'fd', dist: 36 }, explain: 'Lado 4.' },
-          { line: 'tortuga.left(90)', action: { type: 'lt', angle: 90 }, explain: 'Giro final.' },
-          { line: 'tortuga.end_fill()', action: { type: 'end_fill' }, explain: 'Aplica relleno Verde.' },
-          { line: '# === FILA 3 (y = 18) ===', action: null, explain: 'Iniciamos la fila 3 del Cubo Rubik.' },
-          { line: 'tortuga.penup()', action: { type: 'penup' }, explain: 'Levanta el lápiz para saltar a la fila 3.' },
-          { line: 'tortuga.goto(-54, 18)', action: { x: -54, y: 18 }, explain: 'Se posiciona al inicio de la fila 3.' },
-          { line: 'tortuga.pendown()', action: { type: 'pendown' }, explain: 'Baja el lápiz para comenzar a trazar.' },
-          { line: '# Pegatina 3.1 (Azul)', action: null, explain: 'Trazamos y rellenamos pegatina Azul.' },
-          { line: 'tortuga.color("#3b82f6")', action: { type: 'color', color: '#3b82f6' }, explain: 'Color Azul.' },
-          { line: 'tortuga.begin_fill()', action: { type: 'begin_fill' }, explain: 'Inicia relleno de la pegatina Azul.' },
-          { line: 'tortuga.forward(36)', action: { type: 'fd', dist: 36 }, explain: 'Lado 1.' },
-          { line: 'tortuga.left(90)', action: { type: 'lt', angle: 90 }, explain: 'Giro 90°.' },
-          { line: 'tortuga.forward(36)', action: { type: 'fd', dist: 36 }, explain: 'Lado 2.' },
-          { line: 'tortuga.left(90)', action: { type: 'lt', angle: 90 }, explain: 'Giro 90°.' },
-          { line: 'tortuga.forward(36)', action: { type: 'fd', dist: 36 }, explain: 'Lado 3.' },
-          { line: 'tortuga.left(90)', action: { type: 'lt', angle: 90 }, explain: 'Giro 90°.' },
-          { line: 'tortuga.forward(36)', action: { type: 'fd', dist: 36 }, explain: 'Lado 4.' },
-          { line: 'tortuga.left(90)', action: { type: 'lt', angle: 90 }, explain: 'Giro final.' },
-          { line: 'tortuga.end_fill()', action: { type: 'end_fill' }, explain: 'Aplica relleno Azul.' },
-          { line: 'tortuga.forward(36)', action: { type: 'fd', dist: 36 }, explain: 'Avanza a la base de la siguiente pegatina.' },
-          { line: '# Pegatina 3.2 (Rojo)', action: null, explain: 'Trazamos y rellenamos pegatina Rojo.' },
-          { line: 'tortuga.color("#ef4444")', action: { type: 'color', color: '#ef4444' }, explain: 'Color Rojo.' },
-          { line: 'tortuga.begin_fill()', action: { type: 'begin_fill' }, explain: 'Inicia relleno de la pegatina Rojo.' },
-          { line: 'tortuga.forward(36)', action: { type: 'fd', dist: 36 }, explain: 'Lado 1.' },
-          { line: 'tortuga.left(90)', action: { type: 'lt', angle: 90 }, explain: 'Giro 90°.' },
-          { line: 'tortuga.forward(36)', action: { type: 'fd', dist: 36 }, explain: 'Lado 2.' },
-          { line: 'tortuga.left(90)', action: { type: 'lt', angle: 90 }, explain: 'Giro 90°.' },
-          { line: 'tortuga.forward(36)', action: { type: 'fd', dist: 36 }, explain: 'Lado 3.' },
-          { line: 'tortuga.left(90)', action: { type: 'lt', angle: 90 }, explain: 'Giro 90°.' },
-          { line: 'tortuga.forward(36)', action: { type: 'fd', dist: 36 }, explain: 'Lado 4.' },
-          { line: 'tortuga.left(90)', action: { type: 'lt', angle: 90 }, explain: 'Giro final.' },
-          { line: 'tortuga.end_fill()', action: { type: 'end_fill' }, explain: 'Aplica relleno Rojo.' },
-          { line: 'tortuga.forward(36)', action: { type: 'fd', dist: 36 }, explain: 'Avanza a la base de la siguiente pegatina.' },
-          { line: '# Pegatina 3.3 (Amarillo)', action: null, explain: 'Trazamos y rellenamos pegatina Amarillo.' },
-          { line: 'tortuga.color("#eab308")', action: { type: 'color', color: '#eab308' }, explain: 'Color Amarillo.' },
-          { line: 'tortuga.begin_fill()', action: { type: 'begin_fill' }, explain: 'Inicia relleno de la pegatina Amarillo.' },
-          { line: 'tortuga.forward(36)', action: { type: 'fd', dist: 36 }, explain: 'Lado 1.' },
-          { line: 'tortuga.left(90)', action: { type: 'lt', angle: 90 }, explain: 'Giro 90°.' },
-          { line: 'tortuga.forward(36)', action: { type: 'fd', dist: 36 }, explain: 'Lado 2.' },
-          { line: 'tortuga.left(90)', action: { type: 'lt', angle: 90 }, explain: 'Giro 90°.' },
-          { line: 'tortuga.forward(36)', action: { type: 'fd', dist: 36 }, explain: 'Lado 3.' },
-          { line: 'tortuga.left(90)', action: { type: 'lt', angle: 90 }, explain: 'Giro 90°.' },
-          { line: 'tortuga.forward(36)', action: { type: 'fd', dist: 36 }, explain: 'Lado 4.' },
-          { line: 'tortuga.left(90)', action: { type: 'lt', angle: 90 }, explain: 'Giro final.' },
-          { line: 'tortuga.end_fill()', action: { type: 'end_fill' }, explain: 'Aplica relleno Amarillo.' },
-          { line: 'tortuga.done()', action: null, explain: '¡Reto superado! Cara del Cubo Rubik 3x3 completada.' }
+          { line: 'import turtle', action: null, explain: 'Importa el módulo gráfico Turtle.' },
+          { line: 't = turtle.Turtle()', action: {"type": "init_pos", "x": 0, "y": -70}, explain: 'Inicia la tortuga en el centro (0, 0) con ángulo 0°.' },
+          { line: 't.speed(20)', action: null, explain: 'Configura la velocidad de dibujo rápida.' },
+          { line: '# "silueta del cubo"', action: null, explain: 'Fase 1: Trazamos la silueta exterior e interior del cubo 3D.' },
+          { line: 't.left(30); t.forward(90)', action: [{"type": "lt", "angle": 30}, {"type": "fd", "dist": 90}], explain: 'Silueta: arista a 30°' },
+          { line: 't.left(60); t.forward(90)', action: [{"type": "lt", "angle": 60}, {"type": "fd", "dist": 90}], explain: 'Silueta: arista a 90°' },
+          { line: 't.left(120); t.forward(90)', action: [{"type": "lt", "angle": 120}, {"type": "fd", "dist": 90}], explain: 'Silueta: arista a 210°' },
+          { line: 't.left(60); t.forward(90)', action: [{"type": "lt", "angle": 60}, {"type": "fd", "dist": 90}], explain: 'Silueta: arista a 270°' },
+          { line: 't.right(120); t.forward(90)', action: [{"type": "rt", "angle": 120}, {"type": "fd", "dist": 90}], explain: 'Silueta: arista a 150°' },
+          { line: 't.right(60); t.forward(90)', action: [{"type": "rt", "angle": 60}, {"type": "fd", "dist": 90}], explain: 'Silueta: arista a 90°' },
+          { line: 't.right(120); t.forward(90)', action: [{"type": "rt", "angle": 120}, {"type": "fd", "dist": 90}], explain: 'Silueta: arista a 330°' },
+          { line: 't.left(60); t.forward(90)', action: [{"type": "lt", "angle": 60}, {"type": "fd", "dist": 90}], explain: 'Silueta: arista a 30°' },
+          { line: 't.left(120); t.forward(90)', action: [{"type": "lt", "angle": 120}, {"type": "fd", "dist": 90}], explain: 'Silueta: arista a 150°' },
+          { line: 't.left(60); t.forward(90)', action: [{"type": "lt", "angle": 60}, {"type": "fd", "dist": 90}], explain: 'Silueta: arista a 210°' },
+          { line: 't.left(120); t.forward(90)', action: [{"type": "lt", "angle": 120}, {"type": "fd", "dist": 90}], explain: 'Silueta: arista a 330°' },
+          { line: 't.right(60); t.forward(90)', action: [{"type": "rt", "angle": 60}, {"type": "fd", "dist": 90}], explain: 'Silueta: arista central vertical a 270°' },
+          { line: '# "celdas una por una para cambiar su color"', action: null, explain: 'Fase 2: Coloreamos las 27 celdas secuencialmente.' },
+          { line: 't.fillcolor(\'white\')  # Celda 1: Blanco', action: [{"type": "fillcolor", "color": "white"}, {"type": "begin_fill"}, {"type": "lt", "angle": 120}, {"type": "fd", "dist": 30}, {"type": "lt", "angle": 60}, {"type": "fd", "dist": 30}, {"type": "lt", "angle": 120}, {"type": "fd", "dist": 30}, {"type": "end_fill"}, {"type": "bk", "dist": 30}], explain: 'Celda 1 de 27 (Blanco): relleno y navegación.' },
+          { line: 't.fillcolor(\'red\')  # Celda 2: Rojo', action: [{"type": "fillcolor", "color": "red"}, {"type": "begin_fill"}, {"type": "rt", "angle": 180}, {"type": "fd", "dist": 30}, {"type": "rt", "angle": 120}, {"type": "fd", "dist": 30}, {"type": "rt", "angle": 60}, {"type": "fd", "dist": 30}, {"type": "end_fill"}, {"type": "bk", "dist": 30}], explain: 'Celda 2 de 27 (Rojo): relleno y navegación.' },
+          { line: 't.fillcolor(\'blue\')  # Celda 3: Azul', action: [{"type": "fillcolor", "color": "blue"}, {"type": "begin_fill"}, {"type": "lt", "angle": 180}, {"type": "fd", "dist": 30}, {"type": "lt", "angle": 60}, {"type": "fd", "dist": 30}, {"type": "lt", "angle": 120}, {"type": "fd", "dist": 30}, {"type": "end_fill"}, {"type": "fd", "dist": 60}, {"type": "rt", "angle": 60}], explain: 'Celda 3 de 27 (Azul): relleno y navegación.' },
+          { line: 't.fillcolor(\'orange\')  # Celda 4: Naranja', action: [{"type": "fillcolor", "color": "orange"}, {"type": "begin_fill"}, {"type": "fd", "dist": 30}, {"type": "lt", "angle": 120}, {"type": "fd", "dist": 30}, {"type": "lt", "angle": 60}, {"type": "fd", "dist": 30}, {"type": "lt", "angle": 120}, {"type": "fd", "dist": 30}, {"type": "end_fill"}, {"type": "lt", "angle": 60}, {"type": "fd", "dist": 30}], explain: 'Celda 4 de 27 (Naranja): relleno y navegación.' },
+          { line: 't.fillcolor(\'yellow\')  # Celda 5: Amarillo', action: [{"type": "fillcolor", "color": "yellow"}, {"type": "begin_fill"}, {"type": "fd", "dist": 30}, {"type": "lt", "angle": 120}, {"type": "fd", "dist": 30}, {"type": "lt", "angle": 60}, {"type": "fd", "dist": 30}, {"type": "lt", "angle": 120}, {"type": "fd", "dist": 30}, {"type": "end_fill"}, {"type": "lt", "angle": 60}, {"type": "fd", "dist": 30}], explain: 'Celda 5 de 27 (Amarillo): relleno y navegación.' },
+          { line: 't.fillcolor(\'green\')  # Celda 6: Verde', action: [{"type": "fillcolor", "color": "green"}, {"type": "begin_fill"}, {"type": "fd", "dist": 30}, {"type": "lt", "angle": 120}, {"type": "fd", "dist": 30}, {"type": "lt", "angle": 60}, {"type": "fd", "dist": 30}, {"type": "lt", "angle": 120}, {"type": "fd", "dist": 30}, {"type": "end_fill"}, {"type": "lt", "angle": 60}, {"type": "fd", "dist": 30}], explain: 'Celda 6 de 27 (Verde): relleno y navegación.' },
+          { line: 't.fillcolor(\'orange\')  # Celda 7: Naranja', action: [{"type": "fillcolor", "color": "orange"}, {"type": "begin_fill"}, {"type": "rt", "angle": 60}, {"type": "fd", "dist": 30}, {"type": "rt", "angle": 120}, {"type": "fd", "dist": 30}, {"type": "rt", "angle": 60}, {"type": "fd", "dist": 30}, {"type": "rt", "angle": 120}, {"type": "fd", "dist": 30}, {"type": "end_fill"}, {"type": "bk", "dist": 60}], explain: 'Celda 7 de 27 (Naranja): relleno y navegación.' },
+          { line: 't.fillcolor(\'red\')  # Celda 8: Rojo', action: [{"type": "fillcolor", "color": "red"}, {"type": "begin_fill"}, {"type": "fd", "dist": 30}, {"type": "rt", "angle": 60}, {"type": "fd", "dist": 30}, {"type": "rt", "angle": 120}, {"type": "fd", "dist": 30}, {"type": "rt", "angle": 60}, {"type": "fd", "dist": 30}, {"type": "end_fill"}, {"type": "bk", "dist": 30}], explain: 'Celda 8 de 27 (Rojo): relleno y navegación.' },
+          { line: 't.fillcolor(\'green\')  # Celda 9: Verde', action: [{"type": "fillcolor", "color": "green"}, {"type": "begin_fill"}, {"type": "lt", "angle": 60}, {"type": "fd", "dist": 30}, {"type": "rt", "angle": 60}, {"type": "fd", "dist": 30}, {"type": "rt", "angle": 120}, {"type": "fd", "dist": 30}, {"type": "end_fill"}, {"type": "bk", "dist": 30}, {"type": "rt", "angle": 120}], explain: 'Celda 9 de 27 (Verde): relleno y navegación.' },
+          { line: 't.fillcolor(\'orange\')  # Celda 10: Naranja', action: [{"type": "fillcolor", "color": "orange"}, {"type": "begin_fill"}, {"type": "fd", "dist": 30}, {"type": "lt", "angle": 60}, {"type": "fd", "dist": 30}, {"type": "lt", "angle": 120}, {"type": "fd", "dist": 30}, {"type": "end_fill"}, {"type": "bk", "dist": 30}, {"type": "rt", "angle": 180}], explain: 'Celda 10 de 27 (Naranja): relleno y navegación.' },
+          { line: 't.fillcolor(\'green\')  # Celda 11: Verde', action: [{"type": "fillcolor", "color": "green"}, {"type": "begin_fill"}, {"type": "fd", "dist": 30}, {"type": "rt", "angle": 120}, {"type": "fd", "dist": 30}, {"type": "rt", "angle": 60}, {"type": "fd", "dist": 30}, {"type": "end_fill"}, {"type": "bk", "dist": 60}], explain: 'Celda 11 de 27 (Verde): relleno y navegación.' },
+          { line: 't.fillcolor(\'white\')  # Celda 12: Blanco', action: [{"type": "fillcolor", "color": "white"}, {"type": "begin_fill"}, {"type": "rt", "angle": 120}, {"type": "fd", "dist": 30}, {"type": "lt", "angle": 120}, {"type": "fd", "dist": 30}, {"type": "lt", "angle": 60}, {"type": "fd", "dist": 30}, {"type": "end_fill"}, {"type": "bk", "dist": 30}, {"type": "lt", "angle": 120}], explain: 'Celda 12 de 27 (Blanco): relleno y navegación.' },
+          { line: 't.fillcolor(\'yellow\')  # Celda 13: Amarillo', action: [{"type": "fillcolor", "color": "yellow"}, {"type": "begin_fill"}, {"type": "fd", "dist": 30}, {"type": "lt", "angle": 60}, {"type": "fd", "dist": 30}, {"type": "lt", "angle": 120}, {"type": "fd", "dist": 30}, {"type": "lt", "angle": 60}, {"type": "fd", "dist": 30}, {"type": "end_fill"}], explain: 'Celda 13 de 27 (Amarillo): relleno y navegación.' },
+          { line: 't.fillcolor(\'orange\')  # Celda 14: Naranja', action: [{"type": "fillcolor", "color": "orange"}, {"type": "begin_fill"}, {"type": "rt", "angle": 60}, {"type": "fd", "dist": 30}, {"type": "rt", "angle": 120}, {"type": "fd", "dist": 30}, {"type": "rt", "angle": 60}, {"type": "fd", "dist": 30}, {"type": "end_fill"}, {"type": "bk", "dist": 30}], explain: 'Celda 14 de 27 (Naranja): relleno y navegación.' },
+          { line: 't.fillcolor(\'white\')  # Celda 15: Blanco', action: [{"type": "fillcolor", "color": "white"}, {"type": "begin_fill"}, {"type": "rt", "angle": 120}, {"type": "fd", "dist": 30}, {"type": "rt", "angle": 60}, {"type": "fd", "dist": 30}, {"type": "rt", "angle": 120}, {"type": "fd", "dist": 30}, {"type": "rt", "angle": 60}, {"type": "fd", "dist": 30}, {"type": "end_fill"}, {"type": "bk", "dist": 30}, {"type": "lt", "angle": 180}], explain: 'Celda 15 de 27 (Blanco): relleno y navegación.' },
+          { line: 't.fillcolor(\'blue\')  # Celda 16: Azul', action: [{"type": "fillcolor", "color": "blue"}, {"type": "begin_fill"}, {"type": "rt", "angle": 60}, {"type": "fd", "dist": 30}, {"type": "lt", "angle": 120}, {"type": "fd", "dist": 30}, {"type": "lt", "angle": 60}, {"type": "fd", "dist": 30}, {"type": "lt", "angle": 120}, {"type": "fd", "dist": 30}, {"type": "end_fill"}, {"type": "lt", "angle": 60}, {"type": "fd", "dist": 30}], explain: 'Celda 16 de 27 (Azul): relleno y navegación.' },
+          { line: 't.fillcolor(\'green\')  # Celda 17: Verde', action: [{"type": "fillcolor", "color": "green"}, {"type": "begin_fill"}, {"type": "fd", "dist": 30}, {"type": "lt", "angle": 120}, {"type": "fd", "dist": 30}, {"type": "lt", "angle": 60}, {"type": "fd", "dist": 30}, {"type": "lt", "angle": 120}, {"type": "fd", "dist": 30}, {"type": "end_fill"}, {"type": "lt", "angle": 60}, {"type": "fd", "dist": 30}], explain: 'Celda 17 de 27 (Verde): relleno y navegación.' },
+          { line: 't.fillcolor(\'yellow\')  # Celda 18: Amarillo', action: [{"type": "fillcolor", "color": "yellow"}, {"type": "begin_fill"}, {"type": "fd", "dist": 30}, {"type": "lt", "angle": 120}, {"type": "fd", "dist": 30}, {"type": "lt", "angle": 60}, {"type": "fd", "dist": 30}, {"type": "lt", "angle": 120}, {"type": "fd", "dist": 30}, {"type": "end_fill"}, {"type": "lt", "angle": 60}, {"type": "fd", "dist": 30}], explain: 'Celda 18 de 27 (Amarillo): relleno y navegación.' },
+          { line: 't.fillcolor(\'blue\')  # Celda 19: Azul', action: [{"type": "fillcolor", "color": "blue"}, {"type": "begin_fill"}, {"type": "rt", "angle": 120}, {"type": "fd", "dist": 30}, {"type": "rt", "angle": 60}, {"type": "fd", "dist": 30}, {"type": "rt", "angle": 120}, {"type": "fd", "dist": 30}, {"type": "rt", "angle": 60}, {"type": "fd", "dist": 30}, {"type": "end_fill"}, {"type": "rt", "angle": 120}, {"type": "fd", "dist": 30}], explain: 'Celda 19 de 27 (Azul): relleno y navegación.' },
+          { line: 't.fillcolor(\'white\')  # Celda 20: Blanco', action: [{"type": "fillcolor", "color": "white"}, {"type": "begin_fill"}, {"type": "fd", "dist": 30}, {"type": "rt", "angle": 60}, {"type": "fd", "dist": 30}, {"type": "rt", "angle": 120}, {"type": "fd", "dist": 30}, {"type": "rt", "angle": 60}, {"type": "fd", "dist": 30}, {"type": "end_fill"}, {"type": "rt", "angle": 120}, {"type": "fd", "dist": 30}], explain: 'Celda 20 de 27 (Blanco): relleno y navegación.' },
+          { line: 't.fillcolor(\'green\')  # Celda 21: Verde', action: [{"type": "fillcolor", "color": "green"}, {"type": "begin_fill"}, {"type": "fd", "dist": 30}, {"type": "rt", "angle": 60}, {"type": "fd", "dist": 30}, {"type": "rt", "angle": 120}, {"type": "fd", "dist": 30}, {"type": "rt", "angle": 60}, {"type": "fd", "dist": 30}, {"type": "end_fill"}, {"type": "rt", "angle": 120}, {"type": "fd", "dist": 30}, {"type": "rt", "angle": 60}, {"type": "fd", "dist": 30}], explain: 'Celda 21 de 27 (Verde): relleno y navegación.' },
+          { line: 't.fillcolor(\'red\')  # Celda 22: Rojo', action: [{"type": "fillcolor", "color": "red"}, {"type": "begin_fill"}, {"type": "rt", "angle": 120}, {"type": "fd", "dist": 30}, {"type": "lt", "angle": 120}, {"type": "fd", "dist": 30}, {"type": "lt", "angle": 60}, {"type": "fd", "dist": 30}, {"type": "end_fill"}, {"type": "rt", "angle": 60}], explain: 'Celda 22 de 27 (Rojo): relleno y navegación.' },
+          { line: 't.fillcolor(\'orange\')  # Celda 23: Naranja', action: [{"type": "fillcolor", "color": "orange"}, {"type": "begin_fill"}, {"type": "fd", "dist": 30}, {"type": "rt", "angle": 120}, {"type": "fd", "dist": 30}, {"type": "rt", "angle": 60}, {"type": "fd", "dist": 30}, {"type": "end_fill"}, {"type": "lt", "angle": 60}], explain: 'Celda 23 de 27 (Naranja): relleno y navegación.' },
+          { line: 't.fillcolor(\'blue\')  # Celda 24: Azul', action: [{"type": "fillcolor", "color": "blue"}, {"type": "begin_fill"}, {"type": "fd", "dist": 30}, {"type": "lt", "angle": 120}, {"type": "fd", "dist": 30}, {"type": "lt", "angle": 60}, {"type": "fd", "dist": 30}, {"type": "end_fill"}, {"type": "lt", "angle": 120}, {"type": "fd", "dist": 30}], explain: 'Celda 24 de 27 (Azul): relleno y navegación.' },
+          { line: 't.fillcolor(\'yellow\')  # Celda 25: Amarillo', action: [{"type": "fillcolor", "color": "yellow"}, {"type": "begin_fill"}, {"type": "fd", "dist": 30}, {"type": "lt", "angle": 60}, {"type": "fd", "dist": 30}, {"type": "lt", "angle": 120}, {"type": "fd", "dist": 30}, {"type": "lt", "angle": 60}, {"type": "fd", "dist": 30}, {"type": "end_fill"}, {"type": "bk", "dist": 60}], explain: 'Celda 25 de 27 (Amarillo): relleno y navegación.' },
+          { line: 't.fillcolor(\'white\')  # Celda 26: Blanco', action: [{"type": "fillcolor", "color": "white"}, {"type": "begin_fill"}, {"type": "lt", "angle": 120}, {"type": "fd", "dist": 30}, {"type": "rt", "angle": 120}, {"type": "fd", "dist": 30}, {"type": "rt", "angle": 60}, {"type": "fd", "dist": 30}, {"type": "end_fill"}], explain: 'Celda 26 de 27 (Blanco): relleno y navegación.' },
+          { line: 't.fillcolor(\'red\')  # Celda 27: Rojo', action: [{"type": "fillcolor", "color": "red"}, {"type": "begin_fill"}, {"type": "fd", "dist": 30}, {"type": "rt", "angle": 120}, {"type": "fd", "dist": 30}, {"type": "rt", "angle": 60}, {"type": "fd", "dist": 30}, {"type": "end_fill"}], explain: 'Celda 27 de 27 (Rojo): relleno y navegación.' },
+          { line: 't.hideturtle()', action: null, explain: '¡Reto completado! Cubo Rubik 3D coloreado celda por celda.' },
+          { line: 'turtle.done()', action: null, explain: 'Fin de la ejecución del programa.' }
         ]
       }    };
 
@@ -650,7 +570,9 @@
         y: initY,
         angle: 0,
         penDown: true,
-        color: '#10b981',
+        color: '#0f172a',
+        penColor: '#0f172a',
+        fillColor: '#ffffff',
         filling: false,
         fillPoly: []
       };
@@ -661,7 +583,7 @@
     function render() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      // Draw all history
+      // Draw all fills first
       for (const item of drawHistory) {
         if (item.type === 'fill') {
           ctx.fillStyle = item.color;
@@ -673,7 +595,12 @@
           }
           ctx.closePath();
           ctx.fill();
-        } else if (item.type === 'line') {
+        }
+      }
+
+      // Draw all lines on top
+      for (const item of drawHistory) {
+        if (item.type === 'line') {
           ctx.strokeStyle = item.color;
           ctx.lineWidth = 2.5;
           ctx.lineCap = 'round';
@@ -776,6 +703,10 @@
     // Execution logic
     function applyAction(act) {
       if (!act) return;
+      if (Array.isArray(act)) {
+        for (const subAct of act) applyAction(subAct);
+        return;
+      }
       if (typeof act === 'string') {
         if (act === 'init') {
           turtle.x = 0; turtle.y = 0; turtle.angle = 0; turtle.penDown = true;
@@ -783,38 +714,37 @@
         }
         return;
       }
-      if (act === 'init_pos' || act.x !== undefined) {
+      if (act === 'init_pos' || (act.type === undefined && act.x !== undefined)) {
         turtle.x = act.x || 0;
         turtle.y = act.y || 0;
-        turtle.angle = 0;
+        turtle.angle = act.angle || 0;
         turtle.penDown = true;
         if (turtle.filling) turtle.fillPoly.push({x: turtle.x, y: turtle.y});
         return;
       }
 
-      if (act.type === 'fd') {
-        const rad = turtle.angle * Math.PI / 180;
-        const newX = turtle.x + act.dist * Math.cos(rad);
-        const newY = turtle.y + act.dist * Math.sin(rad);
-        if (turtle.penDown) {
-          drawHistory.push({
-            type: 'line',
-            x1: turtle.x, y1: turtle.y,
-            x2: newX, y2: newY,
-            color: turtle.color
-          });
-        }
-        turtle.x = newX;
-        turtle.y = newY;
-        if (turtle.filling) turtle.fillPoly.push({x: newX, y: newY});
-      } else if (act.type === 'lt') {
-        turtle.angle += act.angle;
-      } else if (act.type === 'color') {
-        turtle.color = act.color;
-      } else if (act.type === 'penup') {
+      if (act.type === 'penup') {
         turtle.penDown = false;
       } else if (act.type === 'pendown') {
         turtle.penDown = true;
+      } else if (act.type === 'setheading') {
+        turtle.angle = act.angle;
+      } else if (act.type === 'lt') {
+        turtle.angle += act.angle;
+      } else if (act.type === 'rt') {
+        turtle.angle -= act.angle;
+      } else if (act.type === 'fillcolor' || act.type === 'color') {
+        const colorMap = {
+          'white': '#f8fafc',
+          'red': '#dc2626',
+          'blue': '#2563eb',
+          'orange': '#ea580c',
+          'yellow': '#facc15',
+          'green': '#16a34a'
+        };
+        const c = colorMap[act.color] || act.fillColor || act.color;
+        turtle.fillColor = c;
+        if (act.penColor) turtle.penColor = act.penColor;
       } else if (act.type === 'begin_fill') {
         turtle.filling = true;
         turtle.fillPoly = [{x: turtle.x, y: turtle.y}];
@@ -823,11 +753,55 @@
           drawHistory.push({
             type: 'fill',
             poly: [...turtle.fillPoly],
-            color: turtle.color
+            color: turtle.fillColor || turtle.color
           });
         }
         turtle.filling = false;
         turtle.fillPoly = [];
+      } else if (act.type === 'goto') {
+        const newX = act.x;
+        const newY = act.y;
+        if (turtle.penDown) {
+          drawHistory.push({
+            type: 'line',
+            x1: turtle.x, y1: turtle.y,
+            x2: newX, y2: newY,
+            color: turtle.penColor || '#0f172a'
+          });
+        }
+        turtle.x = newX;
+        turtle.y = newY;
+        if (turtle.filling) turtle.fillPoly.push({x: newX, y: newY});
+      } else if (act.type === 'fd') {
+        const rad = turtle.angle * Math.PI / 180;
+        const newX = turtle.x + act.dist * Math.cos(rad);
+        const newY = turtle.y + act.dist * Math.sin(rad);
+        if (turtle.penDown) {
+          drawHistory.push({
+            type: 'line',
+            x1: turtle.x, y1: turtle.y,
+            x2: newX, y2: newY,
+            color: turtle.penColor || '#0f172a'
+          });
+        }
+        turtle.x = newX;
+        turtle.y = newY;
+        if (turtle.filling) turtle.fillPoly.push({x: newX, y: newY});
+      } else if (act.type === 'bk') {
+        const rad = turtle.angle * Math.PI / 180;
+        const newX = turtle.x - act.dist * Math.cos(rad);
+        const newY = turtle.y - act.dist * Math.sin(rad);
+        if (turtle.penDown) {
+          drawHistory.push({
+            type: 'line',
+            x1: turtle.x, y1: turtle.y,
+            x2: newX, y2: newY,
+            color: turtle.penColor || '#0f172a'
+          });
+        }
+        turtle.x = newX;
+        turtle.y = newY;
+        if (turtle.filling) turtle.fillPoly.push({x: newX, y: newY});
       }
     }
 
