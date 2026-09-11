@@ -8,6 +8,11 @@ import { CURRICULUM, getTopicById, getSurroundingTopics } from './data/curriculu
 import { getTopicData } from './data/topics/index.js';
 import { getCompletedTopics, isTopicCompleted, toggleTopicCompleted, getThemePreference, setThemePreference } from './utils/storage.js';
 import { searchCurriculum } from './utils/search.js';
+import { MARATON_PROBLEMS, getProblemById } from './data/maraton/problems.js';
+import { getMaratonProgress, setProblemDraft, getProblemDraft, recordEvaluation, getMaratonStats } from './data/maraton/storage.js';
+import { runPythonCode, judgeSubmission } from './data/maraton/runner.js';
+import { MaratonUI } from './data/maraton/ui.js';
+
 
   // =========================================================================
   // HELPER GLOBAL: COPIAR CÓDIGO AL PORTAPAPELES
@@ -64,6 +69,7 @@ import { searchCurriculum } from './utils/search.js';
     this.currentCourse = 'prog';
     this.openWeeks = new Set();
     this.allWeeksExpanded = false;
+    this.maratonUI = new MaratonUI(this);
 
     this.initElements();
     this.initTheme();
@@ -361,6 +367,18 @@ import { searchCurriculum } from './utils/search.js';
 
   handleInitialRoute() {
     const hash = window.location.hash.replace('#', '');
+    if (hash === 'maraton' || hash.startsWith('maraton?')) {
+      const params = new URLSearchParams(hash.includes('?') ? hash.split('?')[1] : '');
+      const tema = params.get('tema') || params.get('theme') || '';
+      this.showMaraton(tema);
+      return;
+    }
+    if (hash.startsWith('maraton/')) {
+      const pNum = hash.split('/')[1];
+      this.loadMaratonProblem(pNum);
+      return;
+    }
+
     if (hash && hash !== 'materias' && hash !== 'inicio' && getTopicById(hash)) {
       this.loadTopic(hash);
     } else {
@@ -375,6 +393,17 @@ import { searchCurriculum } from './utils/search.js';
       if (el) {
         el.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }
+      return;
+    }
+    if (hash === 'maraton' || hash.startsWith('maraton?')) {
+      const params = new URLSearchParams(hash.includes('?') ? hash.split('?')[1] : '');
+      const tema = params.get('tema') || params.get('theme') || '';
+      this.showMaraton(tema);
+      return;
+    }
+    if (hash.startsWith('maraton/')) {
+      const pNum = hash.split('/')[1];
+      this.loadMaratonProblem(pNum);
       return;
     }
     if (hash === '' || hash === 'materias' || hash === 'inicio') {
@@ -470,6 +499,38 @@ import { searchCurriculum } from './utils/search.js';
     }
 
     let html = '';
+
+    // Tarjeta de acceso a Maratón: Solución de Problemas
+    if (typeof getMaratonStats === 'function' && typeof MARATON_PROBLEMS !== 'undefined') {
+      const mStats = getMaratonStats(MARATON_PROBLEMS);
+      html += `
+        <div class="mb-3 px-1">
+          <button 
+            type="button" 
+            onclick="window.app.showMaraton()"
+            class="w-full text-left p-2.5 rounded-xl bg-gradient-to-r from-emerald-950/40 via-[#131d27] to-[#0e1622] border border-emerald-500/30 hover:border-emerald-500/60 transition group cursor-pointer shadow-md flex items-center justify-between gap-2"
+            title="Acceder a Maratón: Solución de problemas"
+          >
+            <div class="flex items-center gap-2.5 min-w-0">
+              <div class="w-7 h-7 rounded-lg bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 flex items-center justify-center text-xs shrink-0 group-hover:scale-105 transition">
+                <i class="fas fa-person-running"></i>
+              </div>
+              <div class="truncate">
+                <span class="text-xs font-bold text-white group-hover:text-emerald-300 transition block leading-tight truncate">
+                  🏃 Maratón: Problemas
+                </span>
+                <span class="text-[10px] text-gray-400 font-mono block">
+                  ${mStats.resueltos} de ${mStats.total} resueltos
+                </span>
+              </div>
+            </div>
+            <span class="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 shrink-0">
+              ${mStats.porcentaje}%
+            </span>
+          </button>
+        </div>
+      `;
+    }
 
     CURRICULUM.forEach((week) => {
       // Filtrar temas
@@ -715,6 +776,9 @@ import { searchCurriculum } from './utils/search.js';
 
             <!-- Bloques complementarios legacy si existieran -->
             ${(topic.complementary && topic.complementary.length > 0) ? this.renderComplementarySection(topic.complementary) : ''}
+
+            <!-- Llamado pedagógico a Maratón -->
+            ${this.renderMaratonCallout(topic)}
           </main>
 
 

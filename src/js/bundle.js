@@ -8906,6 +8906,3841 @@ const PROG_U14_TOPICS = {
     };
   }
 
+
+  // =========================================================================
+  // 2.5. BANCO DE DATOS Y MOTOR - MARATÓN: SOLUCIÓN DE PROBLEMAS
+  // =========================================================================
+
+/**
+ * BANCO DE PROBLEMAS - MARATÓN: SOLUCIÓN DE PROBLEMAS
+ * Colección pedagógica de 43 problemas con casos de prueba, pistas y conceptos.
+ */
+
+const MARATON_PROBLEMS = [
+  {
+    "id": "prob-1000",
+    "numero": 1000,
+    "titulo": "Hola Mundo!",
+    "slug": "hola-mundo",
+    "descripcion": "Bienvenido al módulo **Maratón: Solución de Problemas**. Tu primer reto es el saludo tradicional de todo programador: escribir un programa que imprima el mensaje de bienvenida exacto en la consola.",
+    "entrada": "Este problema no requiere ningún dato de entrada.",
+    "salida": "Debes imprimir el mensaje exacto `Hola Mundo!` (o `Hello World!`), seguido de un salto de línea.",
+    "ejemplo_entrada": "",
+    "ejemplo_salida": "Hola Mundo!",
+    "unidad": "Unidad 01: Fundamentos de la programación",
+    "unidadId": "unidad-01",
+    "temas": [
+      "Fundamentos"
+    ],
+    "conceptos": [
+      "print()",
+      "salida estándar",
+      "cadenas de texto"
+    ],
+    "dificultad": "inicial",
+    "lenguaje": "python",
+    "codigo_inicial": "# Escribe tu primer programa de Maratón aquí\nprint(\"Hola Mundo!\")\n",
+    "casos_prueba": [
+      {
+        "id": 1,
+        "entrada": "",
+        "salida_esperada": "Hola Mundo!",
+        "visible": true,
+        "descripcion": "Caso base de bienvenida"
+      }
+    ],
+    "casos_prueba_ocultos": [
+      {
+        "id": 2,
+        "entrada": "",
+        "salida_esperada": "Hola Mundo!",
+        "visible": false
+      }
+    ],
+    "pistas": [
+      "Utiliza la función print() para enviar texto a la salida estándar.",
+      "Recuerda encerrar el texto entre comillas dobles o simples: print(\"Hola Mundo!\").",
+      "Verifica que las mayúsculas, minúsculas y el signo de exclamación coincidan con la especificación."
+    ],
+    "retroalimentacion": {
+      "exito": "¡Felicitaciones! Has completado tu primer reto en Maratón. La función print() es tu ventana para comunicarte con el usuario.",
+      "error_comun": "Revisa los caracteres exactos: asegúrate de no agregar espacios de más ni omitir la exclamación.",
+      "pista_falla": "En Python, los textos literales deben estar delimitados por comillas."
+    },
+    "fuente": "beecrowd",
+    "fuente_id": 1000,
+    "fuente_url": "https://judge.beecrowd.com/es/problems/view/1000",
+    "activo": true,
+    "orden": 1
+  },
+  {
+    "id": "prob-1001",
+    "numero": 1001,
+    "titulo": "Extremadamente Básico",
+    "slug": "extremadamente-basico",
+    "descripcion": "Lee dos variables enteras, denominadas **A** y **B**, y calcula la suma de ambas, asignando el resultado a la variable **X**. Muestra el resultado en el formato especificado.",
+    "entrada": "El archivo de entrada contiene dos valores enteros, cada uno en una línea separada.",
+    "salida": "Imprime la letra `X` (en mayúscula) con un espacio antes y después del signo igual, seguido del valor de la suma.",
+    "ejemplo_entrada": "10\n9",
+    "ejemplo_salida": "X = 19",
+    "unidad": "Unidad 03: Elementos básicos de programación",
+    "unidadId": "unidad-03",
+    "temas": [
+      "Variables",
+      "Operadores"
+    ],
+    "conceptos": [
+      "input()",
+      "int()",
+      "operador +",
+      "asignación de variables"
+    ],
+    "dificultad": "inicial",
+    "lenguaje": "python",
+    "codigo_inicial": "# Lee las dos variables enteras y muestra X = resultado\nA = int(input())\nB = int(input())\n",
+    "casos_prueba": [
+      {
+        "id": 1,
+        "entrada": "10\n9",
+        "salida_esperada": "X = 19",
+        "visible": true,
+        "descripcion": "Suma de enteros positivos"
+      },
+      {
+        "id": 2,
+        "entrada": "-10\n4",
+        "salida_esperada": "X = -6",
+        "visible": true,
+        "descripcion": "Suma con entero negativo"
+      }
+    ],
+    "casos_prueba_ocultos": [
+      {
+        "id": 3,
+        "entrada": "15\n-7",
+        "salida_esperada": "X = 8",
+        "visible": false
+      },
+      {
+        "id": 4,
+        "entrada": "0\n0",
+        "salida_esperada": "X = 0",
+        "visible": false
+      }
+    ],
+    "pistas": [
+      "La función input() retorna una cadena; debes convertirla a número entero con int(input()).",
+      "Crea la variable X = A + B.",
+      "Para imprimir con el formato exacto usa print(f\"X = {X}\") o print(\"X =\", X)."
+    ],
+    "retroalimentacion": {
+      "exito": "¡Excelente! Has dominado la lectura de datos con conversión de tipos y la asignación aritmética.",
+      "error_comun": "Ten cuidado con los espacios: debe ser 'X = resultado', no 'X=resultado'.",
+      "pista_falla": "Recuerda que si sumas dos cadenas sin int(), se concatenarán en lugar de sumarse numéricamente."
+    },
+    "fuente": "beecrowd",
+    "fuente_id": 1001,
+    "fuente_url": "https://judge.beecrowd.com/es/problems/view/1001",
+    "activo": true,
+    "orden": 2
+  },
+  {
+    "id": "prob-1002",
+    "numero": 1002,
+    "titulo": "Área del Círculo",
+    "slug": "area-del-circulo",
+    "descripcion": "La fórmula para calcular el área de una circunferencia es: $A = \\pi \\cdot R^2$. Para este problema considera el valor de $\\pi = 3.14159$. Lee el valor del radio $R$, calcula el área correspondiente y muéstrala con 4 cifras decimales.",
+    "entrada": "La entrada contiene un valor de punto flotante (precisión doble) que representa el radio $R$.",
+    "salida": "Imprime el mensaje `A=` seguido del valor del área calculada con 4 lugares después del punto decimal.",
+    "ejemplo_entrada": "2.00",
+    "ejemplo_salida": "A=12.5664",
+    "unidad": "Unidad 03: Elementos básicos de programación",
+    "unidadId": "unidad-03",
+    "temas": [
+      "Variables",
+      "Operadores"
+    ],
+    "conceptos": [
+      "float()",
+      "potencia **",
+      "formato de números flotantes :.4f"
+    ],
+    "dificultad": "inicial",
+    "lenguaje": "python",
+    "codigo_inicial": "# Calcula el área de la circunferencia con pi = 3.14159\nR = float(input())\npi = 3.14159\n",
+    "casos_prueba": [
+      {
+        "id": 1,
+        "entrada": "2.00",
+        "salida_esperada": "A=12.5664",
+        "visible": true,
+        "descripcion": "Radio pequeño"
+      },
+      {
+        "id": 2,
+        "entrada": "100.64",
+        "salida_esperada": "A=31819.3103",
+        "visible": true,
+        "descripcion": "Radio con decimales"
+      }
+    ],
+    "casos_prueba_ocultos": [
+      {
+        "id": 3,
+        "entrada": "150.00",
+        "salida_esperada": "A=70685.7750",
+        "visible": false
+      }
+    ],
+    "pistas": [
+      "Convierte la entrada a decimal con float(input()).",
+      "Calcula la potencia usando R ** 2 o R * R.",
+      "Para formatear a 4 decimales usa f-strings: print(f\"A={area:.4f}\")."
+    ],
+    "retroalimentacion": {
+      "exito": "¡Gran trabajo! El formateo de números en coma flotante es indispensable en ingeniería y ciencias computacionales.",
+      "error_comun": "Verifica que uses pi = 3.14159 y no la constante math.pi completa para asegurar la precisión requerida.",
+      "pista_falla": "Usa la sintaxis :.4f para limitar a exactamente 4 cifras decimales."
+    },
+    "fuente": "beecrowd",
+    "fuente_id": 1002,
+    "fuente_url": "https://judge.beecrowd.com/es/problems/view/1002",
+    "activo": true,
+    "orden": 3
+  },
+  {
+    "id": "prob-1003",
+    "numero": 1003,
+    "titulo": "Suma Simple",
+    "slug": "suma-simple",
+    "descripcion": "Lee dos valores enteros llamados A y B. Calcula la suma entre ellos y guárdala en una variable llamada SOMA. Muestra el resultado.",
+    "entrada": "Dos números enteros ingresados en líneas separadas.",
+    "salida": "Imprime `SOMA = ` seguido del valor de la suma con un espacio antes y después del signo igual.",
+    "ejemplo_entrada": "30\n10",
+    "ejemplo_salida": "SOMA = 40",
+    "unidad": "Unidad 03: Elementos básicos de programación",
+    "unidadId": "unidad-03",
+    "temas": [
+      "Variables",
+      "Operadores"
+    ],
+    "conceptos": [
+      "input()",
+      "int()",
+      "variables",
+      "operadores aritméticos"
+    ],
+    "dificultad": "inicial",
+    "lenguaje": "python",
+    "codigo_inicial": "A = int(input())\nB = int(input())\n",
+    "casos_prueba": [
+      {
+        "id": 1,
+        "entrada": "30\n10",
+        "salida_esperada": "SOMA = 40",
+        "visible": true,
+        "descripcion": "Suma positiva"
+      },
+      {
+        "id": 2,
+        "entrada": "-30\n10",
+        "salida_esperada": "SOMA = -20",
+        "visible": true,
+        "descripcion": "Suma con negativo"
+      }
+    ],
+    "casos_prueba_ocultos": [
+      {
+        "id": 3,
+        "entrada": "0\n0",
+        "salida_esperada": "SOMA = 0",
+        "visible": false
+      }
+    ],
+    "pistas": [
+      "Asigna la suma a la variable SOMA = A + B.",
+      "Muestra el resultado con print(f\"SOMA = {SOMA}\").",
+      "Caso de borde: Si la suma involucra números negativos, el operador + mantiene la regla de los signos (ej: -30 + 10 = -20). No agregues lógica condicional innecesaria."
+    ],
+    "retroalimentacion": {
+      "exito": "¡Bien hecho! Has realizado una suma secuencial limpia.",
+      "error_comun": "Asegúrate de que la palabra SOMA esté completamente en mayúsculas.",
+      "pista_falla": "Revisa los espacios alrededor del signo igual: 'SOMA = valor'."
+    },
+    "fuente": "beecrowd",
+    "fuente_id": 1003,
+    "fuente_url": "https://judge.beecrowd.com/es/problems/view/1003",
+    "activo": true,
+    "orden": 4
+  },
+  {
+    "id": "prob-1004",
+    "numero": 1004,
+    "titulo": "Producto Simple",
+    "slug": "producto-simple",
+    "descripcion": "Lee dos valores enteros. A continuación, calcula el producto entre ellos y almacena el resultado en una variable llamada PROD. Muestra el resultado.",
+    "entrada": "Dos números enteros en líneas separadas.",
+    "salida": "Imprime `PROD = ` seguido del valor del producto.",
+    "ejemplo_entrada": "3\n9",
+    "ejemplo_salida": "PROD = 27",
+    "unidad": "Unidad 03: Elementos básicos de programación",
+    "unidadId": "unidad-03",
+    "temas": [
+      "Variables",
+      "Operadores"
+    ],
+    "conceptos": [
+      "operador *",
+      "multiplicación de enteros"
+    ],
+    "dificultad": "inicial",
+    "lenguaje": "python",
+    "codigo_inicial": "A = int(input())\nB = int(input())\n",
+    "casos_prueba": [
+      {
+        "id": 1,
+        "entrada": "3\n9",
+        "salida_esperada": "PROD = 27",
+        "visible": true,
+        "descripcion": "Multiplicación positiva"
+      },
+      {
+        "id": 2,
+        "entrada": "-30\n10",
+        "salida_esperada": "PROD = -300",
+        "visible": true,
+        "descripcion": "Signos distintos"
+      }
+    ],
+    "casos_prueba_ocultos": [
+      {
+        "id": 3,
+        "entrada": "0\n9",
+        "salida_esperada": "PROD = 0",
+        "visible": false
+      }
+    ],
+    "pistas": [
+      "En Python, la multiplicación se realiza con el asterisco (*).",
+      "Asigna PROD = A * B y muestra print(f\"PROD = {PROD}\").",
+      "Caso de borde: Considera que la multiplicación por 0 debe dar exactamente 0 (PROD = 0) y el producto de dos números negativos da un resultado positivo."
+    ],
+    "retroalimentacion": {
+      "exito": "¡Correcto! Has aplicado el operador de producto aritmético.",
+      "error_comun": "Verifica que la salida sea 'PROD = valor' con mayúsculas exactas.",
+      "pista_falla": "En Python: multiplicación es * y no x."
+    },
+    "fuente": "beecrowd",
+    "fuente_id": 1004,
+    "fuente_url": "https://judge.beecrowd.com/es/problems/view/1004",
+    "activo": true,
+    "orden": 5
+  },
+  {
+    "id": "prob-1005",
+    "numero": 1005,
+    "titulo": "Promedio 1",
+    "slug": "promedio-1",
+    "descripcion": "Lee dos notas de un estudiante: nota A y nota B. Calcula el promedio ponderado sabiendo que la nota A tiene un peso de 3.5 y la nota B tiene un peso de 7.5 (la suma de los pesos es 11). Muestra el promedio con 5 cifras decimales.",
+    "entrada": "Dos números de punto flotante correspondientes a las notas del estudiante.",
+    "salida": "Imprime `MEDIA = ` seguido del promedio ponderado formateado a 5 decimales.",
+    "ejemplo_entrada": "5.0\n7.1",
+    "ejemplo_salida": "MEDIA = 6.43182",
+    "unidad": "Unidad 03: Elementos básicos de programación",
+    "unidadId": "unidad-03",
+    "temas": [
+      "Variables",
+      "Operadores"
+    ],
+    "conceptos": [
+      "promedio ponderado",
+      "división flotante",
+      "formato :.5f"
+    ],
+    "dificultad": "inicial",
+    "lenguaje": "python",
+    "codigo_inicial": "A = float(input())\nB = float(input())\n",
+    "casos_prueba": [
+      {
+        "id": 1,
+        "entrada": "5.0\n7.1",
+        "salida_esperada": "MEDIA = 6.43182",
+        "visible": true,
+        "descripcion": "Promedio ponderado estándar"
+      },
+      {
+        "id": 2,
+        "entrada": "0.0\n7.1",
+        "salida_esperada": "MEDIA = 4.84091",
+        "visible": true,
+        "descripcion": "Caso con nota cero"
+      }
+    ],
+    "casos_prueba_ocultos": [
+      {
+        "id": 3,
+        "entrada": "10.0\n10.0",
+        "salida_esperada": "MEDIA = 10.00000",
+        "visible": false
+      }
+    ],
+    "pistas": [
+      "Fórmula del promedio ponderado: (A * 3.5 + B * 7.5) / 11.0.",
+      "Para 5 decimales utiliza :.5f.",
+      "Caso de borde y formato: La suma de pesos es 3.5 + 7.5 = 11. Recuerda redondear a 5 decimales con f'{media:.5f}' para evitar imprecisiones de coma flotante."
+    ],
+    "retroalimentacion": {
+      "exito": "¡Excelente cálculo! El promedio ponderado es fundamental para sistemas de calificación.",
+      "error_comun": "Recuerda agrupar la suma con paréntesis antes de dividir entre 11.",
+      "pista_falla": "Usa f'MEDIA = {media:.5f}'."
+    },
+    "fuente": "beecrowd",
+    "fuente_id": 1005,
+    "fuente_url": "https://judge.beecrowd.com/es/problems/view/1005",
+    "activo": true,
+    "orden": 6
+  },
+  {
+    "id": "prob-1006",
+    "numero": 1006,
+    "titulo": "Promedio 2",
+    "slug": "promedio-2",
+    "descripcion": "Lee tres notas: A, B y C. Calcula el promedio ponderado sabiendo que el peso de A es 2, el de B es 3 y el de C es 5 (suma de pesos: 10). Muestra el promedio con 1 cifra decimal.",
+    "entrada": "Tres números de punto flotante en líneas separadas.",
+    "salida": "Imprime `MEDIA = ` seguido del promedio con un decimal.",
+    "ejemplo_entrada": "5.0\n6.0\n7.0",
+    "ejemplo_salida": "MEDIA = 6.3",
+    "unidad": "Unidad 03: Elementos básicos de programación",
+    "unidadId": "unidad-03",
+    "temas": [
+      "Variables",
+      "Operadores"
+    ],
+    "conceptos": [
+      "promedio de tres valores",
+      "pesos 2, 3 y 5",
+      "formato :.1f"
+    ],
+    "dificultad": "inicial",
+    "lenguaje": "python",
+    "codigo_inicial": "A = float(input())\nB = float(input())\nC = float(input())\n",
+    "casos_prueba": [
+      {
+        "id": 1,
+        "entrada": "5.0\n6.0\n7.0",
+        "salida_esperada": "MEDIA = 6.3",
+        "visible": true,
+        "descripcion": "Notas intermedias"
+      },
+      {
+        "id": 2,
+        "entrada": "5.0\n10.0\n10.0",
+        "salida_esperada": "MEDIA = 9.0",
+        "visible": true,
+        "descripcion": "Notas altas"
+      }
+    ],
+    "casos_prueba_ocultos": [
+      {
+        "id": 3,
+        "entrada": "10.0\n10.0\n5.0",
+        "salida_esperada": "MEDIA = 7.5",
+        "visible": false
+      }
+    ],
+    "pistas": [
+      "Fórmula: (A * 2 + B * 3 + C * 5) / 10.0.",
+      "Formatea la salida con print(f\"MEDIA = {media:.1f}\").",
+      "Caso de borde y formato: La suma de pesos es 2 + 3 + 5 = 10. Asegúrate de mostrar exactamente 1 decimal con f'{media:.1f}'."
+    ],
+    "retroalimentacion": {
+      "exito": "¡Muy bien! Has aplicado ponderaciones múltiples con precisión.",
+      "error_comun": "Verifica que el divisor sea 10.0 (la suma de 2 + 3 + 5).",
+      "pista_falla": "Usa :.1f para una sola cifra decimal."
+    },
+    "fuente": "beecrowd",
+    "fuente_id": 1006,
+    "fuente_url": "https://judge.beecrowd.com/es/problems/view/1006",
+    "activo": true,
+    "orden": 7
+  },
+  {
+    "id": "prob-1007",
+    "numero": 1007,
+    "titulo": "Diferencia",
+    "slug": "diferencia",
+    "descripcion": "Lee cuatro valores enteros (A, B, C y D). Calcula y muestra la diferencia del producto de A y B por el producto de C y D según la fórmula: $DIFERENCA = (A \\cdot B - C \\cdot D)$.",
+    "entrada": "Cuatro números enteros en líneas separadas.",
+    "salida": "Imprime `DIFERENCA = ` seguido del valor de la diferencia calculada.",
+    "ejemplo_entrada": "5\n6\n7\n8",
+    "ejemplo_salida": "DIFERENCA = -26",
+    "unidad": "Unidad 03: Elementos básicos de programación",
+    "unidadId": "unidad-03",
+    "temas": [
+      "Variables",
+      "Operadores"
+    ],
+    "conceptos": [
+      "precedencia de operadores",
+      "multiplicación y resta"
+    ],
+    "dificultad": "inicial",
+    "lenguaje": "python",
+    "codigo_inicial": "A = int(input())\nB = int(input())\nC = int(input())\nD = int(input())\n",
+    "casos_prueba": [
+      {
+        "id": 1,
+        "entrada": "5\n6\n7\n8",
+        "salida_esperada": "DIFERENCA = -26",
+        "visible": true,
+        "descripcion": "Caso con resultado negativo"
+      },
+      {
+        "id": 2,
+        "entrada": "0\n0\n7\n8",
+        "salida_esperada": "DIFERENCA = -56",
+        "visible": true,
+        "descripcion": "Caso con ceros"
+      }
+    ],
+    "casos_prueba_ocultos": [
+      {
+        "id": 3,
+        "entrada": "5\n6\n-7\n8",
+        "salida_esperada": "DIFERENCA = 86",
+        "visible": false
+      }
+    ],
+    "pistas": [
+      "Calcula dif = (A * B - C * D).",
+      "Muestra con print(f\"DIFERENCA = {dif}\").",
+      "Caso de borde: El cálculo (A * B - C * D) puede generar diferencias negativas si C * D es mayor que A * B. El formato requiere 'DIFERENCA = ' con mayúsculas exactas."
+    ],
+    "retroalimentacion": {
+      "exito": "¡Correcto! La precedencia aritmética resuelve multiplicaciones antes que restas.",
+      "error_comun": "Cuida que el identificador sea DIFERENCA sin tildes ni caracteres especiales.",
+      "pista_falla": "En Python: (A * B - C * D)."
+    },
+    "fuente": "beecrowd",
+    "fuente_id": 1007,
+    "fuente_url": "https://judge.beecrowd.com/es/problems/view/1007",
+    "activo": true,
+    "orden": 8
+  },
+  {
+    "id": "prob-1008",
+    "numero": 1008,
+    "titulo": "Salario",
+    "slug": "salario",
+    "descripcion": "Escribe un programa que lea el número de un empleado, el número de horas trabajadas y el valor que recibe por hora. Calcula el salario del empleado y muestra su número y salario con 2 decimales.",
+    "entrada": "Un entero (número del empleado), un entero (horas trabajadas) y un flotante (pago por hora).",
+    "salida": "Imprime `NUMBER = ` con el número del empleado, y en la siguiente línea `SALARY = U$ ` seguido del salario con dos decimales.",
+    "ejemplo_entrada": "25\n100\n5.50",
+    "ejemplo_salida": "NUMBER = 25\nSALARY = U$ 550.00",
+    "unidad": "Unidad 03: Elementos básicos de programación",
+    "unidadId": "unidad-03",
+    "temas": [
+      "Variables",
+      "Operadores"
+    ],
+    "conceptos": [
+      "múltiples tipos de datos",
+      "salida en varias líneas",
+      "formato monetario :.2f"
+    ],
+    "dificultad": "inicial",
+    "lenguaje": "python",
+    "codigo_inicial": "num = int(input())\nhoras = int(input())\nvalor_hora = float(input())\n",
+    "casos_prueba": [
+      {
+        "id": 1,
+        "entrada": "25\n100\n5.50",
+        "salida_esperada": "NUMBER = 25\nSALARY = U$ 550.00",
+        "visible": true,
+        "descripcion": "Empleado estándar"
+      },
+      {
+        "id": 2,
+        "entrada": "1\n200\n20.50",
+        "salida_esperada": "NUMBER = 1\nSALARY = U$ 4100.00",
+        "visible": true,
+        "descripcion": "Salario mayor"
+      }
+    ],
+    "casos_prueba_ocultos": [
+      {
+        "id": 3,
+        "entrada": "6\n145\n15.55",
+        "salida_esperada": "NUMBER = 6\nSALARY = U$ 2254.75",
+        "visible": false
+      }
+    ],
+    "pistas": [
+      "El salario es horas * valor_hora.",
+      "Recuerda incluir 'U$ ' con espacio antes del monto.",
+      "Formatea el salario con :.2f."
+    ],
+    "retroalimentacion": {
+      "exito": "¡Excelente! Has manejado salidas en dos líneas con formato exacto.",
+      "error_comun": "Revisa el espacio entre U$ y la cifra: 'SALARY = U$ 550.00'.",
+      "pista_falla": "print(f'NUMBER = {num}\\nSALARY = U$ {salario:.2f}')."
+    },
+    "fuente": "beecrowd",
+    "fuente_id": 1008,
+    "fuente_url": "https://judge.beecrowd.com/es/problems/view/1008",
+    "activo": true,
+    "orden": 9
+  },
+  {
+    "id": "prob-1009",
+    "numero": 1009,
+    "titulo": "Salario con Bonus",
+    "slug": "salario-con-bonus",
+    "descripcion": "Lee el nombre de un vendedor, su salario fijo y el total de ventas efectuadas en el mes (en dinero). Sabiendo que el vendedor recibe un 15% de comisión sobre sus ventas, calcula y muestra su salario total a fin de mes con 2 cifras decimales.",
+    "entrada": "Una cadena (nombre), un flotante (salario base) y un flotante (ventas totales).",
+    "salida": "Imprime `TOTAL = R$ ` seguido del salario total a cobrar con 2 decimales.",
+    "ejemplo_entrada": "JOAO\n500.00\n1230.30",
+    "ejemplo_salida": "TOTAL = R$ 684.54",
+    "unidad": "Unidad 03: Elementos básicos de programación",
+    "unidadId": "unidad-03",
+    "temas": [
+      "Variables",
+      "Operadores"
+    ],
+    "conceptos": [
+      "porcentajes",
+      "cálculo de comisiones",
+      "formato :.2f"
+    ],
+    "dificultad": "inicial",
+    "lenguaje": "python",
+    "codigo_inicial": "nombre = input()\nsalario = float(input())\nventas = float(input())\n",
+    "casos_prueba": [
+      {
+        "id": 1,
+        "entrada": "JOAO\n500.00\n1230.30",
+        "salida_esperada": "TOTAL = R$ 684.54",
+        "visible": true,
+        "descripcion": "Ventas con comisión"
+      },
+      {
+        "id": 2,
+        "entrada": "PEDRO\n700.00\n0.00",
+        "salida_esperada": "TOTAL = R$ 700.00",
+        "visible": true,
+        "descripcion": "Sin ventas"
+      }
+    ],
+    "casos_prueba_ocultos": [
+      {
+        "id": 3,
+        "entrada": "MANGOJATA\n1700.00\n1230.50",
+        "salida_esperada": "TOTAL = R$ 1884.58",
+        "visible": false
+      }
+    ],
+    "pistas": [
+      "La comisión es ventas * 0.15.",
+      "El total es salario + comisión.",
+      "Muestra con print(f\"TOTAL = R$ {total:.2f}\")."
+    ],
+    "retroalimentacion": {
+      "exito": "¡Bien hecho! Los cálculos comerciales de comisiones y bonos son esenciales en programación aplicada.",
+      "error_comun": "No olvides leer el nombre del vendedor con input(), aunque no se use en el cálculo.",
+      "pista_falla": "15% equivale a multiplicar por 0.15."
+    },
+    "fuente": "beecrowd",
+    "fuente_id": 1009,
+    "fuente_url": "https://judge.beecrowd.com/es/problems/view/1009",
+    "activo": true,
+    "orden": 10
+  },
+  {
+    "id": "prob-1010",
+    "numero": 1010,
+    "titulo": "Cálculo Simple",
+    "slug": "calculo-simple",
+    "descripcion": "En este problema el objetivo es leer el código de la pieza 1, su cantidad y su precio unitario. Luego, leer los datos de la pieza 2 (código, cantidad y precio unitario). Calcula y muestra el valor total a pagar con 2 decimales.",
+    "entrada": "Dos líneas. Cada línea contiene el código (int), la cantidad (int) y el valor unitario (float) separados por un espacio.",
+    "salida": "Imprime `VALOR A PAGAR: R$ ` seguido del monto total con 2 decimales.",
+    "ejemplo_entrada": "12 1 5.30\n16 2 5.10",
+    "ejemplo_salida": "VALOR A PAGAR: R$ 15.50",
+    "unidad": "Unidad 03: Elementos básicos de programación",
+    "unidadId": "unidad-03",
+    "temas": [
+      "Variables",
+      "Operadores"
+    ],
+    "conceptos": [
+      "split()",
+      "desempaquetado",
+      "múltiples valores por línea"
+    ],
+    "dificultad": "inicial",
+    "lenguaje": "python",
+    "codigo_inicial": "# Lee dos líneas con valores separados por espacio\nlinea1 = input().split()\nlinea2 = input().split()\n",
+    "casos_prueba": [
+      {
+        "id": 1,
+        "entrada": "12 1 5.30\n16 2 5.10",
+        "salida_esperada": "VALOR A PAGAR: R$ 15.50",
+        "visible": true,
+        "descripcion": "Dos piezas distintas"
+      },
+      {
+        "id": 2,
+        "entrada": "13 2 15.30\n161 4 5.20",
+        "salida_esperada": "VALOR A PAGAR: R$ 51.40",
+        "visible": true,
+        "descripcion": "Cantidades múltiples"
+      }
+    ],
+    "casos_prueba_ocultos": [
+      {
+        "id": 3,
+        "entrada": "1 1 15.10\n2 1 15.10",
+        "salida_esperada": "VALOR A PAGAR: R$ 30.20",
+        "visible": false
+      }
+    ],
+    "pistas": [
+      "Usa input().split() para dividir la línea por espacios.",
+      "Para la primera pieza: c1, q1, v1 = linea1; q1 = int(q1); v1 = float(v1).",
+      "Total = q1 * v1 + q2 * v2."
+    ],
+    "retroalimentacion": {
+      "exito": "¡Excelente dominio de input().split()! Esta técnica es crucial para leer datos tabulares en una sola línea.",
+      "error_comun": "Recuerda convertir la cantidad a int() y el precio a float().",
+      "pista_falla": "Usa f'VALOR A PAGAR: R$ {total:.2f}'."
+    },
+    "fuente": "beecrowd",
+    "fuente_id": 1010,
+    "fuente_url": "https://judge.beecrowd.com/es/problems/view/1010",
+    "activo": true,
+    "orden": 11
+  },
+  {
+    "id": "prob-1011",
+    "numero": 1011,
+    "titulo": "Esfera",
+    "slug": "esfera",
+    "descripcion": "Haz un programa que calcule y muestre el volumen de una esfera a partir del valor de su radio $R$. La fórmula es: $V = (4/3) \\cdot \\pi \\cdot R^3$. Considera $\\pi = 3.14159$.",
+    "entrada": "Un valor numérico correspondiente al radio $R$.",
+    "salida": "Imprime `VOLUME = ` seguido del volumen calculado con 3 cifras decimales.",
+    "ejemplo_entrada": "3",
+    "ejemplo_salida": "VOLUME = 113.097",
+    "unidad": "Unidad 03: Elementos básicos de programación",
+    "unidadId": "unidad-03",
+    "temas": [
+      "Variables",
+      "Operadores"
+    ],
+    "conceptos": [
+      "fórmulas geométricas",
+      "potencia cúbica ** 3",
+      "formato :.3f"
+    ],
+    "dificultad": "inicial",
+    "lenguaje": "python",
+    "codigo_inicial": "R = float(input())\npi = 3.14159\n",
+    "casos_prueba": [
+      {
+        "id": 1,
+        "entrada": "3",
+        "salida_esperada": "VOLUME = 113.097",
+        "visible": true,
+        "descripcion": "Radio pequeño"
+      },
+      {
+        "id": 2,
+        "entrada": "15",
+        "salida_esperada": "VOLUME = 14137.155",
+        "visible": true,
+        "descripcion": "Radio mediano"
+      }
+    ],
+    "casos_prueba_ocultos": [
+      {
+        "id": 3,
+        "entrada": "1523",
+        "salida_esperada": "VOLUME = 14797486501.627",
+        "visible": false
+      }
+    ],
+    "pistas": [
+      "Usa (4.0 / 3) * pi * (R ** 3).",
+      "Cuidado con la división: en Python 3 '4/3' da 1.3333... de forma flotante.",
+      "Formatea a 3 decimales con :.3f."
+    ],
+    "retroalimentacion": {
+      "exito": "¡Gran trabajo con cálculos tridimensionales!",
+      "error_comun": "Asegúrate de elevar R al cubo (R**3) y no al cuadrado.",
+      "pista_falla": "vol = (4/3) * 3.14159 * (R**3)."
+    },
+    "fuente": "beecrowd",
+    "fuente_id": 1011,
+    "fuente_url": "https://judge.beecrowd.com/es/problems/view/1011",
+    "activo": true,
+    "orden": 12
+  },
+  {
+    "id": "prob-1012",
+    "numero": 1012,
+    "titulo": "Área",
+    "slug": "area",
+    "descripcion": "Escribe un programa que lea tres valores flotantes: A, B y C. Luego, calcula y muestra:\na) El área del triángulo rectángulo que tiene base A y altura C.\nb) El área del círculo de radio C (pi = 3.14159).\nc) El área del trapecio que tiene bases A y B, y altura C.\nd) El área del cuadrado que tiene lado B.\ne) El área del rectángulo que tiene lados A y B.",
+    "entrada": "Una línea con tres valores flotantes: A, B y C.",
+    "salida": "El archivo de salida debe contener 5 líneas con los resultados de las áreas con 3 cifras decimales.",
+    "ejemplo_entrada": "3.0 4.0 5.2",
+    "ejemplo_salida": "TRIANGULO: 7.800\nCIRCULO: 84.949\nTRAPEZIO: 18.200\nQUADRADO: 16.000\nRETANGULO: 12.000",
+    "unidad": "Unidad 03: Elementos básicos de programación",
+    "unidadId": "unidad-03",
+    "temas": [
+      "Variables",
+      "Operadores"
+    ],
+    "conceptos": [
+      "geometría computacional",
+      "fórmulas múltiples",
+      "formato :.3f"
+    ],
+    "dificultad": "inicial",
+    "lenguaje": "python",
+    "codigo_inicial": "A, B, C = map(float, input().split())\npi = 3.14159\n",
+    "casos_prueba": [
+      {
+        "id": 1,
+        "entrada": "3.0 4.0 5.2",
+        "salida_esperada": "TRIANGULO: 7.800\nCIRCULO: 84.949\nTRAPEZIO: 18.200\nQUADRADO: 16.000\nRETANGULO: 12.000",
+        "visible": true,
+        "descripcion": "Caso base figuras"
+      }
+    ],
+    "casos_prueba_ocultos": [
+      {
+        "id": 2,
+        "entrada": "12.7 10.4 15.2",
+        "salida_esperada": "TRIANGULO: 96.520\nCIRCULO: 725.833\nTRAPEZIO: 175.560\nQUADRADO: 108.160\nRETANGULO: 132.080",
+        "visible": false
+      }
+    ],
+    "pistas": [
+      "Triángulo: (A * C) / 2.",
+      "Círculo: pi * (C ** 2).",
+      "Trapecio: ((A + B) * C) / 2.",
+      "Cuadrado: B * B.",
+      "Rectángulo: A * B."
+    ],
+    "retroalimentacion": {
+      "exito": "¡Impresionante! Has resuelto un conjunto completo de cálculos geométricos.",
+      "error_comun": "Revisa los nombres de las figuras: TRIANGULO, CIRCULO, TRAPEZIO, QUADRADO, RETANGULO.",
+      "pista_falla": "Recuerda que el radio del círculo es C y el lado del cuadrado es B."
+    },
+    "fuente": "beecrowd",
+    "fuente_id": 1012,
+    "fuente_url": "https://judge.beecrowd.com/es/problems/view/1012",
+    "activo": true,
+    "orden": 13
+  },
+  {
+    "id": "prob-1013",
+    "numero": 1013,
+    "titulo": "El Mayor",
+    "slug": "el-mayor",
+    "descripcion": "Haz un programa que lea tres valores enteros y presente el mayor seguido del mensaje `eh o maior`. Puedes usar condicionales o la fórmula para comparar de a pares.",
+    "entrada": "Tres valores enteros en una misma línea.",
+    "salida": "Imprime el mayor de los tres valores seguido de un espacio y `eh o maior`.",
+    "ejemplo_entrada": "7 14 106",
+    "ejemplo_salida": "106 eh o maior",
+    "unidad": "Unidad 04: Estructuras condicionales",
+    "unidadId": "unidad-04",
+    "temas": [
+      "Condicionales"
+    ],
+    "conceptos": [
+      "if",
+      "max()",
+      "comparaciones"
+    ],
+    "dificultad": "basico",
+    "lenguaje": "python",
+    "codigo_inicial": "a, b, c = map(int, input().split())\n",
+    "casos_prueba": [
+      {
+        "id": 1,
+        "entrada": "7 14 106",
+        "salida_esperada": "106 eh o maior",
+        "visible": true,
+        "descripcion": "Mayor al final"
+      },
+      {
+        "id": 2,
+        "entrada": "217 14 6",
+        "salida_esperada": "217 eh o maior",
+        "visible": true,
+        "descripcion": "Mayor al inicio"
+      }
+    ],
+    "casos_prueba_ocultos": [
+      {
+        "id": 3,
+        "entrada": "10 20 15",
+        "salida_esperada": "20 eh o maior",
+        "visible": false
+      }
+    ],
+    "pistas": [
+      "Puedes usar condicionales: si a >= b y a >= c el mayor es a, etc.",
+      "También puedes usar la función integrada max(a, b, c).",
+      "Imprime print(f\"{mayor} eh o maior\")."
+    ],
+    "retroalimentacion": {
+      "exito": "¡Excelente lógica de comparación!",
+      "error_comun": "Ten cuidado con el texto exacto: 'eh o maior' en minúsculas.",
+      "pista_falla": "mayor = max(a, b, c)."
+    },
+    "fuente": "beecrowd",
+    "fuente_id": 1013,
+    "fuente_url": "https://judge.beecrowd.com/es/problems/view/1013",
+    "activo": true,
+    "orden": 14
+  },
+  {
+    "id": "prob-1014",
+    "numero": 1014,
+    "titulo": "Consumo",
+    "slug": "consumo",
+    "descripcion": "Calcula el consumo promedio de un automóvil a partir de la distancia total recorrida (en km) y el total de combustible consumido (en litros). Muestra el resultado con 3 cifras decimales seguido de `km/l`.",
+    "entrada": "Un entero X (distancia en km) y un flotante Y (combustible en litros).",
+    "salida": "Imprime el valor que representa el consumo promedio con 3 decimales, seguido de un espacio y `km/l`.",
+    "ejemplo_entrada": "500\n35.0",
+    "ejemplo_salida": "14.286 km/l",
+    "unidad": "Unidad 03: Elementos básicos de programación",
+    "unidadId": "unidad-03",
+    "temas": [
+      "Variables",
+      "Operadores"
+    ],
+    "conceptos": [
+      "tasa de consumo",
+      "división flotante",
+      "formato :.3f"
+    ],
+    "dificultad": "inicial",
+    "lenguaje": "python",
+    "codigo_inicial": "X = int(input())\nY = float(input())\n",
+    "casos_prueba": [
+      {
+        "id": 1,
+        "entrada": "500\n35.0",
+        "salida_esperada": "14.286 km/l",
+        "visible": true,
+        "descripcion": "Consumo estándar"
+      },
+      {
+        "id": 2,
+        "entrada": "2254\n147.4",
+        "salida_esperada": "15.292 km/l",
+        "visible": true,
+        "descripcion": "Viaje largo"
+      }
+    ],
+    "casos_prueba_ocultos": [
+      {
+        "id": 3,
+        "entrada": "4554\n464.6",
+        "salida_esperada": "9.802 km/l",
+        "visible": false
+      }
+    ],
+    "pistas": [
+      "El consumo promedio es distancia / combustible: X / Y.",
+      "Formatea con print(f\"{consumo:.3f} km/l\").",
+      "Caso de borde y formato: Asegúrate de convertir la distancia a entero (o float) y el combustible a float. La salida debe tener exactamente 3 decimales seguidos de ' km/l'."
+    ],
+    "retroalimentacion": {
+      "exito": "¡Muy bien! El cálculo de ratios es ampliamente utilizado.",
+      "error_comun": "Asegúrate de incluir 'km/l' con un espacio después del número.",
+      "pista_falla": "consumo = X / Y."
+    },
+    "fuente": "beecrowd",
+    "fuente_id": 1014,
+    "fuente_url": "https://judge.beecrowd.com/es/problems/view/1014",
+    "activo": true,
+    "orden": 15
+  },
+  {
+    "id": "prob-1015",
+    "numero": 1015,
+    "titulo": "Distancia Entre dos Puntos",
+    "slug": "distancia-entre-dos-puntos",
+    "descripcion": "Lee los cuatro valores correspondientes a las coordenadas de dos puntos en el plano: $p_1 = (x_1, y_1)$ y $p_2 = (x_2, y_2)$. Calcula la distancia euclidiana entre ellos usando la fórmula $D = \\sqrt{(x_2 - x_1)^2 + (y_2 - y_1)^2}$ y muéstrala con 4 decimales.",
+    "entrada": "Dos líneas. Cada línea contiene dos valores flotantes separados por un espacio.",
+    "salida": "Imprime el valor de la distancia con 4 cifras decimales.",
+    "ejemplo_entrada": "1.0 7.0\n5.0 9.0",
+    "ejemplo_salida": "4.4721",
+    "unidad": "Unidad 03: Elementos básicos de programación",
+    "unidadId": "unidad-03",
+    "temas": [
+      "Variables",
+      "Operadores"
+    ],
+    "conceptos": [
+      "fórmula euclidiana",
+      "raíz cuadrada math.sqrt o ** 0.5",
+      "formato :.4f"
+    ],
+    "dificultad": "inicial",
+    "lenguaje": "python",
+    "codigo_inicial": "import math\nx1, y1 = map(float, input().split())\nx2, y2 = map(float, input().split())\n",
+    "casos_prueba": [
+      {
+        "id": 1,
+        "entrada": "1.0 7.0\n5.0 9.0",
+        "salida_esperada": "4.4721",
+        "visible": true,
+        "descripcion": "Puntos cuadrante 1"
+      },
+      {
+        "id": 2,
+        "entrada": "-2.5 0.4\n12.1 7.3",
+        "salida_esperada": "16.1484",
+        "visible": true,
+        "descripcion": "Coordenadas con negativos"
+      }
+    ],
+    "casos_prueba_ocultos": [
+      {
+        "id": 3,
+        "entrada": "2.5 -0.4\n-12.2 7.0",
+        "salida_esperada": "16.4575",
+        "visible": false
+      }
+    ],
+    "pistas": [
+      "Puedes calcular la raíz usando math.sqrt() o elevando a la 0.5: ** 0.5.",
+      "dist = math.sqrt((x2 - x1)**2 + (y2 - y1)**2).",
+      "Muestra con print(f\"{dist:.4f}\")."
+    ],
+    "retroalimentacion": {
+      "exito": "¡Gran trabajo aplicando geometría analítica en Python!",
+      "error_comun": "Revisa los signos de resta: (x2 - x1)**2.",
+      "pista_falla": "La raíz cuadrada de z se puede calcular como z ** 0.5."
+    },
+    "fuente": "beecrowd",
+    "fuente_id": 1015,
+    "fuente_url": "https://judge.beecrowd.com/es/problems/view/1015",
+    "activo": true,
+    "orden": 16
+  },
+  {
+    "id": "prob-1016",
+    "numero": 1016,
+    "titulo": "Distancia",
+    "slug": "distancia",
+    "descripcion": "Dos autos (X e Y) parten en la misma dirección. El auto X sale con una velocidad constante de 60 km/h y el auto Y sale con una velocidad constante de 90 km/h. En una hora (60 minutos), el auto Y se aleja 30 kilómetros del auto X, es decir, se aleja 1 kilómetro cada 2 minutos. Lee la distancia (en km) y calcula cuánto tiempo le toma al auto Y tomar esa distancia respecto al auto X.",
+    "entrada": "Un valor entero que representa la distancia en kilómetros.",
+    "salida": "Imprime el tiempo necesario seguido del texto `minutos`.",
+    "ejemplo_entrada": "30",
+    "ejemplo_salida": "60 minutos",
+    "unidad": "Unidad 03: Elementos básicos de programación",
+    "unidadId": "unidad-03",
+    "temas": [
+      "Variables",
+      "Operadores"
+    ],
+    "conceptos": [
+      "velocidad relativa",
+      "física computacional"
+    ],
+    "dificultad": "inicial",
+    "lenguaje": "python",
+    "codigo_inicial": "distancia = int(input())\n",
+    "casos_prueba": [
+      {
+        "id": 1,
+        "entrada": "30",
+        "salida_esperada": "60 minutos",
+        "visible": true,
+        "descripcion": "Distancia de 30 km"
+      },
+      {
+        "id": 2,
+        "entrada": "110",
+        "salida_esperada": "220 minutos",
+        "visible": true,
+        "descripcion": "Distancia de 110 km"
+      }
+    ],
+    "casos_prueba_ocultos": [
+      {
+        "id": 3,
+        "entrada": "7",
+        "salida_esperada": "14 minutos",
+        "visible": false
+      }
+    ],
+    "pistas": [
+      "Si se aleja 1 km cada 2 minutos, el tiempo total en minutos es distancia * 2.",
+      "Muestra con print(f\"{distancia * 2} minutos\").",
+      "Caso de borde y lógica: Dado que el carro Y se aleja a 1 km cada 2 minutos (30 km/h de velocidad relativa), la fórmula directa es distancia * 2 minutos."
+    ],
+    "retroalimentacion": {
+      "exito": "¡Excelente razonamiento sobre velocidad relativa!",
+      "error_comun": "Asegúrate de incluir la palabra 'minutos' con espacio.",
+      "pista_falla": "tiempo = distancia * 2."
+    },
+    "fuente": "beecrowd",
+    "fuente_id": 1016,
+    "fuente_url": "https://judge.beecrowd.com/es/problems/view/1016",
+    "activo": true,
+    "orden": 17
+  },
+  {
+    "id": "prob-1017",
+    "numero": 1017,
+    "titulo": "Combustible Gastado",
+    "slug": "combustible-gastado",
+    "descripcion": "Un automóvil rinde 12 km/L de combustible. Escribe un programa para calcular y mostrar la cantidad de litros de combustible gastados en un viaje, dados el tiempo gastado (en horas) y la velocidad media (en km/h).",
+    "entrada": "Dos enteros: el tiempo gastado en horas y la velocidad media en km/h.",
+    "salida": "Imprime la cantidad de litros consumidos con 3 cifras decimales.",
+    "ejemplo_entrada": "10\n85",
+    "ejemplo_salida": "70.833",
+    "unidad": "Unidad 03: Elementos básicos de programación",
+    "unidadId": "unidad-03",
+    "temas": [
+      "Variables",
+      "Operadores"
+    ],
+    "conceptos": [
+      "distancia = tiempo * velocidad",
+      "litros = distancia / 12",
+      "formato :.3f"
+    ],
+    "dificultad": "inicial",
+    "lenguaje": "python",
+    "codigo_inicial": "tiempo = int(input())\nvelocidad = int(input())\n",
+    "casos_prueba": [
+      {
+        "id": 1,
+        "entrada": "10\n85",
+        "salida_esperada": "70.833",
+        "visible": true,
+        "descripcion": "Viaje largo"
+      },
+      {
+        "id": 2,
+        "entrada": "2\n92",
+        "salida_esperada": "15.333",
+        "visible": true,
+        "descripcion": "Viaje corto"
+      }
+    ],
+    "casos_prueba_ocultos": [
+      {
+        "id": 3,
+        "entrada": "22\n67",
+        "salida_esperada": "122.833",
+        "visible": false
+      }
+    ],
+    "pistas": [
+      "Primero calcula la distancia: distancia = tiempo * velocidad.",
+      "Luego calcula los litros dividiendo entre 12: litros = distancia / 12.",
+      "Formatea a 3 decimales con print(f\"{litros:.3f}\")."
+    ],
+    "retroalimentacion": {
+      "exito": "¡Muy bien resuelto!",
+      "error_comun": "No dividas entre 12 con división entera //, usa división flotante /.",
+      "pista_falla": "litros = (tiempo * velocidad) / 12.0."
+    },
+    "fuente": "beecrowd",
+    "fuente_id": 1017,
+    "fuente_url": "https://judge.beecrowd.com/es/problems/view/1017",
+    "activo": true,
+    "orden": 18
+  },
+  {
+    "id": "prob-1018",
+    "numero": 1018,
+    "titulo": "Billetes",
+    "slug": "billetes",
+    "descripcion": "Lee un valor entero. A continuación, calcula el menor número posible de billetes en los que se puede descomponer el valor. Los billetes posibles son de 100, 50, 20, 10, 5, 2 y 1. Muestra el valor leído y la relación de billetes.",
+    "entrada": "Un número entero positivo.",
+    "salida": "Imprime el valor leído y a continuación la cantidad de billetes de cada denominación.",
+    "ejemplo_entrada": "576",
+    "ejemplo_salida": "576\n5 nota(s) de R$ 100,00\n1 nota(s) de R$ 50,00\n1 nota(s) de R$ 20,00\n0 nota(s) de R$ 10,00\n1 nota(s) de R$ 5,00\n0 nota(s) de R$ 2,00\n1 nota(s) de R$ 1,00",
+    "unidad": "Unidad 03: Elementos básicos de programación",
+    "unidadId": "unidad-03",
+    "temas": [
+      "Variables",
+      "Operadores",
+      "Ciclos"
+    ],
+    "conceptos": [
+      "algoritmo voraz / greedy",
+      "división entera //",
+      "módulo %"
+    ],
+    "dificultad": "basico",
+    "lenguaje": "python",
+    "codigo_inicial": "valor = int(input())\nprint(valor)\nbilletes = [100, 50, 20, 10, 5, 2, 1]\n",
+    "casos_prueba": [
+      {
+        "id": 1,
+        "entrada": "576",
+        "salida_esperada": "576\n5 nota(s) de R$ 100,00\n1 nota(s) de R$ 50,00\n1 nota(s) de R$ 20,00\n0 nota(s) de R$ 10,00\n1 nota(s) de R$ 5,00\n0 nota(s) de R$ 2,00\n1 nota(s) de R$ 1,00",
+        "visible": true,
+        "descripcion": "Descomposición estándar"
+      }
+    ],
+    "casos_prueba_ocultos": [
+      {
+        "id": 2,
+        "entrada": "11257",
+        "salida_esperada": "11257\n112 nota(s) de R$ 100,00\n1 nota(s) de R$ 50,00\n0 nota(s) de R$ 20,00\n0 nota(s) de R$ 10,00\n1 nota(s) de R$ 5,00\n1 nota(s) de R$ 2,00\n0 nota(s) de R$ 1,00",
+        "visible": false
+      },
+      {
+        "id": 3,
+        "entrada": "503",
+        "salida_esperada": "503\n5 nota(s) de R$ 100,00\n0 nota(s) de R$ 50,00\n0 nota(s) de R$ 20,00\n0 nota(s) de R$ 10,00\n0 nota(s) de R$ 5,00\n1 nota(s) de R$ 2,00\n1 nota(s) de R$ 1,00",
+        "visible": false
+      }
+    ],
+    "pistas": [
+      "Primero imprime el valor original: print(valor).",
+      "Para cada billete: cantidad = resto // billete; resto = resto % billete.",
+      "Formato: f\"{cantidad} nota(s) de R$ {billete},00\"."
+    ],
+    "retroalimentacion": {
+      "exito": "¡Excelente algoritmo voraz de descomposición de cambio!",
+      "error_comun": "Recuerda imprimir el valor original antes de la lista de billetes.",
+      "pista_falla": "Usa una lista con [100, 50, 20, 10, 5, 2, 1] y un ciclo for."
+    },
+    "fuente": "beecrowd",
+    "fuente_id": 1018,
+    "fuente_url": "https://judge.beecrowd.com/es/problems/view/1018",
+    "activo": true,
+    "orden": 19
+  },
+  {
+    "id": "prob-1020",
+    "numero": 1020,
+    "titulo": "Edad en Días",
+    "slug": "edad-en-dias",
+    "descripcion": "Lee un valor entero correspondiente a la edad de una persona en días y muéstralo en años, meses y días, seguido por el texto respectivo. Considera el año con 365 días y el mes con 30 días.",
+    "entrada": "Un valor entero que representa la cantidad de días.",
+    "salida": "Tres líneas: `X ano(s)`, `Y mes(es)`, `Z dia(s)`.",
+    "ejemplo_entrada": "400",
+    "ejemplo_salida": "1 ano(s)\n1 mes(es)\n5 dia(s)",
+    "unidad": "Unidad 03: Elementos básicos de programación",
+    "unidadId": "unidad-03",
+    "temas": [
+      "Variables",
+      "Operadores"
+    ],
+    "conceptos": [
+      "división entera //",
+      "resto %",
+      "conversión temporal"
+    ],
+    "dificultad": "inicial",
+    "lenguaje": "python",
+    "codigo_inicial": "dias = int(input())\n",
+    "casos_prueba": [
+      {
+        "id": 1,
+        "entrada": "400",
+        "salida_esperada": "1 ano(s)\n1 mes(es)\n5 dia(s)",
+        "visible": true,
+        "descripcion": "Más de un año"
+      },
+      {
+        "id": 2,
+        "entrada": "800",
+        "salida_esperada": "2 ano(s)\n2 mes(es)\n10 dia(s)",
+        "visible": true,
+        "descripcion": "Más de dos años"
+      }
+    ],
+    "casos_prueba_ocultos": [
+      {
+        "id": 3,
+        "entrada": "30",
+        "salida_esperada": "0 ano(s)\n1 mes(es)\n0 dia(s)",
+        "visible": false
+      }
+    ],
+    "pistas": [
+      "Años = dias // 365.",
+      "Resto = dias % 365.",
+      "Meses = resto // 30; Días restantes = resto % 30."
+    ],
+    "retroalimentacion": {
+      "exito": "¡Gran trabajo dominando la aritmética modular!",
+      "error_comun": "Considera exactamente 365 días por año y 30 días por mes según el enunciado.",
+      "pista_falla": "Usa // para el cociente entero y % para el resto."
+    },
+    "fuente": "beecrowd",
+    "fuente_id": 1020,
+    "fuente_url": "https://judge.beecrowd.com/es/problems/view/1020",
+    "activo": true,
+    "orden": 20
+  },
+  {
+    "id": "prob-1043",
+    "numero": 1043,
+    "titulo": "Triángulo",
+    "slug": "triangulo",
+    "descripcion": "Lee tres valores de punto flotante (A, B y C) y verifica si con ellos es posible formar un triángulo. De ser posible, calcula el perímetro del triángulo y muéstralo con el mensaje `Perimetro = XX.X`. Si no es posible, calcula el área del trapecio que tiene a A y B como bases y a C como altura, mostrando `Area = XX.X`.",
+    "entrada": "Tres valores flotantes en una sola línea.",
+    "salida": "Imprime `Perimetro = ` o `Area = ` con un decimal.",
+    "ejemplo_entrada": "6.0 4.0 2.0",
+    "ejemplo_salida": "Area = 10.0",
+    "unidad": "Unidad 04: Estructuras condicionales",
+    "unidadId": "unidad-04",
+    "temas": [
+      "Condicionales"
+    ],
+    "conceptos": [
+      "desigualdad triangular",
+      "if / else",
+      "área de trapecio"
+    ],
+    "dificultad": "basico",
+    "lenguaje": "python",
+    "codigo_inicial": "A, B, C = map(float, input().split())\n",
+    "casos_prueba": [
+      {
+        "id": 1,
+        "entrada": "6.0 4.0 2.0",
+        "salida_esperada": "Area = 10.0",
+        "visible": true,
+        "descripcion": "No forma triángulo (trapecio)"
+      },
+      {
+        "id": 2,
+        "entrada": "6.0 4.0 2.1",
+        "salida_esperada": "Perimetro = 12.1",
+        "visible": true,
+        "descripcion": "Forma triángulo"
+      }
+    ],
+    "casos_prueba_ocultos": [
+      {
+        "id": 3,
+        "entrada": "5.0 5.0 5.0",
+        "salida_esperada": "Perimetro = 15.0",
+        "visible": false
+      }
+    ],
+    "pistas": [
+      "Desigualdad triangular: A < B + C y B < A + C y C < A + B.",
+      "Perímetro = A + B + C.",
+      "Área trapecio = ((A + B) * C) / 2."
+    ],
+    "retroalimentacion": {
+      "exito": "¡Excelente aplicación de la propiedad geométrica de los triángulos!",
+      "error_comun": "Deben cumplirse las tres condiciones de desigualdad triangular simultáneamente.",
+      "pista_falla": "if A < B + C and B < A + C and C < A + B:"
+    },
+    "fuente": "beecrowd",
+    "fuente_id": 1043,
+    "fuente_url": "https://judge.beecrowd.com/es/problems/view/1043",
+    "activo": true,
+    "orden": 21
+  },
+  {
+    "id": "prob-1044",
+    "numero": 1044,
+    "titulo": "Múltiplos",
+    "slug": "multiplos",
+    "descripcion": "Lee dos valores enteros (A y B). Después, el programa debe mostrar el mensaje `Sao Multiplos` o `Nao sao Multiplos`, dependiendo de si los números son múltiplos el uno del otro.",
+    "entrada": "Dos números enteros en una sola línea.",
+    "salida": "Muestra `Sao Multiplos` o `Nao sao Multiplos`.",
+    "ejemplo_entrada": "6 24",
+    "ejemplo_salida": "Sao Multiplos",
+    "unidad": "Unidad 04: Estructuras condicionales",
+    "unidadId": "unidad-04",
+    "temas": [
+      "Condicionales"
+    ],
+    "conceptos": [
+      "operador módulo %",
+      "divisibilidad mutua"
+    ],
+    "dificultad": "basico",
+    "lenguaje": "python",
+    "codigo_inicial": "A, B = map(int, input().split())\n",
+    "casos_prueba": [
+      {
+        "id": 1,
+        "entrada": "6 24",
+        "salida_esperada": "Sao Multiplos",
+        "visible": true,
+        "descripcion": "Múltiplos en orden"
+      },
+      {
+        "id": 2,
+        "entrada": "6 25",
+        "salida_esperada": "Nao sao Multiplos",
+        "visible": true,
+        "descripcion": "No múltiplos"
+      }
+    ],
+    "casos_prueba_ocultos": [
+      {
+        "id": 3,
+        "entrada": "24 6",
+        "salida_esperada": "Sao Multiplos",
+        "visible": false
+      }
+    ],
+    "pistas": [
+      "Dos números son múltiplos si A % B == 0 o B % A == 0.",
+      "Recuerda que el orden de entrada no garantiza cuál es el mayor.",
+      "Caso de borde: Dos números son múltiplos si A % B == 0 o B % A == 0. Recuerda probar ambos sentidos porque los números pueden venir en cualquier orden."
+    ],
+    "retroalimentacion": {
+      "exito": "¡Muy bien! Considerar ambos sentidos (A%B o B%A) es la clave de este problema.",
+      "error_comun": "No asumas que B siempre es mayor que A.",
+      "pista_falla": "if A % B == 0 or B % A == 0:"
+    },
+    "fuente": "beecrowd",
+    "fuente_id": 1044,
+    "fuente_url": "https://judge.beecrowd.com/es/problems/view/1044",
+    "activo": true,
+    "orden": 22
+  },
+  {
+    "id": "prob-1045",
+    "numero": 1045,
+    "titulo": "Tipos de Triángulos",
+    "slug": "tipos-de-triangulos",
+    "descripcion": "Lee 3 números flotantes (A, B y C) y ordénalos de forma decreciente, de modo que el lado A sea el mayor de los tres. Luego clasifícalos según sus lados y ángulos.",
+    "entrada": "Tres números flotantes en una sola línea.",
+    "salida": "Muestra la clasificación correspondiente (NAO FORMA TRIANGULO, TRIANGULO RETANGULO, OBTUSANGULO, ACUTANGULO, EQUILATERO, ISOSCELES).",
+    "ejemplo_entrada": "7.0 5.0 7.0",
+    "ejemplo_salida": "TRIANGULO ACUTANGULO\nTRIANGULO ISOSCELES",
+    "unidad": "Unidad 04: Estructuras condicionales",
+    "unidadId": "unidad-04",
+    "temas": [
+      "Condicionales"
+    ],
+    "conceptos": [
+      "ordenamiento de 3 valores",
+      "clasificación por ángulos y lados"
+    ],
+    "dificultad": "basico",
+    "lenguaje": "python",
+    "codigo_inicial": "lados = sorted(list(map(float, input().split())), reverse=True)\nA, B, C = lados[0], lados[1], lados[2]\n",
+    "casos_prueba": [
+      {
+        "id": 1,
+        "entrada": "7.0 5.0 7.0",
+        "salida_esperada": "TRIANGULO ACUTANGULO\nTRIANGULO ISOSCELES",
+        "visible": true,
+        "descripcion": "Acutángulo e isósceles"
+      }
+    ],
+    "casos_prueba_ocultos": [
+      {
+        "id": 2,
+        "entrada": "6.0 6.0 10.0",
+        "salida_esperada": "TRIANGULO OBTUSANGULO\nTRIANGULO ISOSCELES",
+        "visible": false
+      },
+      {
+        "id": 3,
+        "entrada": "6.0 8.0 10.0",
+        "salida_esperada": "TRIANGULO RETANGULO",
+        "visible": false
+      }
+    ],
+    "pistas": [
+      "Primero ordena de mayor a menor para asegurar que A >= B >= C.",
+      "Si A >= B + C: print('NAO FORMA TRIANGULO') y no evalúes más.",
+      "Compara A**2 con B**2 + C**2 (igual: RETANGULO, mayor: OBTUSANGULO, menor: ACUTANGULO).",
+      "Además verifica si A == B == C (EQUILATERO) o si dos son iguales (ISOSCELES)."
+    ],
+    "retroalimentacion": {
+      "exito": "¡Gran manejo de condicionales compuestos y cascadas lógicas!",
+      "error_comun": "Si el triángulo es equilátero, no imprimas que es isósceles.",
+      "pista_falla": "Ordena primero con sorted(..., reverse=True)."
+    },
+    "fuente": "beecrowd",
+    "fuente_id": 1045,
+    "fuente_url": "https://judge.beecrowd.com/es/problems/view/1045",
+    "activo": true,
+    "orden": 23
+  },
+  {
+    "id": "prob-1048",
+    "numero": 1048,
+    "titulo": "Incremento Salarial",
+    "slug": "incremento-salarial",
+    "descripcion": "La empresa ABC decidió otorgar un reajuste salarial a sus empleados según el rango de salario:\n- 0 a 400.00: 15%\n- 400.01 a 800.00: 12%\n- 800.01 a 1200.00: 10%\n- 1200.01 a 2000.00: 7%\n- Mayor a 2000.00: 4%\nLee el salario del empleado, calcula y muestra el nuevo salario, el valor ganado y el porcentaje obtenido.",
+    "entrada": "Un número flotante con dos decimales.",
+    "salida": "Muestra `Novo salario: XX.XX`, `Reajuste ganho: XX.XX` y `Em percentual: X %`.",
+    "ejemplo_entrada": "400.00",
+    "ejemplo_salida": "Novo salario: 460.00\nReajuste ganho: 60.00\nEm percentual: 15 %",
+    "unidad": "Unidad 04: Estructuras condicionales",
+    "unidadId": "unidad-04",
+    "temas": [
+      "Condicionales"
+    ],
+    "conceptos": [
+      "if-elif-else en cascada",
+      "escalas salariales"
+    ],
+    "dificultad": "basico",
+    "lenguaje": "python",
+    "codigo_inicial": "salario = float(input())\n",
+    "casos_prueba": [
+      {
+        "id": 1,
+        "entrada": "400.00",
+        "salida_esperada": "Novo salario: 460.00\nReajuste ganho: 60.00\nEm percentual: 15 %",
+        "visible": true,
+        "descripcion": "Rango 15%"
+      },
+      {
+        "id": 2,
+        "entrada": "800.01",
+        "salida_esperada": "Novo salario: 880.01\nReajuste ganho: 80.00\nEm percentual: 10 %",
+        "visible": true,
+        "descripcion": "Rango 10%"
+      }
+    ],
+    "casos_prueba_ocultos": [
+      {
+        "id": 3,
+        "entrada": "2000.00",
+        "salida_esperada": "Novo salario: 2140.00\nReajuste ganho: 140.00\nEm percentual: 7 %",
+        "visible": false
+      }
+    ],
+    "pistas": [
+      "Usa una estructura if-elif-else para determinar la tasa de incremento.",
+      "Reajuste = salario * (porcentaje / 100).",
+      "Nuevo salario = salario + reajuste."
+    ],
+    "retroalimentacion": {
+      "exito": "¡Excelente estructura de if-elif-else para rangos numéricos!",
+      "error_comun": "Revisa los límites: 400.00 entra en 15%, 800.00 entra en 12%.",
+      "pista_falla": "Ten cuidado con los signos <= en los límites superiores."
+    },
+    "fuente": "beecrowd",
+    "fuente_id": 1048,
+    "fuente_url": "https://judge.beecrowd.com/es/problems/view/1048",
+    "activo": true,
+    "orden": 24
+  },
+  {
+    "id": "prob-1049",
+    "numero": 1049,
+    "titulo": "Animal",
+    "slug": "animal",
+    "descripcion": "En este problema debes leer tres palabras que definen las características de un animal según la clasificación zoológica (árbol taxonómico) e imprimir el animal correspondiente.",
+    "entrada": "Tres palabras en líneas separadas.",
+    "salida": "El nombre del animal resultante según el árbol taxonómico.",
+    "ejemplo_entrada": "vertebrado\nave\ncarnivoro",
+    "ejemplo_salida": "aguia",
+    "unidad": "Unidad 04: Estructuras condicionales",
+    "unidadId": "unidad-04",
+    "temas": [
+      "Condicionales"
+    ],
+    "conceptos": [
+      "árbol de decisión",
+      "condicionales anidados",
+      "comparación de cadenas"
+    ],
+    "dificultad": "basico",
+    "lenguaje": "python",
+    "codigo_inicial": "p1 = input().strip()\np2 = input().strip()\np3 = input().strip()\n",
+    "casos_prueba": [
+      {
+        "id": 1,
+        "entrada": "vertebrado\nave\ncarnivoro",
+        "salida_esperada": "aguia",
+        "visible": true,
+        "descripcion": "Águila"
+      },
+      {
+        "id": 2,
+        "entrada": "invertebrado\nanelideo\nonivoro",
+        "salida_esperada": "minhoca",
+        "visible": true,
+        "descripcion": "Lombriz"
+      }
+    ],
+    "casos_prueba_ocultos": [
+      {
+        "id": 3,
+        "entrada": "vertebrado\nmamifero\nonivoro",
+        "salida_esperada": "homem",
+        "visible": false
+      }
+    ],
+    "pistas": [
+      "Puedes anidar condicionales if p1 == 'vertebrado': if p2 == ...",
+      "O también usar un diccionario con tuplas clave: {('vertebrado', 'ave', 'carnivoro'): 'aguia'}.",
+      "Caso de borde: Usa comparaciones exactas con cadenas ('vertebrado', 'ave', 'carnivoro'). Una estructura de if-elif-else anidada previene evaluar ramas innecesarias."
+    ],
+    "retroalimentacion": {
+      "exito": "¡Árbol de decisión implementado con maestría!",
+      "error_comun": "Asegúrate de no dejar espacios en blanco al comparar las cadenas.",
+      "pista_falla": "Usa strip() para limpiar saltos de línea y espacios accidentales."
+    },
+    "fuente": "beecrowd",
+    "fuente_id": 1049,
+    "fuente_url": "https://judge.beecrowd.com/es/problems/view/1049",
+    "activo": true,
+    "orden": 25
+  },
+  {
+    "id": "prob-1050",
+    "numero": 1050,
+    "titulo": "DDD",
+    "slug": "ddd",
+    "descripcion": "Lee un número entero que representa un código de área telefónica (DDD). A continuación muestra la ciudad correspondiente: 61 Brasilia, 71 Salvador, 11 Sao Paulo, 21 Rio de Janeiro, 32 Juiz de Fora, 19 Campinas, 27 Vitoria, 31 Belo Horizonte. Si el código no está en la lista, muestra `DDD nao cadastrado`.",
+    "entrada": "Un número entero.",
+    "salida": "El nombre de la ciudad correspondiente o `DDD nao cadastrado`.",
+    "ejemplo_entrada": "11",
+    "ejemplo_salida": "Sao Paulo",
+    "unidad": "Unidad 04: Estructuras condicionales",
+    "unidadId": "unidad-04",
+    "temas": [
+      "Condicionales"
+    ],
+    "conceptos": [
+      "diccionarios",
+      "búsqueda con get() o if-in"
+    ],
+    "dificultad": "basico",
+    "lenguaje": "python",
+    "codigo_inicial": "ddd = int(input())\n",
+    "casos_prueba": [
+      {
+        "id": 1,
+        "entrada": "11",
+        "salida_esperada": "Sao Paulo",
+        "visible": true,
+        "descripcion": "Sao Paulo"
+      },
+      {
+        "id": 2,
+        "entrada": "61",
+        "salida_esperada": "Brasilia",
+        "visible": true,
+        "descripcion": "Brasilia"
+      }
+    ],
+    "casos_prueba_ocultos": [
+      {
+        "id": 3,
+        "entrada": "77",
+        "salida_esperada": "DDD nao cadastrado",
+        "visible": false
+      }
+    ],
+    "pistas": [
+      "Un diccionario es la forma más limpia: mapa = {11: 'Sao Paulo', ...}.",
+      "mapa.get(ddd, 'DDD nao cadastrado').",
+      "Caso de borde: Si el código DDD no existe en el diccionario o tabla de ciudades, la salida debe ser exactamente 'DDD nao cadastrado' (sin tildes)."
+    ],
+    "retroalimentacion": {
+      "exito": "¡Mapeo de datos impecable!",
+      "error_comun": "Recuerda la tilde y mayúsculas en 'DDD nao cadastrado'.",
+      "pista_falla": "Usa diccionario o if-elif con caso default."
+    },
+    "fuente": "beecrowd",
+    "fuente_id": 1050,
+    "fuente_url": "https://judge.beecrowd.com/es/problems/view/1050",
+    "activo": true,
+    "orden": 26
+  },
+  {
+    "id": "prob-1051",
+    "numero": 1051,
+    "titulo": "Impuestos",
+    "slug": "impuestos",
+    "descripcion": "En un país ficticio, el impuesto sobre la renta se calcula por tramos progresivos:\n- De 0.00 a 2000.00: Exento\n- De 2000.01 a 3000.00: 8%\n- De 3000.01 a 4500.00: 18%\n- Mayor a 4500.00: 28%\nCalcula el impuesto a pagar según el salario ingresado.",
+    "entrada": "Un número flotante con dos decimales.",
+    "salida": "Si el salario es menor o igual a 2000, imprime `Isento`. En caso contrario, imprime `R$ ` seguido del valor con 2 decimales.",
+    "ejemplo_entrada": "3002.00",
+    "ejemplo_salida": "R$ 80.36",
+    "unidad": "Unidad 04: Estructuras condicionales",
+    "unidadId": "unidad-04",
+    "temas": [
+      "Condicionales"
+    ],
+    "conceptos": [
+      "cálculo impositivo por tramos",
+      "condicionales progresivos"
+    ],
+    "dificultad": "basico",
+    "lenguaje": "python",
+    "codigo_inicial": "salario = float(input())\n",
+    "casos_prueba": [
+      {
+        "id": 1,
+        "entrada": "3002.00",
+        "salida_esperada": "R$ 80.36",
+        "visible": true,
+        "descripcion": "Tramo mixto 8% y 18%"
+      },
+      {
+        "id": 2,
+        "entrada": "1701.12",
+        "salida_esperada": "Isento",
+        "visible": true,
+        "descripcion": "Exento"
+      }
+    ],
+    "casos_prueba_ocultos": [
+      {
+        "id": 3,
+        "entrada": "4520.00",
+        "salida_esperada": "R$ 355.60",
+        "visible": false
+      }
+    ],
+    "pistas": [
+      "El impuesto no es directo sobre todo el monto, sino sobre cada porción que supere cada umbral.",
+      "Para 3002: los primeros 2000 son libres, los siguientes 1000 pagan 8% (80), y los restantes 2 pagan 18% (0.36) -> Total 80.36.",
+      "Caso de borde: Los tramos impositivos son marginales: solo el monto que excede cada umbral tributa a la tasa correspondiente. Si el salario es <= 2000, imprime 'Isento'."
+    ],
+    "retroalimentacion": {
+      "exito": "¡Gran dominio de la lógica progresiva de impuestos por tramos!",
+      "error_comun": "No apliques el porcentaje superior a todo el salario; aplícalo sólo a la porción de ese tramo.",
+      "pista_falla": "Calcula cada segmento por separado con min/max o if escalonados."
+    },
+    "fuente": "beecrowd",
+    "fuente_id": 1051,
+    "fuente_url": "https://judge.beecrowd.com/es/problems/view/1051",
+    "activo": true,
+    "orden": 27
+  },
+  {
+    "id": "prob-1052",
+    "numero": 1052,
+    "titulo": "Mes",
+    "slug": "mes",
+    "descripcion": "Lee un valor entero entre 1 y 12 e imprime el nombre del mes correspondiente en inglés con la primera letra en mayúscula.",
+    "entrada": "Un número entero entre 1 y 12.",
+    "salida": "El nombre del mes en inglés (ejemplo: January, February, etc.).",
+    "ejemplo_entrada": "1",
+    "ejemplo_salida": "January",
+    "unidad": "Unidad 04: Estructuras condicionales",
+    "unidadId": "unidad-04",
+    "temas": [
+      "Condicionales"
+    ],
+    "conceptos": [
+      "listas",
+      "indexación de listas",
+      "condicionales"
+    ],
+    "dificultad": "inicial",
+    "lenguaje": "python",
+    "codigo_inicial": "mes = int(input())\n",
+    "casos_prueba": [
+      {
+        "id": 1,
+        "entrada": "1",
+        "salida_esperada": "January",
+        "visible": true,
+        "descripcion": "Primer mes"
+      },
+      {
+        "id": 2,
+        "entrada": "7",
+        "salida_esperada": "July",
+        "visible": true,
+        "descripcion": "Mes intermedio"
+      }
+    ],
+    "casos_prueba_ocultos": [
+      {
+        "id": 3,
+        "entrada": "12",
+        "salida_esperada": "December",
+        "visible": false
+      }
+    ],
+    "pistas": [
+      "Puedes usar una lista de meses: meses = ['January', 'February', ...].",
+      "Ten en cuenta que las listas en Python comienzan en índice 0: meses[mes - 1].",
+      "Caso de borde: Los nombres de los meses deben imprimirse en inglés con la primera letra en mayúscula (ej: 'January', 'February', ..., 'December')."
+    ],
+    "retroalimentacion": {
+      "exito": "¡Excelente indexación!",
+      "error_comun": "Recuerda que el índice del mes es mes - 1.",
+      "pista_falla": "meses = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']."
+    },
+    "fuente": "beecrowd",
+    "fuente_id": 1052,
+    "fuente_url": "https://judge.beecrowd.com/es/problems/view/1052",
+    "activo": true,
+    "orden": 28
+  },
+  {
+    "id": "prob-1059",
+    "numero": 1059,
+    "titulo": "Números Pares",
+    "slug": "numeros-pares",
+    "descripcion": "Escribe un programa que imprima todos los números pares entre 1 y 100, inclusive.",
+    "entrada": "Este problema no contiene entradas.",
+    "salida": "Imprime todos los números pares entre 1 y 100, un número por línea.",
+    "ejemplo_entrada": "",
+    "ejemplo_salida": "2\n4\n6\n8\n...\n100",
+    "unidad": "Unidad 05: Estructuras de control repetitivas",
+    "unidadId": "unidad-05",
+    "temas": [
+      "Ciclos"
+    ],
+    "conceptos": [
+      "for",
+      "range() con paso 2",
+      "operador módulo %"
+    ],
+    "dificultad": "basico",
+    "lenguaje": "python",
+    "codigo_inicial": "# Imprime los pares del 1 al 100\n",
+    "casos_prueba": [
+      {
+        "id": 1,
+        "entrada": "",
+        "salida_esperada": "2\n4\n6\n8\n10\n12\n14\n16\n18\n20\n22\n24\n26\n28\n30\n32\n34\n36\n38\n40\n42\n44\n46\n48\n50\n52\n54\n56\n58\n60\n62\n64\n66\n68\n70\n72\n74\n76\n78\n80\n82\n84\n86\n88\n90\n92\n94\n96\n98\n100",
+        "visible": true,
+        "descripcion": "Secuencia completa de pares"
+      }
+    ],
+    "casos_prueba_ocultos": [
+      {
+        "id": 2,
+        "entrada": "",
+        "salida_esperada": "2\n4\n6\n8\n10\n12\n14\n16\n18\n20\n22\n24\n26\n28\n30\n32\n34\n36\n38\n40\n42\n44\n46\n48\n50\n52\n54\n56\n58\n60\n62\n64\n66\n68\n70\n72\n74\n76\n78\n80\n82\n84\n86\n88\n90\n92\n94\n96\n98\n100",
+        "visible": false
+      }
+    ],
+    "pistas": [
+      "Puedes usar for i in range(2, 101, 2): print(i).",
+      "O recorrer del 1 al 101 y comprobar if i % 2 == 0: print(i).",
+      "Detalle de implementación: Puedes usar range(2, 101, 2) para iterar directamente sobre los pares sin necesidad de comprobar if i % 2 == 0 en cada paso."
+    ],
+    "retroalimentacion": {
+      "exito": "¡Dominio total de ciclos for y range()!",
+      "error_comun": "Recuerda que en range(inicio, fin) el límite 'fin' no es inclusivo: usa 101 para incluir 100.",
+      "pista_falla": "range(2, 101, 2) genera directamente los pares."
+    },
+    "fuente": "beecrowd",
+    "fuente_id": 1059,
+    "fuente_url": "https://judge.beecrowd.com/es/problems/view/1059",
+    "activo": true,
+    "orden": 29
+  },
+  {
+    "id": "prob-1064",
+    "numero": 1064,
+    "titulo": "Positivos y Promedio",
+    "slug": "positivos-y-promedio",
+    "descripcion": "Lee 6 valores numéricos. Muestra cuántos de ellos son positivos y a continuación el promedio de dichos valores positivos con un decimal.",
+    "entrada": "Seis números (enteros o flotantes) en líneas separadas.",
+    "salida": "La primera línea debe ser `X valores positivos` y la segunda línea el promedio con una cifra decimal.",
+    "ejemplo_entrada": "7\n-5\n6\n-3.4\n4.6\n12",
+    "ejemplo_salida": "4 valores positivos\n7.4",
+    "unidad": "Unidad 05: Estructuras de control repetitivas",
+    "unidadId": "unidad-05",
+    "temas": [
+      "Ciclos",
+      "Condicionales"
+    ],
+    "conceptos": [
+      "acumuladores",
+      "contadores",
+      "filtrado de positivos"
+    ],
+    "dificultad": "basico",
+    "lenguaje": "python",
+    "codigo_inicial": "positivos = []\nfor _ in range(6):\n    val = float(input())\n    # Completa tu solución aquí\n",
+    "casos_prueba": [
+      {
+        "id": 1,
+        "entrada": "7\n-5\n6\n-3.4\n4.6\n12",
+        "salida_esperada": "4 valores positivos\n7.4",
+        "visible": true,
+        "descripcion": "Valores mixtos"
+      }
+    ],
+    "casos_prueba_ocultos": [
+      {
+        "id": 2,
+        "entrada": "1\n2\n3\n4\n5\n6",
+        "salida_esperada": "6 valores positivos\n3.5",
+        "visible": false
+      }
+    ],
+    "pistas": [
+      "Si val > 0: guárdalo en una lista o incrementa un contador y suma acumulada.",
+      "Promedio = suma / contador.",
+      "Formatea el promedio con :.1f."
+    ],
+    "retroalimentacion": {
+      "exito": "¡Excelente combinación de bucle for y acumuladores!",
+      "error_comun": "El promedio se calcula únicamente entre los valores positivos, no entre los 6.",
+      "pista_falla": "if val > 0: count += 1; suma += val."
+    },
+    "fuente": "beecrowd",
+    "fuente_id": 1064,
+    "fuente_url": "https://judge.beecrowd.com/es/problems/view/1064",
+    "activo": true,
+    "orden": 30
+  },
+  {
+    "id": "prob-1067",
+    "numero": 1067,
+    "titulo": "Números Impares",
+    "slug": "numeros-impares",
+    "descripcion": "Lee un valor entero X (1 <= X <= 1000). A continuación muestra los números impares desde 1 hasta X, un valor por línea, inclusive X si fuera el caso.",
+    "entrada": "Un número entero X.",
+    "salida": "Todos los números impares desde 1 hasta X, uno por línea.",
+    "ejemplo_entrada": "8",
+    "ejemplo_salida": "1\n3\n5\n7",
+    "unidad": "Unidad 05: Estructuras de control repetitivas",
+    "unidadId": "unidad-05",
+    "temas": [
+      "Ciclos"
+    ],
+    "conceptos": [
+      "for",
+      "generación de impares",
+      "range()"
+    ],
+    "dificultad": "basico",
+    "lenguaje": "python",
+    "codigo_inicial": "X = int(input())\n",
+    "casos_prueba": [
+      {
+        "id": 1,
+        "entrada": "8",
+        "salida_esperada": "1\n3\n5\n7",
+        "visible": true,
+        "descripcion": "X par"
+      },
+      {
+        "id": 2,
+        "entrada": "11",
+        "salida_esperada": "1\n3\n5\n7\n9\n11",
+        "visible": true,
+        "descripcion": "X impar inclusivo"
+      }
+    ],
+    "casos_prueba_ocultos": [
+      {
+        "id": 3,
+        "entrada": "1",
+        "salida_esperada": "1",
+        "visible": false
+      }
+    ],
+    "pistas": [
+      "Puedes usar for i in range(1, X + 1, 2): print(i).",
+      "Caso de borde: Si el valor ingresado es par, el ciclo imprimirá hasta X-1. Si es impar, el último número impreso será exactamente X.",
+      "Detalle de implementación: Presta atención al tipo de dato (int vs float) y verifica que no queden impresiones residuales o textos de depuración."
+    ],
+    "retroalimentacion": {
+      "exito": "¡Perfecto manejo de secuencias impares!",
+      "error_comun": "Asegúrate de que el rango llegue hasta X + 1 para incluir X cuando sea impar.",
+      "pista_falla": "range(1, X + 1, 2)."
+    },
+    "fuente": "beecrowd",
+    "fuente_id": 1067,
+    "fuente_url": "https://judge.beecrowd.com/es/problems/view/1067",
+    "activo": true,
+    "orden": 31
+  },
+  {
+    "id": "prob-1070",
+    "numero": 1070,
+    "titulo": "Seis Números Impares",
+    "slug": "seis-numeros-impares",
+    "descripcion": "Lee un valor entero X. Luego muestra los 6 números impares consecutivos a partir de X, un valor por línea, inclusive X si fuera impar.",
+    "entrada": "Un valor entero positivo.",
+    "salida": "Seis números impares consecutivos a partir de X.",
+    "ejemplo_entrada": "9",
+    "ejemplo_salida": "9\n11\n13\n15\n17\n19",
+    "unidad": "Unidad 05: Estructuras de control repetitivas",
+    "unidadId": "unidad-05",
+    "temas": [
+      "Ciclos"
+    ],
+    "conceptos": [
+      "while",
+      "contador de repeticiones",
+      "impares"
+    ],
+    "dificultad": "basico",
+    "lenguaje": "python",
+    "codigo_inicial": "X = int(input())\n",
+    "casos_prueba": [
+      {
+        "id": 1,
+        "entrada": "9",
+        "salida_esperada": "9\n11\n13\n15\n17\n19",
+        "visible": true,
+        "descripcion": "Inicia en impar"
+      },
+      {
+        "id": 2,
+        "entrada": "8",
+        "salida_esperada": "9\n11\n13\n15\n17\n19",
+        "visible": true,
+        "descripcion": "Inicia en par"
+      }
+    ],
+    "casos_prueba_ocultos": [
+      {
+        "id": 3,
+        "entrada": "1",
+        "salida_esperada": "1\n3\n5\n7\n9\n11",
+        "visible": false
+      }
+    ],
+    "pistas": [
+      "Si X es par, el primer impar es X + 1.",
+      "Luego puedes generar 6 impares sumando de 2 en 2.",
+      "Detalle de implementación: Si el número inicial X es par, el primer impar es X + 1. A partir de allí, genera los siguientes 5 sumando 2 sucesivamente."
+    ],
+    "retroalimentacion": {
+      "exito": "¡Gran trabajo generando secuencias consecutivas!",
+      "error_comun": "Asegúrate de imprimir exactamente 6 valores.",
+      "pista_falla": "if X % 2 == 0: X += 1; for i in range(6): print(X + i*2)."
+    },
+    "fuente": "beecrowd",
+    "fuente_id": 1070,
+    "fuente_url": "https://judge.beecrowd.com/es/problems/view/1070",
+    "activo": true,
+    "orden": 32
+  },
+  {
+    "id": "prob-1071",
+    "numero": 1071,
+    "titulo": "Suma de Números Consecutivos Impares I",
+    "slug": "suma-de-numeros-consecutivos-impares-i",
+    "descripcion": "Lee dos valores enteros X e Y. Calcula y muestra la suma de todos los números impares existentes entre ellos (estrictamente entre ellos, sin incluir a X ni a Y).",
+    "entrada": "Dos números enteros X e Y en líneas separadas.",
+    "salida": "La suma de los números impares estrictamente entre X e Y.",
+    "ejemplo_entrada": "6\n-5",
+    "ejemplo_salida": "5",
+    "unidad": "Unidad 05: Estructuras de control repetitivas",
+    "unidadId": "unidad-05",
+    "temas": [
+      "Ciclos"
+    ],
+    "conceptos": [
+      "rango abierto",
+      "min() y max()",
+      "acumulación con for"
+    ],
+    "dificultad": "basico",
+    "lenguaje": "python",
+    "codigo_inicial": "x = int(input())\ny = int(input())\n",
+    "casos_prueba": [
+      {
+        "id": 1,
+        "entrada": "6\n-5",
+        "salida_esperada": "5",
+        "visible": true,
+        "descripcion": "Uno positivo y otro negativo"
+      },
+      {
+        "id": 2,
+        "entrada": "15\n12",
+        "salida_esperada": "13",
+        "visible": true,
+        "descripcion": "Positivos cercanos"
+      }
+    ],
+    "casos_prueba_ocultos": [
+      {
+        "id": 3,
+        "entrada": "12\n12",
+        "salida_esperada": "0",
+        "visible": false
+      }
+    ],
+    "pistas": [
+      "Primero halla el menor y mayor: inicio = min(x, y) + 1, fin = max(x, y).",
+      "Recorre for n in range(inicio, fin): si n % 2 != 0 suma n.",
+      "Caso de borde: Los números X e Y pueden venir en orden descendente (X > Y). Usa min(X, Y) y max(X, Y) y excluye los extremos de la suma iterando en range(min + 1, max)."
+    ],
+    "retroalimentacion": {
+      "exito": "¡Excelente! Los límites estrictos son clave en problemas de algoritmos.",
+      "error_comun": "Recuerda no incluir ni a X ni a Y en la suma.",
+      "pista_falla": "range(min(x,y) + 1, max(x,y))."
+    },
+    "fuente": "beecrowd",
+    "fuente_id": 1071,
+    "fuente_url": "https://judge.beecrowd.com/es/problems/view/1071",
+    "activo": true,
+    "orden": 33
+  },
+  {
+    "id": "prob-1073",
+    "numero": 1073,
+    "titulo": "Cuadrado de un Par",
+    "slug": "cuadrado-de-un-par",
+    "descripcion": "Lee un valor entero N (5 < N < 2000). Muestra el cuadrado de cada uno de los valores pares desde 1 hasta N, inclusive si N fuera par.",
+    "entrada": "Un número entero N.",
+    "salida": "Para cada número par, muestra `X^2 = Y`.",
+    "ejemplo_entrada": "6",
+    "ejemplo_salida": "2^2 = 4\n4^2 = 16\n6^2 = 36",
+    "unidad": "Unidad 05: Estructuras de control repetitivas",
+    "unidadId": "unidad-05",
+    "temas": [
+      "Ciclos"
+    ],
+    "conceptos": [
+      "for",
+      "potencias",
+      "formato de expresiones"
+    ],
+    "dificultad": "basico",
+    "lenguaje": "python",
+    "codigo_inicial": "N = int(input())\n",
+    "casos_prueba": [
+      {
+        "id": 1,
+        "entrada": "6",
+        "salida_esperada": "2^2 = 4\n4^2 = 16\n6^2 = 36",
+        "visible": true,
+        "descripcion": "N = 6"
+      }
+    ],
+    "casos_prueba_ocultos": [
+      {
+        "id": 2,
+        "entrada": "4",
+        "salida_esperada": "2^2 = 4\n4^2 = 16",
+        "visible": false
+      }
+    ],
+    "pistas": [
+      "Recorre for i in range(2, N + 1, 2):",
+      "Imprime print(f\"{i}^2 = {i ** 2}\").",
+      "Detalle de implementación: Itera con range(2, N + 1, 2) y muestra cada línea con el formato exacto f'{i}^2 = {i**2}'."
+    ],
+    "retroalimentacion": {
+      "exito": "¡Muy bien! Has impreso expresiones cuadráticas paso a paso.",
+      "error_comun": "Revisa los espacios alrededor del igual: '{i}^2 = {i**2}'.",
+      "pista_falla": "range(2, N + 1, 2)."
+    },
+    "fuente": "beecrowd",
+    "fuente_id": 1073,
+    "fuente_url": "https://judge.beecrowd.com/es/problems/view/1073",
+    "activo": true,
+    "orden": 34
+  },
+  {
+    "id": "prob-1078",
+    "numero": 1078,
+    "titulo": "Tablas de Multiplicar",
+    "slug": "tablas-de-multiplicar",
+    "descripcion": "Lee un valor entero N (2 < N < 1000). A continuación, muestra la tabla de multiplicar de N del 1 al 10 en el formato especificado.",
+    "entrada": "Un número entero N.",
+    "salida": "La tabla de multiplicar en el formato `1 x N = N ... 10 x N = 10*N`.",
+    "ejemplo_entrada": "140",
+    "ejemplo_salida": "1 x 140 = 140\n2 x 140 = 280\n3 x 140 = 420\n4 x 140 = 560\n5 x 140 = 700\n6 x 140 = 840\n7 x 140 = 980\n8 x 140 = 1120\n9 x 140 = 1260\n10 x 140 = 1400",
+    "unidad": "Unidad 05: Estructuras de control repetitivas",
+    "unidadId": "unidad-05",
+    "temas": [
+      "Ciclos"
+    ],
+    "conceptos": [
+      "for",
+      "tablas aritméticas",
+      "range(1, 11)"
+    ],
+    "dificultad": "inicial",
+    "lenguaje": "python",
+    "codigo_inicial": "N = int(input())\n",
+    "casos_prueba": [
+      {
+        "id": 1,
+        "entrada": "140",
+        "salida_esperada": "1 x 140 = 140\n2 x 140 = 280\n3 x 140 = 420\n4 x 140 = 560\n5 x 140 = 700\n6 x 140 = 840\n7 x 140 = 980\n8 x 140 = 1120\n9 x 140 = 1260\n10 x 140 = 1400",
+        "visible": true,
+        "descripcion": "Tabla del 140"
+      }
+    ],
+    "casos_prueba_ocultos": [
+      {
+        "id": 2,
+        "entrada": "5",
+        "salida_esperada": "1 x 5 = 5\n2 x 5 = 10\n3 x 5 = 15\n4 x 5 = 20\n5 x 5 = 25\n6 x 5 = 30\n7 x 5 = 35\n8 x 5 = 40\n9 x 5 = 45\n10 x 5 = 50",
+        "visible": false
+      }
+    ],
+    "pistas": [
+      "Usa for i in range(1, 11):",
+      "Imprime f\"{i} x {N} = {i * N}\".",
+      "Detalle de implementación: El ciclo debe ir de 1 a 10 inclusive: for i in range(1, 11). Formatea como f'{i} x {N} = {i * N}'."
+    ],
+    "retroalimentacion": {
+      "exito": "¡Tabla de multiplicar impecable!",
+      "error_comun": "Ten cuidado con usar 'x' en minúscula y con los espacios.",
+      "pista_falla": "for i in range(1, 11): print(f'{i} x {N} = {i*N}')."
+    },
+    "fuente": "beecrowd",
+    "fuente_id": 1078,
+    "fuente_url": "https://judge.beecrowd.com/es/problems/view/1078",
+    "activo": true,
+    "orden": 35
+  },
+  {
+    "id": "prob-1080",
+    "numero": 1080,
+    "titulo": "El Más Alto y Su Posición",
+    "slug": "el-mas-alto-y-su-posicion",
+    "descripcion": "Lee 100 números enteros (o una lista de valores). Encuentra e imprime el mayor valor leído y la posición en que fue leído (1-indexed).",
+    "entrada": "Valores enteros en líneas separadas.",
+    "salida": "El valor más alto y su posición en la línea siguiente.",
+    "ejemplo_entrada": "2\n113\n45\n34565\n6\n8",
+    "ejemplo_salida": "34565\n4",
+    "unidad": "Unidad 05: Estructuras de control repetitivas",
+    "unidadId": "unidad-05",
+    "temas": [
+      "Ciclos",
+      "Listas"
+    ],
+    "conceptos": [
+      "búsqueda lineal",
+      "máximo con índice",
+      "enumerate"
+    ],
+    "dificultad": "basico",
+    "lenguaje": "python",
+    "codigo_inicial": "# Lee los números e identifica el máximo y su posición\n",
+    "casos_prueba": [
+      {
+        "id": 1,
+        "entrada": "2\n113\n45\n34565\n6\n8",
+        "salida_esperada": "34565\n4",
+        "visible": true,
+        "descripcion": "Máximo en posición 4"
+      }
+    ],
+    "casos_prueba_ocultos": [
+      {
+        "id": 2,
+        "entrada": "500\n10\n20",
+        "salida_esperada": "500\n1",
+        "visible": false
+      }
+    ],
+    "pistas": [
+      "Mantén dos variables: mayor = -1 y pos_mayor = -1.",
+      "Al leer cada valor en la posición i (1-indexed), si val > mayor actualiza mayor y pos_mayor = i.",
+      "Caso de borde: Inicializa el valor mayor con un número menor al mínimo posible (o lee el primer número como referencia inicial en posición 1). Las posiciones son 1-indexadas (1 a 100)."
+    ],
+    "retroalimentacion": {
+      "exito": "¡Algoritmo de búsqueda de máximo resuelto con éxito!",
+      "error_comun": "Recuerda que la posición solicitada es 1-indexed (inicia en 1).",
+      "pista_falla": "mayor = -1; pos = 0."
+    },
+    "fuente": "beecrowd",
+    "fuente_id": 1080,
+    "fuente_url": "https://judge.beecrowd.com/es/problems/view/1080",
+    "activo": true,
+    "orden": 36
+  },
+  {
+    "id": "prob-1101",
+    "numero": 1101,
+    "titulo": "Secuencia de Números y Suma",
+    "slug": "secuencia-de-numeros-y-suma",
+    "descripcion": "Lee un conjunto de parejas de valores M y N. Para cada pareja, muestra la secuencia de enteros en orden ascendente entre el menor y el mayor valor de la pareja, seguido del texto `Sum=X`, donde X es la suma de todos los números de la secuencia. El programa se detiene cuando M o N sea menor o igual a cero.",
+    "entrada": "Cada línea contiene dos números enteros M y N. La última línea contiene al menos un número menor o igual a 0.",
+    "salida": "Para cada pareja válida, imprime la secuencia de enteros separados por un espacio seguido de `Sum=total`.",
+    "ejemplo_entrada": "5 2\n6 3\n5 0",
+    "ejemplo_salida": "2 3 4 5 Sum=14\n3 4 5 6 Sum=18",
+    "unidad": "Unidad 05: Estructuras de control repetitivas",
+    "unidadId": "unidad-05",
+    "temas": [
+      "Ciclos"
+    ],
+    "conceptos": [
+      "while con centinela",
+      "ordenamiento de pareja",
+      "acumulación"
+    ],
+    "dificultad": "basico",
+    "lenguaje": "python",
+    "codigo_inicial": "while True:\n    try:\n        m, n = map(int, input().split())\n        if m <= 0 or n <= 0:\n            break\n        # Completa la solución aquí\n    except EOFError:\n        break\n",
+    "casos_prueba": [
+      {
+        "id": 1,
+        "entrada": "5 2\n6 3\n5 0",
+        "salida_esperada": "2 3 4 5 Sum=14\n3 4 5 6 Sum=18",
+        "visible": true,
+        "descripcion": "Dos parejas y centinela"
+      }
+    ],
+    "casos_prueba_ocultos": [
+      {
+        "id": 2,
+        "entrada": "1 1\n0 5",
+        "salida_esperada": "1 Sum=1",
+        "visible": false
+      }
+    ],
+    "pistas": [
+      "Usa un ciclo while True: si m <= 0 or n <= 0: break.",
+      "menor, mayor = min(m, n), max(m, n).",
+      "nums = list(range(menor, mayor + 1)).",
+      "print(' '.join(map(str, nums)) + f' Sum={sum(nums)}')."
+    ],
+    "retroalimentacion": {
+      "exito": "¡Gran manejo de bucles con condición de parada centinela!",
+      "error_comun": "Ten cuidado con los espacios: 'Sum=' va pegado a la suma sin espacio tras el igual.",
+      "pista_falla": "if m <= 0 or n <= 0: break."
+    },
+    "fuente": "beecrowd",
+    "fuente_id": 1101,
+    "fuente_url": "https://judge.beecrowd.com/es/problems/view/1101",
+    "activo": true,
+    "orden": 37
+  },
+  {
+    "id": "prob-1115",
+    "numero": 1115,
+    "titulo": "Cuadrante",
+    "slug": "cuadrante",
+    "descripcion": "Escribe un programa para leer las coordenadas (X, Y) de una cantidad indeterminada de puntos en el sistema cartesiano. Para cada punto, muestra el cuadrante al que pertenece: `primeiro`, `segundo`, `terceiro` o `quarto`. El programa se termina cuando al menos una de las dos coordenadas sea NULA (0).",
+    "entrada": "Contiene varias líneas. Cada línea contiene dos enteros X e Y.",
+    "salida": "Para cada punto, muestra el cuadrante correspondiente.",
+    "ejemplo_entrada": "2 2\n3 -2\n-8 -1\n-7 1\n0 2",
+    "ejemplo_salida": "primeiro\nquarto\nterceiro\nsegundo",
+    "unidad": "Unidad 04: Estructuras condicionales",
+    "unidadId": "unidad-04",
+    "temas": [
+      "Condicionales",
+      "Ciclos"
+    ],
+    "conceptos": [
+      "plano cartesiano",
+      "cuadrantes",
+      "bucle con condición de salida"
+    ],
+    "dificultad": "basico",
+    "lenguaje": "python",
+    "codigo_inicial": "while True:\n    x, y = map(int, input().split())\n    if x == 0 or y == 0:\n        break\n    # Clasifica el cuadrante\n",
+    "casos_prueba": [
+      {
+        "id": 1,
+        "entrada": "2 2\n3 -2\n-8 -1\n-7 1\n0 2",
+        "salida_esperada": "primeiro\nquarto\nterceiro\nsegundo",
+        "visible": true,
+        "descripcion": "Puntos en los 4 cuadrantes"
+      }
+    ],
+    "casos_prueba_ocultos": [
+      {
+        "id": 2,
+        "entrada": "1 5\n-1 -5\n3 0",
+        "salida_esperada": "primeiro\nterceiro",
+        "visible": false
+      }
+    ],
+    "pistas": [
+      "Q1: X > 0 y Y > 0 ('primeiro').",
+      "Q2: X < 0 y Y > 0 ('segundo').",
+      "Q3: X < 0 y Y < 0 ('terceiro').",
+      "Q4: X > 0 y Y < 0 ('quarto')."
+    ],
+    "retroalimentacion": {
+      "exito": "¡Geometría cartesiana y condicionales resueltos con precisión!",
+      "error_comun": "Si X == 0 o Y == 0, debes terminar el ciclo sin imprimir nada.",
+      "pista_falla": "if x > 0 and y > 0: print('primeiro')."
+    },
+    "fuente": "beecrowd",
+    "fuente_id": 1115,
+    "fuente_url": "https://judge.beecrowd.com/es/problems/view/1115",
+    "activo": true,
+    "orden": 38
+  },
+  {
+    "id": "prob-1146",
+    "numero": 1146,
+    "titulo": "Secuencias Crecientes",
+    "slug": "secuencias-crecientes",
+    "descripcion": "Tu programa debe leer un número entero X de forma repetida. Para cada X leído, debe imprimir la secuencia de números enteros desde 1 hasta X en una sola línea, separados por un espacio. El programa se detiene cuando X sea igual a 0.",
+    "entrada": "Varios enteros, uno por línea. El último es 0.",
+    "salida": "Para cada X, imprime los enteros de 1 a X separados por espacio. No debe haber espacio al final de la línea.",
+    "ejemplo_entrada": "5\n10\n3\n0",
+    "ejemplo_salida": "1 2 3 4 5\n1 2 3 4 5 6 7 8 9 10\n1 2 3",
+    "unidad": "Unidad 05: Estructuras de control repetitivas",
+    "unidadId": "unidad-05",
+    "temas": [
+      "Ciclos"
+    ],
+    "conceptos": [
+      "join()",
+      "formateo de secuencias",
+      "bucle while"
+    ],
+    "dificultad": "basico",
+    "lenguaje": "python",
+    "codigo_inicial": "while True:\n    X = int(input())\n    if X == 0:\n        break\n    print(\" \".join(str(i) for i in range(1, X + 1)))\n",
+    "casos_prueba": [
+      {
+        "id": 1,
+        "entrada": "5\n10\n3\n0",
+        "salida_esperada": "1 2 3 4 5\n1 2 3 4 5 6 7 8 9 10\n1 2 3",
+        "visible": true,
+        "descripcion": "Secuencias estándar"
+      }
+    ],
+    "casos_prueba_ocultos": [
+      {
+        "id": 2,
+        "entrada": "1\n0",
+        "salida_esperada": "1",
+        "visible": false
+      }
+    ],
+    "pistas": [
+      "Usa ' '.join(str(i) for i in range(1, X + 1)) para garantizar que no haya espacio sobrante al final.",
+      "Detén el bucle al recibir 0.",
+      "Caso de borde: La secuencia para cada valor de X debe terminar con un salto de línea sin espacio sobrante al final. Cuando se lee un 0, el programa debe terminar inmediatamente."
+    ],
+    "retroalimentacion": {
+      "exito": "¡Excelente técnica usando ' '.join() para evitar espacios residuales al final de línea!",
+      "error_comun": "Evita imprimir print(i, end=' ') en el último elemento para no dejar espacio extra.",
+      "pista_falla": "print(' '.join(str(i) for i in range(1, X + 1)))."
+    },
+    "fuente": "beecrowd",
+    "fuente_id": 1146,
+    "fuente_url": "https://judge.beecrowd.com/es/problems/view/1146",
+    "activo": true,
+    "orden": 39
+  },
+  {
+    "id": "prob-1151",
+    "numero": 1151,
+    "titulo": "Fibonacci Fácil",
+    "slug": "fibonacci-facil",
+    "descripcion": "La siguiente secuencia de números 0, 1, 1, 2, 3, 5, 8, 13, 21... se conoce como la serie de Fibonacci. En ella, cada término a partir del tercero es la suma de los dos anteriores. Escribe un programa que lea un entero N (0 < N < 46) e imprima los primeros N términos de la secuencia en una sola línea, separados por un espacio.",
+    "entrada": "Un número entero N.",
+    "salida": "Los primeros N números de Fibonacci separados por un espacio.",
+    "ejemplo_entrada": "5",
+    "ejemplo_salida": "0 1 1 2 3",
+    "unidad": "Unidad 05: Estructuras de control repetitivas",
+    "unidadId": "unidad-05",
+    "temas": [
+      "Ciclos"
+    ],
+    "conceptos": [
+      "sucesión de Fibonacci",
+      "actualización de variables a, b = b, a+b",
+      "secuencias"
+    ],
+    "dificultad": "intermedio",
+    "lenguaje": "python",
+    "codigo_inicial": "N = int(input())\nfib = [0, 1]\n",
+    "casos_prueba": [
+      {
+        "id": 1,
+        "entrada": "5",
+        "salida_esperada": "0 1 1 2 3",
+        "visible": true,
+        "descripcion": "Primeros 5 términos"
+      },
+      {
+        "id": 2,
+        "entrada": "8",
+        "salida_esperada": "0 1 1 2 3 5 8 13",
+        "visible": true,
+        "descripcion": "Primeros 8 términos"
+      }
+    ],
+    "casos_prueba_ocultos": [
+      {
+        "id": 3,
+        "entrada": "2",
+        "salida_esperada": "0 1",
+        "visible": false
+      }
+    ],
+    "pistas": [
+      "Puedes generar la lista iterativamente: while len(fib) < N: fib.append(fib[-1] + fib[-2]).",
+      "Muestra con print(' '.join(map(str, fib[:N]))).",
+      "Caso de borde y formato: Los números deben estar separados por un espacio, pero el último número de la serie NO debe tener un espacio residual a la derecha."
+    ],
+    "retroalimentacion": {
+      "exito": "¡Magnífico! La serie de Fibonacci es un clásico fundamental de la computación.",
+      "error_comun": "Asegúrate de no incluir espacios al final de la línea.",
+      "pista_falla": "a, b = 0, 1; genera término a término sumando los dos anteriores."
+    },
+    "fuente": "beecrowd",
+    "fuente_id": 1151,
+    "fuente_url": "https://judge.beecrowd.com/es/problems/view/1151",
+    "activo": true,
+    "orden": 40
+  },
+  {
+    "id": "prob-1157",
+    "numero": 1157,
+    "titulo": "Divisores I",
+    "slug": "divisores-i",
+    "descripcion": "Lee un número entero N e imprime todos sus divisores en orden ascendente, un divisor por línea.",
+    "entrada": "Un número entero N.",
+    "salida": "Todos los divisores de N en orden ascendente.",
+    "ejemplo_entrada": "6",
+    "ejemplo_salida": "1\n2\n3\n6",
+    "unidad": "Unidad 05: Estructuras de control repetitivas",
+    "unidadId": "unidad-05",
+    "temas": [
+      "Ciclos"
+    ],
+    "conceptos": [
+      "divisores",
+      "for",
+      "operador módulo %"
+    ],
+    "dificultad": "basico",
+    "lenguaje": "python",
+    "codigo_inicial": "N = int(input())\nfor i in range(1, N + 1):\n    if N % i == 0:\n        print(i)\n",
+    "casos_prueba": [
+      {
+        "id": 1,
+        "entrada": "6",
+        "salida_esperada": "1\n2\n3\n6",
+        "visible": true,
+        "descripcion": "Divisores de 6"
+      },
+      {
+        "id": 2,
+        "entrada": "24",
+        "salida_esperada": "1\n2\n3\n4\n6\n8\n12\n24",
+        "visible": true,
+        "descripcion": "Divisores de 24"
+      }
+    ],
+    "casos_prueba_ocultos": [
+      {
+        "id": 3,
+        "entrada": "7",
+        "salida_esperada": "1\n7",
+        "visible": false
+      }
+    ],
+    "pistas": [
+      "Un número i es divisor de N si N % i == 0.",
+      "Recorre desde 1 hasta N inclusive.",
+      "Detalle de implementación: Un número i es divisor de N si N % i == 0. Itera desde 1 hasta N inclusive imprimiendo cada divisor en una nueva línea."
+    ],
+    "retroalimentacion": {
+      "exito": "¡Cálculo de divisores perfecto!",
+      "error_comun": "Recuerda incluir tanto el 1 como el propio N.",
+      "pista_falla": "if N % i == 0: print(i)."
+    },
+    "fuente": "beecrowd",
+    "fuente_id": 1157,
+    "fuente_url": "https://judge.beecrowd.com/es/problems/view/1157",
+    "activo": true,
+    "orden": 41
+  },
+  {
+    "id": "prob-1435",
+    "numero": 1435,
+    "titulo": "Matriz Cuadrada I",
+    "slug": "matriz-cuadrada-i",
+    "descripcion": "Escribe un programa que lea un entero N (0 <= N <= 100) de forma repetida. Para cada N, construye e imprime una matriz de tamaño N x N donde el borde exterior contiene 1s, el siguiente anillo interior contiene 2s, y así sucesivamente hacia el centro. Cada número debe formatearse ocupando 3 espacios justificado a la derecha (`%3d`), con un espacio entre columnas y una línea en blanco tras cada matriz. El programa termina con N = 0.",
+    "entrada": "Varios enteros N (uno por línea). Finaliza con 0.",
+    "salida": "La matriz concéntrica correspondiente formateada adecuadamente.",
+    "ejemplo_entrada": "1\n2\n3\n0",
+    "ejemplo_salida": "  1\n\n  1   2\n  1   2\n... (con formato %3d)",
+    "unidad": "Unidad 10: Estructuras de datos",
+    "unidadId": "unidad-10",
+    "temas": [
+      "Matrices",
+      "Ciclos"
+    ],
+    "conceptos": [
+      "matrices 2D",
+      "distancia a los bordes min(i, j, n-1-i, n-1-j)",
+      "formateo %3d"
+    ],
+    "dificultad": "intermedio",
+    "lenguaje": "python",
+    "codigo_inicial": "# Matriz cuadrada concéntrica\nwhile True:\n    n = int(input())\n    if n == 0: break\n    for i in range(n):\n        fila = []\n        for j in range(n):\n            val = min(i, j, n - 1 - i, n - 1 - j) + 1\n            fila.append(f\"{val:3d}\")\n        print(\" \".join(fila))\n    print()\n",
+    "casos_prueba": [
+      {
+        "id": 1,
+        "entrada": "1\n2\n0",
+        "salida_esperada": "  1\n\n  1   1\n  1   1\n",
+        "visible": true,
+        "descripcion": "Matrices N=1 y N=2"
+      }
+    ],
+    "casos_prueba_ocultos": [
+      {
+        "id": 2,
+        "entrada": "3\n0",
+        "salida_esperada": "  1   1   1\n  1   2   1\n  1   1   1\n",
+        "visible": false
+      }
+    ],
+    "pistas": [
+      "El valor de cada celda (i, j) es min(i, j, n-1-i, n-1-j) + 1.",
+      "Formatea cada celda con f'{val:3d}'.",
+      "Separa cada fila con un espacio entre números y deja una línea vacía tras cada matriz."
+    ],
+    "retroalimentacion": {
+      "exito": "¡Fascinante dominio de matrices bidimensionales y cálculo concéntrico!",
+      "error_comun": "Recuerda el formateo de 3 caracteres por número: f'{val:3d}'.",
+      "pista_falla": "val = min(i, j, n - 1 - i, n - 1 - j) + 1."
+    },
+    "fuente": "beecrowd",
+    "fuente_id": 1435,
+    "fuente_url": "https://judge.beecrowd.com/es/problems/view/1435",
+    "activo": true,
+    "orden": 42
+  },
+  {
+    "id": "prob-1557",
+    "numero": 1557,
+    "titulo": "Matriz Cuadrada III",
+    "slug": "matriz-cuadrada-iii",
+    "descripcion": "Escribe un programa que lea un entero N (0 <= N <= 15). Para cada N, construye una matriz cuadrada de tamaño N x N donde cada elemento en la fila i y columna j sea $2^{i+j}$. Los números de cada columna deben justificarse a la derecha usando un ancho T igual a la cantidad de dígitos del número mayor de la matriz ($2^{2N-2}$). Cada matriz debe estar separada por una línea en blanco. El programa termina con N = 0.",
+    "entrada": "Varios enteros N (uno por línea). Finaliza con N = 0.",
+    "salida": "La matriz de potencias de 2 formateada con el ancho correspondiente a su elemento mayor.",
+    "ejemplo_entrada": "1\n2\n3\n0",
+    "ejemplo_salida": "1\n\n 1  2\n 2  4\n\n  1   2   4\n  2   4   8\n  4   8  16\n",
+    "unidad": "Unidad 10: Estructuras de datos",
+    "unidadId": "unidad-10",
+    "temas": [
+      "Matrices",
+      "Ciclos",
+      "Algoritmos"
+    ],
+    "conceptos": [
+      "potencias de 2 (2**(i+j))",
+      "ancho dinámico len(str(max))",
+      "matrices"
+    ],
+    "dificultad": "desafio",
+    "lenguaje": "python",
+    "codigo_inicial": "# Matriz de potencias de 2 con ancho dinámico T\nwhile True:\n    n = int(input())\n    if n == 0: break\n    max_val = 2 ** (2 * n - 2)\n    T = len(str(max_val))\n    for i in range(n):\n        fila = [f\"{2**(i+j):{T}d}\" for j in range(n)]\n        print(\" \".join(fila))\n    print()\n",
+    "casos_prueba": [
+      {
+        "id": 1,
+        "entrada": "1\n2\n3\n0",
+        "salida_esperada": "1\n\n 1  2\n 2  4\n\n  1   2   4\n  2   4   8\n  4   8  16\n",
+        "visible": true,
+        "descripcion": "Matrices N=1, N=2 y N=3"
+      }
+    ],
+    "casos_prueba_ocultos": [
+      {
+        "id": 2,
+        "entrada": "4\n0",
+        "salida_esperada": "   1   2   4   8\n   2   4   8  16\n   4   8  16  32\n   8  16  32  64\n",
+        "visible": false
+      }
+    ],
+    "pistas": [
+      "El valor mayor de la matriz es 2 ** (2*n - 2).",
+      "El ancho T es len(str(mayor)).",
+      "Usa f\"{val:{T}d}\" para formatear cada celda con ancho dinámico T."
+    ],
+    "retroalimentacion": {
+      "exito": "¡Desafío completado! Has implementado matrices con formato dinámico avanzado.",
+      "error_comun": "El ancho T cambia según N; asegúrate de calcularlo para cada matriz.",
+      "pista_falla": "T = len(str(2 ** (2 * n - 2)))."
+    },
+    "fuente": "beecrowd",
+    "fuente_id": 1557,
+    "fuente_url": "https://judge.beecrowd.com/es/problems/view/1557",
+    "activo": true,
+    "orden": 43
+  }
+];
+
+function getProblemById(idOrNumber) {
+  if (!idOrNumber) return null;
+  const str = String(idOrNumber).trim();
+  const num = parseInt(str.replace('prob-', ''));
+  return MARATON_PROBLEMS.find(p => p.id === str || p.numero === num || p.slug === str) || null;
+}
+
+function getProblemsByTheme(theme) {
+  if (!theme || theme === 'Todos') return MARATON_PROBLEMS;
+  return MARATON_PROBLEMS.filter(p => p.temas.includes(theme));
+}
+
+function getProblemsByDifficulty(diff) {
+  if (!diff || diff === 'Todos') return MARATON_PROBLEMS;
+  return MARATON_PROBLEMS.filter(p => p.dificultad === diff);
+}
+
+function getProblemsByUnit(unitId) {
+  if (!unitId || unitId === 'Todas') return MARATON_PROBLEMS;
+  return MARATON_PROBLEMS.filter(p => p.unidadId === unitId);
+}
+
+/**
+ * GESTOR DE ESTADO Y PROGRESO - MARATÓN: SOLUCIÓN DE PROBLEMAS
+ * Persistencia en localStorage desacoplada del progreso de lecciones.
+ */
+
+const STORAGE_KEY_MARATON = 'leogaviria_maraton_progress';
+
+function getMaratonState() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY_MARATON);
+    return raw ? JSON.parse(raw) : {};
+  } catch (e) {
+    console.error('Error al leer estado de Maratón:', e);
+    return {};
+  }
+}
+
+function saveMaratonState(state) {
+  try {
+    localStorage.setItem(STORAGE_KEY_MARATON, JSON.stringify(state));
+  } catch (e) {
+    console.error('Error al guardar estado de Maratón:', e);
+  }
+}
+
+function getProblemRecord(problemId) {
+  const state = getMaratonState();
+  return state[problemId] || {
+    status: 'no_iniciado', // 'no_iniciado' | 'en_progreso' | 'resuelto'
+    intentos: 0,
+    codigo_guardado: '',
+    fecha_resolucion: null,
+    ultimo_intento: null,
+    casos_pasados: 0,
+    total_casos: 0
+  };
+}
+
+function saveDraftCode(problemId, code) {
+  const state = getMaratonState();
+  if (!state[problemId]) {
+    state[problemId] = {
+      status: 'en_progreso',
+      intentos: 0,
+      codigo_guardado: code,
+      fecha_resolucion: null,
+      ultimo_intento: new Date().toISOString(),
+      casos_pasados: 0,
+      total_casos: 0
+    };
+  } else {
+    state[problemId].codigo_guardado = code;
+    state[problemId].ultimo_intento = new Date().toISOString();
+    if (state[problemId].status === 'no_iniciado') {
+      state[problemId].status = 'en_progreso';
+    }
+  }
+  saveMaratonState(state);
+}
+
+function recordProblemEvaluation(problemId, code, evaluationResult) {
+  const state = getMaratonState();
+  const prev = state[problemId] || {
+    status: 'no_iniciado',
+    intentos: 0,
+    codigo_guardado: '',
+    fecha_resolucion: null,
+    ultimo_intento: null,
+    casos_pasados: 0,
+    total_casos: 0
+  };
+
+  const isSuccess = evaluationResult.allPassed;
+  const newStatus = isSuccess ? 'resuelto' : 'en_progreso';
+  const now = new Date().toISOString();
+
+  state[problemId] = {
+    ...prev,
+    status: prev.status === 'resuelto' ? 'resuelto' : newStatus,
+    intentos: (prev.intentos || 0) + 1,
+    codigo_guardado: code,
+    ultimo_intento: now,
+    fecha_resolucion: isSuccess && !prev.fecha_resolucion ? now : prev.fecha_resolucion,
+    casos_pasados: Math.max(prev.casos_pasados || 0, evaluationResult.passedCount || 0),
+    total_casos: evaluationResult.totalCount || 0
+  };
+
+  saveMaratonState(state);
+  return state[problemId];
+}
+
+function getMaratonStats(problemsList) {
+  const state = getMaratonState();
+  const total = problemsList.length;
+  let resueltos = 0;
+  let enProgreso = 0;
+
+  const porDificultad = {
+    inicial: { total: 0, resueltos: 0 },
+    basico: { total: 0, resueltos: 0 },
+    intermedio: { total: 0, resueltos: 0 },
+    desafio: { total: 0, resueltos: 0 }
+  };
+
+  problemsList.forEach(p => {
+    const rec = state[p.id];
+    const diff = p.dificultad || 'basico';
+    if (porDificultad[diff]) {
+      porDificultad[diff].total++;
+    }
+
+    if (rec && rec.status === 'resuelto') {
+      resueltos++;
+      if (porDificultad[diff]) porDificultad[diff].resueltos++;
+    } else if (rec && rec.status === 'en_progreso') {
+      enProgreso++;
+    }
+  });
+
+  const pendientes = total - resueltos;
+  const porcentaje = total > 0 ? Math.round((resueltos / total) * 100) : 0;
+
+  return {
+    total,
+    resueltos,
+    enProgreso,
+    pendientes,
+    porcentaje,
+    porDificultad
+  };
+}
+
+/**
+ * MOTOR DE EJECUCIÓN SANDBOX Y JUDGE EDUCATIVO - MARATÓN
+ * Ejecuta código Python en un entorno seguro y evalúa casos de prueba.
+ */
+
+/**
+ * Normaliza la salida para comparación justa (elimina espacios residuales por línea y \r).
+ */
+function normalizeOutput(text) {
+  if (text === null || text === undefined) return '';
+  return String(text)
+    .replace(/\r\n/g, '\n')
+    .replace(/\r/g, '\n')
+    .trim()
+    .split('\n')
+    .map(line => line.trimEnd())
+    .join('\n');
+}
+
+/**
+ * Ejecuta código Python con Skulpt capturando I/O y protegiendo contra timeouts.
+ */
+async function runPythonCode(code, inputStr = '', timeoutMs = 3500) {
+  if (typeof window !== 'undefined' && typeof window.Sk === 'undefined') {
+    return {
+      success: false,
+      output: '',
+      error: 'El motor de ejecución de Python (Skulpt) se está inicializando. Por favor, reintenta en un momento.',
+      errorType: 'InitError',
+      pedagogicalAdvice: 'Espera unos segundos y vuelve a presionar Ejecutar.',
+      isTimeout: false
+    };
+  }
+
+  const Sk = typeof window !== 'undefined' ? window.Sk : global.Sk;
+  if (!Sk) {
+    return {
+      success: false,
+      output: '',
+      error: 'Entorno de ejecución de Python no disponible.',
+      errorType: 'MissingEngine',
+      pedagogicalAdvice: 'Verifica la conexión o recarga la página.',
+      isTimeout: false
+    };
+  }
+
+  let output = '';
+  const inputLines = inputStr ? inputStr.split(/\r?\n/) : [];
+  let inputIdx = 0;
+
+  try {
+    Sk.configure({
+      output: (text) => { output += text; },
+      read: (x) => {
+        if (Sk.builtinFiles === undefined || Sk.builtinFiles['files'][x] === undefined) {
+          throw new Error('Módulo no encontrado en el entorno seguro: ' + x);
+        }
+        return Sk.builtinFiles['files'][x];
+      },
+      inputfun: () => {
+        if (inputIdx < inputLines.length) {
+          return inputLines[inputIdx++];
+        }
+        return '';
+      },
+      inputfunTakesPrompt: false,
+      execLimit: timeoutMs,
+      python3: true
+    });
+
+    await Sk.misceval.asyncToPromise(() => {
+      return Sk.importMainWithBody('<stdin>', false, code, true);
+    });
+
+    return {
+      success: true,
+      output: output,
+      error: null,
+      errorType: null,
+      pedagogicalAdvice: '',
+      isTimeout: false
+    };
+  } catch (err) {
+    const errStr = err ? err.toString() : 'Error de ejecución';
+    const isTimeout = errStr.includes('TimeLimitError') || errStr.includes('run time limit');
+    let friendlyError = errStr;
+    let errorType = 'RuntimeError';
+    let pedagogicalAdvice = '';
+
+    if (isTimeout) {
+      errorType = 'TimeLimitError';
+      friendlyError = `⚠️ Tiempo límite excedido (${timeoutMs / 1000}s).`;
+      pedagogicalAdvice = 'Es posible que tu código contenga un ciclo infinito (while True sin condición de parada o con un contador que nunca se incrementa).';
+    } else if (errStr.includes('EOFError')) {
+      errorType = 'EOFError';
+      friendlyError = '⚠️ EOFError: Tu programa intentó leer más datos de los que fueron suministrados en la entrada.';
+      pedagogicalAdvice = 'Asegúrate de que tus llamadas a input() coincidan exactamente con la cantidad de líneas esperadas en el problema.';
+    } else if (errStr.includes('ValueError')) {
+      errorType = 'ValueError';
+      friendlyError = '⚠️ ValueError: Error de conversión o formato de datos.';
+      pedagogicalAdvice = 'Verifica que estés aplicando int() o float() únicamente a textos que contengan números válidos. Si una línea contiene múltiples números, usa .split().';
+    } else if (errStr.includes('ZeroDivisionError')) {
+      errorType = 'ZeroDivisionError';
+      friendlyError = '⚠️ ZeroDivisionError: Se intentó dividir entre cero.';
+      pedagogicalAdvice = 'Revisa que los denominadores o módulos no sean iguales a 0 antes de operar.';
+    } else if (errStr.includes('IndexError')) {
+      errorType = 'IndexError';
+      friendlyError = '⚠️ IndexError: Posición de lista fuera de rango.';
+      pedagogicalAdvice = 'Revisa que la lista o arreglo tenga suficientes elementos antes de acceder al índice especificado.';
+    } else if (errStr.includes('SyntaxError')) {
+      errorType = 'SyntaxError';
+      friendlyError = `⚠️ ${errStr}`;
+      pedagogicalAdvice = 'Revisa los dos puntos (:), paréntesis sin cerrar y la indentación de los bloques de código.';
+    }
+
+    return {
+      success: false,
+      output: output,
+      error: friendlyError,
+      errorType: errorType,
+      pedagogicalAdvice: pedagogicalAdvice,
+      isTimeout: isTimeout
+    };
+  }
+}
+
+/**
+ * Evalúa el código de un estudiante contra los casos de prueba del problema.
+ */
+async function judgeSubmission(problem, studentCode, isFullCheck = true) {
+  const visibleCases = problem.casosPrueba || problem.casos_prueba || [];
+  const hiddenCases = isFullCheck ? (problem.casosPruebaOcultos || problem.casos_prueba_ocultos || []) : [];
+  const casesToRun = [...visibleCases, ...hiddenCases];
+
+  const results = [];
+  let allPassed = true;
+  let passedCount = 0;
+  let firstError = null;
+
+  for (let i = 0; i < casesToRun.length; i++) {
+    const tc = casesToRun[i];
+    const isVisible = tc.visible !== false;
+
+    const runResult = await runPythonCode(studentCode, tc.entrada || '', 3500);
+
+    if (!runResult.success) {
+      allPassed = false;
+      if (!firstError) firstError = runResult.error;
+      results.push({
+        id: tc.id || (i + 1),
+        visible: isVisible,
+        descripcion: tc.descripcion || `Caso de prueba #${i + 1}`,
+        entrada: isVisible ? tc.entrada : '[Oculto para evaluación]',
+        salida_esperada: isVisible ? tc.salidaEsperada : '[Oculto]',
+        salida_obtenida: runResult.output,
+        passed: false,
+        error: runResult.error,
+        advice: runResult.pedagogicalAdvice,
+        status: runResult.isTimeout ? 'TIMEOUT' : 'ERROR'
+      });
+      if (runResult.isTimeout) break;
+      continue;
+    }
+
+    const expected = tc.salidaEsperada !== undefined ? tc.salidaEsperada : tc.salida_esperada;
+    const normActual = normalizeOutput(runResult.output);
+    const normExpected = normalizeOutput(expected);
+    const passed = normActual === normExpected;
+
+    if (passed) {
+      passedCount++;
+    } else {
+      allPassed = false;
+    }
+
+    results.push({
+      id: tc.id || (i + 1),
+      visible: isVisible,
+      descripcion: tc.descripcion || `Caso de prueba #${i + 1}`,
+      entrada: isVisible ? tc.entrada : '[Caso oculto]',
+      salida_esperada: isVisible ? expected : '[Caso oculto]',
+      salida_obtenida: isVisible ? runResult.output : (passed ? '[Correcto]' : '[Discrepancia en salida]'),
+      passed: passed,
+      error: null,
+      status: passed ? 'AC' : 'WA' // Accepted / Wrong Answer
+    });
+  }
+
+  // Generación de retroalimentación pedagógica
+  let feedback = '';
+  let feedbackType = 'info';
+
+  if (allPassed) {
+    feedback = (problem.retroalimentacion && (problem.retroalimentacion.exito || problem.retroalimentacion.acierto)) || '🎉 ¡Excelente! Has superado todas las pruebas de este reto.';
+    feedbackType = 'success';
+  } else if (firstError && firstError.includes('Tiempo límite')) {
+    feedback = '⚠️ Tu programa se detuvo por tiempo límite. Revisa que tus ciclos while y for avancen hacia una condición de terminación.';
+    feedbackType = 'warning';
+  } else if (passedCount > 0) {
+    feedback = `⚠️ Tu solución funciona para ${passedCount} de ${casesToRun.length} casos de prueba. Revisa los casos límite y el formato exacto de salida.`;
+    feedbackType = 'warning';
+  } else {
+    feedback = (problem.retroalimentacion && (problem.retroalimentacion.errorComun || problem.retroalimentacion.error_comun)) || '💡 La salida de tu programa no coincide con lo esperado. Revisa los tipos de datos, operadores y el formato exacto.';
+    feedbackType = 'error';
+  }
+
+  const score = casesToRun.length > 0 ? Math.round((passedCount / casesToRun.length) * 100) : 0;
+
+  return {
+    accepted: allPassed,
+    passed: passedCount,
+    total: casesToRun.length,
+    score: score,
+    results: results,
+    feedback: feedback,
+    feedbackType: feedbackType
+  };
+}
+
+/**
+ * VISTAS Y COMPONENTES UI - MARATÓN: SOLUCIÓN DE PROBLEMAS
+ * Renderizado de biblioteca, filtros, editor Python y Judge interactivo.
+ */
+
+
+
+
+
+class MaratonUI {
+  constructor(app) {
+    this.app = app;
+    this.activeFilters = {
+      search: '',
+      tema: 'Todos',
+      dificultad: 'Todos',
+      estado: 'Todos',
+      unidad: 'Todas'
+    };
+    this.currentProblem = null;
+    this.currentEvaluation = null;
+    this.activeTestCaseTab = 0;
+    this.isEvaluating = false;
+  }
+
+  getDifficultyBadge(diff) {
+    switch(diff) {
+      case 'inicial':
+        return '<span class="px-2 py-0.5 rounded text-[11px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">🟢 Inicial</span>';
+      case 'basico':
+        return '<span class="px-2 py-0.5 rounded text-[11px] font-semibold bg-sky-500/10 text-sky-400 border border-sky-500/20">🔵 Básico</span>';
+      case 'intermedio':
+        return '<span class="px-2 py-0.5 rounded text-[11px] font-semibold bg-amber-500/10 text-amber-400 border border-amber-500/20">🟠 Intermedio</span>';
+      case 'desafio':
+        return '<span class="px-2 py-0.5 rounded text-[11px] font-semibold bg-rose-500/10 text-rose-400 border border-rose-500/20">🔴 Desafío</span>';
+      default:
+        return '<span class="px-2 py-0.5 rounded text-[11px] font-semibold bg-gray-800 text-gray-300">' + diff + '</span>';
+    }
+  }
+
+  getStatusBadge(status) {
+    switch(status) {
+      case 'resuelto':
+        return '<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30" title="Problema Resuelto"><i class="fas fa-check-circle text-[10px]"></i> Resuelto</span>';
+      case 'en_progreso':
+        return '<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-semibold bg-amber-500/15 text-amber-400 border border-amber-500/30" title="En Progreso"><i class="fas fa-circle-half-stroke text-[10px]"></i> En progreso</span>';
+      default:
+        return '<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] text-gray-500 bg-gray-800/60 border border-gray-700/60" title="No Iniciado"><i class="far fa-circle text-[10px]"></i> No iniciado</span>';
+    }
+  }
+
+  /**
+   * Renderiza la Biblioteca de Problemas
+   */
+  renderLibrary(container, initialTheme = '') {
+    if (initialTheme && initialTheme !== 'Todos') {
+      this.activeFilters.tema = initialTheme;
+    }
+
+    const stats = getMaratonStats(MARATON_PROBLEMS);
+    const maratonState = getMaratonState();
+
+    const allTemas = ['Todos'];
+    const allUnidades = ['Todas'];
+
+    MARATON_PROBLEMS.forEach(p => {
+      p.temas.forEach(t => { if (!allTemas.includes(t)) allTemas.push(t); });
+      if (p.unidad && !allUnidades.includes(p.unidad)) allUnidades.push(p.unidad);
+    });
+
+    const filtered = MARATON_PROBLEMS.filter(p => {
+      const q = this.activeFilters.search.toLowerCase().trim();
+      if (q) {
+        const matchesNum = String(p.numero).includes(q);
+        const matchesTitle = p.titulo.toLowerCase().includes(q);
+        const matchesConcepts = p.conceptos.some(c => c.toLowerCase().includes(q));
+        if (!matchesNum && !matchesTitle && !matchesConcepts) return false;
+      }
+      if (this.activeFilters.tema !== 'Todos' && !p.temas.includes(this.activeFilters.tema)) return false;
+      if (this.activeFilters.dificultad !== 'Todos' && p.dificultad !== this.activeFilters.dificultad) return false;
+      if (this.activeFilters.unidad !== 'Todas' && p.unidad !== this.activeFilters.unidad) return false;
+
+      const record = maratonState[p.id];
+      const status = (record && record.status) || 'no_iniciado';
+      if (this.activeFilters.estado !== 'Todos' && status !== this.activeFilters.estado) return false;
+
+      return true;
+    });
+
+    const html = `
+      <div class="w-full max-w-6xl xl:max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 animate-fade-in">
+        <!-- Migas de Pan -->
+        <nav class="flex items-center gap-2 text-xs text-gray-400 mb-4 flex-wrap">
+          <span class="text-gray-500 font-medium">Leo Gaviria</span>
+          <span class="text-gray-600">/</span>
+          <span class="text-emerald-400 font-medium flex items-center gap-1">
+            <i class="fas fa-person-running text-xs"></i> Maratón: Solución de problemas
+          </span>
+        </nav>
+
+        <!-- Cabecera de Maratón -->
+        <header class="bg-gradient-to-br from-[#0c1816] via-[#101924] to-[#0c121e] border border-emerald-500/30 rounded-2xl p-6 sm:p-8 mb-8 shadow-2xl relative overflow-hidden">
+          <div class="absolute -right-12 -top-12 w-56 h-56 rounded-full bg-emerald-500/10 blur-3xl pointer-events-none"></div>
+          <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
+            <div class="flex-1">
+              <div class="flex items-center gap-2.5 mb-2">
+                <span class="w-9 h-9 rounded-xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 flex items-center justify-center text-lg shadow-sm">
+                  <i class="fas fa-person-running"></i>
+                </span>
+                <span class="text-xs font-mono font-bold text-emerald-400 uppercase tracking-widest px-2.5 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20">
+                  Judge Online Educativo Integrado
+                </span>
+              </div>
+              <h1 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight leading-tight">
+                🏃 Maratón: Solución de problemas
+              </h1>
+              <p class="text-xs sm:text-sm text-gray-300 mt-2 max-w-2xl leading-relaxed">
+                Biblioteca transversal de problemas algorítmicos. Pon a prueba tus habilidades de programación en Python, ejecuta tu código en sandbox seguro, evalúa con casos de prueba y recibe retroalimentación pedagógica en tiempo real.
+              </p>
+            </div>
+
+            <!-- Widget de Progreso del Estudiante -->
+            <div class="bg-[#0b0e14]/90 border border-emerald-500/30 rounded-xl p-4 sm:p-5 w-full md:w-80 shrink-0 shadow-lg backdrop-blur-sm">
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-xs font-bold text-white flex items-center gap-1.5">
+                  <i class="fas fa-trophy text-amber-400 text-xs"></i> Tu Progreso en Maratón
+                </span>
+                <span class="text-xs font-mono font-bold text-emerald-400">${stats.resueltos} / ${stats.total}</span>
+              </div>
+
+              <div class="w-full h-2.5 bg-gray-800/80 rounded-full overflow-hidden mb-3">
+                <div class="h-full bg-gradient-to-r from-emerald-500 to-teal-400 rounded-full transition-all duration-500 shadow-[0_0_10px_rgba(16,185,129,0.5)]" style="width: ${stats.porcentaje}%"></div>
+              </div>
+
+              <div class="grid grid-cols-4 gap-1 text-center font-mono text-[10px]">
+                <div class="bg-[#141923] p-1.5 rounded border border-gray-800">
+                  <span class="text-emerald-400 block font-bold">${stats.porDificultad.inicial.resueltos}/${stats.porDificultad.inicial.total}</span>
+                  <span class="text-gray-500 text-[9px]">Inicial</span>
+                </div>
+                <div class="bg-[#141923] p-1.5 rounded border border-gray-800">
+                  <span class="text-sky-400 block font-bold">${stats.porDificultad.basico.resueltos}/${stats.porDificultad.basico.total}</span>
+                  <span class="text-gray-500 text-[9px]">Básico</span>
+                </div>
+                <div class="bg-[#141923] p-1.5 rounded border border-gray-800">
+                  <span class="text-amber-400 block font-bold">${stats.porDificultad.intermedio.resueltos}/${stats.porDificultad.intermedio.total}</span>
+                  <span class="text-gray-500 text-[9px]">Interm.</span>
+                </div>
+                <div class="bg-[#141923] p-1.5 rounded border border-gray-800">
+                  <span class="text-rose-400 block font-bold">${stats.porDificultad.desafio.resueltos}/${stats.porDificultad.desafio.total}</span>
+                  <span class="text-gray-500 text-[9px]">Desafío</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <!-- Barra de Filtros Combinables -->
+        <div class="bg-[#121622] border border-gray-800 rounded-2xl p-4 mb-6 shadow-md">
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+            <!-- Búsqueda textual -->
+            <div class="lg:col-span-1">
+              <label class="block text-[10px] font-mono uppercase text-gray-400 mb-1 font-semibold">Buscar reto</label>
+              <div class="relative">
+                <i class="fas fa-search absolute left-3 top-2.5 text-xs text-gray-500"></i>
+                <input 
+                  type="text" 
+                  id="maraton-filter-search" 
+                  value="${this.activeFilters.search}" 
+                  placeholder="# o nombre..." 
+                  class="w-full bg-[#0b0e14] border border-gray-800 rounded-lg pl-8 pr-3 py-1.5 text-xs text-white placeholder-gray-500 outline-none focus:border-emerald-500/50 transition"
+                >
+              </div>
+            </div>
+
+            <!-- Filtro Tema -->
+            <div>
+              <label class="block text-[10px] font-mono uppercase text-gray-400 mb-1 font-semibold">Tema</label>
+              <select 
+                id="maraton-filter-tema" 
+                class="w-full bg-[#0b0e14] border border-gray-800 rounded-lg px-2.5 py-1.5 text-xs text-gray-200 outline-none focus:border-emerald-500/50 transition cursor-pointer"
+              >
+                ${allTemas.map(t => `<option value="${t}" ${this.activeFilters.tema === t ? 'selected' : ''}>${t}</option>`).join('')}
+              </select>
+            </div>
+
+            <!-- Filtro Dificultad -->
+            <div>
+              <label class="block text-[10px] font-mono uppercase text-gray-400 mb-1 font-semibold">Dificultad</label>
+              <select 
+                id="maraton-filter-dificultad" 
+                class="w-full bg-[#0b0e14] border border-gray-800 rounded-lg px-2.5 py-1.5 text-xs text-gray-200 outline-none focus:border-emerald-500/50 transition cursor-pointer"
+              >
+                <option value="Todos" ${this.activeFilters.dificultad === 'Todos' ? 'selected' : ''}>Todas</option>
+                <option value="inicial" ${this.activeFilters.dificultad === 'inicial' ? 'selected' : ''}>🟢 Inicial</option>
+                <option value="basico" ${this.activeFilters.dificultad === 'basico' ? 'selected' : ''}>🔵 Básico</option>
+                <option value="intermedio" ${this.activeFilters.dificultad === 'intermedio' ? 'selected' : ''}>🟠 Intermedio</option>
+                <option value="desafio" ${this.activeFilters.dificultad === 'desafio' ? 'selected' : ''}>🔴 Desafío</option>
+              </select>
+            </div>
+
+            <!-- Filtro Estado -->
+            <div>
+              <label class="block text-[10px] font-mono uppercase text-gray-400 mb-1 font-semibold">Estado</label>
+              <select 
+                id="maraton-filter-estado" 
+                class="w-full bg-[#0b0e14] border border-gray-800 rounded-lg px-2.5 py-1.5 text-xs text-gray-200 outline-none focus:border-emerald-500/50 transition cursor-pointer"
+              >
+                <option value="Todos" ${this.activeFilters.estado === 'Todos' ? 'selected' : ''}>Todos</option>
+                <option value="resuelto" ${this.activeFilters.estado === 'resuelto' ? 'selected' : ''}>✓ Resueltos</option>
+                <option value="en_progreso" ${this.activeFilters.estado === 'en_progreso' ? 'selected' : ''}>◐ En progreso</option>
+                <option value="no_iniciado" ${this.activeFilters.estado === 'no_iniciado' ? 'selected' : ''}>○ No iniciados</option>
+              </select>
+            </div>
+
+            <!-- Filtro Unidad -->
+            <div>
+              <label class="block text-[10px] font-mono uppercase text-gray-400 mb-1 font-semibold">Unidad</label>
+              <select 
+                id="maraton-filter-unidad" 
+                class="w-full bg-[#0b0e14] border border-gray-800 rounded-lg px-2.5 py-1.5 text-xs text-gray-200 outline-none focus:border-emerald-500/50 transition cursor-pointer"
+              >
+                ${allUnidades.map(u => `<option value="${u}" ${this.activeFilters.unidad === u ? 'selected' : ''}>${u}</option>`).join('')}
+              </select>
+            </div>
+          </div>
+
+          <!-- Resumen de Filtro Activo y Botón Limpiar -->
+          <div class="flex items-center justify-between mt-3 pt-2.5 border-t border-gray-800/80 text-xs text-gray-400 flex-wrap gap-2">
+            <span class="font-mono text-[11px]">
+              Mostrando <strong class="text-emerald-400 font-bold">${filtered.length}</strong> de ${MARATON_PROBLEMS.length} problemas
+            </span>
+            <button 
+              id="maraton-clear-filters-btn" 
+              class="text-[11px] text-gray-400 hover:text-emerald-400 transition cursor-pointer flex items-center gap-1 font-semibold"
+            >
+              <i class="fas fa-rotate-left text-[10px]"></i> Restablecer filtros
+            </button>
+          </div>
+        </div>
+
+        <!-- Listado de Problemas (Tabla Responsive) -->
+        <div class="bg-[#121622] border border-gray-800 rounded-2xl overflow-hidden shadow-xl">
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs border-collapse">
+              <thead>
+                <tr class="bg-[#161c28] border-b border-gray-800 text-gray-400 font-mono text-[11px] uppercase tracking-wider">
+                  <th class="py-3 px-4 w-16 text-center">#</th>
+                  <th class="py-3 px-4 min-w-[220px]">Problema y Conceptos</th>
+                  <th class="py-3 px-4 min-w-[120px]">Tema</th>
+                  <th class="py-3 px-4 min-w-[140px] hidden md:table-cell">Unidad</th>
+                  <th class="py-3 px-4 w-28 text-center">Dificultad</th>
+                  <th class="py-3 px-4 w-28 text-center">Estado</th>
+                  <th class="py-3 px-4 w-32 text-right">Acción</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-gray-800/70">
+                ${filtered.length === 0 ? `
+                  <tr>
+                    <td colspan="7" class="py-12 text-center text-gray-500 font-mono">
+                      <i class="fas fa-inbox text-2xl mb-2 text-gray-600 block"></i>
+                      No se encontraron problemas con los filtros seleccionados.
+                    </td>
+                  </tr>
+                ` : filtered.map(p => {
+                  const rec = maratonState[p.id];
+                  const status = (rec && rec.status) || 'no_iniciado';
+
+                  return `
+                    <tr class="hover:bg-[#151c29]/70 transition group cursor-pointer" onclick="window.app.loadMaratonProblem(${p.numero})">
+                      <td class="py-3 px-4 text-center font-mono font-bold text-gray-400 group-hover:text-emerald-400">
+                        ${p.numero}
+                      </td>
+                      <td class="py-3 px-4">
+                        <div class="font-bold text-white group-hover:text-emerald-300 transition text-sm mb-1">
+                          ${p.titulo}
+                        </div>
+                        <div class="flex flex-wrap gap-1">
+                          ${p.conceptos.slice(0, 3).map(c => `
+                            <span class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-gray-800/80 text-gray-300 border border-gray-700/50">
+                              ${c}
+                            </span>
+                          `).join('')}
+                        </div>
+                      </td>
+                      <td class="py-3 px-4 text-gray-300 font-medium">
+                        ${p.temas.join(', ')}
+                      </td>
+                      <td class="py-3 px-4 text-gray-400 text-[11px] hidden md:table-cell">
+                        ${p.unidad || '—'}
+                      </td>
+                      <td class="py-3 px-4 text-center whitespace-nowrap">
+                        ${this.getDifficultyBadge(p.dificultad)}
+                      </td>
+                      <td class="py-3 px-4 text-center whitespace-nowrap">
+                        ${this.getStatusBadge(status)}
+                      </td>
+                      <td class="py-3 px-4 text-right whitespace-nowrap" onclick="event.stopPropagation();">
+                        <button 
+                          onclick="window.app.loadMaratonProblem(${p.numero})"
+                          class="px-3 py-1.5 rounded-lg bg-[#1e2638] hover:bg-emerald-600 text-gray-200 hover:text-white border border-gray-700/70 hover:border-emerald-500 text-xs font-semibold transition cursor-pointer inline-flex items-center gap-1.5 shadow-sm"
+                        >
+                          <span>Resolver</span>
+                          <i class="fas fa-arrow-right text-[10px]"></i>
+                        </button>
+                      </td>
+                    </tr>
+                  `;
+                }).join('')}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    `;
+
+    container.innerHTML = html;
+    this.bindLibraryEvents(container);
+  }
+
+  bindLibraryEvents(container) {
+    const searchInput = container.querySelector('#maraton-filter-search');
+    const temaSelect = container.querySelector('#maraton-filter-tema');
+    const diffSelect = container.querySelector('#maraton-filter-dificultad');
+    const estadoSelect = container.querySelector('#maraton-filter-estado');
+    const unidadSelect = container.querySelector('#maraton-filter-unidad');
+    const clearBtn = container.querySelector('#maraton-clear-filters-btn');
+
+    const update = () => {
+      this.activeFilters.search = searchInput ? searchInput.value : '';
+      this.activeFilters.tema = temaSelect ? temaSelect.value : 'Todos';
+      this.activeFilters.dificultad = diffSelect ? diffSelect.value : 'Todos';
+      this.activeFilters.estado = estadoSelect ? estadoSelect.value : 'Todos';
+      this.activeFilters.unidad = unidadSelect ? unidadSelect.value : 'Todas';
+      this.renderLibrary(container);
+    };
+
+    if (searchInput) searchInput.addEventListener('input', update);
+    if (temaSelect) temaSelect.addEventListener('change', update);
+    if (diffSelect) diffSelect.addEventListener('change', update);
+    if (estadoSelect) estadoSelect.addEventListener('change', update);
+    if (unidadSelect) unidadSelect.addEventListener('change', update);
+
+    if (clearBtn) {
+      clearBtn.addEventListener('click', () => {
+        this.activeFilters = { search: '', tema: 'Todos', dificultad: 'Todos', estado: 'Todos', unidad: 'Todas' };
+        this.renderLibrary(container);
+      });
+    }
+  }
+
+  /**
+   * Renderiza la vista individual de resolución de problema
+   */
+  renderProblemView(container, problem) {
+    this.currentProblem = problem;
+    this.currentEvaluation = null;
+    this.activeTestCaseTab = 0;
+
+    const record = getProblemRecord(problem.id);
+    const codeToShow = record.codigo_guardado || problem.codigo_inicial;
+
+    const html = `
+      <div class="w-full max-w-6xl xl:max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 animate-fade-in">
+        <!-- Migas de Pan -->
+        <nav class="flex items-center justify-between gap-2 text-xs text-gray-400 mb-4 flex-wrap">
+          <div class="flex items-center gap-2 flex-wrap">
+            <span class="text-gray-500 font-medium">Leo Gaviria</span>
+            <span class="text-gray-600">/</span>
+            <button onclick="window.app.showMaraton()" class="hover:text-emerald-400 transition font-medium text-gray-300">
+              🏃 Maratón
+            </button>
+            <span class="text-gray-600">/</span>
+            <span class="text-emerald-400 font-medium">#${problem.numero} - ${problem.titulo}</span>
+          </div>
+
+          <button 
+            onclick="window.app.showMaraton()" 
+            class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#141923] border border-gray-800 hover:border-gray-700 text-xs text-gray-300 hover:text-white transition cursor-pointer"
+          >
+            <i class="fas fa-arrow-left text-[10px]"></i> Volver a la Biblioteca
+          </button>
+        </nav>
+
+        <!-- Cabecera del Reto -->
+        <header class="border-b border-gray-800/80 pb-5 mb-6">
+          <div class="flex flex-col md:flex-row md:items-start justify-between gap-4">
+            <div>
+              <div class="flex items-center gap-2.5 mb-1.5 flex-wrap">
+                <span class="text-xs font-mono font-bold text-emerald-400 px-2 py-0.5 rounded bg-emerald-500/10 border border-emerald-500/20">
+                  Problema ${problem.numero}
+                </span>
+                ${this.getDifficultyBadge(problem.dificultad)}
+                <span class="text-xs text-gray-400 font-medium px-2 py-0.5 rounded bg-gray-800/70">
+                  ${problem.temas.join(', ')}
+                </span>
+                ${problem.unidad ? `<span class="text-xs text-gray-500 font-mono">${problem.unidad}</span>` : ''}
+              </div>
+              <h1 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+                ${problem.titulo}
+              </h1>
+            </div>
+
+            <div class="flex items-center gap-3 shrink-0">
+              <div id="maraton-problem-status-pill">
+                ${this.getStatusBadge(record.status)}
+              </div>
+              <span class="text-[11px] font-mono text-gray-500">
+                Intentos: <strong id="maraton-attempts-counter" class="text-gray-300">${record.intentos || 0}</strong>
+              </span>
+            </div>
+          </div>
+        </header>
+
+        <!-- Contenedor Principal: 2 Columnas (Descripción + Editor/Judge) -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+          
+          <!-- Columna Izquierda: Enunciado Pedagógico (5 columnas) -->
+          <div class="lg:col-span-5 space-y-6">
+            
+            <!-- Descripción -->
+            <div class="bg-[#121622] border border-gray-800 rounded-2xl p-5 shadow-sm">
+              <h3 class="text-xs font-mono uppercase tracking-wider text-emerald-400 font-bold mb-3 flex items-center gap-2">
+                <i class="fas fa-file-lines"></i> Descripción del Problema
+              </h3>
+              <div class="prose prose-invert max-w-none text-xs sm:text-sm text-gray-300 leading-relaxed space-y-3">
+                <p>${problem.descripcion}</p>
+              </div>
+            </div>
+
+            <!-- Entrada y Salida -->
+            <div class="grid grid-cols-1 gap-4">
+              <div class="bg-[#121622] border border-gray-800 rounded-xl p-4">
+                <h4 class="text-xs font-mono font-bold text-sky-400 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                  <i class="fas fa-right-to-bracket text-[11px]"></i> Especificación de Entrada
+                </h4>
+                <p class="text-xs text-gray-300 leading-relaxed">${problem.entrada}</p>
+              </div>
+
+              <div class="bg-[#121622] border border-gray-800 rounded-xl p-4">
+                <h4 class="text-xs font-mono font-bold text-emerald-400 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                  <i class="fas fa-right-from-bracket text-[11px]"></i> Especificación de Salida
+                </h4>
+                <p class="text-xs text-gray-300 leading-relaxed">${problem.salida}</p>
+              </div>
+            </div>
+
+            <!-- Ejemplos -->
+            <div class="bg-[#121622] border border-gray-800 rounded-2xl p-5 shadow-sm">
+              <div class="flex items-center justify-between mb-3">
+                <h3 class="text-xs font-mono uppercase tracking-wider text-amber-400 font-bold flex items-center gap-2">
+                  <i class="fas fa-vial"></i> Ejemplo de Ejecución
+                </h3>
+              </div>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 font-mono text-xs">
+                <div>
+                  <span class="text-[10px] text-gray-500 font-bold uppercase block mb-1">Entrada de Ejemplo</span>
+                  <pre class="bg-[#080b11] p-3 rounded-lg border border-gray-800 text-emerald-300 overflow-x-auto min-h-[50px]"><code>${problem.ejemplo_entrada || '(Sin entrada)'}</code></pre>
+                </div>
+                <div>
+                  <span class="text-[10px] text-gray-500 font-bold uppercase block mb-1">Salida Esperada</span>
+                  <pre class="bg-[#080b11] p-3 rounded-lg border border-gray-800 text-sky-300 overflow-x-auto min-h-[50px]"><code>${problem.ejemplo_salida}</code></pre>
+                </div>
+              </div>
+            </div>
+
+            <!-- Conceptos Relacionados -->
+            <div class="bg-[#121622] border border-gray-800 rounded-2xl p-4">
+              <h4 class="text-xs font-mono font-bold text-purple-400 uppercase tracking-wider mb-2.5 flex items-center gap-1.5">
+                <i class="fas fa-lightbulb text-[11px]"></i> Conceptos Clave para Practicar
+              </h4>
+              <div class="flex flex-wrap gap-1.5">
+                ${problem.conceptos.map(c => `
+                  <span class="px-2 py-1 rounded-md bg-[#192132] border border-gray-700 text-gray-300 text-xs font-mono">
+                    ${c}
+                  </span>
+                `).join('')}
+              </div>
+            </div>
+
+            <!-- Pistas Progresivas (Acordeón) -->
+            ${problem.pistas && problem.pistas.length > 0 ? `
+              <div class="bg-[#121622] border border-gray-800 rounded-2xl p-5 shadow-sm">
+                <h4 class="text-xs font-mono font-bold text-amber-400 uppercase tracking-wider mb-3 flex items-center gap-1.5">
+                  <i class="fas fa-wand-magic-sparkles text-[11px]"></i> Pistas Progresivas de Apoyo
+                </h4>
+                <div class="space-y-2">
+                  ${problem.pistas.map((pista, idx) => `
+                    <details class="group bg-[#0b0e14] border border-gray-800 rounded-xl p-3 cursor-pointer">
+                      <summary class="text-xs font-semibold text-gray-300 group-hover:text-amber-300 flex items-center justify-between list-none">
+                        <span class="flex items-center gap-2">
+                          <i class="fas fa-key text-amber-400/80 text-[10px]"></i>
+                          <span>Pista ${idx + 1}</span>
+                        </span>
+                        <span class="text-[10px] text-gray-500 group-open:rotate-180 transition-transform">▼</span>
+                      </summary>
+                      <p class="mt-2.5 text-xs text-gray-300 leading-relaxed border-t border-gray-800/80 pt-2">
+                        ${pista}
+                      </p>
+                    </details>
+                  `).join('')}
+                </div>
+              </div>
+            ` : ''}
+
+          </div>
+
+          <!-- Columna Derecha: Editor de Código + Judge (7 columnas) -->
+          <div class="lg:col-span-7 space-y-6">
+            
+            <!-- Tarjeta del Editor Python -->
+            <div class="bg-[#121622] border border-gray-800 rounded-2xl overflow-hidden shadow-2xl flex flex-col">
+              <!-- Barra Superior del Editor -->
+              <div class="bg-[#161c28] px-4 py-2.5 border-b border-gray-800 flex items-center justify-between flex-wrap gap-2">
+                <div class="flex items-center gap-2">
+                  <span class="text-xs font-mono font-bold text-sky-400 flex items-center gap-1.5">
+                    <i class="fab fa-python text-sm"></i> solución.py
+                  </span>
+                  <span class="text-[11px] text-gray-500 font-mono hidden sm:inline">• Python 3 Sandbox</span>
+                </div>
+
+                <div class="flex items-center gap-1.5">
+                  <button 
+                    id="maraton-copy-code-btn" 
+                    onclick="window.copyCodeToClipboard(this)"
+                    class="px-2 py-1 rounded bg-[#1e2638] hover:bg-gray-700 text-gray-300 text-[11px] font-mono flex items-center gap-1 border border-gray-700 transition cursor-pointer"
+                    title="Copiar código al portapapeles"
+                  >
+                    <i class="fas fa-copy text-[10px]"></i> <span>Copiar</span>
+                  </button>
+                  <button 
+                    id="maraton-reset-code-btn" 
+                    class="px-2 py-1 rounded bg-[#1e2638] hover:bg-rose-900/40 text-gray-300 hover:text-rose-300 text-[11px] font-mono flex items-center gap-1 border border-gray-700 transition cursor-pointer"
+                    title="Reiniciar código inicial"
+                  >
+                    <i class="fas fa-rotate-left text-[10px]"></i> <span>Reiniciar</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Área de Edición de Código con Soporte Tab y Numeración -->
+              <div class="relative bg-[#07090e] p-3 sm:p-4 font-mono text-xs">
+                <textarea 
+                  id="maraton-code-editor" 
+                  rows="14"
+                  spellcheck="false"
+                  autocomplete="off"
+                  autocapitalize="off"
+                  class="w-full bg-transparent text-gray-200 outline-none resize-y font-mono text-xs leading-relaxed border-none focus:ring-0 selection:bg-emerald-500/30"
+                  placeholder="# Escribe tu solución aquí"
+                >${codeToShow}</textarea>
+              </div>
+
+              <!-- Barra Inferior de Controles del Editor -->
+              <div class="bg-[#141923] p-3 sm:px-4 sm:py-3 border-t border-gray-800 flex items-center justify-between flex-wrap gap-3">
+                <span class="text-[11px] text-gray-500 font-mono hidden sm:inline flex items-center gap-1">
+                  <kbd class="px-1.5 py-0.5 bg-gray-800 rounded text-[9px] text-gray-400 border border-gray-700">Ctrl</kbd> + <kbd class="px-1.5 py-0.5 bg-gray-800 rounded text-[9px] text-gray-400 border border-gray-700">Enter</kbd> para Comprobar
+                </span>
+
+                <div class="flex items-center gap-2 ml-auto">
+                  <!-- Botón Ejecutar (solo casos visibles rápidos) -->
+                  <button 
+                    id="maraton-run-btn" 
+                    class="px-3.5 py-2 rounded-xl bg-[#1e2638] hover:bg-gray-700 text-gray-200 hover:text-white text-xs font-semibold border border-gray-700 transition cursor-pointer flex items-center gap-1.5 shadow-sm"
+                    title="Ejecutar contra casos de prueba de ejemplo"
+                  >
+                    <i class="fas fa-play text-sky-400 text-xs"></i>
+                    <span>▶ Ejecutar</span>
+                  </button>
+
+                  <!-- Botón Comprobar (evaluación completa con judge) -->
+                  <button 
+                    id="maraton-check-btn" 
+                    class="px-4 py-2 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-500 hover:from-emerald-500 hover:to-teal-400 text-white text-xs font-bold transition cursor-pointer flex items-center gap-2 shadow-lg shadow-emerald-600/30"
+                    title="Evaluar solución completa con casos visibles y ocultos"
+                  >
+                    <i class="fas fa-check-double text-xs"></i>
+                    <span>✓ Comprobar Solución</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Panel de Evaluación del Judge (Resultados y Casos de Prueba) -->
+            <div id="maraton-judge-results-panel" class="bg-[#121622] border border-gray-800 rounded-2xl p-5 shadow-xl min-h-[160px] flex flex-col justify-center">
+              <div class="text-center py-6 text-xs text-gray-500 font-mono">
+                <i class="fas fa-terminal text-2xl text-gray-600 mb-2 block"></i>
+                Presiona <strong>▶ Ejecutar</strong> o <strong>✓ Comprobar Solución</strong> para evaluar tu código.
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+    `;
+
+    container.innerHTML = html;
+    this.bindProblemEvents(container, problem);
+  }
+
+  bindProblemEvents(container, problem) {
+    const editor = container.querySelector('#maraton-code-editor');
+    const runBtn = container.querySelector('#maraton-run-btn');
+    const checkBtn = container.querySelector('#maraton-check-btn');
+    const resetBtn = container.querySelector('#maraton-reset-code-btn');
+
+    if (editor) {
+      editor.addEventListener('keydown', (e) => {
+        if (e.key === 'Tab') {
+          e.preventDefault();
+          const start = editor.selectionStart;
+          const end = editor.selectionEnd;
+          const val = editor.value;
+          editor.value = val.substring(0, start) + '    ' + val.substring(end);
+          editor.selectionStart = editor.selectionEnd = start + 4;
+          saveDraftCode(problem.id, editor.value);
+        } else if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+          e.preventDefault();
+          if (checkBtn) checkBtn.click();
+        }
+      });
+
+      editor.addEventListener('input', () => {
+        saveDraftCode(problem.id, editor.value);
+      });
+    }
+
+    if (resetBtn && editor) {
+      resetBtn.addEventListener('click', () => {
+        if (confirm('¿Deseas reiniciar el código a la plantilla inicial del reto?')) {
+          editor.value = problem.codigo_inicial;
+          saveDraftCode(problem.id, editor.value);
+          this.app.showToast('Código inicial restablecido', 'info');
+        }
+      });
+    }
+
+    if (runBtn) {
+      runBtn.addEventListener('click', () => this.handleEvaluate(problem, editor.value, false));
+    }
+
+    if (checkBtn) {
+      checkBtn.addEventListener('click', () => this.handleEvaluate(problem, editor.value, true));
+    }
+  }
+
+  async handleEvaluate(problem, code, isFullCheck) {
+    if (this.isEvaluating) return;
+    this.isEvaluating = true;
+
+    const panel = document.getElementById('maraton-judge-results-panel');
+    const runBtn = document.getElementById('maraton-run-btn');
+    const checkBtn = document.getElementById('maraton-check-btn');
+
+    if (runBtn) runBtn.disabled = true;
+    if (checkBtn) checkBtn.disabled = true;
+
+    if (panel) {
+      panel.innerHTML = `
+        <div class="py-8 text-center">
+          <div class="inline-block w-8 h-8 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin mb-3"></div>
+          <p class="text-xs font-mono text-gray-300 font-semibold">
+            ${isFullCheck ? 'Evaluando contra la suite completa de casos de prueba...' : 'Ejecutando programa en sandbox seguro...'}
+          </p>
+          <span class="text-[11px] text-gray-500 font-mono block mt-1">Aislamiento de procesos y control de tiempo activo</span>
+        </div>
+      `;
+    }
+
+    try {
+      const evaluation = await judgeSubmission(problem, code, isFullCheck);
+      this.currentEvaluation = evaluation;
+
+      if (isFullCheck) {
+        const updatedRecord = recordProblemEvaluation(problem.id, code, evaluation);
+        const pill = document.getElementById('maraton-problem-status-pill');
+        if (pill) pill.innerHTML = this.getStatusBadge(updatedRecord.status);
+        const counter = document.getElementById('maraton-attempts-counter');
+        if (counter) counter.innerText = updatedRecord.intentos;
+      }
+
+      this.renderEvaluationResults(panel, evaluation, isFullCheck);
+    } catch (e) {
+      if (panel) {
+        panel.innerHTML = `
+          <div class="p-4 bg-rose-500/10 border border-rose-500/30 rounded-xl text-rose-300 text-xs">
+            <i class="fas fa-triangle-exclamation mr-1.5"></i> Error al evaluar: ${e.message || e}
+          </div>
+        `;
+      }
+    } finally {
+      this.isEvaluating = false;
+      if (runBtn) runBtn.disabled = false;
+      if (checkBtn) checkBtn.disabled = false;
+    }
+  }
+
+  renderEvaluationResults(panel, evalResult, isFullCheck) {
+    if (!panel) return;
+
+    const isAll = evalResult.allPassed;
+    const bannerBg = isAll ? 'bg-emerald-500/15 border-emerald-500/40 text-emerald-300' : 'bg-amber-500/15 border-amber-500/40 text-amber-300';
+    const bannerIcon = isAll ? 'fa-circle-check text-emerald-400' : 'fa-triangle-exclamation text-amber-400';
+    const bannerTitle = isAll ? '🎉 ¡Pruebas Superadas Exitosamente!' : '⚠️ Discrepancia en Casos de Prueba';
+
+    const activeTab = Math.min(this.activeTestCaseTab, evalResult.results.length - 1);
+    const currentCase = evalResult.results[activeTab] || evalResult.results[0];
+
+    const html = `
+      <div class="space-y-4 animate-fade-in">
+        
+        <!-- Banner de Estado Global -->
+        <div class="p-4 rounded-xl border ${bannerBg} flex items-start justify-between gap-3">
+          <div class="flex items-start gap-3">
+            <i class="fas ${bannerIcon} text-lg mt-0.5 shrink-0"></i>
+            <div>
+              <h4 class="text-xs font-bold uppercase tracking-wider">${bannerTitle}</h4>
+              <p class="text-xs mt-1 leading-relaxed text-gray-200">
+                ${evalResult.feedback}
+              </p>
+            </div>
+          </div>
+          <div class="text-right shrink-0 font-mono text-xs">
+            <span class="font-bold ${isAll ? 'text-emerald-400' : 'text-amber-400'}">
+              ${evalResult.passedCount} / ${evalResult.totalCount}
+            </span>
+            <span class="text-[10px] text-gray-400 block">casos pasados</span>
+          </div>
+        </div>
+
+        <!-- Pestañas de Casos de Prueba Evaluados -->
+        <div>
+          <div class="flex items-center gap-1.5 border-b border-gray-800 pb-2 overflow-x-auto no-scrollbar">
+            ${evalResult.results.map((r, idx) => `
+              <button 
+                type="button"
+                onclick="window.app.maratonUI.switchCaseTab(${idx})"
+                class="px-2.5 py-1 rounded-lg text-xs font-mono font-semibold transition cursor-pointer flex items-center gap-1.5 shrink-0 ${activeTab === idx ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40' : 'bg-[#161c28] text-gray-400 hover:text-white border border-transparent'}"
+              >
+                <span class="w-2 h-2 rounded-full ${r.passed ? 'bg-emerald-400' : 'bg-rose-400'}"></span>
+                <span>${r.visible ? `Caso ${idx + 1}` : `Caso Oculto ${idx + 1}`}</span>
+              </button>
+            `).join('')}
+          </div>
+
+          <!-- Detalle del Caso Seleccionado -->
+          ${currentCase ? `
+            <div class="mt-3 space-y-3">
+              <div class="flex items-center justify-between text-xs">
+                <span class="text-gray-400 font-mono">${currentCase.descripcion}</span>
+                <span class="font-mono font-bold ${currentCase.passed ? 'text-emerald-400' : 'text-rose-400'}">
+                  ${currentCase.passed ? '✓ Superado (AC)' : (currentCase.status === 'TIMEOUT' ? '⏱ Tiempo Límite Excedido' : '❌ Salida Incorrecta (WA)')}
+                </span>
+              </div>
+
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs font-mono">
+                <div>
+                  <span class="text-[10px] text-gray-500 uppercase font-bold block mb-1">Entrada</span>
+                  <pre class="bg-[#080b11] p-2.5 rounded border border-gray-800 text-gray-300 min-h-[42px] overflow-x-auto"><code>${currentCase.entrada || '(Sin entrada)'}</code></pre>
+                </div>
+                <div>
+                  <span class="text-[10px] text-gray-500 uppercase font-bold block mb-1">Salida Esperada</span>
+                  <pre class="bg-[#080b11] p-2.5 rounded border border-gray-800 text-sky-300 min-h-[42px] overflow-x-auto"><code>${currentCase.salida_esperada}</code></pre>
+                </div>
+              </div>
+
+              <div>
+                <span class="text-[10px] text-gray-500 uppercase font-bold block mb-1">Salida Obtenida de tu Código</span>
+                <pre class="bg-[#080b11] p-2.5 rounded border border-gray-800 ${currentCase.passed ? 'text-emerald-300' : 'text-rose-300'} overflow-x-auto min-h-[42px]"><code>${currentCase.salida_obtenida || (currentCase.error ? currentCase.error : '(Salida vacía)')}</code></pre>
+              </div>
+
+              ${currentCase.error ? `
+                <div class="p-3 bg-rose-950/30 border border-rose-500/30 rounded-xl text-rose-300 text-xs font-mono">
+                  ${currentCase.error}
+                </div>
+              ` : ''}
+            </div>
+          ` : ''}
+        </div>
+
+      </div>
+    `;
+
+    panel.innerHTML = html;
+  }
+
+  switchCaseTab(idx) {
+    this.activeTestCaseTab = idx;
+    const panel = document.getElementById('maraton-judge-results-panel');
+    if (panel && this.currentEvaluation) {
+      this.renderEvaluationResults(panel, this.currentEvaluation, true);
+    }
+  }
+}
+
+
   // =========================================================================
   // 3. GESTOR DE ALMACENAMIENTO (LOCALSTORAGE)
   // =========================================================================
@@ -9065,6 +12900,7 @@ const PROG_U14_TOPICS = {
       this.sidebarCollapsed = false;
       this.openWeeks = new Set();
       this.allWeeksExpanded = false;
+      this.maratonUI = new MaratonUI(this);
 
       this.initElements();
       this.initTheme();
@@ -9442,6 +13278,18 @@ const PROG_U14_TOPICS = {
 
     handleInitialRoute() {
       const hash = window.location.hash.replace('#', '');
+      if (hash === 'maraton' || hash.startsWith('maraton?')) {
+        const params = new URLSearchParams(hash.includes('?') ? hash.split('?')[1] : '');
+        const tema = params.get('tema') || params.get('theme') || '';
+        this.showMaraton(tema);
+        return;
+      }
+      if (hash.startsWith('maraton/')) {
+        const pNum = hash.split('/')[1];
+        this.loadMaratonProblem(pNum);
+        return;
+      }
+
       const topicExists = this.findTopic(hash);
 
       if (hash && hash !== 'materias' && hash !== 'inicio' && topicExists) {
@@ -9461,6 +13309,17 @@ const PROG_U14_TOPICS = {
         }
         return;
       }
+      if (hash === 'maraton' || hash.startsWith('maraton?')) {
+        const params = new URLSearchParams(hash.includes('?') ? hash.split('?')[1] : '');
+        const tema = params.get('tema') || params.get('theme') || '';
+        this.showMaraton(tema);
+        return;
+      }
+      if (hash.startsWith('maraton/')) {
+        const pNum = hash.split('/')[1];
+        this.loadMaratonProblem(pNum);
+        return;
+      }
       if (hash === '' || hash === 'materias' || hash === 'inicio') {
         this.showCoursesHome();
       } else if (hash && hash !== this.currentTopicId) {
@@ -9471,6 +13330,85 @@ const PROG_U14_TOPICS = {
           this.showCoursesHome();
         }
       }
+    }
+
+    /**
+     * Muestra la Biblioteca de problemas de Maratón
+     */
+    showMaraton(themeFilter = '') {
+      if (typeof window !== 'undefined' && window.innerWidth < 768 && typeof this.closeMobileSidebar === 'function') {
+        this.closeMobileSidebar();
+      }
+      this.currentTopicId = null;
+      this.activeWeekId = null;
+      this.pauseSliderAutoPlay();
+      window.location.hash = themeFilter ? `maraton?tema=${encodeURIComponent(themeFilter)}` : 'maraton';
+      document.title = 'Leo Gaviria | 🏃 Maratón: Solución de problemas';
+      this.renderSidebar();
+      this.maratonUI.renderLibrary(this.contentAreaEl, themeFilter);
+      if (this.contentAreaEl) this.contentAreaEl.scrollTop = 0;
+    }
+
+    /**
+     * Carga la vista de resolución de un problema específico de Maratón
+     */
+    loadMaratonProblem(problemIdOrNumber) {
+      if (typeof window !== 'undefined' && window.innerWidth < 768 && typeof this.closeMobileSidebar === 'function') {
+        this.closeMobileSidebar();
+      }
+      this.currentTopicId = null;
+      this.activeWeekId = null;
+      this.pauseSliderAutoPlay();
+      const problem = getProblemById(problemIdOrNumber);
+      if (!problem) {
+        this.showMaraton();
+        return;
+      }
+      window.location.hash = `maraton/${problem.numero}`;
+      document.title = `Leo Gaviria | Problema ${problem.numero}: ${problem.titulo}`;
+      this.renderSidebar();
+      this.maratonUI.renderProblemView(this.contentAreaEl, problem);
+      if (this.contentAreaEl) this.contentAreaEl.scrollTop = 0;
+    }
+
+    /**
+     * Renderiza el bloque opcional de enlace a Maratón al final de una lección
+     */
+    renderMaratonCallout(topic) {
+      if (typeof MARATON_PROBLEMS === 'undefined') return '';
+      const related = MARATON_PROBLEMS.filter(p => {
+        if (p.unidadId && (p.unidadId === topic.unitId || topic.id.startsWith(p.unidadId.replace('unidad-', 'prog-u')))) return true;
+        if (p.unidad && topic.weekTitle && topic.weekTitle.includes(p.unidad)) return true;
+        return p.temas.some(t => topic.title.toLowerCase().includes(t.toLowerCase()));
+      });
+
+      if (related.length === 0) return '';
+      const primaryTheme = related[0].temas[0] || 'Todos';
+
+      return `
+        <div class="mt-12 bg-gradient-to-r from-emerald-950/40 via-[#101824] to-[#0c121e] border border-emerald-500/30 rounded-2xl p-5 sm:p-6 shadow-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div class="flex items-start sm:items-center gap-3.5">
+            <div class="w-10 h-10 rounded-xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 flex items-center justify-center text-lg shadow-sm shrink-0 mt-0.5 sm:mt-0">
+              <i class="fas fa-person-running"></i>
+            </div>
+            <div>
+              <span class="text-[10px] font-mono uppercase font-bold text-emerald-400 tracking-wider">🏃 Lleva tu conocimiento a la práctica</span>
+              <h4 class="text-sm font-bold text-white mt-0.5">¿Listo para resolver retos de programación en Maratón?</h4>
+              <p class="text-xs text-gray-300 mt-0.5 leading-relaxed">
+                Pon a prueba tu lógica resolviendo los problemas asociados a este tema con el Judge Online integrado.
+              </p>
+            </div>
+          </div>
+          <button 
+            type="button"
+            onclick="window.app.showMaraton('${primaryTheme}')" 
+            class="px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition flex items-center gap-2 shadow-lg shadow-emerald-600/30 shrink-0 cursor-pointer"
+          >
+            <span>Resolver problemas de ${primaryTheme}</span>
+            <i class="fas fa-arrow-right text-xs"></i>
+          </button>
+        </div>
+      `;
     }
 
     /**
@@ -9907,6 +13845,38 @@ const PROG_U14_TOPICS = {
         this.sidebarWeeksCountEl.textContent = `${this.currentCurriculum.length} Unidades`;
       }
 
+      // Tarjeta de acceso a Maratón: Solución de Problemas
+      if (typeof getMaratonStats === 'function' && typeof MARATON_PROBLEMS !== 'undefined') {
+        const mStats = getMaratonStats(MARATON_PROBLEMS);
+        html += `
+          <div class="mb-3 px-1">
+            <button 
+              type="button" 
+              onclick="window.app.showMaraton()"
+              class="w-full text-left p-2.5 rounded-xl bg-gradient-to-r from-emerald-950/40 via-[#131d27] to-[#0e1622] border border-emerald-500/30 hover:border-emerald-500/60 transition group cursor-pointer shadow-md flex items-center justify-between gap-2"
+              title="Acceder a Maratón: Solución de problemas"
+            >
+              <div class="flex items-center gap-2.5 min-w-0">
+                <div class="w-7 h-7 rounded-lg bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 flex items-center justify-center text-xs shrink-0 group-hover:scale-105 transition">
+                  <i class="fas fa-person-running"></i>
+                </div>
+                <div class="truncate">
+                  <span class="text-xs font-bold text-white group-hover:text-emerald-300 transition block leading-tight truncate">
+                    🏃 Maratón: Problemas
+                  </span>
+                  <span class="text-[10px] text-gray-400 font-mono block">
+                    ${mStats.resueltos} de ${mStats.total} resueltos
+                  </span>
+                </div>
+              </div>
+              <span class="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 shrink-0">
+                ${mStats.porcentaje}%
+              </span>
+            </button>
+          </div>
+        `;
+      }
+
       this.currentCurriculum.forEach((week) => {
         const filteredTopics = week.topics.filter(t => {
           if (!query) return true;
@@ -10154,7 +14124,10 @@ const PROG_U14_TOPICS = {
             ${topic.comprueba ? this.renderCompruebaSection(topic.comprueba) : ''}
 
             <!-- Bloques complementarios legacy si existieran -->
-            ${(topic.complementary && topic.complementary.length > 0) ? this.renderComplementarySection(topic.complementary) : ''}
+            
+
+            <!-- Llamado pedagógico a Maratón -->
+            
           </main>
 
 
