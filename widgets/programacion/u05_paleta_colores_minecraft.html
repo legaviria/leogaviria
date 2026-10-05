@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Paleta de Colores de Minecraft - Catálogo Interactivo 97 Bloques</title>
+  <style>
+    :root {
+      --bg: #0e0e11;
+      --card: #141923;
+      --border: #232d42;
+      --text: #f3f4f6;
+      --muted: #94a3b8;
+      --sky: #38bdf8;
+      --purple: #a855f7;
+      --green: #10b981;
+      --amber: #f59e0b;
+      --rose: #f43f5e;
+      --card-inner: #080b10;
+    }
+    body.theme-light {
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --border: #e2e8f0;
+      --text: #0f172a;
+      --muted: #64748b;
+      --sky: #0284c7;
+      --purple: #9333ea;
+      --green: #059669;
+      --amber: #d97706;
+      --rose: #e11d48;
+      --card-inner: #f1f5f9;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { background: var(--bg); color: var(--text); padding: 14px; display: flex; justify-content: center; }
+    .container { width: 100%; max-width: 960px; background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 18px; box-shadow: 0 10px 30px rgba(0,0,0,0.35); }
+    
+    .header { text-align: center; margin-bottom: 14px; }
+    .header h3 { font-size: 1.25rem; color: var(--amber); margin-bottom: 4px; display: flex; align-items: center; justify-content: center; gap: 8px; }
+    .header p { font-size: 0.78rem; color: var(--muted); }
+
+    /* Barra Superior: Buscador y Contador */
+    .search-bar-wrap {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+    }
+    .search-input-box {
+      flex: 1;
+      position: relative;
+      min-width: 240px;
+    }
+    .search-input-box input {
+      width: 100%;
+      background: #080b12;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px 12px 8px 34px;
+      font-size: 0.8rem;
+      color: var(--text);
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .search-input-box input:focus {
+      border-color: var(--sky);
+      box-shadow: 0 0 8px rgba(56, 189, 248, 0.2);
+    }
+    .search-icon {
+      position: absolute;
+      left: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    /* Pestañas de Filtro por Categoría */
+    .filter-tabs {
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+      padding-bottom: 8px;
+      margin-bottom: 12px;
+    }
+    .tab-btn {
+      padding: 5px 12px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s;
+    }
+    .tab-btn:hover, .tab-btn.active {
+      background: var(--sky);
+      color: #0b0e14;
+      border-color: var(--sky);
+    }
+
+    /* Layout Principal: Grid de Bloques + Panel Inspector 3D */
+    .palette-layout {
+      display: grid;
+      grid-template-columns: 1.7fr 1fr;
+      gap: 14px;
+    }
+    @media (max-width: 768px) {
+      .palette-layout { grid-template-columns: 1fr; }
+    }
+
+    /* Grid de Bloques de Colores */
+    .blocks-grid-scroll {
+      background: #060911;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px;
+      max-height: 480px;
+      overflow-y: auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      gap: 8px;
+    }
+
+    .block-card {
+      background: #0d121c;
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 8px;
+      padding: 8px;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      transition: transform 0.15s, border-color 0.15s, box-shadow 0.15s;
+    }
+    .block-card:hover {
+      transform: translateY(-2px);
+      border-color: var(--sky);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+    }
+    .block-card.selected {
+      border-color: var(--amber);
+      background: rgba(245, 158, 11, 0.08);
+      box-shadow: 0 0 10px rgba(245, 158, 11, 0.25);
+    }
+
+    .swatch-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .swatch-code {
+      font-size: 0.65rem;
+      font-family: monospace;
+      font-weight: 800;
+      color: var(--muted);
+      background: rgba(255,255,255,0.06);
+      padding: 1px 5px;
+      border-radius: 4px;
+    }
+    .swatch-hex {
+      font-size: 0.62rem;
+      font-family: monospace;
+      color: var(--muted);
+    }
+
+    .swatch-preview-box {
+      width: 100%;
+      height: 38px;
+      border-radius: 6px;
+      border: 1px solid rgba(255,255,255,0.12);
+      box-shadow: inset 0 0 6px rgba(0,0,0,0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      font-weight: bold;
+      color: #fff;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+    }
+
+    .block-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+    }
+    .block-name {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: #f1f5f9;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .block-id-tag {
+      font-size: 0.64rem;
+      font-family: monospace;
+      color: var(--sky);
+    }
+
+    /* Panel Inspector 3D Derecho */
+    .inspector-panel {
+      background: #080b12;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .inspector-title {
+      font-size: 0.75rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    canvas#inspectorCanvas {
+      width: 100%;
+      height: 180px;
+      display: block;
+      border-radius: 8px;
+      background: radial-gradient(circle at 50% 40%, #1a2233 0%, #050811 100%);
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .inspector-details {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      font-family: Consolas, monospace;
+      font-size: 0.74rem;
+    }
+    .detail-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 4px 6px;
+      background: rgba(255,255,255,0.02);
+      border-radius: 4px;
+      border: 1px solid rgba(255,255,255,0.04);
+    }
+    .detail-key { color: var(--muted); }
+    .detail-val { color: #facc15; font-weight: bold; }
+
+    .code-snippet-box {
+      background: #05070c;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 8px;
+      font-family: Consolas, monospace;
+      font-size: 0.72rem;
+      line-height: 1.45;
+      color: #93c5fd;
+      overflow-x: auto;
+    }
+    .copy-btn {
+      width: 100%;
+      padding: 7px;
+      font-size: 0.74rem;
+      font-weight: 700;
+      border-radius: 6px;
+      border: none;
+      background: var(--sky);
+      color: #0b0e14;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: background 0.2s;
+    }
+    .copy-btn:hover { background: #7dd3fc; }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header">
+    <h3>🎨 Paleta Completa de 97 Colores y Materiales de Minecraft</h3>
+    <p>Catálogo oficial del proyecto extraído de <code>paleta_minecraft.png</code> y <code>pokemon.py</code> con códigos, IDs de bloque, datos y tuplas para Python.</p>
+  </div>
+
+  <!-- Buscador y Filtros -->
+  <div class="search-bar-wrap">
+    <div class="search-input-box">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="searchInput" placeholder="Buscar por nombre, código (1-97), ID de bloque o Hex..." oninput="filterPalette()">
+    </div>
+    <div style="font-size:0.75rem; color:var(--muted); align-self:center; font-family:monospace;" id="matchCountTag">
+      97 / 97 Materiales
+    </div>
+  </div>
+
+  <!-- Pestañas de Categoría -->
+  <div class="filter-tabs" id="filterTabs">
+    <button class="tab-btn active" onclick="setCategory('all')">Todos (97)</button>
+    <button class="tab-btn" onclick="setCategory('lana')">🐑 Lanas (16)</button>
+    <button class="tab-btn" onclick="setCategory('hormigon')">🧱 Hormigón (16)</button>
+    <button class="tab-btn" onclick="setCategory('terracota')">🏺 Terracotas</button>
+    <button class="tab-btn" onclick="setCategory('metales')">💎 Oros, Redstone, Carbón</button>
+    <button class="tab-btn" onclick="setCategory('naturaleza')">🌿 Madera, Hojas, Nieve</button>
+  </div>
+
+  <div class="palette-layout">
+    <!-- Lista de 97 Bloques -->
+    <div class="blocks-grid-scroll" id="blocksGrid"></div>
+
+    <!-- Panel Inspector 3D -->
+    <div class="inspector-panel">
+      <div class="inspector-title">
+        <span>Visor de Bloque Voxel 3D</span>
+        <span id="inspectCodeTag" style="color:var(--amber);">#01</span>
+      </div>
+
+      <canvas id="inspectorCanvas" width="300" height="180"></canvas>
+
+      <div class="inspector-details">
+        <div class="detail-row">
+          <span class="detail-key">Material:</span>
+          <span class="detail-val" id="detName">Blanco - Lana</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-key">ID Bloque / Data:</span>
+          <span class="detail-val" id="detBlockData">ID: 35, DATA: 0</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-key">Tupla Python:</span>
+          <span class="detail-val" id="detTuple" style="color:#a855f7;">(35, 0)</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-key">Color Hex:</span>
+          <span class="detail-val" id="detHex" style="color:var(--sky);">#E9ECEC</span>
+        </div>
+      </div>
+
+      <div class="code-snippet-box" id="detCodeSnippet">
+        # Uso en Python con mcpi:<br>
+        bloque, sub_id = pk.PALETA[1]<br>
+        mc.setBlock(x, y, z, 35, 0)
+      </div>
+
+      <button class="copy-btn" id="btnCopyCode" onclick="copyTupleToClipboard()">
+        <span>📋 Copiar Tupla (35, 0)</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Catálogo completo de los 97 colores extraído de paleta_minecraft.png y pokemon.py
+  const PALETTE_97 = [
+    { code: 1,  name: "Blanco - Lana", en: "Wool", b: 35, d: 0, hex: "#E9ECEC", cat: "lana" },
+    { code: 2,  name: "Blanco - Hormigón", en: "Concrete", b: 251, d: 0, hex: "#D9D9D9", cat: "hormigon" },
+    { code: 3,  name: "Blanco - Polvo Hormigón", en: "Concrete Powder", b: 252, d: 0, hex: "#E2E2E2", cat: "hormigon" },
+    { code: 4,  name: "Blanco - Terracota", en: "Terracotta", b: 159, d: 0, hex: "#D1B1A1", cat: "terracota" },
+    { code: 5,  name: "Blanco - Cuarzo", en: "Quartz Block", b: 155, d: 0, hex: "#E7E3D8", cat: "naturaleza" },
+    { code: 6,  name: "Blanco - Nieve", en: "Snow Block", b: 80, d: 0, hex: "#F0F5F5", cat: "naturaleza" },
+    { code: 7,  name: "Blanco - Piedra del Fin", en: "End Stone", b: 121, d: 0, hex: "#DEE6A7", cat: "naturaleza" },
+    { code: 8,  name: "Naranja - Lana", en: "Wool", b: 35, d: 1, hex: "#F07613", cat: "lana" },
+    { code: 9,  name: "Naranja - Hormigón", en: "Concrete", b: 251, d: 1, hex: "#E06100", cat: "hormigon" },
+    { code: 10, name: "Naranja - Polvo Hormigón", en: "Concrete Powder", b: 252, d: 1, hex: "#E06100", cat: "hormigon" },
+    { code: 11, name: "Naranja - Terracota", en: "Terracotta", b: 159, d: 1, hex: "#A25425", cat: "terracota" },
+    { code: 12, name: "Naranja - Terracota Vidriada", en: "Glazed Terracotta", b: 236, d: 0, hex: "#BD6A22", cat: "terracota" },
+    { code: 13, name: "Calabaza", en: "Pumpkin", b: 86, d: 0, hex: "#CA7118", cat: "naturaleza" },
+    { code: 14, name: "Redstone - Bloque", en: "Redstone Block", b: 152, d: 0, hex: "#9E140D", cat: "metales" },
+    { code: 15, name: "Magenta - Lana", en: "Wool", b: 35, d: 2, hex: "#BD44B3", cat: "lana" },
+    { code: 16, name: "Magenta - Hormigón", en: "Concrete", b: 251, d: 2, hex: "#A9309F", cat: "hormigon" },
+    { code: 17, name: "Magenta - Polvo Hormigón", en: "Concrete Powder", b: 252, d: 2, hex: "#D83EB0", cat: "hormigon" },
+    { code: 18, name: "Magenta - Terracota", en: "Terracotta", b: 159, d: 2, hex: "#95576C", cat: "terracota" },
+    { code: 19, name: "Magenta - Terracota Vid.", en: "Glazed Terracotta", b: 237, d: 0, hex: "#BF38B1", cat: "terracota" },
+    { code: 20, name: "Bloque Purpur", en: "Purpur Block", b: 201, d: 0, hex: "#A97DA9", cat: "naturaleza" },
+    { code: 21, name: "Azul Claro - Lana", en: "Wool", b: 35, d: 3, hex: "#3AAFD9", cat: "lana" },
+    { code: 22, name: "Azul Claro - Hormigón", en: "Concrete", b: 251, d: 3, hex: "#2489C7", cat: "hormigon" },
+    { code: 23, name: "Azul Claro - Polvo Horm.", en: "Concrete Powder", b: 252, d: 3, hex: "#4AB5D5", cat: "hormigon" },
+    { code: 24, name: "Azul Claro - Terracota", en: "Terracotta", b: 159, d: 3, hex: "#706C8A", cat: "terracota" },
+    { code: 25, name: "Hielo Ciano", en: "Packed Ice", b: 174, d: 0, hex: "#91B5E7", cat: "naturaleza" },
+    { code: 26, name: "Amarillo - Lana", en: "Wool", b: 35, d: 4, hex: "#F8C627", cat: "lana" },
+    { code: 27, name: "Amarillo - Hormigón", en: "Concrete", b: 251, d: 4, hex: "#F0D83D", cat: "hormigon" },
+    { code: 28, name: "Amarillo - Polvo Horm.", en: "Concrete Powder", b: 252, d: 4, hex: "#E7C636", cat: "hormigon" },
+    { code: 29, name: "Amarillo - Terracota", en: "Terracotta", b: 159, d: 4, hex: "#BA8523", cat: "terracota" },
+    { code: 30, name: "Oro - Bloque", en: "Gold Block", b: 41, d: 0, hex: "#F2CD46", cat: "metales" },
+    { code: 31, name: "Heno - Bloque", en: "Hay Bale", b: 170, d: 0, hex: "#AC8E12", cat: "naturaleza" },
+    { code: 32, name: "Verde Lima - Lana", en: "Wool", b: 35, d: 5, hex: "#70B919", cat: "lana" },
+    { code: 33, name: "Verde Lima - Hormigón", en: "Concrete", b: 251, d: 5, hex: "#5EA818", cat: "hormigon" },
+    { code: 34, name: "Verde Lima - Polvo Horm.", en: "Concrete Powder", b: 252, d: 5, hex: "#68B319", cat: "hormigon" },
+    { code: 35, name: "Verde Lima - Terracota", en: "Terracotta", b: 159, d: 5, hex: "#677535", cat: "terracota" },
+    { code: 36, name: "Slime - Bloque", en: "Slime Block", b: 165, d: 0, hex: "#82C259", cat: "naturaleza" },
+    { code: 37, name: "Melón - Bloque", en: "Melon Block", b: 103, d: 0, hex: "#769828", cat: "naturaleza" },
+    { code: 38, name: "Rosa - Lana", en: "Wool", b: 35, d: 6, hex: "#ED8DAC", cat: "lana" },
+    { code: 39, name: "Rosa - Hormigón", en: "Concrete", b: 251, d: 6, hex: "#D5658F", cat: "hormigon" },
+    { code: 40, name: "Rosa - Polvo Horm.", en: "Concrete Powder", b: 252, d: 6, hex: "#E28CA8", cat: "hormigon" },
+    { code: 41, name: "Rosa - Terracota", en: "Terracotta", b: 159, d: 6, hex: "#A04D4E", cat: "terracota" },
+    { code: 42, name: "Gris - Lana", en: "Wool", b: 35, d: 7, hex: "#3E4447", cat: "lana" },
+    { code: 43, name: "Gris - Hormigón", en: "Concrete", b: 251, d: 7, hex: "#36393D", cat: "hormigon" },
+    { code: 44, name: "Gris - Polvo Horm.", en: "Concrete Powder", b: 252, d: 7, hex: "#4A4D51", cat: "hormigon" },
+    { code: 45, name: "Gris - Terracota", en: "Terracotta", b: 159, d: 7, hex: "#3A2A23", cat: "terracota" },
+    { code: 46, name: "Piedra", en: "Stone", b: 1, d: 0, hex: "#7D7D7D", cat: "naturaleza" },
+    { code: 47, name: "Adoquín", en: "Cobblestone", b: 4, d: 0, hex: "#6A6A6A", cat: "naturaleza" },
+    { code: 48, name: "Ladrillos de Piedra", en: "Stone Bricks", b: 98, d: 0, hex: "#777777", cat: "naturaleza" },
+    { code: 49, name: "Gris Claro - Lana", en: "Wool", b: 35, d: 8, hex: "#8E8E86", cat: "lana" },
+    { code: 50, name: "Gris Claro - Hormigón", en: "Concrete", b: 251, d: 8, hex: "#878B8C", cat: "hormigon" },
+    { code: 51, name: "Gris Claro - Polvo", en: "Concrete Powder", b: 252, d: 8, hex: "#9A9A9A", cat: "hormigon" },
+    { code: 52, name: "Gris Claro - Terracota", en: "Terracotta", b: 159, d: 8, hex: "#876B62", cat: "terracota" },
+    { code: 53, name: "Hierro - Bloque", en: "Iron Block", b: 42, d: 0, hex: "#D8D8D8", cat: "metales" },
+    { code: 54, name: "Cian - Lana", en: "Wool", b: 35, d: 9, hex: "#158991", cat: "lana" },
+    { code: 55, name: "Cian - Hormigón", en: "Concrete", b: 251, d: 9, hex: "#157788", cat: "hormigon" },
+    { code: 56, name: "Cian - Polvo Horm.", en: "Concrete Powder", b: 252, d: 9, hex: "#249CA8", cat: "hormigon" },
+    { code: 57, name: "Cian - Terracota", en: "Terracotta", b: 159, d: 9, hex: "#575C5C", cat: "terracota" },
+    { code: 58, name: "Prismarina", en: "Prismarine", b: 168, d: 0, hex: "#5B9289", cat: "naturaleza" },
+    { code: 59, name: "Prismarina - Ladrillos", en: "Prismarine Bricks", b: 168, d: 1, hex: "#639C96", cat: "naturaleza" },
+    { code: 60, name: "Morado - Lana", en: "Wool", b: 35, d: 10, hex: "#792AAC", cat: "lana" },
+    { code: 61, name: "Morado - Hormigón", en: "Concrete", b: 251, d: 10, hex: "#6419A0", cat: "hormigon" },
+    { code: 62, name: "Morado - Polvo Horm.", en: "Concrete Powder", b: 252, d: 10, hex: "#8431C4", cat: "hormigon" },
+    { code: 63, name: "Morado - Terracota", en: "Terracotta", b: 159, d: 10, hex: "#7A435B", cat: "terracota" },
+    { code: 64, name: "Micelio", en: "Mycelium", b: 110, d: 0, hex: "#6F626A", cat: "naturaleza" },
+    { code: 65, name: "Azul - Lana", en: "Wool", b: 35, d: 11, hex: "#35399D", cat: "lana" },
+    { code: 66, name: "Azul - Hormigón", en: "Concrete", b: 251, d: 11, hex: "#2F3FA8", cat: "hormigon" },
+    { code: 67, name: "Azul - Polvo Horm.", en: "Concrete Powder", b: 252, d: 11, hex: "#4655BC", cat: "hormigon" },
+    { code: 68, name: "Azul - Terracota", en: "Terracotta", b: 159, d: 11, hex: "#4A3C5B", cat: "terracota" },
+    { code: 69, name: "Lapislázuli - Bloque", en: "Lapis Lazuli Block", b: 22, d: 0, hex: "#1E438C", cat: "metales" },
+    { code: 70, name: "Prismarina Oscura", en: "Dark Prismarine", b: 168, d: 2, hex: "#3A5C56", cat: "naturaleza" },
+    { code: 71, name: "Café - Lana", en: "Wool", b: 35, d: 12, hex: "#724728", cat: "lana" },
+    { code: 72, name: "Café - Hormigón", en: "Concrete", b: 251, d: 12, hex: "#603B2A", cat: "hormigon" },
+    { code: 73, name: "Café - Polvo Horm.", en: "Concrete Powder", b: 252, d: 12, hex: "#774B32", cat: "hormigon" },
+    { code: 74, name: "Café - Terracota", en: "Terracotta", b: 159, d: 12, hex: "#4D3323", cat: "terracota" },
+    { code: 75, name: "Tierra", en: "Dirt", b: 3, d: 0, hex: "#866043", cat: "naturaleza" },
+    { code: 76, name: "Madera - Roble", en: "Oak Wood Plank", b: 5, d: 0, hex: "#A2824E", cat: "naturaleza" },
+    { code: 77, name: "Madera - Abeto", en: "Spruce Wood Plank", b: 5, d: 1, hex: "#664A29", cat: "naturaleza" },
+    { code: 78, name: "Madera - Jungla", en: "Jungle Wood Plank", b: 5, d: 3, hex: "#A87A51", cat: "naturaleza" },
+    { code: 79, name: "Podzol", en: "Podzol", b: 3, d: 2, hex: "#593D29", cat: "naturaleza" },
+    { code: 80, name: "Verde - Lana", en: "Wool", b: 35, d: 13, hex: "#546D1B", cat: "lana" },
+    { code: 81, name: "Verde - Hormigón", en: "Concrete", b: 251, d: 13, hex: "#4C7A34", cat: "hormigon" },
+    { code: 82, name: "Verde - Polvo Horm.", en: "Concrete Powder", b: 252, d: 13, hex: "#5A8B3B", cat: "hormigon" },
+    { code: 83, name: "Verde - Terracota", en: "Terracotta", b: 159, d: 13, hex: "#4C532A", cat: "terracota" },
+    { code: 84, name: "Hojas de Roble", en: "Oak Leaves", b: 18, d: 0, hex: "#3A5F1B", cat: "naturaleza" },
+    { code: 85, name: "Rojo - Lana", en: "Wool", b: 35, d: 14, hex: "#A12722", cat: "lana" },
+    { code: 86, name: "Rojo - Hormigón", en: "Concrete", b: 251, d: 14, hex: "#A51C1C", cat: "hormigon" },
+    { code: 87, name: "Rojo - Polvo Horm.", en: "Concrete Powder", b: 252, d: 14, hex: "#C22E2E", cat: "hormigon" },
+    { code: 88, name: "Rojo - Terracota", en: "Terracotta", b: 159, d: 14, hex: "#8F3D2F", cat: "terracota" },
+    { code: 89, name: "Ladrillo de Arcilla", en: "Bricks", b: 45, d: 0, hex: "#844633", cat: "naturaleza" },
+    { code: 90, name: "Ladrillo del Nether", en: "Nether Brick", b: 112, d: 0, hex: "#2C161A", cat: "naturaleza" },
+    { code: 91, name: "Piedra del Nether", en: "Netherrack", b: 87, d: 0, hex: "#6F3636", cat: "naturaleza" },
+    { code: 92, name: "Negro - Lana", en: "Wool", b: 35, d: 15, hex: "#141519", cat: "lana" },
+    { code: 93, name: "Negro - Hormigón", en: "Concrete", b: 251, d: 15, hex: "#191919", cat: "hormigon" },
+    { code: 94, name: "Negro - Polvo Horm.", en: "Concrete Powder", b: 252, d: 15, hex: "#1B1B1E", cat: "hormigon" },
+    { code: 95, name: "Negro - Terracota", en: "Terracotta", b: 159, d: 15, hex: "#251610", cat: "terracota" },
+    { code: 96, name: "Obsidiana", en: "Obsidian", b: 49, d: 0, hex: "#14121F", cat: "metales" },
+    { code: 97, name: "Carbón - Bloque", en: "Coal Block", b: 173, d: 0, hex: "#101010", cat: "metales" }
+  ];
+
+  let selectedIndex = 0;
+  let currentCategory = 'all';
+
+  function initCatalog() {
+    renderBlocksGrid();
+    inspectBlock(0);
+  }
+
+  function renderBlocksGrid() {
+    const grid = document.getElementById('blocksGrid');
+    grid.innerHTML = '';
+    const query = document.getElementById('searchInput').value.trim().toLowerCase();
+
+    const filtered = PALETTE_97.filter(item => {
+      const matchCat = (currentCategory === 'all' || item.cat === currentCategory);
+      if (!matchCat) return false;
+
+      if (!query) return true;
+      const cStr = item.code.toString();
+      const nStr = item.name.toLowerCase();
+      const eStr = item.en.toLowerCase();
+      const hStr = item.hex.toLowerCase();
+      const bStr = item.b.toString();
+      return cStr.includes(query) || nStr.includes(query) || eStr.includes(query) || hStr.includes(query) || bStr.includes(query);
+    });
+
+    document.getElementById('matchCountTag').textContent = `${filtered.length} / 97 Materiales`;
+
+    filtered.forEach(item => {
+      const card = document.createElement('div');
+      card.className = `block-card ${PALETTE_97[selectedIndex].code === item.code ? 'selected' : ''}`;
+      card.id = `card_${item.code}`;
+      card.onclick = () => {
+        const idx = PALETTE_97.findIndex(p => p.code === item.code);
+        inspectBlock(idx);
+      };
+
+      const codeFmt = item.code < 10 ? `0${item.code}` : `${item.code}`;
+
+      card.innerHTML = `
+        <div class="swatch-header">
+          <span class="swatch-code">#${codeFmt}</span>
+          <span class="swatch-hex">${item.hex}</span>
+        </div>
+        <div class="swatch-preview-box" style="background-color: ${item.hex};"></div>
+        <div class="block-meta">
+          <span class="block-name" title="${item.name}">${item.name}</span>
+          <span class="block-id-tag">ID:${item.b} D:${item.d}</span>
+        </div>
+      `;
+      grid.appendChild(card);
+    });
+  }
+
+  function setCategory(cat) {
+    currentCategory = cat;
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.classList.toggle('active', btn.getAttribute('onclick')?.includes(`'${cat}'`));
+    });
+    renderBlocksGrid();
+  }
+
+  function filterPalette() {
+    renderBlocksGrid();
+  }
+
+  function inspectBlock(idx) {
+    selectedIndex = idx;
+    const item = PALETTE_97[idx];
+    const codeFmt = item.code < 10 ? `0${item.code}` : `${item.code}`;
+
+    document.querySelectorAll('.block-card').forEach(c => c.classList.remove('selected'));
+    const activeCard = document.getElementById(`card_${item.code}`);
+    if (activeCard) activeCard.classList.add('selected');
+
+    document.getElementById('inspectCodeTag').textContent = `#${codeFmt}`;
+    document.getElementById('detName').textContent = item.name;
+    document.getElementById('detBlockData').textContent = `ID: ${item.b}, DATA: ${item.d}`;
+    document.getElementById('detTuple').textContent = `(${item.b}, ${item.d})`;
+    document.getElementById('detHex').textContent = item.hex;
+    document.getElementById('btnCopyCode').innerHTML = `<span>📋 Copiar Tupla (${item.b}, ${item.d})</span>`;
+
+    document.getElementById('detCodeSnippet').innerHTML = `
+      <span style="color:#64748b;"># Consulta en pokemon.py:</span><br>
+      bloque, sub_id = pk.PALETA[<span style="color:#f59e0b;">${item.code}</span>] &nbsp;<span style="color:#64748b;"># -> (${item.b}, ${item.d})</span><br>
+      mc.<span style="color:#38bdf8;">setBlock</span>(x, y, z, <span style="color:#a855f7;">${item.b}</span>, <span style="color:#a855f7;">${item.d}</span>) &nbsp;<span style="color:#64748b;"># ${item.name}</span>
+    `;
+
+    draw3DBlockPreview(item.hex);
+  }
+
+  function copyTupleToClipboard() {
+    const item = PALETTE_97[selectedIndex];
+    const text = `(${item.b}, ${item.d})`;
+    navigator.clipboard.writeText(text).then(() => {
+      const btn = document.getElementById('btnCopyCode');
+      btn.innerHTML = `<span>✓ ¡Copiado (${item.b}, ${item.d})!</span>`;
+      setTimeout(() => {
+        btn.innerHTML = `<span>📋 Copiar Tupla (${item.b}, ${item.d})</span>`;
+      }, 1800);
+    });
+  }
+
+  // Dibujar Cubo Isométrico 3D Grande con sombreado de caras
+  function draw3DBlockPreview(hex) {
+    const canvas = document.getElementById('inspectorCanvas');
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    const cx = canvas.width / 2;
+    const cy = canvas.height / 2 + 10;
+    const size = 52;
+
+    // Calcular colores derivados más oscuros para izquierda y derecha
+    function shadeColor(color, percent) {
+      let num = parseInt(color.replace("#",""), 16),
+      amt = Math.round(2.55 * percent),
+      R = (num >> 16) + amt,
+      B = (num >> 8 & 0x00FF) + amt,
+      G = (num & 0x0000FF) + amt;
+      return "#" + (0x1000000 + (R<255?R<1?0:R:255)*0x10000 + (B<255?B<1?0:B:255)*0x100 + (G<255?G<1?0:G:255)).toString(16).slice(1);
+    }
+
+    const topCol = hex;
+    const leftCol = shadeColor(hex, -22);
+    const rightCol = shadeColor(hex, -40);
+
+    // Cara Superior (Top)
+    ctx.fillStyle = topCol;
+    ctx.beginPath();
+    ctx.moveTo(cx, cy - size);
+    ctx.lineTo(cx + size * 1.15, cy - size * 0.45);
+    ctx.lineTo(cx, cy + size * 0.1);
+    ctx.lineTo(cx - size * 1.15, cy - size * 0.45);
+    ctx.closePath();
+    ctx.fill();
+    ctx.strokeStyle = "rgba(0,0,0,0.4)";
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+
+    // Cara Izquierda (Left)
+    ctx.fillStyle = leftCol;
+    ctx.beginPath();
+    ctx.moveTo(cx - size * 1.15, cy - size * 0.45);
+    ctx.lineTo(cx, cy + size * 0.1);
+    ctx.lineTo(cx, cy + size * 0.95);
+    ctx.lineTo(cx - size * 1.15, cy + size * 0.4);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+
+    // Cara Derecha (Right)
+    ctx.fillStyle = rightCol;
+    ctx.beginPath();
+    ctx.moveTo(cx, cy + size * 0.1);
+    ctx.lineTo(cx + size * 1.15, cy - size * 0.45);
+    ctx.lineTo(cx + size * 1.15, cy + size * 0.4);
+    ctx.lineTo(cx, cy + size * 0.95);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+
+    // Sombra en el suelo
+    ctx.fillStyle = "rgba(0,0,0,0.35)";
+    ctx.beginPath();
+    ctx.ellipse(cx, cy + size * 1.1, size * 1.1, size * 0.35, 0, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  window.addEventListener('load', initCatalog);
+</script>
+
+</body>
+</html>

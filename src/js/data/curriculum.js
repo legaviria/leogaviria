@@ -91,7 +91,7 @@ export const CURRICULUM = [
     "title": "Unidad 03: Elementos básicos de programación",
     "shortTitle": "U03: Elementos Básicos",
     "icon": "fa-cube",
-    "description": "Variables, constantes, tipos de datos primitivos, conversiones de tipo, operadores lógicos y palabras reservadas.",
+    "description": "Variables, constantes, tipos de datos, conversiones, operadores lógicos, palabras reservadas, listas, slicing visual, diccionarios, strings y cheat sheet.",
     "topics": [
       {
         "id": "prog-variables-constantes",
@@ -128,6 +128,51 @@ export const CURRICULUM = [
         "hasAnimation": true,
         "widgetFile": "widgets/programacion/u03_clasificador_palabras.html",
         "badge": "Clasificador Keywords"
+      },
+      {
+        "id": "prog-listas",
+        "title": "3.5 Listas e indexación en Python",
+        "duration": "30 min",
+        "difficulty": "Fácil",
+        "hasAnimation": true,
+        "widgetFile": "widgets/programacion/u03_simulador_listas.html",
+        "badge": "Simulador Listas"
+      },
+      {
+        "id": "prog-slicing-visual",
+        "title": "3.6 Sublistas y Slicing visual",
+        "duration": "30 min",
+        "difficulty": "Fácil",
+        "hasAnimation": true,
+        "widgetFile": "widgets/programacion/u03_slicing_visual.html",
+        "badge": "Slicing Visual"
+      },
+      {
+        "id": "prog-diccionarios",
+        "title": "3.7 Diccionarios y estructuras clave-valor",
+        "duration": "30 min",
+        "difficulty": "Media",
+        "hasAnimation": true,
+        "widgetFile": "widgets/programacion/u03_simulador_diccionarios.html",
+        "badge": "Clave-Valor"
+      },
+      {
+        "id": "prog-cadenas-strings",
+        "title": "3.8 Cadenas de caracteres y métodos de texto",
+        "duration": "30 min",
+        "difficulty": "Fácil",
+        "hasAnimation": true,
+        "widgetFile": "widgets/programacion/u03_simulador_strings.html",
+        "badge": "Laboratorio Strings"
+      },
+      {
+        "id": "prog-cheat-sheet-referencia",
+        "title": "3.9 Referencia rápida y Cheat Sheet",
+        "duration": "25 min",
+        "difficulty": "Fácil",
+        "hasAnimation": true,
+        "widgetFile": "widgets/programacion/u03_cheat_sheet_interactivo.html",
+        "badge": "Cheat Sheet"
       }
     ]
   },
@@ -137,7 +182,7 @@ export const CURRICULUM = [
     "title": "Unidad 04: Estructuras condicionales",
     "shortTitle": "U04: Condicionales",
     "icon": "fa-code-branch",
-    "description": "Toma de decisiones y bifurcaciones condicionales en Python: if, elif y else.",
+    "description": "Toma de decisiones y bifurcaciones condicionales en Python: if, elif y else, conexión con Minecraft y automatización con bloques.",
     "topics": [
       {
         "id": "prog-condicionales-if-elif-else",
@@ -147,6 +192,15 @@ export const CURRICULUM = [
         "hasAnimation": true,
         "widgetFile": "widgets/programacion/u04_flujo_condicional.html",
         "badge": "Flujo Bifurcado"
+      },
+      {
+        "id": "prog-minecraft-bloques-condicionales",
+        "title": "4.2 Conexión con Minecraft y bloques condicionales",
+        "duration": "30 min",
+        "difficulty": "Media",
+        "hasAnimation": true,
+        "widgetFile": "widgets/programacion/u04_minecraft_bloques_condicional.html",
+        "badge": "Minecraft & Bloques"
       }
     ]
   },
@@ -156,7 +210,7 @@ export const CURRICULUM = [
     "title": "Unidad 05: Estructuras de control",
     "shortTitle": "U05: Control & Ciclos",
     "icon": "fa-repeat",
-    "description": "Estructuras de repetición e iteración (for, while) y control robusto de errores con try y except.",
+    "description": "Estructuras de repetición e iteración (for, while), ciclos anidados aplicados a Pixel Art en Minecraft y control robusto de errores con try y except.",
     "topics": [
       {
         "id": "prog-bucle-for",
@@ -168,8 +222,17 @@ export const CURRICULUM = [
         "badge": "Simulador for"
       },
       {
+        "id": "prog-minecraft-puente-for",
+        "title": "5.2 Construcción de un puente en Minecraft con bucles for",
+        "duration": "35 min",
+        "difficulty": "Media",
+        "hasAnimation": true,
+        "widgetFile": "widgets/programacion/u05_minecraft_puente_for.html",
+        "badge": "Puente Automatizado"
+      },
+      {
         "id": "prog-bucle-while",
-        "title": "5.2 Estructura while",
+        "title": "5.3 Estructura while",
         "duration": "30 min",
         "difficulty": "Media",
         "hasAnimation": true,
@@ -178,12 +241,21 @@ export const CURRICULUM = [
       },
       {
         "id": "prog-excepciones-try-except",
-        "title": "5.3 Manejo de excepciones: try y except",
+        "title": "5.4 Manejo de excepciones: try y except",
         "duration": "25 min",
         "difficulty": "Media",
         "hasAnimation": true,
         "widgetFile": "widgets/programacion/u05_simulador_excepciones.html",
         "badge": "Control Excepciones"
+      },
+      {
+        "id": "prog-minecraft-pixelart-bucles",
+        "title": "5.5 Ciclos anidados y Pixel Art en Minecraft",
+        "duration": "35 min",
+        "difficulty": "Media",
+        "hasAnimation": true,
+        "widgetFile": "widgets/programacion/u05_minecraft_pixelart_bucles.html",
+        "badge": "Pixel Art & Bucles"
       }
     ]
   },
@@ -193,7 +265,7 @@ export const CURRICULUM = [
     "title": "Unidad 06: Funciones y procedimientos",
     "shortTitle": "U06: Funciones",
     "icon": "fa-cubes",
-    "description": "Diseño modular de software: definición de funciones, ámbito de variables, funciones integradas de Python y procedimientos.",
+    "description": "Diseño modular de software: definición de funciones, ámbito de variables, funciones integradas, procedimientos y librerías de sprites Pokémon en Minecraft.",
     "topics": [
       {
         "id": "prog-funciones-intro",
@@ -221,6 +293,15 @@ export const CURRICULUM = [
         "hasAnimation": true,
         "widgetFile": "widgets/programacion/u06_clasificador_procedimientos.html",
         "badge": "Función vs Procedimiento"
+      },
+      {
+        "id": "prog-minecraft-funciones-matrices",
+        "title": "6.4 Funciones para Minecraft: Librería Pokémon y Dibujado Modular",
+        "duration": "35 min",
+        "difficulty": "Media",
+        "hasAnimation": true,
+        "widgetFile": "widgets/programacion/u06_minecraft_pokemon_libreria.html",
+        "badge": "Librería Pokémon"
       }
     ]
   },

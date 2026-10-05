@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simulador de Pixel Art en Minecraft con Ciclos Anidados</title>
+  <style>
+    :root {
+      --bg: #0e0e11;
+      --card: #141923;
+      --border: #232d42;
+      --text: #f3f4f6;
+      --muted: #94a3b8;
+      --sky: #38bdf8;
+      --purple: #a855f7;
+      --green: #10b981;
+      --amber: #f59e0b;
+      --rose: #f43f5e;
+      --card-inner: #080b10;
+    }
+    body.theme-light {
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --border: #e2e8f0;
+      --text: #0f172a;
+      --muted: #64748b;
+      --sky: #0284c7;
+      --purple: #9333ea;
+      --green: #059669;
+      --amber: #d97706;
+      --rose: #e11d48;
+      --card-inner: #f1f5f9;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { background: var(--bg); color: var(--text); padding: 12px; display: flex; justify-content: center; }
+    .container { width: 100%; max-width: 960px; background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 18px; box-shadow: 0 10px 30px rgba(0,0,0,0.35); }
+    
+    .header { text-align: center; margin-bottom: 12px; }
+    .header h3 { font-size: 1.25rem; color: var(--amber); margin-bottom: 3px; display: flex; align-items: center; justify-content: center; gap: 8px; }
+    .header p { font-size: 0.78rem; color: var(--muted); }
+
+    /* Selector de Modelos / Presets */
+    .presets-bar {
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+      margin-bottom: 12px;
+      padding-bottom: 4px;
+      align-items: center;
+    }
+    .preset-btn {
+      padding: 6px 12px;
+      font-size: 0.74rem;
+      font-weight: 700;
+      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .preset-btn:hover, .preset-btn.active {
+      background: var(--amber);
+      color: #0b0e14;
+      border-color: var(--amber);
+    }
+
+    /* Grid Principal: Canvas Voxel 3D + Matriz & Inspector */
+    .stage-grid {
+      display: grid;
+      grid-template-columns: 1.25fr 1fr;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    @media (max-width: 720px) {
+      .stage-grid { grid-template-columns: 1fr; }
+    }
+
+    .panel-box {
+      background: #050811;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+    }
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--muted);
+    }
+    .panel-header span.tag {
+      font-family: monospace;
+      font-size: 0.68rem;
+      padding: 2px 6px;
+      border-radius: 4px;
+      background: rgba(56, 189, 248, 0.15);
+      color: var(--sky);
+    }
+
+    canvas#voxelCanvas {
+      width: 100%;
+      height: 380px;
+      display: block;
+      border-radius: 6px;
+      background: radial-gradient(circle at 50% 35%, #182234 0%, #080d16 100%);
+    }
+
+    /* Vista de Matriz 2D */
+    .matrix-view-container {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .matrix-grid-wrapper {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 6px;
+      background: #0a0e17;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      overflow: auto;
+      max-height: 165px;
+    }
+    .matrix-grid {
+      display: inline-grid;
+      gap: 2px;
+      padding: 2px;
+    }
+    .matrix-cell {
+      width: 16px;
+      height: 16px;
+      border-radius: 2px;
+      border: 1px solid rgba(255,255,255,0.08);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 8px;
+      font-family: monospace;
+      color: #fff;
+      text-shadow: 0 0 2px #000;
+      cursor: pointer;
+      transition: transform 0.1s, border-color 0.1s;
+    }
+    .matrix-cell.active-cell {
+      border: 2px solid #facc15 !important;
+      transform: scale(1.3);
+      z-index: 10;
+      box-shadow: 0 0 8px #facc15;
+    }
+    .matrix-cell.built-cell {
+      opacity: 0.95;
+    }
+    .matrix-cell.pending-cell {
+      opacity: 0.35;
+    }
+
+    /* Trace Variables */
+    .trace-card {
+      background: #0a0e17;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px 10px;
+      font-family: monospace;
+      font-size: 0.72rem;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 6px;
+    }
+    .trace-item {
+      display: flex;
+      flex-direction: column;
+    }
+    .trace-label {
+      font-size: 0.64rem;
+      color: var(--muted);
+      text-transform: uppercase;
+    }
+    .trace-val {
+      font-weight: 700;
+      color: var(--sky);
+      margin-top: 1px;
+    }
+
+    /* Code Box */
+    .code-box {
+      background: #080b12;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px;
+      font-family: Consolas, "Fira Code", monospace;
+      font-size: 0.72rem;
+      line-height: 1.45;
+      overflow-x: auto;
+    }
+    .code-line {
+      padding: 1px 6px;
+      border-radius: 3px;
+      transition: background 0.15s;
+      white-space: pre;
+      color: #cbd5e1;
+    }
+    .code-line.active {
+      background: rgba(245, 158, 11, 0.22);
+      border-left: 3px solid var(--amber);
+      color: #fef08a;
+      font-weight: 700;
+    }
+    .kw { color: #c084fc; font-weight: bold; }
+    .fn { color: #38bdf8; }
+    .num { color: #f59e0b; }
+    .cm { color: #64748b; font-style: italic; }
+
+    /* Paleta de Bloques Minecraft */
+    .palette-drawer {
+      margin-top: 10px;
+      background: #0a0e17;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px;
+    }
+    .palette-title {
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: var(--muted);
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .palette-swatches {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+    }
+    .swatch {
+      width: 20px;
+      height: 20px;
+      border-radius: 3px;
+      border: 1px solid rgba(255,255,255,0.15);
+      cursor: pointer;
+      position: relative;
+      transition: transform 0.1s;
+    }
+    .swatch:hover, .swatch.selected {
+      transform: scale(1.2);
+      border-color: #facc15;
+      box-shadow: 0 0 6px #facc15;
+      z-index: 5;
+    }
+
+    /* Barra de Controles */
+    .controls-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 6px;
+      border-top: 1px solid var(--border);
+    }
+    .btn-group {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+    .btn {
+      padding: 6px 14px;
+      font-size: 0.74rem;
+      font-weight: 700;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255,255,255,0.06);
+      color: var(--text);
+      transition: all 0.2s;
+    }
+    .btn:hover { background: rgba(255,255,255,0.12); }
+    .btn-primary { background: var(--green); color: #0b0e14; border-color: var(--green); }
+    .btn-primary:hover { background: #34d399; }
+    .btn-amber { background: var(--amber); color: #0b0e14; border-color: var(--amber); }
+
+    .speed-control {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.72rem;
+      color: var(--muted);
+      font-family: monospace;
+    }
+    .speed-control select {
+      background: #080b12;
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 3px 6px;
+      border-radius: 4px;
+      font-size: 0.72rem;
+      font-family: monospace;
+    }
+
+    .progress-bar-wrap {
+      width: 100%;
+      height: 4px;
+      background: rgba(255,255,255,0.06);
+      border-radius: 2px;
+      overflow: hidden;
+      margin-top: 8px;
+    }
+    .progress-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #38bdf8, #10b981);
+      width: 0%;
+      transition: width 0.1s linear;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header">
+    <h3>⛏️ Minecraft Pixel Art con Ciclos Anidados</h3>
+    <p>Visualiza cómo los ciclos anidados <code>for i</code> (filas) y <code>for j</code> (columnas) recorren matrices 2D y construyen figuras voxel en el mundo 3D.</p>
+  </div>
+
+  <!-- Presets -->
+  <div class="presets-bar">
+    <span style="font-size:0.7rem; color:var(--muted); font-weight:700; margin-right:4px;">MODELO:</span>
+    <button class="preset-btn active" onclick="loadPreset('pokeball')">🔴 Pokebola</button>
+    <button class="preset-btn" onclick="loadPreset('pikachu')">⚡ Pikachu Mini</button>
+    <button class="preset-btn" onclick="loadPreset('sword')">🗡️ Espada Diamante</button>
+    <button class="preset-btn" onclick="loadPreset('creeper')">🟩 Cara Creeper</button>
+    <button class="preset-btn" onclick="loadPreset('heart')">❤️ Corazón 8-Bit</button>
+    <button class="preset-btn" onclick="toggleCustomDraw()" id="btnCustomDraw">🎨 Dibujar Propio</button>
+  </div>
+
+  <div class="stage-grid">
+    <!-- Panel Izquierdo: Canvas 3D Voxel -->
+    <div class="panel-box">
+      <div class="panel-header">
+        <span>Mundo Minecraft 3D (Ejes X / Y / Z)</span>
+        <span class="tag" id="voxelStatsTag">0 / 0 Bloques</span>
+      </div>
+      <canvas id="voxelCanvas" width="540" height="380"></canvas>
+      <div class="progress-bar-wrap">
+        <div class="progress-bar-fill" id="progressFill"></div>
+      </div>
+    </div>
+
+    <!-- Panel Derecho: Matriz 2D y Código -->
+    <div class="panel-box matrix-view-container">
+      <div class="panel-header">
+        <span>Matriz en Memoria: <code>matriz[i][j]</code></span>
+        <span class="tag" id="matrixDimTag">10 x 10</span>
+      </div>
+
+      <!-- Cuadrícula 2D -->
+      <div class="matrix-grid-wrapper">
+        <div class="matrix-grid" id="matrixGrid"></div>
+      </div>
+
+      <!-- Variables de Traza -->
+      <div class="trace-card">
+        <div class="trace-item">
+          <span class="trace-label">Ciclo Externo (Fila i)</span>
+          <span class="trace-val" id="traceI">i = 0</span>
+        </div>
+        <div class="trace-item">
+          <span class="trace-label">Ciclo Interno (Col j)</span>
+          <span class="trace-val" id="traceJ">j = 0</span>
+        </div>
+        <div class="trace-item">
+          <span class="trace-label">Valor en Matriz</span>
+          <span class="trace-val" id="traceVal">valor = --</span>
+        </div>
+        <div class="trace-item">
+          <span class="trace-label">mc.setBlock()</span>
+          <span class="trace-val" id="traceBlock" style="color:var(--amber);">---</span>
+        </div>
+      </div>
+
+      <!-- Código Python en Vivo -->
+      <div class="code-box" id="codeBox">
+        <div class="code-line" id="l1"><span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(filas): <span class="cm"># Recorre filas (arriba a abajo)</span></div>
+        <div class="code-line" id="l2">&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">for</span> j <span class="kw">in</span> <span class="fn">range</span>(columnas): <span class="cm"># Recorre columnas (izq a der)</span></div>
+        <div class="code-line" id="l3">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;valor = matriz[i][j]</div>
+        <div class="code-line" id="l4">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">if</span> valor <span class="kw">in</span> PALETA:</div>
+        <div class="code-line" id="l5">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bloque, sub_id = PALETA[valor]</div>
+        <div class="code-line" id="l6">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;mc.<span class="fn">setBlock</span>(x + j, y + (filas - 1 - i), z, bloque, sub_id)</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Barra de Paleta (Activa en Dibujar Propio) -->
+  <div class="palette-drawer" id="paletteDrawer" style="display:none;">
+    <div class="palette-title">
+      <span>🎨 Paleta de Bloques de Minecraft (Haz clic en un color y luego en la cuadrícula superior):</span>
+      <span id="activeSwatchLabel" style="color:var(--sky);">Lana Roja (35, 14)</span>
+    </div>
+    <div class="palette-swatches" id="swatchesContainer"></div>
+  </div>
+
+  <!-- Controles Inferiores -->
+  <div class="controls-bar">
+    <div class="btn-group">
+      <button class="btn btn-primary" id="btnPlay" onclick="togglePlay()">Auto ▶</button>
+      <button class="btn" onclick="stepForward()">Paso ⏭</button>
+      <button class="btn" onclick="resetSim()">Reiniciar ↺</button>
+      <button class="btn btn-amber" onclick="buildInstant()">Construir Todo ⚡</button>
+    </div>
+
+    <div class="speed-control">
+      <span>Velocidad:</span>
+      <select id="speedSelect" onchange="changeSpeed()">
+        <option value="400">0.5x</option>
+        <option value="150" selected>1x</option>
+        <option value="60">3x</option>
+        <option value="20">10x</option>
+      </select>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Paleta de Materiales Minecraft oficial tomada de insumos/pokemon.py y bloque.py
+  // Formato: id: { bloque, subId, name, hexTop, hexLeft, hexRight }
+  const MINECRAFT_PALETTE = {
+    0:  { b: 0,   id: 0,  name: "Aire (Vacío)", hexTop: "rgba(0,0,0,0)", hexLeft: "rgba(0,0,0,0)", hexRight: "rgba(0,0,0,0)" },
+    1:  { b: 35,  id: 0,  name: "Lana Blanca", hexTop: "#f9fafb", hexLeft: "#d1d5db", hexRight: "#9ca3af" },
+    2:  { b: 251, id: 0,  name: "Hormigón Blanco", hexTop: "#ffffff", hexLeft: "#e5e7eb", hexRight: "#cbd5e1" },
+    9:  { b: 251, id: 1,  name: "Hormigón Naranja", hexTop: "#ea580c", hexLeft: "#c2410c", hexRight: "#9a3412" },
+    14: { b: 152, id: 0,  name: "Bloque Redstone", hexTop: "#dc2626", hexLeft: "#b91c1c", hexRight: "#991b1b" },
+    22: { b: 251, id: 3,  name: "Hormigón Azul Claro", hexTop: "#38bdf8", hexLeft: "#0284c7", hexRight: "#0369a1" },
+    26: { b: 35,  id: 4,  name: "Lana Amarilla", hexTop: "#facc15", hexLeft: "#eab308", hexRight: "#ca8a04" },
+    29: { b: 159, id: 4,  name: "Terracota Amarilla", hexTop: "#fde047", hexLeft: "#eab308", hexRight: "#a16207" },
+    30: { b: 41,  id: 0,  name: "Bloque de Oro", hexTop: "#fef08a", hexLeft: "#facc15", hexRight: "#ca8a04" },
+    32: { b: 35,  id: 5,  name: "Lana Lima", hexTop: "#84cc16", hexLeft: "#65a30d", hexRight: "#4d7c0f" },
+    38: { b: 35,  id: 6,  name: "Lana Rosa", hexTop: "#f472b6", hexLeft: "#db2777", hexRight: "#be185d" },
+    42: { b: 35,  id: 7,  name: "Lana Gris", hexTop: "#64748b", hexLeft: "#475569", hexRight: "#334155" },
+    46: { b: 1,   id: 0,  name: "Piedra", hexTop: "#94a3b8", hexLeft: "#64748b", hexRight: "#475569" },
+    47: { b: 4,   id: 0,  name: "Adoquín", hexTop: "#71717a", hexLeft: "#52525b", hexRight: "#3f3f46" },
+    54: { b: 35,  id: 9,  name: "Lana Cian", hexTop: "#06b6d4", hexLeft: "#0891b2", hexRight: "#0e7490" },
+    58: { b: 168, id: 0,  name: "Prismarina", hexTop: "#2dd4bf", hexLeft: "#14b8a6", hexRight: "#0f766e" },
+    65: { b: 35,  id: 11, name: "Lana Azul", hexTop: "#2563eb", hexLeft: "#1d4ed8", hexRight: "#1e40af" },
+    69: { b: 22,  id: 0,  name: "Bloque Lapislázuli", hexTop: "#1d4ed8", hexLeft: "#1e40af", hexRight: "#1e3a8a" },
+    71: { b: 35,  id: 12, name: "Lana Café", hexTop: "#92400e", hexLeft: "#78350f", hexRight: "#5a2609" },
+    76: { b: 5,   id: 0,  name: "Madera de Roble", hexTop: "#b45309", hexLeft: "#92400e", hexRight: "#78350f" },
+    80: { b: 35,  id: 13, name: "Lana Verde", hexTop: "#15803d", hexLeft: "#166534", hexRight: "#14532d" },
+    85: { b: 35,  id: 14, name: "Lana Roja", hexTop: "#ef4444", hexLeft: "#dc2626", hexRight: "#b91c1c" },
+    92: { b: 35,  id: 15, name: "Lana Negra", hexTop: "#27272a", hexLeft: "#18181b", hexRight: "#09090b" },
+    93: { b: 251, id: 15, name: "Hormigón Negro", hexTop: "#18181b", hexLeft: "#0f172a", hexRight: "#020617" },
+    97: { b: 173, id: 0,  name: "Bloque de Carbón", hexTop: "#1c1917", hexLeft: "#0c0a09", hexRight: "#000000" }
+  };
+
+  // Matrices de Modelos Pixel Art Predefinidos
+  const PRESETS = {
+    pokeball: [
+      [0,  0, 97, 97, 97, 97,  0,  0],
+      [0, 97, 85, 85, 85, 85, 97,  0],
+      [97, 85, 85, 85, 85, 85, 85, 97],
+      [97, 97, 97, 97, 97, 97, 97, 97],
+      [97, 97, 97,  1,  1, 97, 97, 97],
+      [97,  1,  1,  1,  1,  1,  1, 97],
+      [0, 97,  1,  1,  1,  1, 97,  0],
+      [0,  0, 97, 97, 97, 97,  0,  0]
+    ],
+    pikachu: [
+      [97, 0,  0,  0,  0,  0,  0, 97],
+      [97, 30, 0,  0,  0,  0, 30, 97],
+      [0, 97, 30, 30, 30, 30, 97,  0],
+      [0, 97, 30, 97, 30, 97, 97,  0],
+      [0, 97, 85, 30, 30, 85, 97,  0],
+      [0, 97, 30, 30, 71, 30, 97,  0],
+      [0,  0, 97, 97, 97, 97,  0,  0]
+    ],
+    sword: [
+      [0, 0, 0, 0, 0, 54, 58],
+      [0, 0, 0, 0, 54, 58, 54],
+      [0, 0, 0, 54, 58, 54, 0],
+      [0, 42, 54, 58, 54, 0, 0],
+      [76, 42, 42, 54, 0, 0, 0],
+      [0, 76, 42, 0, 0, 0, 0],
+      [0, 0, 76, 0, 0, 0, 0]
+    ],
+    creeper: [
+      [32, 32, 32, 32, 32, 32, 32, 32],
+      [32, 80, 32, 32, 32, 32, 80, 32],
+      [32, 32, 97, 97, 97, 97, 32, 32],
+      [32, 32, 97, 97, 97, 97, 32, 32],
+      [32, 32, 32, 97, 97, 32, 32, 32],
+      [32, 32, 97, 97, 97, 97, 32, 32],
+      [32, 32, 97,  0,  0, 97, 32, 32],
+      [32, 80, 97,  0,  0, 97, 80, 32]
+    ],
+    heart: [
+      [0, 97, 97,  0,  0, 97, 97,  0],
+      [97, 85, 85, 97, 97, 85, 85, 97],
+      [97, 85,  1, 85, 85, 85, 85, 97],
+      [97, 85, 85, 85, 85, 85, 85, 97],
+      [0, 97, 85, 85, 85, 85, 97,  0],
+      [0,  0, 97, 85, 85, 97,  0,  0],
+      [0,  0,  0, 97, 97,  0,  0,  0]
+    ]
+  };
+
+  let currentMatrix = JSON.parse(JSON.stringify(PRESETS.pokeball));
+  let currentPresetKey = 'pokeball';
+  let isCustom = false;
+  let selectedSwatchVal = 85; // Rojo por defecto
+
+  // Estado de Ejecución
+  let currentStep = 0; // k = 0 .. totalSteps
+  let totalSteps = 0;
+  let isPlaying = false;
+  let animTimer = null;
+  let speedMs = 150;
+
+  function initApp() {
+    loadPreset('pokeball');
+    initPaletteSwatches();
+  }
+
+  function loadPreset(key) {
+    isCustom = false;
+    currentPresetKey = key;
+    currentMatrix = JSON.parse(JSON.stringify(PRESETS[key]));
+    document.querySelectorAll('.preset-btn').forEach(b => {
+      b.classList.toggle('active', b.getAttribute('onclick')?.includes(`'${key}'`));
+    });
+    document.getElementById('btnCustomDraw').classList.remove('active');
+    document.getElementById('paletteDrawer').style.display = 'none';
+
+    setupSimulation();
+  }
+
+  function toggleCustomDraw() {
+    isCustom = true;
+    document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('btnCustomDraw').classList.add('active');
+    document.getElementById('paletteDrawer').style.display = 'block';
+
+    // Matriz limpia de 8x8
+    currentMatrix = Array(8).fill(0).map(() => Array(8).fill(0));
+    // Dibuja una carita básica para empezar
+    currentMatrix[2][2] = 30; currentMatrix[2][5] = 30;
+    currentMatrix[5][2] = 85; currentMatrix[5][3] = 85; currentMatrix[5][4] = 85; currentMatrix[5][5] = 85;
+
+    setupSimulation();
+  }
+
+  function setupSimulation() {
+    if (isPlaying) togglePlay();
+    const filas = currentMatrix.length;
+    const columnas = currentMatrix[0].length;
+    totalSteps = filas * columnas;
+    currentStep = 0;
+
+    document.getElementById('matrixDimTag').textContent = `${filas} filas × ${columnas} cols`;
+    document.getElementById('voxelStatsTag').textContent = `0 / ${totalSteps} Bloques`;
+    document.getElementById('progressFill').style.width = '0%';
+
+    renderMatrixGrid();
+    updateTracer();
+    drawVoxelScene();
+  }
+
+  function renderMatrixGrid() {
+    const grid = document.getElementById('matrixGrid');
+    const filas = currentMatrix.length;
+    const columnas = currentMatrix[0].length;
+    grid.style.gridTemplateColumns = `repeat(${columnas}, 16px)`;
+    grid.innerHTML = '';
+
+    for (let i = 0; i < filas; i++) {
+      for (let j = 0; j < columnas; j++) {
+        const val = currentMatrix[i][j];
+        const cell = document.createElement('div');
+        cell.className = 'matrix-cell';
+        cell.id = `mc_${i}_${j}`;
+        cell.title = `[${i}, ${j}] - ${MINECRAFT_PALETTE[val]?.name || 'Vacío'}`;
+        cell.style.backgroundColor = MINECRAFT_PALETTE[val] ? MINECRAFT_PALETTE[val].hexTop : '#000';
+        
+        if (isCustom) {
+          cell.onclick = () => {
+            currentMatrix[i][j] = selectedSwatchVal;
+            setupSimulation();
+          };
+        }
+        grid.appendChild(cell);
+      }
+    }
+  }
+
+  function initPaletteSwatches() {
+    const container = document.getElementById('swatchesContainer');
+    container.innerHTML = '';
+    const keys = [0, 1, 9, 14, 22, 26, 30, 32, 38, 42, 47, 54, 58, 65, 69, 71, 76, 80, 85, 92, 97];
+
+    keys.forEach(k => {
+      const pal = MINECRAFT_PALETTE[k];
+      const sw = document.createElement('div');
+      sw.className = `swatch ${k === selectedSwatchVal ? 'selected' : ''}`;
+      sw.style.backgroundColor = k === 0 ? 'rgba(255,255,255,0.05)' : pal.hexTop;
+      sw.title = `${pal.name} (${pal.b}, ${pal.id})`;
+      sw.onclick = () => {
+        selectedSwatchVal = k;
+        document.querySelectorAll('.swatch').forEach(s => s.classList.remove('selected'));
+        sw.classList.add('selected');
+        document.getElementById('activeSwatchLabel').textContent = `${pal.name} (${pal.b}, ${pal.id})`;
+      };
+      container.appendChild(sw);
+    });
+  }
+
+  function stepForward() {
+    if (currentStep < totalSteps) {
+      currentStep++;
+      updateTracer();
+      drawVoxelScene();
+    } else {
+      if (isPlaying) togglePlay();
+    }
+  }
+
+  function togglePlay() {
+    isPlaying = !isPlaying;
+    const btn = document.getElementById('btnPlay');
+    if (isPlaying) {
+      btn.textContent = "Pausa ⏸";
+      btn.style.background = "#eab308";
+      animTimer = setInterval(() => {
+        if (currentStep < totalSteps) {
+          stepForward();
+        } else {
+          togglePlay();
+        }
+      }, speedMs);
+    } else {
+      btn.textContent = "Auto ▶";
+      btn.style.background = "var(--green)";
+      clearInterval(animTimer);
+    }
+  }
+
+  function changeSpeed() {
+    speedMs = parseInt(document.getElementById('speedSelect').value);
+    if (isPlaying) {
+      clearInterval(animTimer);
+      animTimer = setInterval(() => {
+        if (currentStep < totalSteps) {
+          stepForward();
+        } else {
+          togglePlay();
+        }
+      }, speedMs);
+    }
+  }
+
+  function resetSim() {
+    if (isPlaying) togglePlay();
+    currentStep = 0;
+    updateTracer();
+    drawVoxelScene();
+  }
+
+  function buildInstant() {
+    if (isPlaying) togglePlay();
+    currentStep = totalSteps;
+    updateTracer();
+    drawVoxelScene();
+  }
+
+  function updateTracer() {
+    const filas = currentMatrix.length;
+    const columnas = currentMatrix[0].length;
+
+    // Calcular i y j actuales
+    const k = Math.max(0, currentStep - 1);
+    const i = Math.floor(k / columnas);
+    const j = k % columnas;
+    const val = currentMatrix[i][j];
+    const pal = MINECRAFT_PALETTE[val] || MINECRAFT_PALETTE[0];
+
+    // Resaltar celdas en la cuadrícula
+    document.querySelectorAll('.matrix-cell').forEach(c => {
+      c.classList.remove('active-cell');
+      c.classList.remove('built-cell');
+      c.classList.remove('pending-cell');
+    });
+
+    let builtCount = 0;
+    for (let r = 0; r < filas; r++) {
+      for (let c = 0; c < columnas; c++) {
+        const idx = r * columnas + c;
+        const cell = document.getElementById(`mc_${r}_${c}`);
+        if (!cell) continue;
+
+        if (idx < currentStep) {
+          cell.classList.add('built-cell');
+          if (currentMatrix[r][c] > 0) builtCount++;
+        } else {
+          cell.classList.add('pending-cell');
+        }
+
+        if (idx === currentStep - 1 && currentStep > 0) {
+          cell.classList.add('active-cell');
+        }
+      }
+    }
+
+    // Actualizar etiquetas
+    document.getElementById('traceI').textContent = currentStep === 0 ? "i = 0 (inicio)" : `i = ${i}`;
+    document.getElementById('traceJ').textContent = currentStep === 0 ? "j = 0" : `j = ${j}`;
+    document.getElementById('traceVal').textContent = currentStep === 0 ? "esperando..." : `${val} (${pal.name})`;
+
+    if (currentStep === 0) {
+      document.getElementById('traceBlock').textContent = "---";
+    } else if (val === 0) {
+      document.getElementById('traceBlock').textContent = "Aire (sin bloque)";
+    } else {
+      document.getElementById('traceBlock').textContent = `setBlock(x+${j}, y+${filas-1-i}, z, ${pal.b}, ${pal.id})`;
+    }
+
+    document.getElementById('voxelStatsTag').textContent = `${currentStep} / ${totalSteps} Iteraciones (${builtCount} bloques)`;
+    const pct = totalSteps > 0 ? (currentStep / totalSteps) * 100 : 0;
+    document.getElementById('progressFill').style.width = `${pct}%`;
+
+    // Resaltar líneas de código
+    document.querySelectorAll('.code-line').forEach(l => l.classList.remove('active'));
+    if (currentStep === 0) {
+      document.getElementById('l1').classList.add('active');
+    } else if (val === 0) {
+      document.getElementById('l4').classList.add('active');
+    } else {
+      document.getElementById('l6').classList.add('active');
+    }
+  }
+
+  // RENDERIZADOR 3D VOXEL EN CANVAS
+  function drawVoxelScene() {
+    const canvas = document.getElementById('voxelCanvas');
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    const filas = currentMatrix.length;
+    const columnas = currentMatrix[0].length;
+
+    // Configuración geométrica de proyección isométrica vertical
+    // Eje X: horizontal (j)
+    // Eje Y: vertical en pantalla (filas - 1 - i)
+    // Eje Z: profundidad
+    const cubeSize = Math.min(26, Math.floor(290 / Math.max(filas, columnas)));
+    const blockH = cubeSize;
+    const blockW = cubeSize * 1.3;
+    const isoSkew = blockW * 0.45;
+
+    // Centro del canvas
+    const originX = (canvas.width / 2) - ((columnas - filas) * (isoSkew * 0.5));
+    const originY = canvas.height - 45;
+
+    function toScreenIso(xGrid, yGrid, zGrid = 0) {
+      // Proyección isométrica limpia para paredes verticales de Minecraft
+      const sx = originX + (xGrid * (blockW * 0.75)) - (zGrid * (blockW * 0.4));
+      const sy = originY - (yGrid * (blockH * 0.8)) + (xGrid * 6) + (zGrid * (blockH * 0.5));
+      return { x: sx, y: sy };
+    }
+
+    // Dibujar suelo de soporte de césped/adoquín (Pedestal de construcción)
+    for (let cx = -1; cx <= columnas; cx++) {
+      for (let cz = -1; cz <= 1; cz++) {
+        drawPedestalCube(ctx, toScreenIso(cx, -1, cz), blockW * 0.75, blockH * 0.75);
+      }
+    }
+
+    // Dibujar bloques colocados hasta el currentStep
+    for (let r = filas - 1; r >= 0; r--) {
+      for (let c = 0; c < columnas; c++) {
+        const stepIndex = r * columnas + c;
+        if (stepIndex >= currentStep) continue;
+
+        const val = currentMatrix[r][c];
+        if (val === 0) continue; // Aire
+
+        const pal = MINECRAFT_PALETTE[val] || MINECRAFT_PALETTE[1];
+        const isCurrentBlock = (stepIndex === currentStep - 1);
+
+        // En Minecraft: fila 0 está en la cima -> altura voxel Y = (filas - 1 - r)
+        const yCoord = (filas - 1 - r);
+        const p = toScreenIso(c, yCoord, 0);
+
+        draw3DVoxelBlock(ctx, p.x, p.y, blockW * 0.75, blockH * 0.75, pal, isCurrentBlock);
+      }
+    }
+  }
+
+  function drawPedestalCube(ctx, p, w, h) {
+    const topCol = "#15803d"; // Césped verde
+    const leftCol = "#78350f"; // Tierra oscura
+    const rightCol = "#5a2609";
+
+    ctx.fillStyle = topCol;
+    ctx.beginPath();
+    ctx.moveTo(p.x, p.y);
+    ctx.lineTo(p.x + w / 2, p.y - h * 0.25);
+    ctx.lineTo(p.x + w, p.y);
+    ctx.lineTo(p.x + w / 2, p.y + h * 0.25);
+    ctx.closePath();
+    ctx.fill();
+    ctx.strokeStyle = "rgba(0,0,0,0.3)";
+    ctx.lineWidth = 0.8;
+    ctx.stroke();
+
+    ctx.fillStyle = leftCol;
+    ctx.beginPath();
+    ctx.moveTo(p.x, p.y);
+    ctx.lineTo(p.x + w / 2, p.y + h * 0.25);
+    ctx.lineTo(p.x + w / 2, p.y + h * 0.8);
+    ctx.lineTo(p.x, p.y + h * 0.55);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+
+    ctx.fillStyle = rightCol;
+    ctx.beginPath();
+    ctx.moveTo(p.x + w / 2, p.y + h * 0.25);
+    ctx.lineTo(p.x + w, p.y);
+    ctx.lineTo(p.x + w, p.y + h * 0.55);
+    ctx.lineTo(p.x + w / 2, p.y + h * 0.8);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+  }
+
+  function draw3DVoxelBlock(ctx, x, y, w, h, pal, isGlowing) {
+    // Cara Superior (Top)
+    ctx.fillStyle = isGlowing ? "#fef08a" : pal.hexTop;
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+    ctx.lineTo(x + w / 2, y - h * 0.28);
+    ctx.lineTo(x + w, y);
+    ctx.lineTo(x + w / 2, y + h * 0.28);
+    ctx.closePath();
+    ctx.fill();
+    ctx.strokeStyle = isGlowing ? "#facc15" : "rgba(0,0,0,0.35)";
+    ctx.lineWidth = isGlowing ? 2 : 1;
+    ctx.stroke();
+
+    // Cara Izquierda (Left Face)
+    ctx.fillStyle = isGlowing ? "#facc15" : pal.hexLeft;
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+    ctx.lineTo(x + w / 2, y + h * 0.28);
+    ctx.lineTo(x + w / 2, y + h * 0.85);
+    ctx.lineTo(x, y + h * 0.57);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+
+    // Cara Derecha (Right Face)
+    ctx.fillStyle = isGlowing ? "#ca8a04" : pal.hexRight;
+    ctx.beginPath();
+    ctx.moveTo(x + w / 2, y + h * 0.28);
+    ctx.lineTo(x + w, y);
+    ctx.lineTo(x + w, y + h * 0.57);
+    ctx.lineTo(x + w / 2, y + h * 0.85);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+
+    if (isGlowing) {
+      // Efecto resplandor en el bloque recién colocado
+      ctx.fillStyle = "rgba(254, 240, 138, 0.4)";
+      ctx.beginPath();
+      ctx.arc(x + w / 2, y + h * 0.3, w * 0.8, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+
+  // Inicializar al cargar
+  window.addEventListener('load', initApp);
+</script>
+
+</body>
+</html>

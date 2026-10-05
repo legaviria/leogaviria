@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Práctica Guiada: Ciclos Anidados y Pixel Art en Minecraft</title>
+  <style>
+    :root {
+      --bg: #0e0e11;
+      --card: #141923;
+      --border: #232d42;
+      --text: #f3f4f6;
+      --muted: #94a3b8;
+      --sky: #38bdf8;
+      --purple: #a855f7;
+      --green: #10b981;
+      --amber: #f59e0b;
+      --rose: #f43f5e;
+      --card-inner: #080b10;
+    }
+    body.theme-light {
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --border: #e2e8f0;
+      --text: #0f172a;
+      --muted: #64748b;
+      --sky: #0284c7;
+      --purple: #9333ea;
+      --green: #059669;
+      --amber: #d97706;
+      --rose: #e11d48;
+      --card-inner: #f1f5f9;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { background: var(--bg); color: var(--text); padding: 14px; display: flex; justify-content: center; }
+    .container { width: 100%; max-width: 740px; background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 18px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+    
+    .header { text-align: center; margin-bottom: 14px; }
+    .header h3 { font-size: 1.15rem; color: #4ade80; margin-bottom: 4px; display: flex; align-items: center; justify-content: center; gap: 8px; }
+    .header p { font-size: 0.76rem; color: var(--muted); }
+
+    .progress-bar-wrap {
+      background: var(--card-inner);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      height: 8px;
+      overflow: hidden;
+      margin-bottom: 16px;
+    }
+    .progress-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--sky), var(--green));
+      width: 0%;
+      transition: width 0.3s;
+    }
+
+    .challenge-card {
+      background: var(--card-inner);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px;
+      margin-bottom: 14px;
+    }
+    .challenge-badge {
+      font-size: 0.68rem;
+      font-family: monospace;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: #86efac;
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      padding: 2px 8px;
+      border-radius: 4px;
+      display: inline-block;
+      margin-bottom: 8px;
+    }
+    .challenge-title {
+      font-size: 0.95rem;
+      font-weight: bold;
+      color: #fff;
+      margin-bottom: 8px;
+      line-height: 1.4;
+    }
+    .code-snippet {
+      background: #05070a;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 12px;
+      font-family: Consolas, monospace;
+      font-size: 0.8rem;
+      color: var(--sky);
+      margin-bottom: 14px;
+      overflow-x: auto;
+      line-height: 1.5;
+    }
+
+    .options-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+    .option-btn {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 14px;
+      text-align: left;
+      color: var(--text);
+      font-size: 0.82rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transition: all 0.2s;
+    }
+    .option-btn:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+    .option-btn.selected {
+      border-color: var(--sky);
+      background: rgba(56, 189, 248, 0.12);
+    }
+    .option-btn.correct {
+      border-color: var(--green);
+      background: rgba(16, 185, 129, 0.2);
+      color: #4ade80;
+    }
+    .option-btn.wrong {
+      border-color: var(--rose);
+      background: rgba(244, 63, 94, 0.2);
+      color: #fb7185;
+    }
+    .option-letter {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.72rem;
+      font-weight: bold;
+      flex-shrink: 0;
+    }
+
+    .feedback-box {
+      border-radius: 8px;
+      padding: 10px 12px;
+      font-size: 0.78rem;
+      line-height: 1.4;
+      display: none;
+      margin-bottom: 12px;
+    }
+    .feedback-box.correct {
+      display: block;
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.4);
+      color: #86efac;
+    }
+    .feedback-box.wrong {
+      display: block;
+      background: rgba(244, 63, 94, 0.15);
+      border: 1px solid rgba(244, 63, 94, 0.4);
+      color: #fca5a5;
+    }
+
+    .footer-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .score-tag {
+      font-size: 0.76rem;
+      font-family: monospace;
+      color: var(--muted);
+    }
+    .action-btn {
+      padding: 8px 18px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      background: var(--sky);
+      color: #0b0e14;
+      transition: all 0.2s;
+    }
+    .action-btn:hover {
+      background: #7dd3fc;
+    }
+    .action-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header">
+    <h3>💻 Práctica: Ciclos Anidados y Pixel Art en Minecraft</h3>
+    <p>Resuelve los siguientes desafíos conceptuales y de código sobre matrices, iteraciones anidadas y cálculo espacial en Minecraft.</p>
+  </div>
+
+  <div class="progress-bar-wrap">
+    <div class="progress-bar-fill" id="progressFill"></div>
+  </div>
+
+  <div class="challenge-card" id="challengeCard">
+    <span class="challenge-badge" id="cBadge">Desafío 1 de 4</span>
+    <div class="challenge-title" id="cTitle">Cargando pregunta...</div>
+    <div class="code-snippet" id="cCode">...</div>
+    <div class="options-grid" id="cOptions"></div>
+    <div class="feedback-box" id="cFeedback"></div>
+  </div>
+
+  <div class="footer-actions">
+    <span class="score-tag" id="scoreTag">Aciertos: 0 / 4</span>
+    <button class="action-btn" id="nextBtn" onclick="nextQuestion()" disabled>Siguiente Desafío ➔</button>
+  </div>
+</div>
+
+<script>
+  const CHALLENGES = [
+    {
+      badge: "Desafío 1: Multiplicación de Iteraciones",
+      title: "¿Cuántas veces se ejecuta la instrucción mc.setBlock() al procesar una imagen de pixel art representada por una matriz de 16 filas por 12 columnas?",
+      code: "filas = len(matriz)        # 16 filas\ncolumnas = len(matriz[0])   # 12 columnas\n\nfor i in range(filas):\n    for j in range(columnas):\n        bloque, sub_id = PALETA[matriz[i][j]]\n        mc.setBlock(x + j, y + (filas - 1 - i), z, bloque, sub_id)",
+      options: [
+        "192 veces (16 × 12). El ciclo externo itera 16 veces y por cada una, el ciclo interno itera 12.",
+        "28 veces (16 + 12). Se suman las dimensiones de la cuadrícula.",
+        "16 veces, ya que solo manda el ciclo exterior 'for i'.",
+        "12 veces, ya que el ciclo 'for j' sobreescribe al anterior."
+      ],
+      correct: 0,
+      feedback: "¡Excelente! En los ciclos anidados independientes, el número total de iteraciones es el producto directo de las dimensiones: 16 × 12 = 192 ejecuciones de mc.setBlock()."
+    },
+    {
+      badge: "Desafío 2: Inversión del Eje Vertical (Y)",
+      title: "En Minecraft, ¿por qué la altura vertical del bloque se calcula como 'y + (filas - 1 - i)' en lugar de simplemente 'y + i'?",
+      code: "# Matriz en memoria Python:\n# Fila 0 = parte superior del dibujo\n# Fila final = base inferior del dibujo\n\nmc.setBlock(x + j, y + (filas - 1 - i), z, bloque, sub_id)",
+      options: [
+        "Porque en Python las listas se leen de arriba a abajo (fila 0 arriba), pero en el espacio 3D de Minecraft valores mayores de Y van hacia arriba. Si usamos 'y + i', la figura se construiría de cabeza (invertida verticalmente).",
+        "Porque Minecraft no acepta números positivos en el eje Y.",
+        "Es un truco obligatorio para duplicar la velocidad de carga de bloques en el servidor.",
+        "Porque el ciclo 'range(filas)' genera números negativos por defecto."
+      ],
+      correct: 0,
+      feedback: "¡Correcto! Una imagen se indexa con la fila 0 en la cúspide. Para que la fila 0 quede en la posición más alta del mundo Minecraft (+Y), restamos el índice 'i': (filas - 1 - 0) da la altura máxima."
+    },
+    {
+      badge: "Desafío 3: Consulta en Diccionario de Paleta",
+      title: "Analiza el siguiente fragmento defensivo. ¿Qué beneficio técnico aporta la comprobación 'if valor in pk.PALETA'?",
+      code: "valor = matriz[i][j]\nif valor in pk.PALETA:\n    bloque, sub_id = pk.PALETA[valor]\n    mc.setBlock(x + j, y + (filas - 1 - i), z, bloque, sub_id)",
+      options: [
+        "Evita una excepción KeyError en caso de que la celda contenga un código no registrado (como 0 para aire/transparencia) y omite colocar bloques innecesarios.",
+        "Obliga a que el bloque colocado sea siempre de diamante.",
+        "Hace que el bucle for se detenga inmediatamente si encuentra un cero.",
+        "Convierte automáticamente números negativos en colores válidos."
+      ],
+      correct: 0,
+      feedback: "¡Exacto! El operador 'in' sobre el diccionario PALETA verifica si la clave existe en tiempo O(1). Si el píxel es fondo transparente (0) u otro código no mapeado, no arroja KeyError y evita llamadas de red superfluas."
+    },
+    {
+      badge: "Desafío 4: Orientación Espacial",
+      title: "Si quisiéramos construir el pixel art como una alfombra horizontal plana en el suelo en vez de una pared vertical, ¿cómo deberíamos modificar la llamada a mc.setBlock()?",
+      code: "# Pared Vertical Actual:\n# mc.setBlock(x + j, y + (filas - 1 - i), z, bloque, sub_id)\n\n# ¿Alfombra Horizontal en el Suelo?",
+      options: [
+        "mc.setBlock(x + j, y, z + i, bloque, sub_id) -> Dejando Y fijo y usando las variables (j, i) para recorrer X y Z en el plano horizontal.",
+        "mc.setBlock(x, y + j, z + i, bloque, sub_id)",
+        "mc.setBlock(x * j, y * i, z, bloque, sub_id)",
+        "Minecraft no permite colocar bloques horizontalmente mediante bucles for."
+      ],
+      correct: 0,
+      feedback: "¡Perfecto! Al mantener fija la altura Y y hacer que las variables de iteración varíen en los ejes X y Z (plano XZ), los bloques se colocan como una alfombra o mosaico plano sobre el suelo."
+    }
+  ];
+
+  let currentIndex = 0;
+  let score = 0;
+  let answered = false;
+
+  function renderQuestion() {
+    answered = false;
+    const c = CHALLENGES[currentIndex];
+    document.getElementById('cBadge').textContent = `Desafío ${currentIndex + 1} de ${CHALLENGES.length}`;
+    document.getElementById('cTitle').textContent = c.title;
+    document.getElementById('cCode').textContent = c.code;
+    document.getElementById('cFeedback').className = 'feedback-box';
+    document.getElementById('nextBtn').disabled = true;
+
+    const optContainer = document.getElementById('cOptions');
+    optContainer.innerHTML = '';
+    const letters = ['A', 'B', 'C', 'D'];
+
+    c.options.forEach((opt, idx) => {
+      const btn = document.createElement('button');
+      btn.className = 'option-btn';
+      btn.innerHTML = `<span class="option-letter">${letters[idx]}</span><span>${opt}</span>`;
+      btn.onclick = () => selectOption(idx);
+      optContainer.appendChild(btn);
+    });
+
+    const pct = (currentIndex / CHALLENGES.length) * 100;
+    document.getElementById('progressFill').style.width = `${pct}%`;
+  }
+
+  function selectOption(index) {
+    if (answered) return;
+    answered = true;
+    const c = CHALLENGES[currentIndex];
+    const buttons = document.querySelectorAll('.option-btn');
+
+    if (index === c.correct) {
+      buttons[index].classList.add('correct');
+      document.getElementById('cFeedback').className = 'feedback-box correct';
+      document.getElementById('cFeedback').textContent = c.feedback;
+      score++;
+    } else {
+      buttons[index].classList.add('wrong');
+      buttons[c.correct].classList.add('correct');
+      document.getElementById('cFeedback').className = 'feedback-box wrong';
+      document.getElementById('cFeedback').textContent = `Incorrecto. ${c.feedback}`;
+    }
+
+    document.getElementById('scoreTag').textContent = `Aciertos: ${score} / ${CHALLENGES.length}`;
+    document.getElementById('nextBtn').disabled = false;
+  }
+
+  function nextQuestion() {
+    if (currentIndex < CHALLENGES.length - 1) {
+      currentIndex++;
+      renderQuestion();
+    } else {
+      showSummary();
+    }
+  }
+
+  function showSummary() {
+    document.getElementById('progressFill').style.width = '100%';
+    const card = document.getElementById('challengeCard');
+    const pct = Math.round((score / CHALLENGES.length) * 100);
+    card.innerHTML = `
+      <div style="text-align:center; padding: 20px 10px;">
+        <div style="font-size:2.4rem; margin-bottom:10px;">🏆</div>
+        <h4 style="font-size:1.2rem; color:#4ade80; margin-bottom:8px;">¡Práctica Completada con Éxito!</h4>
+        <p style="font-size:0.85rem; color:#cbd5e1; margin-bottom:16px;">
+          Has respondido correctamente <strong>${score} de ${CHALLENGES.length}</strong> preguntas (${pct}% de dominio).
+        </p>
+        <div style="background:#05070a; border:1px solid var(--border); border-radius:8px; padding:12px; font-size:0.78rem; color:#94a3b8; text-align:left; line-height:1.6;">
+          ✓ Comprendes la multiplicación dimensional en ciclos anidados: filas × columnas.<br>
+          ✓ Dominas el mapeo espacial y la inversión del eje Y para renderizar imágenes en 3D.<br>
+          ✓ Sabes utilizar diccionarios de paleta para asociar valores numéricos con bloques de Minecraft.<br>
+          ✓ Estás listo para encapsular esta lógica dentro de funciones modulares y reutilizables.
+        </div>
+      </div>
+    `;
+    document.getElementById('nextBtn').style.display = 'none';
+  }
+
+  window.addEventListener('load', renderQuestion);
+</script>
+
+</body>
+</html>

@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simulador de Construcción de Puente en Minecraft con Ciclos</title>
+  <style>
+    :root {
+      --bg: #0e0e11;
+      --card: #141923;
+      --border: #232d42;
+      --text: #f3f4f6;
+      --muted: #94a3b8;
+      --sky: #38bdf8;
+      --purple: #a855f7;
+      --green: #10b981;
+      --amber: #f59e0b;
+      --rose: #f43f5e;
+      --card-inner: #080b10;
+    }
+    body.theme-light {
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --border: #e2e8f0;
+      --text: #0f172a;
+      --muted: #64748b;
+      --sky: #0284c7;
+      --purple: #9333ea;
+      --green: #059669;
+      --amber: #d97706;
+      --rose: #e11d48;
+      --card-inner: #f1f5f9;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { background: var(--bg); color: var(--text); padding: 14px; display: flex; justify-content: center; }
+    .container { width: 100%; max-width: 940px; background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 18px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+    
+    .header { text-align: center; margin-bottom: 14px; }
+    .header h3 { font-size: 1.25rem; color: var(--amber); margin-bottom: 4px; display: flex; align-items: center; justify-content: center; gap: 8px; }
+    .header p { font-size: 0.78rem; color: var(--muted); }
+
+    /* Selector de Modos */
+    .modes-nav {
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+      margin-bottom: 12px;
+      padding-bottom: 4px;
+    }
+    .mode-btn {
+      padding: 6px 12px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s;
+    }
+    .mode-btn:hover, .mode-btn.active {
+      background: var(--amber);
+      color: #0b0e14;
+      border-color: var(--amber);
+    }
+
+    /* Contenedor Principal: Canvas 3D + Consola */
+    .stage-grid {
+      display: grid;
+      grid-template-columns: 1.4fr 1fr;
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+    @media (max-width: 720px) {
+      .stage-grid { grid-template-columns: 1fr; }
+    }
+
+    .canvas-card {
+      background: #050811;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    canvas {
+      width: 100%;
+      height: 360px;
+      display: block;
+      border-radius: 6px;
+      background: radial-gradient(circle at 50% 30%, #151f33 0%, #060911 100%);
+    }
+    .viewport-tag {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      font-size: 0.65rem;
+      font-family: monospace;
+      color: var(--amber);
+      background: rgba(245, 158, 11, 0.15);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-weight: bold;
+    }
+
+    /* Panel de Código y Ejecución */
+    .code-card {
+      background: var(--card-inner);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .code-block {
+      background: #030508;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 10px;
+      font-family: monospace;
+      font-size: 0.73rem;
+      color: #e2e8f0;
+      line-height: 1.5;
+      overflow-x: auto;
+      margin-bottom: 10px;
+    }
+    .code-line { padding: 1px 4px; border-radius: 3px; }
+    .code-line.active { background: rgba(245, 158, 11, 0.25); color: #fde047; font-weight: bold; border-left: 2px solid var(--amber); }
+
+    /* Controles de Ejecución */
+    .controls-row {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .c-btn {
+      padding: 7px 12px;
+      font-size: 0.75rem;
+      font-weight: bold;
+      border-radius: 6px;
+      cursor: pointer;
+      border: 1px solid var(--border);
+      transition: all 0.2s;
+    }
+    .btn-play { background: var(--green); color: #0b0e14; border: none; flex: 1; }
+    .btn-step { background: rgba(56, 189, 248, 0.15); color: var(--sky); border-color: var(--sky); }
+    .btn-reset { background: rgba(244, 63, 94, 0.15); color: #fda4af; border-color: var(--rose); }
+    .c-btn:hover { opacity: 0.9; transform: translateY(-1px); }
+
+    /* Barra del Flujo Metodológico: Código -> Iteración -> Variable -> Coordenada -> Bloque -> Construcción */
+    .flow-chain {
+      background: var(--card-inner);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 4px;
+      overflow-x: auto;
+      font-family: monospace;
+      font-size: 0.72rem;
+    }
+    .chain-node {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border);
+      padding: 6px 8px;
+      border-radius: 6px;
+      min-width: 90px;
+      text-align: center;
+    }
+    .node-label { font-size: 0.58rem; text-transform: uppercase; color: var(--muted); font-weight: bold; margin-bottom: 2px; }
+    .node-val { font-weight: bold; color: #fff; }
+    .chain-arrow { color: var(--amber); font-weight: bold; font-size: 0.85rem; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h3>🌉 Minecraft + Python: Construcción con Ciclos</h3>
+      <p>Observa cómo cada iteración del bucle <code>for</code> calcula coordenadas y coloca bloques para cruzar el vacío.</p>
+    </div>
+
+    <!-- Modos Progresivos de Construcción -->
+    <div class="modes-nav">
+      <button class="mode-btn active" onclick="setBridgeMode('line')">1. Línea Simple</button>
+      <button class="mode-btn" onclick="setBridgeMode('bridge')">2. Puente sobre Hueco</button>
+      <button class="mode-btn" onclick="setBridgeMode('rails')">3. Puente con Barandas</button>
+      <button class="mode-btn" onclick="setBridgeMode('platform')">4. Plataforma 2D (Ciclos Anidados)</button>
+    </div>
+
+    <div class="stage-grid">
+      <!-- Visor Isométrico Voxel -->
+      <div class="canvas-card">
+        <span class="viewport-tag" id="modeTitleBadge">Modo: Puente sobre Hueco</span>
+        <canvas id="bridgeCanvas" width="520" height="360"></canvas>
+      </div>
+
+      <!-- Código Python y Controles -->
+      <div class="code-card">
+        <div class="code-block" id="codeContainer">
+          <!-- Renderizado dinámico del código según el modo -->
+        </div>
+
+        <div class="controls-row">
+          <button class="c-btn btn-step" onclick="stepForward()">Paso a Paso ▶</button>
+          <button class="c-btn btn-play" id="btnPlay" onclick="togglePlay()">Auto ▶</button>
+          <button class="c-btn btn-reset" onclick="resetBridge()">Reiniciar</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Cadena Metodológica Requerida: Código -> Iteración -> Variable -> Coordenada -> Bloque -> Construcción -->
+    <div class="flow-chain">
+      <div class="chain-node">
+        <span class="node-label">1. Código</span>
+        <span class="node-val" id="chainCode" style="color:var(--sky);">for i in range</span>
+      </div>
+      <div class="chain-arrow">➔</div>
+      <div class="chain-node">
+        <span class="node-label">2. Iteración</span>
+        <span class="node-val" id="chainIter" style="color:var(--amber);">0 / 8</span>
+      </div>
+      <div class="chain-arrow">➔</div>
+      <div class="chain-node">
+        <span class="node-label">3. Variable</span>
+        <span class="node-val" id="chainVar" style="color:#fde047;">i = 0</span>
+      </div>
+      <div class="chain-arrow">➔</div>
+      <div class="chain-node">
+        <span class="node-label">4. Coordenada</span>
+        <span class="node-val" id="chainCoord" style="color:#a78bfa;">(x+0, y, z)</span>
+      </div>
+      <div class="chain-arrow">➔</div>
+      <div class="chain-node">
+        <span class="node-label">5. Bloque</span>
+        <span class="node-val" id="chainBlock" style="color:#86efac;">Madera (5,0)</span>
+      </div>
+      <div class="chain-arrow">➔</div>
+      <div class="chain-node">
+        <span class="node-label">6. Construcción</span>
+        <span class="node-val" id="chainStatus" style="color:#4ade80;">En proceso</span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const MODES = {
+      line: {
+        title: "Modo 1: Línea Recta de Bloques",
+        codeLines: [
+          `<span style="color:#a855f7;">for</span> i <span style="color:#a855f7;">in</span> <span style="color:#38bdf8;">range</span>(<span style="color:#fde047;">8</span>):`,
+          `&nbsp;&nbsp;&nbsp;&nbsp;mc.setBlock(x + i, y, z, <span style="color:#fde047;">5</span>, <span style="color:#fde047;">0</span>) <span style="color:#64748b;"># Madera</span>`
+        ],
+        totalSteps: 8,
+        hasGap: false
+      },
+      bridge: {
+        title: "Modo 2: Puente sobre Hueco (Abismo)",
+        codeLines: [
+          `<span style="color:#64748b;"># Construir puente sobre el hueco (8 bloques)</span>`,
+          `<span style="color:#a855f7;">for</span> i <span style="color:#a855f7;">in</span> <span style="color:#38bdf8;">range</span>(<span style="color:#fde047;">1</span>, <span style="color:#fde047;">9</span>):`,
+          `&nbsp;&nbsp;&nbsp;&nbsp;mc.setBlock(x + i, y, z, <span style="color:#fde047;">4</span>, <span style="color:#fde047;">0</span>) <span style="color:#64748b;"># Adoquín</span>`
+        ],
+        totalSteps: 8,
+        hasGap: true
+      },
+      rails: {
+        title: "Modo 3: Puente con Barandas Laterales",
+        codeLines: [
+          `<span style="color:#a855f7;">for</span> i <span style="color:#a855f7;">in</span> <span style="color:#38bdf8;">range</span>(<span style="color:#fde047;">1</span>, <span style="color:#fde047;">9</span>):`,
+          `&nbsp;&nbsp;&nbsp;&nbsp;mc.setBlock(x + i, y, z, <span style="color:#fde047;">5</span>, <span style="color:#fde047;">0</span>)     <span style="color:#64748b;"># Suelo</span>`,
+          `&nbsp;&nbsp;&nbsp;&nbsp;mc.setBlock(x + i, y+<span style="color:#fde047;">1</span>, z-<span style="color:#fde047;">1</span>, <span style="color:#fde047;">85</span>, <span style="color:#fde047;">0</span>) <span style="color:#64748b;"># Baranda Izq</span>`,
+          `&nbsp;&nbsp;&nbsp;&nbsp;mc.setBlock(x + i, y+<span style="color:#fde047;">1</span>, z+<span style="color:#fde047;">1</span>, <span style="color:#fde047;">85</span>, <span style="color:#fde047;">0</span>) <span style="color:#64748b;"># Baranda Der</span>`
+        ],
+        totalSteps: 8,
+        hasGap: true
+      },
+      platform: {
+        title: "Modo 4: Plataforma 2D con Ciclos Anidados",
+        codeLines: [
+          `<span style="color:#a855f7;">for</span> dx <span style="color:#a855f7;">in</span> <span style="color:#38bdf8;">range</span>(<span style="color:#fde047;">6</span>):      <span style="color:#64748b;"># Ciclo exterior (Largo)</span>`,
+          `&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#a855f7;">for</span> dz <span style="color:#a855f7;">in</span> <span style="color:#38bdf8;">range</span>(<span style="color:#fde047;">3</span>):  <span style="color:#64748b;"># Ciclo interior (Ancho)</span>`,
+          `&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;mc.setBlock(x+dx, y, z+dz, <span style="color:#fde047;">41</span>, <span style="color:#fde047;">0</span>) <span style="color:#64748b;"># Oro</span>`
+        ],
+        totalSteps: 18,
+        hasGap: false
+      }
+    };
+
+    let currentMode = 'bridge';
+    let currentStep = 0;
+    let isPlaying = false;
+    let timer = null;
+
+    function setBridgeMode(m) {
+      currentMode = m;
+      document.querySelectorAll('.mode-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.getAttribute('onclick').includes(`'${m}'`));
+      });
+      document.getElementById('modeTitleBadge').textContent = MODES[m].title;
+
+      // Render Code
+      const cBox = document.getElementById('codeContainer');
+      cBox.innerHTML = MODES[m].codeLines.map((l, idx) => `<div class="code-line" id="cl${idx}">${l}</div>`).join('');
+
+      resetBridge();
+    }
+
+    function resetBridge() {
+      if (isPlaying) togglePlay();
+      currentStep = 0;
+      updateSimulationState();
+      drawWorld();
+    }
+
+    function stepForward() {
+      const maxSteps = MODES[currentMode].totalSteps;
+      if (currentStep < maxSteps) {
+        currentStep++;
+        updateSimulationState();
+        drawWorld();
+      } else {
+        if (isPlaying) togglePlay();
+      }
+    }
+
+    function togglePlay() {
+      isPlaying = !isPlaying;
+      const btn = document.getElementById('btnPlay');
+      if (isPlaying) {
+        btn.textContent = "Pausa ⏸";
+        btn.style.background = "#eab308";
+        timer = setInterval(() => {
+          if (currentStep < MODES[currentMode].totalSteps) {
+            stepForward();
+          } else {
+            togglePlay();
+          }
+        }, 500);
+      } else {
+        btn.textContent = "Auto ▶";
+        btn.style.background = "var(--green)";
+        clearInterval(timer);
+      }
+    }
+
+    function updateSimulationState() {
+      const maxSteps = MODES[currentMode].totalSteps;
+      document.getElementById('chainIter').textContent = `${currentStep} / ${maxSteps}`;
+
+      let varStr = "";
+      let coordStr = "";
+      let blockStr = "";
+
+      if (currentMode === 'line') {
+        const i = Math.max(0, currentStep - 1);
+        varStr = `i = ${i}`;
+        coordStr = `(x + ${i}, y, z)`;
+        blockStr = "Madera (5, 0)";
+      } else if (currentMode === 'bridge') {
+        const i = currentStep;
+        varStr = `i = ${i}`;
+        coordStr = `(x + ${i}, y, z)`;
+        blockStr = "Adoquín (4, 0)";
+      } else if (currentMode === 'rails') {
+        const i = currentStep;
+        varStr = `i = ${i}`;
+        coordStr = `x+${i}, z±1`;
+        blockStr = "Madera + Vallas";
+      } else if (currentMode === 'platform') {
+        const idx = Math.max(0, currentStep - 1);
+        const dx = Math.floor(idx / 3);
+        const dz = idx % 3;
+        varStr = `dx=${dx}, dz=${dz}`;
+        coordStr = `(x+${dx}, y, z+${dz})`;
+        blockStr = "Bloque Oro (41)";
+      }
+
+      document.getElementById('chainVar').textContent = currentStep === 0 ? "Iniciando" : varStr;
+      document.getElementById('chainCoord').textContent = currentStep === 0 ? "---" : coordStr;
+      document.getElementById('chainBlock').textContent = currentStep === 0 ? "---" : blockStr;
+      document.getElementById('chainStatus').textContent = currentStep === maxSteps ? "¡Completado!" : "Construyendo";
+      document.getElementById('chainStatus').style.color = currentStep === maxSteps ? "#4ade80" : "#fde047";
+    }
+
+    // Canvas Isométrico Voxel para Minecraft
+    function drawWorld() {
+      const canvas = document.getElementById('bridgeCanvas');
+      const ctx = canvas.getContext('2d');
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      const originX = 180;
+      const originY = 220;
+      const tileWidth = 38;
+      const tileHeight = 19;
+      const blockHeight = 24;
+
+      function toScreen(isoX, isoZ, isoY = 0) {
+        const sx = originX + (isoX - isoZ) * (tileWidth / 2);
+        const sy = originY + (isoX + isoZ) * (tileHeight / 2) - isoY * blockHeight;
+        return { x: sx, y: sy };
+      }
+
+      function drawCube(isoX, isoZ, isoY, topCol, leftCol, rightCol) {
+        const p = toScreen(isoX, isoZ, isoY);
+
+        ctx.fillStyle = topCol;
+        ctx.beginPath();
+        ctx.moveTo(p.x, p.y - blockHeight);
+        ctx.lineTo(p.x + tileWidth / 2, p.y - blockHeight + tileHeight / 2);
+        ctx.lineTo(p.x, p.y - blockHeight + tileHeight);
+        ctx.lineTo(p.x - tileWidth / 2, p.y - blockHeight + tileHeight / 2);
+        ctx.closePath();
+        ctx.fill();
+        ctx.strokeStyle = "rgba(0,0,0,0.25)";
+        ctx.lineWidth = 1;
+        ctx.stroke();
+
+        ctx.fillStyle = leftCol;
+        ctx.beginPath();
+        ctx.moveTo(p.x - tileWidth / 2, p.y - blockHeight + tileHeight / 2);
+        ctx.lineTo(p.x, p.y - blockHeight + tileHeight);
+        ctx.lineTo(p.x, p.y + tileHeight);
+        ctx.lineTo(p.x - tileWidth / 2, p.y + tileHeight / 2);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.fillStyle = rightCol;
+        ctx.beginPath();
+        ctx.moveTo(p.x, p.y - blockHeight + tileHeight);
+        ctx.lineTo(p.x + tileWidth / 2, p.y - blockHeight + tileHeight / 2);
+        ctx.lineTo(p.x + tileWidth / 2, p.y + tileHeight / 2);
+        ctx.lineTo(p.x, p.y + tileHeight);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+      }
+
+      // Dibujar Terreno Izquierdo (Orilla de inicio)
+      for (let ix = -3; ix <= 0; ix++) {
+        for (let iz = -2; iz <= 2; iz++) {
+          drawCube(ix, iz, 0, "#4ade80", "#15803d", "#166534");
+        }
+      }
+
+      // Si el modo tiene hueco, dibujar abismo con lava al fondo
+      if (MODES[currentMode].hasGap) {
+        // Fondo de lava profunda
+        for (let ix = 1; ix <= 8; ix++) {
+          for (let iz = -2; iz <= 2; iz++) {
+            drawCube(ix, iz, -2, "#ea580c", "#b45309", "#9a3412");
+          }
+        }
+
+        // Orilla derecha de destino (isla opuesta)
+        for (let ix = 9; ix <= 12; ix++) {
+          for (let iz = -2; iz <= 2; iz++) {
+            drawCube(ix, iz, 0, "#4ade80", "#15803d", "#166534");
+          }
+        }
+      } else if (currentMode === 'line') {
+        for (let ix = 1; ix <= 9; ix++) {
+          for (let iz = -2; iz <= 2; iz++) {
+            drawCube(ix, iz, -1, "#334155", "#1e293b", "#0f172a");
+          }
+        }
+      }
+
+      // Dibujar Bloques Colocados por el Bucle For
+      if (currentMode === 'line') {
+        for (let i = 0; i < currentStep; i++) {
+          drawCube(i, 0, 0, "#b45309", "#78350f", "#451a03"); // Madera
+        }
+      } else if (currentMode === 'bridge') {
+        for (let i = 1; i <= currentStep; i++) {
+          drawCube(i, 0, 0, "#94a3b8", "#64748b", "#475569"); // Adoquín
+        }
+      } else if (currentMode === 'rails') {
+        for (let i = 1; i <= currentStep; i++) {
+          // Suelo puente
+          drawCube(i, 0, 0, "#b45309", "#78350f", "#451a03");
+          // Baranda izq
+          drawCube(i, -1, 1, "#f59e0b", "#d97706", "#b45309");
+          // Baranda der
+          drawCube(i, 1, 1, "#f59e0b", "#d97706", "#b45309");
+        }
+      } else if (currentMode === 'platform') {
+        for (let s = 0; s < currentStep; s++) {
+          const dx = Math.floor(s / 3);
+          const dz = s % 3;
+          drawCube(dx, dz, 0, "#fde047", "#eab308", "#ca8a04"); // Oro
+        }
+      }
+
+      // Dibujar Steve (Jugador) en posición (-1, 0, 1)
+      const p = toScreen(-1, 0, 1);
+      ctx.fillStyle = "#0284c7";
+      ctx.fillRect(p.x - 5, p.y - 36, 10, 16);
+      ctx.fillStyle = "#fbcfe8";
+      ctx.fillRect(p.x - 6, p.y - 48, 12, 12);
+      ctx.fillStyle = "#92400e";
+      ctx.fillRect(p.x - 6, p.y - 48, 12, 4);
+
+      ctx.fillStyle = "#fff";
+      ctx.font = "bold 9px monospace";
+      ctx.textAlign = "center";
+      ctx.fillText("Jugador", p.x, p.y - 52);
+    }
+
+    // Inicializar
+    setBridgeMode('bridge');
+  </script>
+</body>
+</html>

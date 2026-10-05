@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Minecraft + Python: Bloques y Condiciones</title>
+  <style>
+    :root {
+      --bg: #0e0e11;
+      --card: #141923;
+      --border: #232d42;
+      --text: #f3f4f6;
+      --muted: #94a3b8;
+      --sky: #38bdf8;
+      --purple: #a855f7;
+      --green: #10b981;
+      --amber: #f59e0b;
+      --rose: #f43f5e;
+      --card-inner: #080b10;
+    }
+    body.theme-light {
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --border: #e2e8f0;
+      --text: #0f172a;
+      --muted: #64748b;
+      --sky: #0284c7;
+      --purple: #9333ea;
+      --green: #059669;
+      --amber: #d97706;
+      --rose: #e11d48;
+      --card-inner: #f1f5f9;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { background: var(--bg); color: var(--text); padding: 14px; display: flex; justify-content: center; }
+    .container { width: 100%; max-width: 920px; background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 18px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+    
+    .header { text-align: center; margin-bottom: 14px; }
+    .header h3 { font-size: 1.25rem; color: #4ade80; margin-bottom: 4px; display: flex; align-items: center; justify-content: center; gap: 8px; }
+    .header p { font-size: 0.78rem; color: var(--muted); }
+
+    .world-container {
+      display: grid;
+      grid-template-columns: 1.4fr 1fr;
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+    @media (max-width: 720px) {
+      .world-container { grid-template-columns: 1fr; }
+    }
+
+    /* Visor Voxel Isométrico Ampliado */
+    .viewport-box {
+      background: #050811;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+    }
+    .vp-badge {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      font-size: 0.72rem;
+      font-family: monospace;
+      font-weight: bold;
+      color: #86efac;
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      padding: 3px 10px;
+      border-radius: 4px;
+      z-index: 5;
+    }
+    canvas {
+      width: 100%;
+      height: 360px;
+      display: block;
+      border-radius: 6px;
+      background: radial-gradient(circle at 50% 30%, #151f33 0%, #060911 100%);
+    }
+
+    /* Panel de Código y Controles */
+    .controls-panel {
+      background: var(--card-inner);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .code-editor {
+      background: #030508;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 10px;
+      font-family: monospace;
+      font-size: 0.75rem;
+      color: #e2e8f0;
+      line-height: 1.45;
+      margin-bottom: 10px;
+      overflow-x: auto;
+    }
+    .code-line { padding: 1px 4px; border-radius: 3px; }
+    .code-line.active { background: rgba(56, 189, 248, 0.25); color: #7dd3fc; font-weight: bold; }
+
+    .cond-controls {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .slider-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      font-size: 0.75rem;
+    }
+    .slider-row label { color: var(--muted); font-family: monospace; font-weight: 600; }
+    .slider-row span { color: #fde047; font-family: monospace; font-weight: bold; min-width: 45px; text-align: right; }
+    input[type="range"] {
+      flex: 1;
+      accent-color: var(--green);
+      cursor: pointer;
+    }
+
+    .btn-exec {
+      width: 100%;
+      padding: 8px;
+      background: var(--green);
+      color: #050811;
+      font-weight: bold;
+      border: none;
+      border-radius: 6px;
+      font-size: 0.78rem;
+      cursor: pointer;
+      margin-top: 8px;
+      transition: opacity 0.2s;
+    }
+    .btn-exec:hover { opacity: 0.9; }
+
+    /* Explicación y Traza */
+    .trace-box {
+      background: var(--card-inner);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 0.78rem;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .trace-step {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: monospace;
+    }
+    .trace-step strong { color: var(--sky); }
+    .block-preview {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 2px 6px;
+      border-radius: 4px;
+      background: rgba(255,255,255,0.06);
+      font-weight: bold;
+    }
+    .color-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 3px;
+      display: inline-block;
+      border: 1px solid rgba(0,0,0,0.5);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h3>🧱 Minecraft + Python: Bloques y Decisiones Condicionales</h3>
+      <p>Modifica la variable ambiental y observa cómo el condicional <code>if - elif - else</code> decide qué bloque y color colocar.</p>
+    </div>
+
+    <div class="world-container">
+      <!-- Visor Voxel Canvas -->
+      <div class="viewport-box">
+        <span class="vp-badge">Mundo Minecraft: Servidor 15.235.56.59</span>
+        <canvas id="mcCanvas" width="520" height="360"></canvas>
+      </div>
+
+      <!-- Editor de Código y Control de Variable -->
+      <div class="controls-panel">
+        <div class="code-editor" id="codeEditor">
+          <div class="code-line" id="l1"><span style="color:#a855f7;">from</span> mcpi.minecraft <span style="color:#a855f7;">import</span> Minecraft</div>
+          <div class="code-line" id="l2">mc = Minecraft.create(<span style="color:#38bdf8;">"15.235.56.59"</span>, <span style="color:#fde047;">8180</span>)</div>
+          <div class="code-line" id="l3">x, y, z = mc.player.getTilePos()</div>
+          <div class="code-line" id="l4">temperatura = <span style="color:#fde047;" id="valCodeTemp">28</span></div>
+          <div class="code-line" id="l5"><span style="color:#a855f7;">if</span> temperatura &gt;= <span style="color:#fde047;">30</span>:</div>
+          <div class="code-line" id="l6">&nbsp;&nbsp;&nbsp;&nbsp;mc.setBlock(x+<span style="color:#fde047;">1</span>, y, z, <span style="color:#fde047;">35</span>, <span style="color:#fde047;">14</span>) <span style="color:#64748b;"># Rojo</span></div>
+          <div class="code-line" id="l7"><span style="color:#a855f7;">elif</span> temperatura &gt;= <span style="color:#fde047;">20</span>:</div>
+          <div class="code-line" id="l8">&nbsp;&nbsp;&nbsp;&nbsp;mc.setBlock(x+<span style="color:#fde047;">1</span>, y, z, <span style="color:#fde047;">35</span>, <span style="color:#fde047;">1</span>)  <span style="color:#64748b;"># Naranja</span></div>
+          <div class="code-line" id="l9"><span style="color:#a855f7;">elif</span> temperatura &gt;= <span style="color:#fde047;">10</span>:</div>
+          <div class="code-line" id="l10">&nbsp;&nbsp;&nbsp;&nbsp;mc.setBlock(x+<span style="color:#fde047;">1</span>, y, z, <span style="color:#fde047;">35</span>, <span style="color:#fde047;">5</span>)  <span style="color:#64748b;"># Lima</span></div>
+          <div class="code-line" id="l11"><span style="color:#a855f7;">else</span>:</div>
+          <div class="code-line" id="l12">&nbsp;&nbsp;&nbsp;&nbsp;mc.setBlock(x+<span style="color:#fde047;">1</span>, y, z, <span style="color:#fde047;">35</span>, <span style="color:#fde047;">11</span>) <span style="color:#64748b;"># Azul</span></div>
+        </div>
+
+        <div class="cond-controls">
+          <div class="slider-row">
+            <label>Temperatura:</label>
+            <input type="range" id="tempSlider" min="0" max="40" value="28" oninput="onTempChange()">
+            <span id="tempLabel">28 °C</span>
+          </div>
+
+          <button class="btn-exec" onclick="executeConditionalBlock()">
+            ⚡ Ejecutar Código en Minecraft
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Traza en Vivo -->
+    <div class="trace-box" id="traceBox">
+      <div class="trace-step">
+        <strong>Evaluación Lógica:</strong>
+        <span id="logicTrace">temperatura = 28 ➔ temperatura &gt;= 20 es True (bloque naranja).</span>
+      </div>
+      <div class="trace-step">
+        <strong>Bloque Colocado:</strong>
+        <span class="block-preview" id="blockPreview">
+          <span class="color-dot" id="dotColor" style="background:#ea580c;"></span>
+          <span id="blockDesc">Lana Naranja (ID: 35, Data: 1)</span>
+        </span>
+        <span style="color:var(--muted); font-size:0.72rem;" id="coordDesc">Coordenadas: (x+1, y, z)</span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const WOOL_COLORS = {
+      14: { name: "Lana Roja (Calor Extremo)", hex: "#dc2626", id: 35, data: 14, cond: "temperatura >= 30", activeLines: [5, 6] },
+      1:  { name: "Lana Naranja (Templado/Cálido)", hex: "#ea580c", id: 35, data: 1, cond: "temperatura >= 20", activeLines: [7, 8] },
+      5:  { name: "Lana Verde Lima (Templado)", hex: "#84cc16", id: 35, data: 5, cond: "temperatura >= 10", activeLines: [9, 10] },
+      11: { name: "Lana Azul Claro (Frío)", hex: "#0284c7", id: 35, data: 11, cond: "else (menor a 10)", activeLines: [11, 12] }
+    };
+
+    let curTemp = 28;
+    let placedBlock = WOOL_COLORS[1];
+
+    function onTempChange() {
+      curTemp = parseInt(document.getElementById('tempSlider').value, 10);
+      document.getElementById('tempLabel').textContent = `${curTemp} °C`;
+      document.getElementById('valCodeTemp').textContent = curTemp;
+      executeConditionalBlock();
+    }
+
+    function executeConditionalBlock() {
+      if (curTemp >= 30) {
+        placedBlock = WOOL_COLORS[14];
+      } else if (curTemp >= 20) {
+        placedBlock = WOOL_COLORS[1];
+      } else if (curTemp >= 10) {
+        placedBlock = WOOL_COLORS[5];
+      } else {
+        placedBlock = WOOL_COLORS[11];
+      }
+
+      // Resaltar líneas del código
+      for (let i = 1; i <= 12; i++) {
+        const el = document.getElementById('l' + i);
+        if (el) el.classList.remove('active');
+      }
+      placedBlock.activeLines.forEach(l => {
+        const el = document.getElementById('l' + l);
+        if (el) el.classList.add('active');
+      });
+
+      // Actualizar traza
+      document.getElementById('logicTrace').textContent = `temperatura = ${curTemp} ➔ Cumple condición '${placedBlock.cond}'.`;
+      document.getElementById('dotColor').style.background = placedBlock.hex;
+      document.getElementById('blockDesc').textContent = `${placedBlock.name} (mc.setBlock(x+1, y, z, 35, ${placedBlock.data}))`;
+
+      drawIsometricWorld();
+    }
+
+    // Dibujo Isométrico en Canvas 2D
+    function drawIsometricWorld() {
+      const canvas = document.getElementById('mcCanvas');
+      const ctx = canvas.getContext('2d');
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      const originX = canvas.width / 2;
+      const originY = 220;
+      const tileWidth = 54;
+      const tileHeight = 27;
+      const blockHeight = 32;
+
+      function toScreen(isoX, isoY, isoZ = 0) {
+        const screenX = originX + (isoX - isoY) * (tileWidth / 2);
+        const screenY = originY + (isoX + isoY) * (tileHeight / 2) - isoZ * blockHeight;
+        return { x: screenX, y: screenY };
+      }
+
+      function drawCube(isoX, isoY, isoZ, topColor, leftColor, rightColor, label = '') {
+        const p = toScreen(isoX, isoY, isoZ);
+
+        // Cara Superior (Top)
+        ctx.fillStyle = topColor;
+        ctx.beginPath();
+        ctx.moveTo(p.x, p.y - blockHeight);
+        ctx.lineTo(p.x + tileWidth / 2, p.y - blockHeight + tileHeight / 2);
+        ctx.lineTo(p.x, p.y - blockHeight + tileHeight);
+        ctx.lineTo(p.x - tileWidth / 2, p.y - blockHeight + tileHeight / 2);
+        ctx.closePath();
+        ctx.fill();
+        ctx.strokeStyle = "rgba(0,0,0,0.3)";
+        ctx.lineWidth = 1;
+        ctx.stroke();
+
+        // Cara Izquierda (Left)
+        ctx.fillStyle = leftColor;
+        ctx.beginPath();
+        ctx.moveTo(p.x - tileWidth / 2, p.y - blockHeight + tileHeight / 2);
+        ctx.lineTo(p.x, p.y - blockHeight + tileHeight);
+        ctx.lineTo(p.x, p.y + tileHeight);
+        ctx.lineTo(p.x - tileWidth / 2, p.y + tileHeight / 2);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+
+        // Cara Derecha (Right)
+        ctx.fillStyle = rightColor;
+        ctx.beginPath();
+        ctx.moveTo(p.x, p.y - blockHeight + tileHeight);
+        ctx.lineTo(p.x + tileWidth / 2, p.y - blockHeight + tileHeight / 2);
+        ctx.lineTo(p.x + tileWidth / 2, p.y + tileHeight / 2);
+        ctx.lineTo(p.x, p.y + tileHeight);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+
+        if (label) {
+          ctx.fillStyle = "#fff";
+          ctx.font = "bold 9px monospace";
+          ctx.textAlign = "center";
+          ctx.fillText(label, p.x, p.y - blockHeight + 14);
+        }
+      }
+
+      // Dibujar suelo de césped (Grass blocks)
+      for (let ix = -2; ix <= 2; ix++) {
+        for (let iy = -2; iy <= 2; iy++) {
+          drawCube(ix, iy, 0, "#4ade80", "#15803d", "#166534");
+        }
+      }
+
+      // Dibujar Jugador Steve en (0, 0, 1)
+      const pPos = toScreen(0, 0, 1);
+      // Cuerpo jugador
+      ctx.fillStyle = "#0284c7"; // Camisa azul Steve
+      ctx.fillRect(pPos.x - 6, pPos.y - 42, 12, 18);
+      // Cabeza
+      ctx.fillStyle = "#fbcfe8";
+      ctx.fillRect(pPos.x - 7, pPos.y - 56, 14, 14);
+      ctx.fillStyle = "#92400e"; // Cabello
+      ctx.fillRect(pPos.x - 7, pPos.y - 56, 14, 4);
+
+      ctx.fillStyle = "#38bdf8";
+      ctx.font = "bold 9px monospace";
+      ctx.textAlign = "center";
+      ctx.fillText("Jugador (x,y,z)", pPos.x, pPos.y - 60);
+
+      // Dibujar Bloque Condicional Colocado en (1, 0, 1)
+      const hex = placedBlock.hex;
+      drawCube(1, 0, 1, hex, adjustBrightness(hex, -20), adjustBrightness(hex, -40), "35:" + placedBlock.data);
+
+      // Etiqueta del bloque colocado
+      const bPos = toScreen(1, 0, 1);
+      ctx.fillStyle = "#fde047";
+      ctx.font = "bold 10px monospace";
+      ctx.fillText("setBlock(x+1)", bPos.x, bPos.y - 36);
+    }
+
+    function adjustBrightness(col, percent) {
+      let num = parseInt(col.replace("#",""), 16);
+      let amt = Math.round(2.55 * percent);
+      let R = (num >> 16) + amt;
+      let B = (num >> 8 & 0x00FF) + amt;
+      let G = (num & 0x0000FF) + amt;
+      return "#" + (0x1000000 + (R<255?R<1?0:R:255)*0x10000 + (B<255?B<1?0:B:255)*0x100 + (G<255?G<1?0:G:255)).toString(16).slice(1);
+    }
+
+    // Inicializar
+    executeConditionalBlock();
+  </script>
+</body>
+</html>

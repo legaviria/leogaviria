@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simulador Modular: Funciones y Librería Pokémon en Minecraft</title>
+  <style>
+    :root {
+      --bg: #0e0e11;
+      --card: #141923;
+      --border: #232d42;
+      --text: #f3f4f6;
+      --muted: #94a3b8;
+      --sky: #38bdf8;
+      --purple: #a855f7;
+      --green: #10b981;
+      --amber: #f59e0b;
+      --rose: #f43f5e;
+      --card-inner: #080b10;
+    }
+    body.theme-light {
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --border: #e2e8f0;
+      --text: #0f172a;
+      --muted: #64748b;
+      --sky: #0284c7;
+      --purple: #9333ea;
+      --green: #059669;
+      --amber: #d97706;
+      --rose: #e11d48;
+      --card-inner: #f1f5f9;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { background: var(--bg); color: var(--text); padding: 12px; display: flex; justify-content: center; }
+    .container { width: 100%; max-width: 980px; background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 18px; box-shadow: 0 10px 30px rgba(0,0,0,0.35); }
+    
+    .header { text-align: center; margin-bottom: 12px; }
+    .header h3 { font-size: 1.25rem; color: #a855f7; margin-bottom: 3px; display: flex; align-items: center; justify-content: center; gap: 8px; }
+    .header p { font-size: 0.78rem; color: var(--muted); }
+
+    /* Barra de Invocación y Parámetros */
+    .invocation-panel {
+      background: #080b12;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 12px;
+      margin-bottom: 12px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+    .invocation-signature {
+      font-family: Consolas, monospace;
+      font-size: 0.8rem;
+      color: #e2e8f0;
+    }
+    .inv-fn { color: #38bdf8; font-weight: bold; }
+    .inv-param { color: #f59e0b; }
+    .inv-mat { color: #a855f7; font-weight: bold; }
+
+    .pokemon-selector {
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+    }
+    .pk-btn {
+      padding: 5px 10px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      border-radius: 5px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s;
+    }
+    .pk-btn:hover, .pk-btn.active {
+      background: var(--purple);
+      color: #fff;
+      border-color: var(--purple);
+      box-shadow: 0 0 8px rgba(168, 85, 247, 0.35);
+    }
+
+    /* Grid Principal: Canvas 3D + Stack & Ámbito */
+    .stage-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    @media (max-width: 720px) {
+      .stage-grid { grid-template-columns: 1fr; }
+    }
+
+    .panel-box {
+      background: #050811;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+    }
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--muted);
+    }
+    .panel-header span.tag {
+      font-family: monospace;
+      font-size: 0.68rem;
+      padding: 2px 6px;
+      border-radius: 4px;
+      background: rgba(168, 85, 247, 0.15);
+      color: var(--purple);
+    }
+
+    canvas#voxelCanvas {
+      width: 100%;
+      height: 400px;
+      display: block;
+      border-radius: 6px;
+      background: radial-gradient(circle at 50% 30%, #171d2b 0%, #060910 100%);
+    }
+
+    /* Call Stack & Local Scope */
+    .stack-container {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .stack-card {
+      background: #0a0e17;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px 10px;
+    }
+    .stack-title {
+      font-size: 0.66rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 5px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .stack-frames {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .frame-pill {
+      font-family: Consolas, monospace;
+      font-size: 0.72rem;
+      padding: 4px 8px;
+      border-radius: 4px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(255, 255, 255, 0.02);
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .frame-pill.active {
+      background: rgba(168, 85, 247, 0.2);
+      border-color: var(--purple);
+      color: #f3e8ff;
+      font-weight: bold;
+    }
+    .frame-pill.active::before {
+      content: "➔ ";
+      color: var(--amber);
+    }
+
+    /* Variables Locales en Memoria */
+    .scope-table {
+      width: 100%;
+      font-family: Consolas, monospace;
+      font-size: 0.7rem;
+      border-collapse: collapse;
+      margin-top: 4px;
+    }
+    .scope-table th {
+      text-align: left;
+      font-size: 0.62rem;
+      color: var(--muted);
+      padding: 2px 4px;
+      border-bottom: 1px solid var(--border);
+    }
+    .scope-table td {
+      padding: 3px 4px;
+      border-bottom: 1px solid rgba(255,255,255,0.03);
+    }
+    .var-name { color: #38bdf8; }
+    .var-val { color: #facc15; font-weight: bold; }
+    .var-type { color: var(--muted); font-size: 0.62rem; }
+
+    /* Código Python */
+    .code-box {
+      background: #080b12;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px;
+      font-family: Consolas, "Fira Code", monospace;
+      font-size: 0.72rem;
+      line-height: 1.45;
+      overflow-x: auto;
+    }
+    .code-line {
+      padding: 1px 6px;
+      border-radius: 3px;
+      transition: background 0.15s;
+      white-space: pre;
+      color: #cbd5e1;
+    }
+    .code-line.active {
+      background: rgba(168, 85, 247, 0.25);
+      border-left: 3px solid var(--purple);
+      color: #f3e8ff;
+      font-weight: 700;
+    }
+    .kw { color: #c084fc; font-weight: bold; }
+    .fn { color: #38bdf8; }
+    .num { color: #f59e0b; }
+    .cm { color: #64748b; font-style: italic; }
+
+    /* Controles Inferiores */
+    .controls-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 8px;
+      border-top: 1px solid var(--border);
+    }
+    .btn-group {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+    .btn {
+      padding: 6px 14px;
+      font-size: 0.74rem;
+      font-weight: 700;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255,255,255,0.06);
+      color: var(--text);
+      transition: all 0.2s;
+    }
+    .btn:hover { background: rgba(255,255,255,0.12); }
+    .btn-purple { background: var(--purple); color: #fff; border-color: var(--purple); }
+    .btn-purple:hover { background: #9333ea; }
+    .btn-amber { background: var(--amber); color: #0b0e14; border-color: var(--amber); }
+
+    .speed-control {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.72rem;
+      color: var(--muted);
+      font-family: monospace;
+    }
+    .speed-control select {
+      background: #080b12;
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 3px 6px;
+      border-radius: 4px;
+      font-size: 0.72rem;
+      font-family: monospace;
+    }
+
+    .progress-bar-wrap {
+      width: 100%;
+      height: 4px;
+      background: rgba(255,255,255,0.06);
+      border-radius: 2px;
+      overflow: hidden;
+      margin-top: 8px;
+    }
+    .progress-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #a855f7, #38bdf8);
+      width: 0%;
+      transition: width 0.1s linear;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header">
+    <h3>📦 Modularización: Funciones y Librería Pokémon en Minecraft</h3>
+    <p>Aprende cómo modularizar tu código creando funciones reutilizables con parámetros <code>(x, y, z, matriz)</code> e importando colecciones desde librerías externas.</p>
+  </div>
+
+  <!-- Barra de Invocación con Selector de Argumentos -->
+  <div class="invocation-panel">
+    <div class="invocation-signature">
+      <span class="inv-fn">dibujar_pixelart</span>(x=<span class="inv-param" id="argX">10</span>, y=<span class="inv-param" id="argY">64</span>, z=<span class="inv-param" id="argZ">25</span>, matriz=<span class="inv-mat" id="argMat">pk.PK_025</span>)
+    </div>
+    <div class="pokemon-selector">
+      <span style="font-size:0.68rem; color:var(--muted); font-weight:700; align-self:center;">ARGUMENTO:</span>
+      <button class="pk-btn active" onclick="selectPokemon('PK_025')">⚡ Pikachu (PK_025)</button>
+      <button class="pk-btn" onclick="selectPokemon('PK_001')">🍃 Bulbasaur (PK_001)</button>
+      <button class="pk-btn" onclick="selectPokemon('PK_027')">🐾 Sandshrew (PK_027)</button>
+      <button class="pk-btn" onclick="selectPokemon('PK_125')">⚡ Electabuzz (PK_125)</button>
+    </div>
+  </div>
+
+  <div class="stage-grid">
+    <!-- Panel Izquierdo: Mundo 3D Voxel -->
+    <div class="panel-box">
+      <div class="panel-header">
+        <span>Mundo Minecraft 3D (Renderizado Voxel)</span>
+        <span class="tag" id="voxelStatsTag">0 / 0 Bloques</span>
+      </div>
+      <canvas id="voxelCanvas" width="540" height="400"></canvas>
+      <div class="progress-bar-wrap">
+        <div class="progress-bar-fill" id="progressFill"></div>
+      </div>
+    </div>
+
+    <!-- Panel Derecho: Call Stack, Scope Local y Código -->
+    <div class="panel-box stack-container">
+      <!-- Pila de Llamadas (Call Stack) -->
+      <div class="stack-card">
+        <div class="stack-title">
+          <span>Pila de Llamadas (Call Stack)</span>
+          <span style="font-size:0.6rem; color:#86efac;">● Ejecutando</span>
+        </div>
+        <div class="stack-frames">
+          <div class="frame-pill active" id="frameFunc">dibujar_pixelart(x, y, z, matriz)</div>
+          <div class="frame-pill" id="frameMain">__main__ [Script Principal]</div>
+        </div>
+      </div>
+
+      <!-- Variables Locales en Ámbito (Scope) -->
+      <div class="stack-card">
+        <div class="stack-title">
+          <span>Variables Locales en Scope: dibujar_pixelart</span>
+          <span style="color:var(--sky); font-family:monospace;" id="stepStateTag">i=0, j=0</span>
+        </div>
+        <table class="scope-table">
+          <thead>
+            <tr><th>Variable</th><th>Tipo</th><th>Valor Actual</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="var-name">x, y, z</td><td class="var-type">int (origen)</td><td class="var-val" id="scopeCoords">10, 64, 25</td></tr>
+            <tr><td class="var-name">filas, cols</td><td class="var-type">int (dimensiones)</td><td class="var-val" id="scopeDims">-- × --</td></tr>
+            <tr><td class="var-name">i, j</td><td class="var-type">int (índices)</td><td class="var-val" id="scopeIndices">i=--, j=--</td></tr>
+            <tr><td class="var-name">valor</td><td class="var-type">int (paleta)</td><td class="var-val" id="scopeVal">--</td></tr>
+            <tr><td class="var-name">bloque, id</td><td class="var-type">tuple (mc block)</td><td class="var-val" id="scopeBlock" style="color:#a855f7;">--</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Código de dibujar.py -->
+      <div class="code-box" id="codeBox">
+        <div class="code-line" id="l1"><span class="kw">from</span> mcpi.minecraft <span class="kw">import</span> Minecraft</div>
+        <div class="code-line" id="l2"><span class="kw">import</span> pokemon <span class="kw">as</span> pk</div>
+        <div class="code-line" id="l3"></div>
+        <div class="code-line" id="l4"><span class="kw">def</span> <span class="fn">dibujar_pixelart</span>(x, y, z, matriz):</div>
+        <div class="code-line" id="l5">&nbsp;&nbsp;&nbsp;&nbsp;filas = <span class="fn">len</span>(matriz)</div>
+        <div class="code-line" id="l6">&nbsp;&nbsp;&nbsp;&nbsp;columnas = <span class="fn">len</span>(matriz[<span class="num">0</span>])</div>
+        <div class="code-line" id="l7">&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(filas):</div>
+        <div class="code-line" id="l8">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">for</span> j <span class="kw">in</span> <span class="fn">range</span>(columnas):</div>
+        <div class="code-line" id="l9">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;valor = matriz[i][j]</div>
+        <div class="code-line" id="l10">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">if</span> valor <span class="kw">in</span> pk.PALETA:</div>
+        <div class="code-line" id="l11">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bloque, sub_id = pk.PALETA[valor]</div>
+        <div class="code-line" id="l12">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;mc.<span class="fn">setBlock</span>(x + j, y + (filas - i), z, bloque, sub_id)</div>
+        <div class="code-line" id="l13"></div>
+        <div class="code-line" id="l14"><span class="fn">dibujar_pixelart</span>(x, y, z, pk.<span id="codeArgMat">PK_025</span>)</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Controles de Simulación -->
+  <div class="controls-bar">
+    <div class="btn-group">
+      <button class="btn btn-purple" id="btnPlay" onclick="togglePlay()">Auto ▶</button>
+      <button class="btn" onclick="stepForward()">Paso ⏭</button>
+      <button class="btn" onclick="resetSim()">Reiniciar ↺</button>
+      <button class="btn btn-amber" onclick="buildInstant()">Construir Todo ⚡</button>
+    </div>
+
+    <div class="speed-control">
+      <span>Velocidad:</span>
+      <select id="speedSelect" onchange="changeSpeed()">
+        <option value="300">0.5x</option>
+        <option value="100" selected>1x</option>
+        <option value="30">3x</option>
+        <option value="10">10x</option>
+      </select>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Paleta oficial de Minecraft Pi Edition extraída de insumos/pokemon.py
+  const PALETA_MC = {
+    1:  { b: 35,  id: 0,  name: "Blanco - Lana", top: "#ffffff", left: "#e2e8f0", right: "#cbd5e1" },
+    2:  { b: 251, id: 0,  name: "Blanco - Hormigón", top: "#f8fafc", left: "#e2e8f0", right: "#94a3b8" },
+    5:  { b: 155, id: 0,  name: "Blanco - Cuarzo", top: "#ede9fe", left: "#ddd6fe", right: "#c4b5fd" },
+    6:  { b: 80,  id: 0,  name: "Blanco - Nieve", top: "#ffffff", left: "#f1f5f9", right: "#e2e8f0" },
+    9:  { b: 251, id: 1,  name: "Naranja - Hormigón", top: "#ea580c", left: "#c2410c", right: "#9a3412" },
+    11: { b: 159, id: 1,  name: "Naranja - Terracota", top: "#c2410c", left: "#9a3412", right: "#7c2d12" },
+    14: { b: 152, id: 0,  name: "Redstone - Bloque", top: "#dc2626", left: "#b91c1c", right: "#991b1b" },
+    25: { b: 174, id: 0,  name: "Hielo Ciano", top: "#67e8f9", left: "#06b6d4", right: "#0e7490" },
+    27: { b: 251, id: 4,  name: "Amarillo - Hormigón", top: "#facc15", left: "#eab308", right: "#ca8a04" },
+    29: { b: 159, id: 4,  name: "Amarillo - Terracota", top: "#ca8a04", left: "#a16207", right: "#854d0e" },
+    30: { b: 41,  id: 0,  name: "Oro - Bloque", top: "#fef08a", left: "#facc15", right: "#ca8a04" },
+    31: { b: 170, id: 0,  name: "Heno - Bloque", top: "#eab308", left: "#ca8a04", right: "#a16207" },
+    32: { b: 35,  id: 5,  name: "Verde Lima - Lana", top: "#84cc16", left: "#65a30d", right: "#4d7c0f" },
+    42: { b: 35,  id: 7,  name: "Gris - Lana", top: "#64748b", left: "#475569", right: "#334155" },
+    43: { b: 251, id: 7,  name: "Gris - Hormigón", top: "#475569", left: "#334155", right: "#1e293b" },
+    50: { b: 251, id: 8,  name: "Gris Claro - Hormigón", top: "#94a3b8", left: "#64748b", right: "#475569" },
+    61: { b: 251, id: 10, name: "Morado - Hormigón", top: "#9333ea", left: "#7e22ce", right: "#6b21a8" },
+    69: { b: 22,  id: 0,  name: "Lapislázuli - Bloque", top: "#1d4ed8", left: "#1e40af", right: "#1e3a8a" },
+    71: { b: 35,  id: 12, name: "Café - Lana", top: "#92400e", left: "#78350f", right: "#5a2609" },
+    72: { b: 251, id: 12, name: "Café - Hormigón", top: "#78350f", left: "#5a2609", right: "#451a03" },
+    74: { b: 159, id: 12, name: "Café - Terracota", top: "#5a2609", left: "#451a03", right: "#301102" },
+    80: { b: 35,  id: 13, name: "Verde - Lana", top: "#15803d", left: "#166534", right: "#14532d" },
+    81: { b: 251, id: 13, name: "Verde - Hormigón", top: "#166534", left: "#14532d", right: "#052e16" },
+    83: { b: 159, id: 13, name: "Verde - Terracota", top: "#14532d", left: "#052e16", right: "#021a0c" },
+    85: { b: 35,  id: 14, name: "Rojo - Lana", top: "#ef4444", left: "#dc2626", right: "#b91c1c" },
+    93: { b: 251, id: 15, name: "Negro - Hormigón", top: "#18181b", left: "#0f172a", right: "#020617" },
+    97: { b: 173, id: 0,  name: "Carbón - Bloque", top: "#1c1917", left: "#0c0a09", right: "#000000" }
+  };
+
+  // Sprites extraídos de insumos/pokemon.py
+  const POKEMON_LIBRARY = {
+    PK_025: [
+      [1,1,1,1,1,1,97,97,1,1,1,1,1,1,1,1,1,1,1,1,1],
+      [1,1,1,1,1,97,97,97,1,1,1,1,1,1,1,1,97,97,1,1,1],
+      [1,1,1,1,1,97,97,97,1,1,1,1,1,1,1,97,30,29,97,1,1],
+      [1,1,1,97,29,29,97,1,1,1,1,97,97,97,97,30,29,29,29,97,1],
+      [1,1,1,97,29,29,97,1,1,97,97,97,97,97,30,29,29,29,29,97,1],
+      [1,1,97,97,29,97,1,1,97,30,30,97,97,29,29,29,29,29,97,1,1],
+      [1,97,29,30,30,30,97,97,30,30,30,97,29,29,29,29,97,1,1,1,1],
+      [97,30,30,30,30,30,30,29,30,30,97,29,29,29,29,29,97,1,1,1,1],
+      [97,30,30,30,30,30,30,30,30,29,97,97,29,29,29,97,1,1,1,1,1],
+      [97,30,30,30,30,30,6,97,30,30,30,97,1,97,29,29,29,97,1,1,1],
+      [97,30,97,30,30,30,97,97,30,30,30,30,97,6,97,29,29,97,1,1,1],
+      [1,97,30,30,30,30,14,14,30,30,30,30,97,29,29,97,1,1,1,1,1],
+      [97,29,97,29,30,30,14,14,30,30,30,74,97,74,97,1,1,1,1,1,1],
+      [1,97,97,97,29,29,30,30,97,30,30,30,30,97,74,97,1,1,1,1,1],
+      [1,1,1,97,29,29,97,30,30,97,30,30,74,97,97,1,1,1,1,1,1],
+      [1,1,1,97,29,29,29,97,97,30,30,30,30,97,1,1,1,1,1,1,1],
+      [1,1,1,97,97,29,29,30,30,30,30,30,97,97,1,1,1,1,1,1,1],
+      [1,1,1,97,29,97,97,97,30,30,30,30,97,1,1,1,1,1,1,1,1],
+      [1,1,1,1,97,1,1,1,97,97,97,30,97,1,1,1,1,1,1,1,1],
+      [1,1,1,1,1,1,1,1,1,1,97,1,1,1,1,1,1,1,1,1,1]
+    ],
+    PK_001: [
+      [ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,93, 1,93, 1, 1, 1, 1, 1],
+      [ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,93,32,93,32,93, 1, 1, 1, 1],
+      [ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,93,93,80,32,80,93, 1, 1, 1, 1],
+      [ 1, 1, 1, 1, 1, 1, 1, 1,93,93,80,81,81,80,81,80,93,93, 1, 1],
+      [ 1, 1, 1, 1, 1, 1, 1,93,80,80,81,80,81,80,81,80,80,81,93, 1],
+      [ 1, 1, 1,93, 1, 1,93,83,80,81,80,80,81,80,80,81,80,80,81,93],
+      [ 1, 1,93,32,93,93,42,83,81,83,80,81,80,80,80,80,81,80,83,93],
+      [ 1, 1,93,32,32,32,80,42,42,83,83,81,80,80,80,80,81,83,83,93],
+      [ 1, 1,93,32,32,80,81,81,80,42,83,81,83,83,83,83,81,83,83,93],
+      [ 1,93,32,32,32,81,81,81,32,80,42,42,42,83,83,83,81,80,93, 1],
+      [ 1,93,80,32,32,32,32,32,32,32,32,32,42,83,83,81,42,93, 1, 1],
+      [93,85,81,32,32,32,80,32,32,32,32,42,80,42,42,42,80,93, 1, 1],
+      [93,32,32,32,32,81,32,42,93,42,32,80,80,80,80,80,81,81,93, 1],
+      [ 1,93,32,32,32,32,93,93, 1, 1,80,80,80,42,80,80,81,81,93, 1],
+      [ 1,93,81,32,32,32,93,85, 1,80,80,80,81,81,42,80,80,80,93, 1],
+      [ 1, 1,93,93,80,80,80,80,80,80,42,80,81,81,42,80,32,93, 1, 1],
+      [ 1, 1, 1, 1,93,93,93,93,93,93,80,80,80,80,42,93,93, 1, 1, 1],
+      [ 1, 1, 1, 1, 1, 1, 1, 1, 1,93, 1,80, 1,42,93, 1, 1, 1, 1, 1],
+      [ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,93,93,93,93, 1, 1, 1, 1, 1, 1]
+    ],
+    PK_027: [
+      [1,1,1,97,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+      [1,1,97,31,97,1,1,97,97,97,1,1,1,1,1,1,1,1,1,1],
+      [1,1,97,30,30,97,97,31,31,31,97,97,1,1,1,1,1,1,1,1],
+      [1,97,30,31,31,31,30,74,74,74,31,30,97,1,1,1,1,1,1,1],
+      [1,97,31,30,30,31,71,71,31,74,31,31,30,97,1,1,1,1,97,1],
+      [97,30,30,31,31,30,31,31,30,71,31,31,29,30,97,1,1,97,31,97],
+      [97,31,31,30,31,31,74,74,30,30,31,30,30,30,71,97,97,30,31,97],
+      [97,30,31,31,29,74,25,69,30,30,30,29,31,29,30,71,31,31,30,97],
+      [97,5,30,30,5,74,69,6,30,71,29,30,31,31,30,71,30,31,97,1],
+      [1,97,5,5,6,6,6,71,71,6,30,31,30,31,30,29,71,30,97,1],
+      [1,97,29,6,71,71,71,5,5,71,25,31,31,71,29,30,71,97,1,1],
+      [1,1,97,71,29,71,5,5,5,71,29,25,71,30,30,30,30,97,1,1],
+      [1,1,1,97,29,29,71,6,6,6,71,71,31,30,29,30,97,1,1,1],
+      [1,1,1,1,97,97,29,71,6,29,31,30,30,29,30,97,1,1,1,1],
+      [1,1,1,1,1,1,97,97,97,97,30,31,31,30,29,97,1,1,1,1],
+      [1,1,1,1,1,1,1,1,1,97,71,30,30,97,1,1,1,1,1,1],
+      [1,1,1,1,1,1,1,1,1,97,25,30,25,97,1,1,1,1,1,1],
+      [1,1,1,1,1,1,1,1,1,1,97,97,97,1,1,1,1,1,1,1]
+    ],
+    PK_125: [
+      [2,2,2,2,2,2,2,2,2,2,2,2,2,2,93,2,2,2,2,2,2,2,2,2],
+      [2,2,2,2,2,2,2,2,2,2,2,2,93,27,93,2,2,2,2,2,2,2,2,2],
+      [2,2,2,2,93,93,2,2,2,93,61,27,9,93,2,2,2,93,93,2,2,2,2,2],
+      [2,2,2,2,93,9,93,2,93,27,61,27,9,43,93,2,2,93,27,27,93,2,2,2],
+      [2,2,2,2,93,9,93,43,27,9,61,9,27,27,27,93,2,93,9,93,93,2,2,2],
+      [2,2,2,2,2,93,43,27,9,9,27,27,27,27,27,43,27,9,93,2,2,2,2,2],
+      [2,2,2,2,2,93,72,27,27,27,27,27,61,61,27,27,27,27,93,2,2,2,2,2],
+      [2,2,2,2,93,27,72,61,27,27,61,61,61,27,27,27,27,9,27,93,2,2,2,2],
+      [2,2,2,93,9,72,2,93,61,61,61,27,27,27,61,61,27,27,27,27,93,2,2,2],
+      [2,2,2,93,9,2,93,27,61,27,27,93,43,2,61,27,27,27,27,9,93,2,2,2],
+      [2,2,2,93,72,9,43,27,43,27,27,43,43,43,27,27,43,9,43,9,9,93,2,2],
+      [2,2,93,72,9,9,61,43,27,43,43,43,43,43,43,43,43,9,9,9,43,72,9,2],
+      [2,93,9,9,61,61,43,43,27,27,27,9,61,61,61,61,9,9,27,9,9,43,9,2],
+      [2,93,61,9,9,9,93,2,93,61,61,61,61,61,61,61,27,27,9,61,61,61,9,2],
+      [93,9,9,61,61,61,93,2,2,93,61,61,61,61,27,27,9,61,61,61,9,9,43,2],
+      [93,9,9,9,9,9,93,2,2,2,93,61,9,9,9,9,9,9,9,9,9,93,93,2],
+      [2,93,9,9,43,93,2,2,2,2,2,93,9,9,93,2,2,93,72,72,9,93,2,2],
+      [2,2,2,2,2,2,93,2,9,9,27,27,9,9,9,93,2,93,27,27,27,27,93,2],
+      [2,2,2,2,2,2,2,2,2,93,93,93,93,2,2,2,2,2,93,2,93,93,93,2]
+    ]
+  };
+
+  let activePokemonKey = 'PK_025';
+  let activeMatrix = POKEMON_LIBRARY.PK_025;
+  let currentStep = 0;
+  let totalSteps = 0;
+  let isPlaying = false;
+  let animTimer = null;
+  let speedMs = 100;
+
+  // Parámetros de Invocación
+  const originX = 10, originY = 64, originZ = 25;
+
+  function initApp() {
+    selectPokemon('PK_025');
+  }
+
+  function selectPokemon(key) {
+    if (isPlaying) togglePlay();
+    activePokemonKey = key;
+    activeMatrix = POKEMON_LIBRARY[key];
+    
+    document.querySelectorAll('.pk-btn').forEach(b => {
+      b.classList.toggle('active', b.getAttribute('onclick')?.includes(`'${key}'`));
+    });
+
+    document.getElementById('argMat').textContent = `pk.${key}`;
+    document.getElementById('codeArgMat').textContent = key;
+
+    const filas = activeMatrix.length;
+    const columnas = activeMatrix[0].length;
+    totalSteps = filas * columnas;
+    currentStep = 0;
+
+    document.getElementById('scopeDims').textContent = `${filas} filas × ${columnas} cols`;
+    document.getElementById('voxelStatsTag').textContent = `0 / ${totalSteps} Bloques`;
+    document.getElementById('progressFill').style.width = '0%';
+
+    updateTracer();
+    drawVoxelScene();
+  }
+
+  function stepForward() {
+    if (currentStep < totalSteps) {
+      currentStep++;
+      updateTracer();
+      drawVoxelScene();
+    } else {
+      if (isPlaying) togglePlay();
+    }
+  }
+
+  function togglePlay() {
+    isPlaying = !isPlaying;
+    const btn = document.getElementById('btnPlay');
+    if (isPlaying) {
+      btn.textContent = "Pausa ⏸";
+      btn.style.background = "#eab308";
+      animTimer = setInterval(() => {
+        if (currentStep < totalSteps) {
+          stepForward();
+        } else {
+          togglePlay();
+        }
+      }, speedMs);
+    } else {
+      btn.textContent = "Auto ▶";
+      btn.style.background = "var(--purple)";
+      clearInterval(animTimer);
+    }
+  }
+
+  function changeSpeed() {
+    speedMs = parseInt(document.getElementById('speedSelect').value);
+    if (isPlaying) {
+      clearInterval(animTimer);
+      animTimer = setInterval(() => {
+        if (currentStep < totalSteps) {
+          stepForward();
+        } else {
+          togglePlay();
+        }
+      }, speedMs);
+    }
+  }
+
+  function resetSim() {
+    if (isPlaying) togglePlay();
+    currentStep = 0;
+    updateTracer();
+    drawVoxelScene();
+  }
+
+  function buildInstant() {
+    if (isPlaying) togglePlay();
+    currentStep = totalSteps;
+    updateTracer();
+    drawVoxelScene();
+  }
+
+  function updateTracer() {
+    const filas = activeMatrix.length;
+    const columnas = activeMatrix[0].length;
+
+    const k = Math.max(0, currentStep - 1);
+    const i = Math.floor(k / columnas);
+    const j = k % columnas;
+    const val = activeMatrix[i][j];
+    const isTransp = (val === 1 || val === 2); // En pokemon.py 1 y 2 son fondos
+    const pal = PALETA_MC[val] || PALETA_MC[1];
+
+    document.getElementById('stepStateTag').textContent = currentStep === 0 ? "Iniciando llamada..." : `i = ${i}, j = ${j}`;
+    document.getElementById('scopeIndices').textContent = currentStep === 0 ? "i = --, j = --" : `i = ${i}, j = ${j}`;
+    document.getElementById('scopeVal').textContent = currentStep === 0 ? "--" : `${val}`;
+
+    if (currentStep === 0) {
+      document.getElementById('scopeBlock').textContent = "--";
+    } else if (isTransp) {
+      document.getElementById('scopeBlock').textContent = `(35, 0) Fondo [Omitible]`;
+    } else {
+      document.getElementById('scopeBlock').textContent = `(${pal.b}, ${pal.id}) ${pal.name}`;
+    }
+
+    const pct = totalSteps > 0 ? (currentStep / totalSteps) * 100 : 0;
+    document.getElementById('progressFill').style.width = `${pct}%`;
+    document.getElementById('voxelStatsTag').textContent = `${currentStep} / ${totalSteps} Iteraciones`;
+
+    // Resaltar líneas de código de dibujar.py
+    document.querySelectorAll('.code-line').forEach(l => l.classList.remove('active'));
+    if (currentStep === 0) {
+      document.getElementById('l14').classList.add('active');
+    } else if (currentStep === 1) {
+      document.getElementById('l4').classList.add('active');
+    } else if (isTransp) {
+      document.getElementById('l10').classList.add('active');
+    } else {
+      document.getElementById('l12').classList.add('active');
+    }
+  }
+
+  // RENDERIZADO VOXEL 3D
+  function drawVoxelScene() {
+    const canvas = document.getElementById('voxelCanvas');
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    const filas = activeMatrix.length;
+    const columnas = activeMatrix[0].length;
+
+    // Escala del bloque
+    const cubeSize = Math.min(22, Math.floor(300 / Math.max(filas, columnas)));
+    const blockH = cubeSize;
+    const blockW = cubeSize * 1.35;
+    const isoSkew = blockW * 0.45;
+
+    const originCanvasX = (canvas.width / 2) - ((columnas - filas) * (isoSkew * 0.45));
+    const originCanvasY = canvas.height - 45;
+
+    function toScreenIso(xGrid, yGrid, zGrid = 0) {
+      const sx = originCanvasX + (xGrid * (blockW * 0.72)) - (zGrid * (blockW * 0.35));
+      const sy = originCanvasY - (yGrid * (blockH * 0.75)) + (xGrid * 5) + (zGrid * (blockH * 0.45));
+      return { x: sx, y: sy };
+    }
+
+    // Dibujar Pedestal de Suelo (Piedra y Césped)
+    for (let cx = -1; cx <= columnas; cx++) {
+      for (let cz = -1; cz <= 1; cz++) {
+        drawPedestal(ctx, toScreenIso(cx, -1, cz), blockW * 0.72, blockH * 0.75);
+      }
+    }
+
+    // Dibujar Bloques del Pokémon
+    for (let r = filas - 1; r >= 0; r--) {
+      for (let c = 0; c < columnas; c++) {
+        const stepIndex = r * columnas + c;
+        if (stepIndex >= currentStep) continue;
+
+        const val = activeMatrix[r][c];
+        if (val === 1 || val === 2) continue; // Fondo blanco/transparente no se dibuja en el mundo
+
+        const pal = PALETA_MC[val] || PALETA_MC[97];
+        const isCurrent = (stepIndex === currentStep - 1);
+        const yCoord = (filas - r); // Coordenada de dibujar.py: y + (filas - i)
+        const p = toScreenIso(c, yCoord, 0);
+
+        draw3DVoxel(ctx, p.x, p.y, blockW * 0.72, blockH * 0.75, pal, isCurrent);
+      }
+    }
+  }
+
+  function drawPedestal(ctx, p, w, h) {
+    ctx.fillStyle = "#15803d";
+    ctx.beginPath();
+    ctx.moveTo(p.x, p.y);
+    ctx.lineTo(p.x + w / 2, p.y - h * 0.25);
+    ctx.lineTo(p.x + w, p.y);
+    ctx.lineTo(p.x + w / 2, p.y + h * 0.25);
+    ctx.closePath();
+    ctx.fill();
+    ctx.strokeStyle = "rgba(0,0,0,0.25)";
+    ctx.lineWidth = 0.8;
+    ctx.stroke();
+
+    ctx.fillStyle = "#334155";
+    ctx.beginPath();
+    ctx.moveTo(p.x, p.y);
+    ctx.lineTo(p.x + w / 2, p.y + h * 0.25);
+    ctx.lineTo(p.x + w / 2, p.y + h * 0.75);
+    ctx.lineTo(p.x, p.y + h * 0.5);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+
+    ctx.fillStyle = "#1e293b";
+    ctx.beginPath();
+    ctx.moveTo(p.x + w / 2, p.y + h * 0.25);
+    ctx.lineTo(p.x + w, p.y);
+    ctx.lineTo(p.x + w, p.y + h * 0.5);
+    ctx.lineTo(p.x + w / 2, p.y + h * 0.75);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+  }
+
+  function draw3DVoxel(ctx, x, y, w, h, pal, isGlowing) {
+    ctx.fillStyle = isGlowing ? "#fef08a" : pal.top;
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+    ctx.lineTo(x + w / 2, y - h * 0.28);
+    ctx.lineTo(x + w, y);
+    ctx.lineTo(x + w / 2, y + h * 0.28);
+    ctx.closePath();
+    ctx.fill();
+    ctx.strokeStyle = isGlowing ? "#facc15" : "rgba(0,0,0,0.35)";
+    ctx.lineWidth = isGlowing ? 2 : 1;
+    ctx.stroke();
+
+    ctx.fillStyle = isGlowing ? "#facc15" : pal.left;
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+    ctx.lineTo(x + w / 2, y + h * 0.28);
+    ctx.lineTo(x + w / 2, y + h * 0.85);
+    ctx.lineTo(x, y + h * 0.57);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+
+    ctx.fillStyle = isGlowing ? "#ca8a04" : pal.right;
+    ctx.beginPath();
+    ctx.moveTo(x + w / 2, y + h * 0.28);
+    ctx.lineTo(x + w, y);
+    ctx.lineTo(x + w, y + h * 0.57);
+    ctx.lineTo(x + w / 2, y + h * 0.85);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+
+    if (isGlowing) {
+      ctx.fillStyle = "rgba(254, 240, 138, 0.4)";
+      ctx.beginPath();
+      ctx.arc(x + w / 2, y + h * 0.3, w * 0.75, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+
+  window.addEventListener('load', initApp);
+</script>
+
+</body>
+</html>

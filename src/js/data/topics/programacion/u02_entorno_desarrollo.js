@@ -1282,5 +1282,6 @@ t.<span class="text-sky-400">hideturtle</span>()
         `
       }
     ]
-  };
-}
+  }
+};
+

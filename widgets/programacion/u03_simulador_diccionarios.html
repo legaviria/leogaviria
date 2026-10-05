@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simulador Visual de Diccionarios (Clave ➔ Valor)</title>
+  <style>
+    :root {
+      --bg: #0e0e11;
+      --card: #141923;
+      --border: #232d42;
+      --text: #f3f4f6;
+      --muted: #94a3b8;
+      --sky: #38bdf8;
+      --purple: #a855f7;
+      --green: #10b981;
+      --amber: #f59e0b;
+      --rose: #f43f5e;
+      --card-inner: #080b10;
+    }
+    body.theme-light {
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --border: #e2e8f0;
+      --text: #0f172a;
+      --muted: #64748b;
+      --sky: #0284c7;
+      --purple: #9333ea;
+      --green: #059669;
+      --amber: #d97706;
+      --rose: #e11d48;
+      --card-inner: #f1f5f9;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { background: var(--bg); color: var(--text); padding: 14px; display: flex; justify-content: center; }
+    .container { width: 100%; max-width: 760px; background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 18px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+    
+    .header { text-align: center; margin-bottom: 14px; }
+    .header h3 { font-size: 1.15rem; color: var(--purple); margin-bottom: 4px; display: flex; align-items: center; justify-content: center; gap: 8px; }
+    .header p { font-size: 0.76rem; color: var(--muted); }
+
+    /* Panel de vista del Diccionario */
+    .dict-panel {
+      background: var(--card-inner);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px;
+      margin-bottom: 14px;
+    }
+    .dict-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      font-size: 0.75rem;
+      color: var(--muted);
+      font-family: monospace;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .stat-pill {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border);
+      padding: 3px 8px;
+      border-radius: 6px;
+      color: var(--purple);
+      font-weight: bold;
+    }
+
+    .kv-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 10px;
+    }
+    .kv-card {
+      background: rgba(168, 85, 247, 0.08);
+      border: 1.5px solid rgba(168, 85, 247, 0.3);
+      border-radius: 8px;
+      padding: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: all 0.25s;
+      position: relative;
+    }
+    .kv-card.highlight {
+      border-color: var(--amber);
+      background: rgba(245, 158, 11, 0.2);
+      transform: scale(1.03);
+    }
+    .k-box {
+      font-family: monospace;
+      font-size: 0.82rem;
+      font-weight: bold;
+      color: var(--sky);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .arrow-icon {
+      color: var(--purple);
+      font-size: 0.85rem;
+      font-weight: bold;
+      padding: 0 4px;
+    }
+    .v-box {
+      font-family: monospace;
+      font-size: 0.85rem;
+      font-weight: bold;
+      color: #fde047;
+      background: rgba(0,0,0,0.3);
+      padding: 3px 8px;
+      border-radius: 4px;
+      text-align: right;
+    }
+    .empty-msg {
+      grid-column: 1 / -1;
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.8rem;
+      font-style: italic;
+      padding: 16px;
+    }
+
+    /* Consola */
+    .console-panel {
+      background: #05070a;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-family: monospace;
+      font-size: 0.78rem;
+      margin-bottom: 14px;
+    }
+    .code-executed { color: var(--sky); font-weight: bold; margin-bottom: 4px; }
+    .code-comment { color: var(--muted); font-size: 0.72rem; }
+    .code-result { color: #c084fc; margin-top: 4px; word-break: break-all; }
+
+    /* Barra de Operaciones y Métodos */
+    .section-title {
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 8px;
+      letter-spacing: 0.5px;
+    }
+    .actions-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 6px;
+      margin-bottom: 12px;
+    }
+    .action-btn {
+      padding: 7px 10px;
+      font-size: 0.72rem;
+      font-family: monospace;
+      font-weight: 600;
+      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border);
+      color: var(--text);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: all 0.2s;
+    }
+    .action-btn:hover {
+      background: rgba(168, 85, 247, 0.15);
+      border-color: var(--purple);
+      color: #d8b4fe;
+      transform: translateY(-1px);
+    }
+    .action-badge {
+      font-size: 0.6rem;
+      padding: 1px 4px;
+      border-radius: 3px;
+      background: rgba(255,255,255,0.08);
+      color: var(--muted);
+    }
+
+    /* Modos de visualización complementarios: Anidados / Lista */
+    .views-row {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 12px;
+    }
+    .view-btn {
+      padding: 5px 10px;
+      font-size: 0.72rem;
+      border-radius: 6px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      cursor: pointer;
+    }
+    .view-btn.active {
+      background: var(--purple);
+      color: white;
+      border-color: var(--purple);
+    }
+
+    /* Input personalizado */
+    .custom-row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      background: var(--card-inner);
+      padding: 8px 12px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      flex-wrap: wrap;
+    }
+    .custom-row input {
+      flex: 1;
+      min-width: 100px;
+      padding: 6px 10px;
+      background: rgba(0,0,0,0.3);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: #fff;
+      font-family: monospace;
+      font-size: 0.8rem;
+      outline: none;
+    }
+    .custom-row input:focus { border-color: var(--purple); }
+    .btn-exec {
+      padding: 6px 14px;
+      background: var(--purple);
+      color: #fff;
+      font-weight: bold;
+      border: none;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      cursor: pointer;
+    }
+    .btn-exec:hover { opacity: 0.9; }
+    .btn-reset {
+      padding: 6px 12px;
+      background: rgba(244, 63, 94, 0.15);
+      border: 1px solid var(--rose);
+      color: #fda4af;
+      font-weight: bold;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      cursor: pointer;
+    }
+    .btn-reset:hover { background: var(--rose); color: #fff; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h3>🗝️ Simulador Visual de Diccionarios en Python</h3>
+      <p>Explora la correspondencia fundamental: <strong>CLAVE (única/inmutable) ➔ VALOR</strong>.</p>
+    </div>
+
+    <!-- Modos de vista -->
+    <div class="views-row">
+      <button class="view-btn active" id="btnModeSimple" onclick="setMode('simple')">Diccionario 'estudiante'</button>
+      <button class="view-btn" id="btnModeNested" onclick="setMode('nested')">Diccionario Anidado</button>
+      <button class="view-btn" id="btnModeListOfDicts" onclick="setMode('list')">Lista de Diccionarios</button>
+    </div>
+
+    <!-- Panel de vista -->
+    <div class="dict-panel">
+      <div class="dict-header">
+        <div>Estructura: <span class="stat-pill" id="dictName">estudiante</span></div>
+        <div>Longitud: <span class="stat-pill" id="dictLen">len() = 3 pares</span></div>
+        <div>Tipo Claves: <span class="stat-pill" style="color:var(--sky);">str</span></div>
+      </div>
+      <div class="kv-grid" id="kvGrid">
+        <!-- Render dinámico -->
+      </div>
+    </div>
+
+    <!-- Consola interactiva -->
+    <div class="console-panel">
+      <div class="code-executed" id="consoleCode">&gt;&gt;&gt; estudiante = {"nombre": "Ana", "edad": 20, "programa": "Ingeniería"}</div>
+      <div class="code-comment" id="consoleComment">Diccionario inicializado con 3 pares clave-valor.</div>
+      <div class="code-result" id="consoleResult">{'nombre': 'Ana', 'edad': 20, 'programa': 'Ingeniería'}</div>
+    </div>
+
+    <!-- Métodos y operaciones -->
+    <div class="section-title">Métodos y Operaciones con Diccionarios:</div>
+    <div class="actions-grid">
+      <button class="action-btn" onclick="execDict('access', 'nombre')">
+        <span>estudiante["nombre"]</span>
+        <span class="action-badge">Acceso []</span>
+      </button>
+      <button class="action-btn" onclick="execDict('get', 'edad')">
+        <span>get("edad")</span>
+        <span class="action-badge">Seguro</span>
+      </button>
+      <button class="action-btn" onclick="execDict('get_default', 'promedio')">
+        <span>get("promedio", 4.5)</span>
+        <span class="action-badge">Con default</span>
+      </button>
+      <button class="action-btn" onclick="execDict('modify', 'edad', 21)">
+        <span>edad = 21</span>
+        <span class="action-badge">Modificar</span>
+      </button>
+      <button class="action-btn" onclick="execDict('add', 'semestre', 4)">
+        <span>semestre = 4</span>
+        <span class="action-badge">Incorporar</span>
+      </button>
+      <button class="action-btn" onclick="execDict('keys')">
+        <span>keys()</span>
+        <span class="action-badge">Ver claves</span>
+      </button>
+      <button class="action-btn" onclick="execDict('values')">
+        <span>values()</span>
+        <span class="action-badge">Ver valores</span>
+      </button>
+      <button class="action-btn" onclick="execDict('items')">
+        <span>items()</span>
+        <span class="action-badge">Tuplas (k, v)</span>
+      </button>
+      <button class="action-btn" onclick="execDict('pop', 'programa')">
+        <span>pop("programa")</span>
+        <span class="action-badge">Elimina clave</span>
+      </button>
+      <button class="action-btn" onclick="execDict('popitem')">
+        <span>popitem()</span>
+        <span class="action-badge">Último par</span>
+      </button>
+      <button class="action-btn" onclick="execDict('update')">
+        <span>update(...)</span>
+        <span class="action-badge">Actualiza lote</span>
+      </button>
+      <button class="action-btn" onclick="execDict('setdefault', 'activo', True)">
+        <span>setdefault("activo")</span>
+        <span class="action-badge">Si no existe</span>
+      </button>
+      <button class="action-btn" onclick="execDict('del', 'nombre')">
+        <span>del estudiante[...]</span>
+        <span class="action-badge">Borra</span>
+      </button>
+      <button class="action-btn" onclick="execDict('inCheck', 'nombre')">
+        <span>"nombre" in d</span>
+        <span class="action-badge">Pertenencia</span>
+      </button>
+      <button class="action-btn" onclick="execDict('forLoop')">
+        <span>for k, v in d.items()</span>
+        <span class="action-badge">Recorrido</span>
+      </button>
+      <button class="action-btn" onclick="execDict('copy')">
+        <span>copy()</span>
+        <span class="action-badge">Clonar</span>
+      </button>
+    </div>
+
+    <!-- Agregar par personalizado -->
+    <div class="custom-row">
+      <input type="text" id="inpKey" placeholder="Clave (ej: ciudad)">
+      <input type="text" id="inpVal" placeholder="Valor (ej: 'Bogotá' o 100)">
+      <button class="btn-exec" onclick="addCustomKV()">Guardar par [clave] = valor</button>
+      <button class="btn-reset" onclick="resetDict()">Reiniciar</button>
+    </div>
+  </div>
+
+  <script>
+    let mode = 'simple';
+    let dictData = {
+      "nombre": "Ana",
+      "edad": 20,
+      "programa": "Ingeniería"
+    };
+
+    function setMode(newMode) {
+      mode = newMode;
+      document.getElementById('btnModeSimple').classList.toggle('active', mode === 'simple');
+      document.getElementById('btnModeNested').classList.toggle('active', mode === 'nested');
+      document.getElementById('btnModeListOfDicts').classList.toggle('active', mode === 'list');
+
+      if (mode === 'simple') {
+        dictData = { "nombre": "Ana", "edad": 20, "programa": "Ingeniería" };
+        logConsole('estudiante = {"nombre": "Ana", "edad": 20, "programa": "Ingeniería"}', 'Diccionario plano con claves y valores.', JSON.stringify(dictData));
+      } else if (mode === 'nested') {
+        dictData = {
+          "nombre": "Ana",
+          "contacto": { "email": "ana@univ.edu", "telefono": 3001234567 },
+          "calificaciones": [4.5, 4.8, 4.0]
+        };
+        logConsole('estudiante = {"nombre": "Ana", "contacto": {"email": "...", "telefono": ...}, ...}', 'Diccionario anidado: valores que son otros diccionarios o listas.', JSON.stringify(dictData));
+      } else if (mode === 'list') {
+        dictData = {
+          "estudiante_1": { "nombre": "Ana", "promedio": 4.5 },
+          "estudiante_2": { "nombre": "Carlos", "promedio": 4.1 },
+          "estudiante_3": { "nombre": "Beatriz", "promedio": 4.8 }
+        };
+        logConsole('curso = [{"nombre": "Ana", ...}, {"nombre": "Carlos", ...}]', 'Colección de diccionarios modelando registros tabulares.', JSON.stringify(dictData));
+      }
+
+      renderDict();
+    }
+
+    function renderDict(highlightKey = null) {
+      const grid = document.getElementById('kvGrid');
+      grid.innerHTML = '';
+
+      const keys = Object.keys(dictData);
+      document.getElementById('dictLen').textContent = `len() = ${keys.length} pares`;
+
+      if (keys.length === 0) {
+        grid.innerHTML = `<div class="empty-msg">El diccionario está vacío: { }</div>`;
+        return;
+      }
+
+      keys.forEach(k => {
+        const val = dictData[k];
+        const card = document.createElement('div');
+        const isHl = k === highlightKey;
+        card.className = `kv-card ${isHl ? 'highlight' : ''}`;
+
+        let valStr = typeof val === 'object' ? JSON.stringify(val) : (typeof val === 'string' ? `"${val}"` : String(val));
+
+        card.innerHTML = `
+          <div class="k-box">"${k}"</div>
+          <div class="arrow-icon">➔</div>
+          <div class="v-box">${valStr}</div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    function logConsole(code, comment, result) {
+      document.getElementById('consoleCode').textContent = `>>> ${code}`;
+      document.getElementById('consoleComment').textContent = comment;
+      document.getElementById('consoleResult').textContent = `Resultado: ${result}`;
+    }
+
+    function execDict(action, arg1, arg2) {
+      let code = "";
+      let comment = "";
+      let result = "";
+      let hl = null;
+
+      switch(action) {
+        case 'access':
+          if (arg1 in dictData) {
+            hl = arg1;
+            code = `estudiante["${arg1}"]`;
+            comment = `Acceso directo por clave mediante corchetes. Retorna el valor asociado.`;
+            result = JSON.stringify(dictData[arg1]);
+          } else {
+            code = `estudiante["${arg1}"]`;
+            comment = `KeyError: '${arg1}'. La clave no existe en el diccionario.`;
+            result = "KeyError";
+          }
+          break;
+
+        case 'get':
+          if (arg1 in dictData) {
+            hl = arg1;
+            code = `estudiante.get("${arg1}")`;
+            comment = `Método seguro: si la clave existe retorna su valor; si no existe retorna None sin romper el programa.`;
+            result = JSON.stringify(dictData[arg1]);
+          } else {
+            code = `estudiante.get("${arg1}")`;
+            comment = `La clave no existe, retorna None de forma segura.`;
+            result = "None";
+          }
+          break;
+
+        case 'get_default':
+          code = `estudiante.get("promedio", 4.5)`;
+          comment = `Al no existir la clave 'promedio', .get() retorna el valor predeterminado alternativo 4.5.`;
+          result = "4.5 (por defecto, no modifica el diccionario)";
+          break;
+
+        case 'modify':
+          dictData[arg1] = arg2;
+          hl = arg1;
+          code = `estudiante["${arg1}"] = ${arg2}`;
+          comment = `Como la clave '${arg1}' ya existía, se sobrescribe su valor previo.`;
+          result = JSON.stringify(dictData);
+          break;
+
+        case 'add':
+          dictData[arg1] = arg2;
+          hl = arg1;
+          code = `estudiante["${arg1}"] = ${arg2}`;
+          comment = `Como la clave '${arg1}' no existía previamente, se añade como un nuevo par al diccionario.`;
+          result = JSON.stringify(dictData);
+          break;
+
+        case 'keys':
+          code = `estudiante.keys()`;
+          comment = `Retorna una vista dict_keys con todas las claves del diccionario.`;
+          result = `dict_keys(${JSON.stringify(Object.keys(dictData))})`;
+          break;
+
+        case 'values':
+          code = `estudiante.values()`;
+          comment = `Retorna una vista dict_values con todos los valores almacenados.`;
+          result = `dict_values(${JSON.stringify(Object.values(dictData))})`;
+          break;
+
+        case 'items':
+          code = `estudiante.items()`;
+          comment = `Retorna una vista dict_items de tuplas (clave, valor) ideal para iterar.`;
+          result = `dict_items([${Object.entries(dictData).map(e => `('${e[0]}', ${JSON.stringify(e[1])})`).join(', ')}])`;
+          break;
+
+        case 'pop':
+          if (arg1 in dictData) {
+            const popped = dictData[arg1];
+            delete dictData[arg1];
+            code = `estudiante.pop("${arg1}")`;
+            comment = `Extrae y remueve la clave '${arg1}'. Retorna su valor previo (${popped}).`;
+            result = `Valor extraído: ${JSON.stringify(popped)}`;
+          } else {
+            code = `estudiante.pop("${arg1}")`;
+            comment = `KeyError: clave no encontrada.`;
+            result = "Error";
+          }
+          break;
+
+        case 'popitem':
+          const keys = Object.keys(dictData);
+          if (keys.length > 0) {
+            const lastK = keys[keys.length - 1];
+            const lastV = dictData[lastK];
+            delete dictData[lastK];
+            code = `estudiante.popitem()`;
+            comment = `Remueve y retorna el último par insertado en formato tupla (LIFO según Python 3.7+).`;
+            result = `('${lastK}', ${JSON.stringify(lastV)})`;
+          } else {
+            code = `estudiante.popitem()`;
+            comment = `KeyError: 'popitem(): dictionary is empty'`;
+            result = "Error";
+          }
+          break;
+
+        case 'update':
+          Object.assign(dictData, { "ciudad": "Pereira", "matriculado": true });
+          code = `estudiante.update({"ciudad": "Pereira", "matriculado": True})`;
+          comment = `Fusiona múltiples pares clave-valor en una sola operación in-place.`;
+          result = JSON.stringify(dictData);
+          break;
+
+        case 'setdefault':
+          if (arg1 in dictData) {
+            hl = arg1;
+            code = `estudiante.setdefault("${arg1}", ${arg2})`;
+            comment = `La clave '${arg1}' ya existía, por lo que NO se altera su valor actual.`;
+            result = JSON.stringify(dictData[arg1]);
+          } else {
+            dictData[arg1] = arg2;
+            hl = arg1;
+            code = `estudiante.setdefault("${arg1}", ${arg2})`;
+            comment = `Como '${arg1}' no existía, se inserta con el valor especificado.`;
+            result = JSON.stringify(dictData[arg1]);
+          }
+          break;
+
+        case 'del':
+          const firstKey = Object.keys(dictData)[0];
+          if (firstKey) {
+            delete dictData[firstKey];
+            code = `del estudiante["${firstKey}"]`;
+            comment = `Instrucción 'del': destruye el par clave-valor de la memoria sin retornar nada.`;
+            result = JSON.stringify(dictData);
+          } else {
+            code = `del estudiante["inexistente"]`;
+            comment = `Diccionario ya está vacío.`;
+            result = "KeyError";
+          }
+          break;
+
+        case 'inCheck':
+          const exists = "nombre" in dictData;
+          code = `"nombre" in estudiante`;
+          comment = `El operador 'in' verifica si una CLAVE existe en el diccionario (en tiempo O(1)).`;
+          result = `${exists ? 'True' : 'False'}`;
+          break;
+
+        case 'forLoop':
+          code = `for clave, valor in estudiante.items(): print(clave, "->", valor)`;
+          comment = `Recorrido canónico de diccionarios desempaquetando pares (k, v).`;
+          result = Object.entries(dictData).map(e => `${e[0]}: ${JSON.stringify(e[1])}`).join(" | ");
+          break;
+
+        case 'copy':
+          code = `clon = estudiante.copy()`;
+          comment = `Copia superficial: duplica el diccionario en una nueva posición de memoria.`;
+          result = `Copia creada: ${JSON.stringify(dictData)}`;
+          break;
+      }
+
+      logConsole(code, comment, result);
+      renderDict(hl);
+    }
+
+    function addCustomKV() {
+      const kInput = document.getElementById('inpKey');
+      const vInput = document.getElementById('inpVal');
+      const k = kInput.value.trim();
+      const rawV = vInput.value.trim();
+
+      if (!k) return;
+
+      let v = rawV;
+      if (rawV === 'True') v = true;
+      else if (rawV === 'False') v = false;
+      else if (!isNaN(Number(rawV)) && rawV !== '') v = Number(rawV);
+
+      dictData[k] = v;
+      kInput.value = '';
+      vInput.value = '';
+
+      logConsole(`estudiante["${k}"] = ${JSON.stringify(v)}`, `Par agregado o actualizado exitosamente.`, JSON.stringify(dictData));
+      renderDict(k);
+    }
+
+    function resetDict() {
+      setMode('simple');
+    }
+
+    // Inicializar
+    renderDict();
+  </script>
+</body>
+</html>

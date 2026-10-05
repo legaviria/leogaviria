@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Práctica Guiada: Listas, Slicing, Diccionarios y Strings</title>
+  <style>
+    :root {
+      --bg: #0e0e11;
+      --card: #141923;
+      --border: #232d42;
+      --text: #f3f4f6;
+      --muted: #94a3b8;
+      --sky: #38bdf8;
+      --purple: #a855f7;
+      --green: #10b981;
+      --amber: #f59e0b;
+      --rose: #f43f5e;
+      --card-inner: #080b10;
+    }
+    body.theme-light {
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --border: #e2e8f0;
+      --text: #0f172a;
+      --muted: #64748b;
+      --sky: #0284c7;
+      --purple: #9333ea;
+      --green: #059669;
+      --amber: #d97706;
+      --rose: #e11d48;
+      --card-inner: #f1f5f9;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { background: var(--bg); color: var(--text); padding: 14px; display: flex; justify-content: center; }
+    .container { width: 100%; max-width: 720px; background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 18px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+    
+    .header { text-align: center; margin-bottom: 14px; }
+    .header h3 { font-size: 1.15rem; color: var(--amber); margin-bottom: 4px; display: flex; align-items: center; justify-content: center; gap: 8px; }
+    .header p { font-size: 0.76rem; color: var(--muted); }
+
+    .progress-bar-wrap {
+      background: var(--card-inner);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      height: 8px;
+      overflow: hidden;
+      margin-bottom: 16px;
+    }
+    .progress-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--sky), var(--green));
+      width: 0%;
+      transition: width 0.3s;
+    }
+
+    .challenge-card {
+      background: var(--card-inner);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px;
+      margin-bottom: 14px;
+    }
+    .challenge-badge {
+      font-size: 0.68rem;
+      font-family: monospace;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--amber);
+      background: rgba(245, 158, 11, 0.12);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+      padding: 2px 8px;
+      border-radius: 4px;
+      display: inline-block;
+      margin-bottom: 8px;
+    }
+    .challenge-title {
+      font-size: 0.95rem;
+      font-weight: bold;
+      color: #fff;
+      margin-bottom: 8px;
+      line-height: 1.4;
+    }
+    .code-snippet {
+      background: #05070a;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 12px;
+      font-family: monospace;
+      font-size: 0.82rem;
+      color: var(--sky);
+      margin-bottom: 14px;
+      overflow-x: auto;
+      line-height: 1.5;
+    }
+
+    .options-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 8px;
+    }
+    .option-btn {
+      padding: 10px 14px;
+      font-size: 0.8rem;
+      font-family: monospace;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1.5px solid var(--border);
+      color: var(--text);
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .option-btn:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: var(--sky);
+    }
+    .option-btn.correct {
+      background: rgba(16, 185, 129, 0.2);
+      border-color: var(--green);
+      color: #86efac;
+    }
+    .option-btn.wrong {
+      background: rgba(244, 63, 94, 0.2);
+      border-color: var(--rose);
+      color: #fda4af;
+    }
+
+    .feedback-box {
+      margin-top: 12px;
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 0.78rem;
+      line-height: 1.45;
+      display: none;
+    }
+    .feedback-box.show-ok {
+      display: block;
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid var(--green);
+      color: #86efac;
+    }
+    .feedback-box.show-err {
+      display: block;
+      background: rgba(244, 63, 94, 0.12);
+      border: 1px solid var(--rose);
+      color: #fda4af;
+    }
+
+    .nav-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 12px;
+      font-size: 0.78rem;
+      color: var(--muted);
+      font-family: monospace;
+    }
+    .btn-next {
+      padding: 6px 14px;
+      background: var(--amber);
+      color: #0b0e14;
+      font-weight: bold;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      display: none;
+    }
+    .btn-next:hover { opacity: 0.9; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h3>✏️ Práctica Guiada: Colecciones y Cadenas</h3>
+      <p>Pruebas de escritorio y ejercicios de aplicación interactiva sobre Listas, Slicing, Diccionarios y Strings.</p>
+    </div>
+
+    <!-- Barra de progreso -->
+    <div class="progress-bar-wrap">
+      <div class="progress-bar-fill" id="pBar"></div>
+    </div>
+
+    <div class="challenge-card">
+      <span class="challenge-badge" id="chCategory">Slicing de Listas</span>
+      <div class="challenge-title" id="chQuestion">Pregunta aquí...</div>
+      <div class="code-snippet" id="chCode"># Código...</div>
+      <div class="options-grid" id="chOptions">
+        <!-- Opciones dinámicas -->
+      </div>
+      <div class="feedback-box" id="chFeedback"></div>
+    </div>
+
+    <div class="nav-footer">
+      <span id="scoreText">Pregunta 1 de 5 | Puntaje: 0</span>
+      <button class="btn-next" id="btnNext" onclick="nextQuestion()">Siguiente Pregunta ➔</button>
+    </div>
+  </div>
+
+  <script>
+    const QUESTIONS = [
+      {
+        cat: "Slicing de Listas",
+        q: "Dada la siguiente lista de frutas, ¿cuál será el resultado exacto de la expresión frutas[1:4]?",
+        code: `frutas = ["manzana", "pera", "uva", "mango", "banano"]\nresultado = frutas[1:4]`,
+        options: [
+          "['pera', 'uva', 'mango']",
+          "['manzana', 'pera', 'uva']",
+          "['pera', 'uva', 'mango', 'banano']",
+          "['manzana', 'pera', 'uva', 'mango']"
+        ],
+        correct: 0,
+        explanation: "frutas[1:4] inicia en el índice 1 ('pera') y termina en el índice 4 - 1 = 3 ('mango'). El elemento en la posición 4 ('banano') queda excluido por la regla semiabierta [inicio, fin)."
+      },
+      {
+        cat: "Métodos de Listas",
+        q: "¿Cuál será el contenido final de la lista después de ejecutar la siguiente secuencia de operaciones?",
+        code: `datos = [10, 20, 30]\ndatos.append(40)\ndatos.pop(1)\ndatos.insert(0, 5)`,
+        options: [
+          "[5, 10, 30, 40]",
+          "[5, 20, 30, 40]",
+          "[10, 30, 40, 5]",
+          "[5, 10, 20, 40]"
+        ],
+        correct: 0,
+        explanation: "1) append(40) ➔ [10, 20, 30, 40]. 2) pop(1) elimina el elemento en el índice 1 (el 20) ➔ [10, 30, 40]. 3) insert(0, 5) coloca el 5 en el índice inicial ➔ [5, 10, 30, 40]."
+      },
+      {
+        cat: "Diccionarios y get()",
+        q: "¿Qué imprimirá en consola el siguiente fragmento de código con diccionarios?",
+        code: `estudiante = {\n    "nombre": "Ana",\n    "edad": 20,\n    "programa": "Ingeniería"\n}\nprint(estudiante.get("semestre", 1))`,
+        options: [
+          "1",
+          "None",
+          "KeyError",
+          "0"
+        ],
+        correct: 0,
+        explanation: "Como la clave 'semestre' no existe en el diccionario 'estudiante', el método .get('semestre', 1) retorna de forma segura el valor predeterminado proporcionado como segundo argumento (1)."
+      },
+      {
+        cat: "Métodos de Strings",
+        q: "Dada la cadena s = '  Python,Minecraft,Codigo  ', ¿qué valor produce la expresión s.strip().split(',')?",
+        code: `s = "  Python,Minecraft,Codigo  "\nres = s.strip().split(",")`,
+        options: [
+          "['Python', 'Minecraft', 'Codigo']",
+          "['  Python', 'Minecraft', 'Codigo  ']",
+          "'Python,Minecraft,Codigo'",
+          "['Python', ' Minecraft', ' Codigo']"
+        ],
+        correct: 0,
+        explanation: ".strip() remueve los espacios en blanco sobrantes a los extremos. Luego .split(',') divide la cadena por las comas, produciendo la lista limpia ['Python', 'Minecraft', 'Codigo']."
+      },
+      {
+        cat: "Slicing Inverso",
+        q: "¿Qué salida genera la expresión frutas[::-1] sobre la lista original?",
+        code: `frutas = ["manzana", "pera", "uva", "mango", "banano"]\nprint(frutas[::-1])`,
+        options: [
+          "['banano', 'mango', 'uva', 'pera', 'manzana']",
+          "['manzana', 'pera', 'uva', 'mango', 'banano']",
+          "IndexError",
+          "['banano']"
+        ],
+        correct: 0,
+        explanation: "El slicing con paso negativo frutas[::-1] invierte el orden completo de la secuencia comenzando desde el último elemento hacia el primero."
+      }
+    ];
+
+    let curQ = 0;
+    let score = 0;
+    let answered = false;
+
+    function renderQuestion() {
+      const q = QUESTIONS[curQ];
+      answered = false;
+
+      document.getElementById('pBar').style.width = `${(curQ / QUESTIONS.length) * 100}%`;
+      document.getElementById('chCategory').textContent = q.cat;
+      document.getElementById('chQuestion').textContent = q.q;
+      document.getElementById('chCode').textContent = q.code;
+
+      const fb = document.getElementById('chFeedback');
+      fb.className = 'feedback-box';
+      fb.style.display = 'none';
+      document.getElementById('btnNext').style.display = 'none';
+
+      const optContainer = document.getElementById('chOptions');
+      optContainer.innerHTML = '';
+
+      q.options.forEach((optText, idx) => {
+        const btn = document.createElement('button');
+        btn.className = 'option-btn';
+        btn.innerHTML = `<span style="opacity:0.6;">${String.fromCharCode(65 + idx)}.</span> <span>${optText}</span>`;
+        btn.onclick = () => selectOption(idx, btn);
+        optContainer.appendChild(btn);
+      });
+
+      document.getElementById('scoreText').textContent = `Pregunta ${curQ + 1} de ${QUESTIONS.length} | Puntaje: ${score}`;
+    }
+
+    function selectOption(userChoice, btnEl) {
+      if (answered) return;
+      answered = true;
+
+      const q = QUESTIONS[curQ];
+      const allBtns = document.querySelectorAll('.option-btn');
+      const fb = document.getElementById('chFeedback');
+
+      if (userChoice === q.correct) {
+        score += 20;
+        btnEl.classList.add('correct');
+        fb.className = 'feedback-box show-ok';
+        fb.innerHTML = `<strong>¡Excelente! Respuesta correcta (+20 pts).</strong><br>${q.explanation}`;
+      } else {
+        btnEl.classList.add('wrong');
+        allBtns[q.correct].classList.add('correct');
+        fb.className = 'feedback-box show-err';
+        fb.innerHTML = `<strong>Respuesta incorrecta.</strong><br>${q.explanation}`;
+      }
+
+      document.getElementById('scoreText').textContent = `Pregunta ${curQ + 1} de ${QUESTIONS.length} | Puntaje: ${score}`;
+      document.getElementById('btnNext').style.display = 'inline-block';
+    }
+
+    function nextQuestion() {
+      curQ++;
+      if (curQ < QUESTIONS.length) {
+        renderQuestion();
+      } else {
+        document.getElementById('pBar').style.width = '100%';
+        document.querySelector('.challenge-card').innerHTML = `
+          <div style="text-align:center; padding: 20px;">
+            <div style="font-size: 2.5rem; margin-bottom: 10px;">🏆</div>
+            <h4 style="font-size: 1.2rem; color: var(--green); margin-bottom: 8px;">¡Práctica Completada!</h4>
+            <p style="font-size: 0.9rem; color: var(--text); margin-bottom: 14px;">Puntaje final obtenido: <strong>${score} / 100 puntos</strong>.</p>
+            <p style="font-size: 0.78rem; color: var(--muted); max-width: 480px; margin: 0 auto 16px;">Has reforzado las habilidades clave de listas, indexación dual, sublistas mediante slicing, diccionarios asociativos y métodos de cadenas.</p>
+            <button class="btn-next" style="display:inline-block;" onclick="restart()">Reiniciar Práctica</button>
+          </div>
+        `;
+      }
+    }
+
+    function restart() {
+      curQ = 0;
+      score = 0;
+      location.reload();
+    }
+
+    // Inicializar
+    renderQuestion();
+  </script>
+</body>
+</html>

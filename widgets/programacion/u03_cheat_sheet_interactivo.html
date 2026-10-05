@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Referencia Rápida / Cheat Sheet de Python</title>
+  <style>
+    :root {
+      --bg: #0e0e11;
+      --card: #141923;
+      --border: #232d42;
+      --text: #f3f4f6;
+      --muted: #94a3b8;
+      --sky: #38bdf8;
+      --purple: #a855f7;
+      --green: #10b981;
+      --amber: #f59e0b;
+      --rose: #f43f5e;
+      --card-inner: #080b10;
+    }
+    body.theme-light {
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --border: #e2e8f0;
+      --text: #0f172a;
+      --muted: #64748b;
+      --sky: #0284c7;
+      --purple: #9333ea;
+      --green: #059669;
+      --amber: #d97706;
+      --rose: #e11d48;
+      --card-inner: #f1f5f9;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { background: var(--bg); color: var(--text); padding: 14px; display: flex; justify-content: center; }
+    .container { width: 100%; max-width: 820px; background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 18px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+    
+    .header { text-align: center; margin-bottom: 14px; }
+    .header h3 { font-size: 1.15rem; color: var(--sky); margin-bottom: 4px; display: flex; align-items: center; justify-content: center; gap: 8px; }
+    .header p { font-size: 0.76rem; color: var(--muted); }
+
+    /* Barra de búsqueda y filtros */
+    .search-bar {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    .search-bar input {
+      flex: 1;
+      padding: 8px 12px;
+      background: var(--card-inner);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: #fff;
+      font-size: 0.82rem;
+      outline: none;
+    }
+    .search-bar input:focus { border-color: var(--sky); }
+
+    .category-pills {
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+      padding-bottom: 8px;
+      margin-bottom: 14px;
+      no-scrollbar: true;
+    }
+    .cat-btn {
+      padding: 5px 10px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s;
+    }
+    .cat-btn:hover, .cat-btn.active {
+      background: var(--sky);
+      color: #0b0e14;
+      border-color: var(--sky);
+    }
+
+    /* Lista de Fichas Sintaxis ➔ Descripción ➔ Ejemplo ➔ Resultado */
+    .sheet-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-height: 520px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+    .sheet-card {
+      background: var(--card-inner);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 14px;
+      transition: all 0.2s;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .sheet-card:hover {
+      border-color: rgba(56, 189, 248, 0.4);
+      transform: translateY(-1px);
+    }
+
+    .card-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .syntax-badge {
+      font-family: monospace;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--sky);
+      background: rgba(56, 189, 248, 0.1);
+      border: 1px solid rgba(56, 189, 248, 0.25);
+      padding: 3px 8px;
+      border-radius: 6px;
+    }
+    .category-tag {
+      font-size: 0.65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      padding: 2px 6px;
+      border-radius: 4px;
+      background: rgba(255, 255, 255, 0.06);
+      color: var(--muted);
+    }
+
+    .card-desc {
+      font-size: 0.78rem;
+      color: var(--text);
+      line-height: 1.4;
+    }
+
+    .card-example-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-top: 4px;
+      font-family: monospace;
+      font-size: 0.75rem;
+    }
+    @media (max-width: 580px) {
+      .card-example-row { grid-template-columns: 1fr; }
+    }
+    .example-box {
+      background: rgba(0, 0, 0, 0.35);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 6px 10px;
+    }
+    .box-label {
+      font-size: 0.62rem;
+      font-weight: bold;
+      color: var(--muted);
+      text-transform: uppercase;
+      margin-bottom: 2px;
+    }
+    .example-code { color: #fde047; }
+    .result-code { color: #86efac; font-weight: bold; }
+
+    .no-results {
+      text-align: center;
+      color: var(--muted);
+      padding: 30px;
+      font-size: 0.85rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h3>⚡ Guía Rápida y Cheat Sheet de Python</h3>
+      <p>Esquema estándar: <strong>Sintaxis ➔ Descripción ➔ Ejemplo ➔ Resultado</strong></p>
+    </div>
+
+    <!-- Buscador -->
+    <div class="search-bar">
+      <input type="text" id="searchInput" placeholder="Buscar sintaxis, método o concepto (ej: slicing, append, get, len...)" oninput="filterData()">
+    </div>
+
+    <!-- Categorías requeridas -->
+    <div class="category-pills">
+      <button class="cat-btn active" onclick="setCategory('all')">Todos (50+)</button>
+      <button class="cat-btn" onclick="setCategory('tipos')">Tipos de datos</button>
+      <button class="cat-btn" onclick="setCategory('operadores')">Operadores</button>
+      <button class="cat-btn" onclick="setCategory('listas')">Listas</button>
+      <button class="cat-btn" onclick="setCategory('metodos_listas')">Métodos de listas</button>
+      <button class="cat-btn" onclick="setCategory('diccionarios')">Diccionarios</button>
+      <button class="cat-btn" onclick="setCategory('metodos_diccionarios')">Métodos de diccionarios</button>
+      <button class="cat-btn" onclick="setCategory('strings')">Strings</button>
+      <button class="cat-btn" onclick="setCategory('metodos_strings')">Métodos de strings</button>
+      <button class="cat-btn" onclick="setCategory('indices')">Índices</button>
+      <button class="cat-btn" onclick="setCategory('slicing')">Slicing</button>
+    </div>
+
+    <!-- Contenedor de fichas -->
+    <div class="sheet-list" id="sheetContainer">
+      <!-- Generado dinámicamente -->
+    </div>
+  </div>
+
+  <script>
+    const CHEAT_DATA = [
+      // 1. TIPOS DE DATOS
+      { cat: "tipos", catLabel: "Tipos de datos", syn: "int", desc: "Números enteros con precisión arbitraria.", ex: "x = 42", res: "<class 'int'>" },
+      { cat: "tipos", catLabel: "Tipos de datos", syn: "float", desc: "Números reales con punto decimal (doble precisión IEEE 754).", ex: "pi = 3.1416", res: "<class 'float'>" },
+      { cat: "tipos", catLabel: "Tipos de datos", syn: "str", desc: "Secuencia inmutable de caracteres de texto Unicode.", ex: "saludo = 'Hola'", res: "<class 'str'>" },
+      { cat: "tipos", catLabel: "Tipos de datos", syn: "bool", desc: "Valores lógicos de verdad booleanos (True o False).", ex: "activo = True", res: "<class 'bool'>" },
+      { cat: "tipos", catLabel: "Tipos de datos", syn: "list", desc: "Secuencia ordenada y mutable de elementos heterogéneos.", ex: "a = [1, 'dos', 3.0]", res: "<class 'list'>" },
+      { cat: "tipos", catLabel: "Tipos de datos", syn: "dict", desc: "Estructura asociativa mutable de mapeos clave: valor.", ex: "d = {'x': 10}", res: "<class 'dict'>" },
+      { cat: "tipos", catLabel: "Tipos de datos", syn: "type(obj)", desc: "Función built-in que retorna el tipo dinámico de un objeto.", ex: "type(100)", res: "<class 'int'>" },
+
+      // 2. OPERADORES
+      { cat: "operadores", catLabel: "Operadores", syn: "+, -, *, /", desc: "Operaciones aritméticas fundamentales (suma, resta, producto, división flotante).", ex: "10 / 4", res: "2.5" },
+      { cat: "operadores", catLabel: "Operadores", syn: "//, %, **", desc: "División entera de piso (//), módulo o residuo (%) y exponenciación (**).", ex: "14 % 4", res: "2" },
+      { cat: "operadores", catLabel: "Operadores", syn: "==, !=", desc: "Comparadores relacionales de igualdad y desigualdad.", ex: "'python' == 'Python'", res: "False" },
+      { cat: "operadores", catLabel: "Operadores", syn: ">, <, >=, <=", desc: "Comparadores relacionales de orden y magnitud.", ex: "15 >= 10", res: "True" },
+      { cat: "operadores", catLabel: "Operadores", syn: "and, or, not", desc: "Operadores booleanos con evaluación en cortocircuito.", ex: "(5 > 2) and (10 == 10)", res: "True" },
+      { cat: "operadores", catLabel: "Operadores", syn: "in, not in", desc: "Operadores de pertenencia sobre secuencias o colecciones.", ex: "3 in [1, 2, 3]", res: "True" },
+      { cat: "operadores", catLabel: "Operadores", syn: "+=, -=, *=", desc: "Operadores de asignación compuesta sobre variables.", ex: "c = 5; c += 3", res: "c vale 8" },
+
+      // 3. LISTAS
+      { cat: "listas", catLabel: "Listas", syn: "lista = []", desc: "Creación de una lista vacía en memoria.", ex: "vacia = []; len(vacia)", res: "0" },
+      { cat: "listas", catLabel: "Listas", syn: "lista = [1, 'a', True]", desc: "Lista heterogénea con múltiples tipos de datos.", ex: "datos = [10, 'A', 3.5]", res: "3 elementos" },
+      { cat: "listas", catLabel: "Listas", syn: "len(lista)", desc: "Retorna la cantidad total de elementos de la lista.", ex: "len(['a', 'b', 'c'])", res: "3" },
+      { cat: "listas", catLabel: "Listas", syn: "lista1 + lista2", desc: "Concatenación de dos listas generando una nueva colección.", ex: "[1, 2] + [3, 4]", res: "[1, 2, 3, 4]" },
+      { cat: "listas", catLabel: "Listas", syn: "lista * n", desc: "Repetición de la secuencia n veces consecutivas.", ex: "['x'] * 3", res: "['x', 'x', 'x']" },
+      { cat: "listas", catLabel: "Listas", syn: "del lista[i]", desc: "Elimina in-place el elemento situado en el índice i.", ex: "del a[0]", res: "Modifica lista" },
+      { cat: "listas", catLabel: "Listas", syn: "min(l) / max(l)", desc: "Retorna el valor mínimo o máximo de una lista numérica.", ex: "max([4, 9, 2])", res: "9" },
+      { cat: "listas", catLabel: "Listas", syn: "sum(l)", desc: "Suma todos los elementos numéricos de la lista.", ex: "sum([10, 20, 30])", res: "60" },
+      { cat: "listas", catLabel: "Listas", syn: "sorted(l)", desc: "Retorna una nueva lista ordenada sin alterar la original.", ex: "sorted([3, 1, 2])", res: "[1, 2, 3]" },
+
+      // 4. MÉTODOS DE LISTAS
+      { cat: "metodos_listas", catLabel: "Métodos de listas", syn: "lista.append(x)", desc: "Agrega el elemento x exactamente al final de la lista.", ex: "[1, 2].append(3)", res: "[1, 2, 3]" },
+      { cat: "metodos_listas", catLabel: "Métodos de listas", syn: "lista.extend(iterable)", desc: "Desempaqueta y anexa cada elemento del iterable al final.", ex: "[1].extend([2, 3])", res: "[1, 2, 3]" },
+      { cat: "metodos_listas", catLabel: "Métodos de listas", syn: "lista.insert(i, x)", desc: "Inserta el elemento x en la posición i, desplazando el resto.", ex: "[1, 3].insert(1, 2)", res: "[1, 2, 3]" },
+      { cat: "metodos_listas", catLabel: "Métodos de listas", syn: "lista.remove(x)", desc: "Elimina la primera coincidencia del valor x en la lista.", ex: "[1, 2, 1].remove(1)", res: "[2, 1]" },
+      { cat: "metodos_listas", catLabel: "Métodos de listas", syn: "lista.pop([i])", desc: "Remueve y retorna el elemento en i (por defecto el último).", ex: "[10, 20, 30].pop()", res: "30 (queda [10, 20])" },
+      { cat: "metodos_listas", catLabel: "Métodos de listas", syn: "lista.clear()", desc: "Vacía completamente todos los elementos de la lista.", ex: "a.clear()", res: "[ ]" },
+      { cat: "metodos_listas", catLabel: "Métodos de listas", syn: "lista.index(x)", desc: "Retorna el índice de la primera aparición de x.", ex: "['a', 'b'].index('b')", res: "1" },
+      { cat: "metodos_listas", catLabel: "Métodos de listas", syn: "lista.count(x)", desc: "Cuenta cuántas veces aparece el valor x en la lista.", ex: "[1, 2, 1, 1].count(1)", res: "3" },
+      { cat: "metodos_listas", catLabel: "Métodos de listas", syn: "lista.sort()", desc: "Ordena in-place los elementos de la lista.", ex: "[3, 1, 2].sort()", res: "[1, 2, 3]" },
+      { cat: "metodos_listas", catLabel: "Métodos de listas", syn: "lista.reverse()", desc: "Invierte in-place el orden de los elementos.", ex: "[1, 2, 3].reverse()", res: "[3, 2, 1]" },
+      { cat: "metodos_listas", catLabel: "Métodos de listas", syn: "lista.copy()", desc: "Crea una copia superficial (shallow copy) independiente.", ex: "clon = a.copy()", res: "Nueva lista idéntica" },
+
+      // 5. DICCIONARIOS
+      { cat: "diccionarios", catLabel: "Diccionarios", syn: "d = {'clave': valor}", desc: "Creación de diccionario con pares asociativos.", ex: "d = {'nombre': 'Ana'}", res: "{'nombre': 'Ana'}" },
+      { cat: "diccionarios", catLabel: "Diccionarios", syn: "d[clave]", desc: "Acceso al valor asociado a una clave (arroja KeyError si no existe).", ex: "d['nombre']", res: "'Ana'" },
+      { cat: "diccionarios", catLabel: "Diccionarios", syn: "d[clave] = nuevo", desc: "Modifica el valor si la clave existe; la crea si no existía.", ex: "d['edad'] = 20", res: "{..., 'edad': 20}" },
+      { cat: "diccionarios", catLabel: "Diccionarios", syn: "del d[clave]", desc: "Elimina el par clave-valor de la memoria.", ex: "del d['edad']", res: "Borra la clave" },
+      { cat: "diccionarios", catLabel: "Diccionarios", syn: "len(d)", desc: "Retorna la cantidad de pares clave-valor contenidos.", ex: "len({'a': 1, 'b': 2})", res: "2" },
+      { cat: "diccionarios", catLabel: "Diccionarios", syn: "clave in d", desc: "Verifica pertenencia de una clave en tiempo constante O(1).", ex: "'nombre' in d", res: "True" },
+
+      // 6. MÉTODOS DE DICCIONARIOS
+      { cat: "metodos_diccionarios", catLabel: "Métodos de diccionarios", syn: "d.get(k, [def])", desc: "Acceso seguro: retorna el valor o un valor por defecto si no existe.", ex: "d.get('foto', 'def.png')", res: "'def.png'" },
+      { cat: "metodos_diccionarios", catLabel: "Métodos de diccionarios", syn: "d.keys()", desc: "Retorna una vista iterable de todas las claves.", ex: "d.keys()", res: "dict_keys(['nombre', ...])" },
+      { cat: "metodos_diccionarios", catLabel: "Métodos de diccionarios", syn: "d.values()", desc: "Retorna una vista iterable de todos los valores.", ex: "d.values()", res: "dict_values(['Ana', ...])" },
+      { cat: "metodos_diccionarios", catLabel: "Métodos de diccionarios", syn: "d.items()", desc: "Retorna tuplas (clave, valor) para recorrer con ciclos for.", ex: "d.items()", res: "dict_items([('k', 'v')])" },
+      { cat: "metodos_diccionarios", catLabel: "Métodos de diccionarios", syn: "d.pop(k, [def])", desc: "Elimina la clave k y retorna su valor correspondiente.", ex: "d.pop('edad')", res: "20" },
+      { cat: "metodos_diccionarios", catLabel: "Métodos de diccionarios", syn: "d.popitem()", desc: "Remueve y retorna el último par insertado como tupla (k, v).", ex: "d.popitem()", res: "('edad', 20)" },
+      { cat: "metodos_diccionarios", catLabel: "Métodos de diccionarios", syn: "d.update(otro_dict)", desc: "Actualiza el diccionario con los pares de otro diccionario.", ex: "d.update({'semestre': 4})", res: "Pares añadidos" },
+      { cat: "metodos_diccionarios", catLabel: "Métodos de diccionarios", syn: "d.setdefault(k, v)", desc: "Retorna d[k]; si k no existe, la inserta con valor v.", ex: "d.setdefault('activo', True)", res: "True" },
+      { cat: "metodos_diccionarios", catLabel: "Métodos de diccionarios", syn: "d.clear()", desc: "Elimina todos los pares del diccionario dejándolo vacío.", ex: "d.clear()", res: "{ }" },
+      { cat: "metodos_diccionarios", catLabel: "Métodos de diccionarios", syn: "d.copy()", desc: "Retorna una copia superficial del diccionario.", ex: "clon = d.copy()", res: "Nuevo dict" },
+
+      // 7. STRINGS
+      { cat: "strings", catLabel: "Strings", syn: "s = 'texto'", desc: "Creación de cadenas de texto con comillas simples o dobles.", ex: "s = 'Python'", res: "'Python'" },
+      { cat: "strings", catLabel: "Strings", syn: "s1 + s2", desc: "Concatenación de texto formando una nueva cadena inmutable.", ex: "'Hola ' + 'Mundo'", res: "'Hola Mundo'" },
+      { cat: "strings", catLabel: "Strings", syn: "s * n", desc: "Repetición textual de la cadena n veces consecutivas.", ex: "'Na' * 4", res: "'NaNaNaNa'" },
+      { cat: "strings", catLabel: "Strings", syn: "sub in s", desc: "Verifica si la subcadena reside dentro del texto.", ex: "'th' in 'Python'", res: "True" },
+      { cat: "strings", catLabel: "Strings", syn: "len(s)", desc: "Retorna el número de caracteres Unicode de la cadena.", ex: "len('Minecraft')", res: "9" },
+      { cat: "strings", catLabel: "Strings", syn: "for car in s:", desc: "Recorrido secuencial carácter a carácter con ciclo for.", ex: "for c in 'Py': print(c)", res: "P \\n y" },
+
+      // 8. MÉTODOS DE STRINGS
+      { cat: "metodos_strings", catLabel: "Métodos de strings", syn: "s.upper() / s.lower()", desc: "Transformación a mayúsculas o minúsculas completas.", ex: "'py'.upper()", res: "'PY'" },
+      { cat: "metodos_strings", catLabel: "Métodos de strings", syn: "s.capitalize()", desc: "Primera letra en mayúscula y el resto en minúsculas.", ex: "'python'.capitalize()", res: "'Python'" },
+      { cat: "metodos_strings", catLabel: "Métodos de strings", syn: "s.title()", desc: "Convierte a mayúscula la inicial de cada palabra.", ex: "'leo gaviria'.title()", res: "'Leo Gaviria'" },
+      { cat: "metodos_strings", catLabel: "Métodos de strings", syn: "s.strip()", desc: "Elimina espacios en blanco y saltos al inicio y final.", ex: "'  hola  '.strip()", res: "'hola'" },
+      { cat: "metodos_strings", catLabel: "Métodos de strings", syn: "s.replace(old, new)", desc: "Sustituye todas las apariciones de una subcadena.", ex: "'2025'.replace('5', '6')", res: "'2026'" },
+      { cat: "metodos_strings", catLabel: "Métodos de strings", syn: "s.split(sep)", desc: "Divide la cadena según el separador retornando una lista.", ex: "'a,b,c'.split(',')", res: "['a', 'b', 'c']" },
+      { cat: "metodos_strings", catLabel: "Métodos de strings", syn: "sep.join(lista)", desc: "Une una lista de strings intercalando el separador.", ex: "'-'.join(['A', 'B'])", res: "'A-B'" },
+      { cat: "metodos_strings", catLabel: "Métodos de strings", syn: "s.find(sub)", desc: "Retorna el índice inicial de sub o -1 si no existe.", ex: "'Python'.find('th')", res: "2" },
+      { cat: "metodos_strings", catLabel: "Métodos de strings", syn: "s.index(sub)", desc: "Retorna el índice o arroja ValueError si no existe.", ex: "'Python'.index('P')", res: "0" },
+      { cat: "metodos_strings", catLabel: "Métodos de strings", syn: "s.count(sub)", desc: "Cuenta las apariciones de la subcadena.", ex: "'banana'.count('an')", res: "2" },
+      { cat: "metodos_strings", catLabel: "Métodos de strings", syn: "s.startswith(pref)", desc: "Verifica si la cadena inicia con el prefijo indicado.", ex: "'robot.py'.startswith('rob')", res: "True" },
+      { cat: "metodos_strings", catLabel: "Métodos de strings", syn: "s.endswith(suf)", desc: "Verifica si la cadena concluye con el sufijo indicado.", ex: "'script.py'.endswith('.py')", res: "True" },
+
+      // 9. ÍNDICES
+      { cat: "indices", catLabel: "Índices", syn: "sec[0]", desc: "Índice positivo inicial: primer elemento de la secuencia.", ex: "['manzana', 'pera'][0]", res: "'manzana'" },
+      { cat: "indices", catLabel: "Índices", syn: "sec[-1]", desc: "Índice negativo: último elemento de la secuencia.", ex: "['manzana', 'pera'][-1]", res: "'pera'" },
+      { cat: "indices", catLabel: "Índices", syn: "sec[len(sec) - 1]", desc: "Equivalente con len() para acceder al último elemento.", ex: "s[len(s) - 1]", res: "Último carácter" },
+      { cat: "indices", catLabel: "Índices", syn: "sec[-n]", desc: "Índice negativo correspondiente al primer elemento (n = len).", ex: "s[-len(s)]", res: "Primer elemento" },
+
+      // 10. SLICING
+      { cat: "slicing", catLabel: "Slicing", syn: "sec[inicio:fin]", desc: "Extracción semiabierta desde 'inicio' hasta 'fin - 1'.", ex: "['a','b','c','d'][1:3]", res: "['b', 'c']" },
+      { cat: "slicing", catLabel: "Slicing", syn: "sec[:fin]", desc: "Omisión de inicio: extrae desde el índice 0 hasta fin - 1.", ex: "['a','b','c'][:2]", res: "['a', 'b']" },
+      { cat: "slicing", catLabel: "Slicing", syn: "sec[inicio:]", desc: "Omisión de fin: extrae desde 'inicio' hasta el último elemento.", ex: "['a','b','c','d'][2:]", res: "['c', 'd']" },
+      { cat: "slicing", catLabel: "Slicing", syn: "sec[::paso]", desc: "Extracción completa dando saltos del tamaño del paso.", ex: "[0,1,2,3,4,5][::2]", res: "[0, 2, 4]" },
+      { cat: "slicing", catLabel: "Slicing", syn: "sec[::-1]", desc: "Paso negativo -1: invierte completamente el orden.", ex: "'Python'[::-1]", res: "'nohtyP'" },
+      { cat: "slicing", catLabel: "Slicing", syn: "sec[:]", desc: "Copia superficial completa de la secuencia.", ex: "clon = lista[:]", res: "Mismos elementos" }
+    ];
+
+    let currentCategory = 'all';
+
+    function setCategory(cat) {
+      currentCategory = cat;
+      document.querySelectorAll('.cat-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.getAttribute('onclick').includes(`'${cat}'`));
+      });
+      filterData();
+    }
+
+    function filterData() {
+      const q = document.getElementById('searchInput').value.toLowerCase().trim();
+      const container = document.getElementById('sheetContainer');
+      container.innerHTML = '';
+
+      const filtered = CHEAT_DATA.filter(item => {
+        const matchesCat = currentCategory === 'all' || item.cat === currentCategory;
+        const matchesQuery = !q || 
+          item.syn.toLowerCase().includes(q) ||
+          item.desc.toLowerCase().includes(q) ||
+          item.ex.toLowerCase().includes(q) ||
+          item.res.toLowerCase().includes(q) ||
+          item.catLabel.toLowerCase().includes(q);
+        return matchesCat && matchesQuery;
+      });
+
+      if (filtered.length === 0) {
+        container.innerHTML = `<div class="no-results">No se encontraron elementos coincidentes con "${q}".</div>`;
+        return;
+      }
+
+      filtered.forEach(item => {
+        const card = document.createElement('div');
+        card.className = 'sheet-card';
+        card.innerHTML = `
+          <div class="card-top">
+            <span class="syntax-badge">${item.syn}</span>
+            <span class="category-tag">${item.catLabel}</span>
+          </div>
+          <div class="card-desc">${item.desc}</div>
+          <div class="card-example-row">
+            <div class="example-box">
+              <div class="box-label">Ejemplo</div>
+              <div class="example-code">${item.ex}</div>
+            </div>
+            <div class="example-box">
+              <div class="box-label">Resultado</div>
+              <div class="result-code">${item.res}</div>
+            </div>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    // Inicializar
+    filterData();
+  </script>
+</body>
+</html>

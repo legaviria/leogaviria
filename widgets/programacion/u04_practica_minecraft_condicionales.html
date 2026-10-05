@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Práctica Guiada: Condicionales y Ciclos en Minecraft</title>
+  <style>
+    :root {
+      --bg: #0e0e11;
+      --card: #141923;
+      --border: #232d42;
+      --text: #f3f4f6;
+      --muted: #94a3b8;
+      --sky: #38bdf8;
+      --purple: #a855f7;
+      --green: #10b981;
+      --amber: #f59e0b;
+      --rose: #f43f5e;
+      --card-inner: #080b10;
+    }
+    body.theme-light {
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --border: #e2e8f0;
+      --text: #0f172a;
+      --muted: #64748b;
+      --sky: #0284c7;
+      --purple: #9333ea;
+      --green: #059669;
+      --amber: #d97706;
+      --rose: #e11d48;
+      --card-inner: #f1f5f9;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { background: var(--bg); color: var(--text); padding: 14px; display: flex; justify-content: center; }
+    .container { width: 100%; max-width: 720px; background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 18px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+    
+    .header { text-align: center; margin-bottom: 14px; }
+    .header h3 { font-size: 1.15rem; color: #4ade80; margin-bottom: 4px; display: flex; align-items: center; justify-content: center; gap: 8px; }
+    .header p { font-size: 0.76rem; color: var(--muted); }
+
+    .progress-bar-wrap {
+      background: var(--card-inner);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      height: 8px;
+      overflow: hidden;
+      margin-bottom: 16px;
+    }
+    .progress-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--sky), var(--green));
+      width: 0%;
+      transition: width 0.3s;
+    }
+
+    .challenge-card {
+      background: var(--card-inner);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px;
+      margin-bottom: 14px;
+    }
+    .challenge-badge {
+      font-size: 0.68rem;
+      font-family: monospace;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: #86efac;
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      padding: 2px 8px;
+      border-radius: 4px;
+      display: inline-block;
+      margin-bottom: 8px;
+    }
+    .challenge-title {
+      font-size: 0.95rem;
+      font-weight: bold;
+      color: #fff;
+      margin-bottom: 8px;
+      line-height: 1.4;
+    }
+    .code-snippet {
+      background: #05070a;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 12px;
+      font-family: monospace;
+      font-size: 0.82rem;
+      color: var(--sky);
+      margin-bottom: 14px;
+      overflow-x: auto;
+      line-height: 1.5;
+    }
+
+    .options-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 8px;
+    }
+    .option-btn {
+      padding: 10px 14px;
+      font-size: 0.8rem;
+      font-family: monospace;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1.5px solid var(--border);
+      color: var(--text);
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .option-btn:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: var(--green);
+    }
+    .option-btn.correct {
+      background: rgba(16, 185, 129, 0.2);
+      border-color: var(--green);
+      color: #86efac;
+    }
+    .option-btn.wrong {
+      background: rgba(244, 63, 94, 0.2);
+      border-color: var(--rose);
+      color: #fda4af;
+    }
+
+    .feedback-box {
+      margin-top: 12px;
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 0.78rem;
+      line-height: 1.45;
+      display: none;
+    }
+    .feedback-box.show-ok {
+      display: block;
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid var(--green);
+      color: #86efac;
+    }
+    .feedback-box.show-err {
+      display: block;
+      background: rgba(244, 63, 94, 0.12);
+      border: 1px solid var(--rose);
+      color: #fda4af;
+    }
+
+    .nav-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 12px;
+      font-size: 0.78rem;
+      color: var(--muted);
+      font-family: monospace;
+    }
+    .btn-next {
+      padding: 6px 14px;
+      background: var(--green);
+      color: #0b0e14;
+      font-weight: bold;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      display: none;
+    }
+    .btn-next:hover { opacity: 0.9; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h3>🎮 Práctica: Python y Construcción en Minecraft</h3>
+      <p>Aplica condicionales, coordenadas espaciales y ciclos for para resolver retos en el servidor.</p>
+    </div>
+
+    <!-- Barra de progreso -->
+    <div class="progress-bar-wrap">
+      <div class="progress-bar-fill" id="pBar"></div>
+    </div>
+
+    <div class="challenge-card">
+      <span class="challenge-badge" id="chCategory">Minecraft + Condicionales</span>
+      <div class="challenge-title" id="chQuestion">Pregunta aquí...</div>
+      <div class="code-snippet" id="chCode"># Código...</div>
+      <div class="options-grid" id="chOptions"></div>
+      <div class="feedback-box" id="chFeedback"></div>
+    </div>
+
+    <div class="nav-footer">
+      <span id="scoreText">Pregunta 1 de 5 | Puntaje: 0</span>
+      <button class="btn-next" id="btnNext" onclick="nextQuestion()">Siguiente Pregunta ➔</button>
+    </div>
+  </div>
+
+  <script>
+    const QUESTIONS = [
+      {
+        cat: "Colocación de Bloques",
+        q: "En la biblioteca mcpi de Minecraft, ¿qué función exacta coloca un bloque en una posición tridimensional fija?",
+        code: `x, y, z = mc.player.getTilePos()\n# ¿Cómo colocar un bloque de lana negra (35, 15)?`,
+        options: [
+          "mc.setBlock(x, y, z, 35, 15)",
+          "mc.createBlock(35, 15, x, y, z)",
+          "mc.spawnBlock(x, y, z, 'wool_black')",
+          "mc.blocks.add(35, x, y, z)"
+        ],
+        correct: 0,
+        explanation: "La función estándar de Minecraft Pi Edition es mc.setBlock(x, y, z, idBloque, idDatos), tal como se implementa en los insumos oficiales del servidor."
+      },
+      {
+        cat: "Condicionales en Minecraft",
+        q: "Si la variable altura = 65, ¿qué bloque se colocará según este bloque de decisión condicional?",
+        code: `if altura > 100:\n    mc.setBlock(x, y, z, 80, 0)   # Nieve\nelif altura >= 60:\n    mc.setBlock(x, y, z, 1, 0)    # Piedra\nelse:\n    mc.setBlock(x, y, z, 3, 0)    # Tierra`,
+        options: [
+          "Piedra (ID: 1, 0)",
+          "Nieve (ID: 80, 0)",
+          "Tierra (ID: 3, 0)",
+          "Ninguno, se produce un error"
+        ],
+        correct: 0,
+        explanation: "Dado que altura = 65, la primera condición (altura > 100) es False, pero la rama elif (altura >= 60) resulta True, colocando el bloque de Piedra (1, 0)."
+      },
+      {
+        cat: "Ciclo for y Coordenadas",
+        q: "Para construir un puente horizontal de 10 bloques a lo largo del eje X a partir de la posición del jugador (x, y, z), ¿cuál es el bucle for correcto?",
+        code: `# Construcción de puente recto en el eje X`,
+        options: [
+          "for i in range(1, 11):\n    mc.setBlock(x + i, y, z, 4, 0)",
+          "for i in range(10):\n    mc.setBlock(x, y + i, z, 4, 0)",
+          "for i in range(10):\n    mc.setBlock(x, y, z + i, 4, 0)",
+          "while i < 10:\n    mc.setBlock(x, y, z, 4, 0)"
+        ],
+        correct: 0,
+        explanation: "Sumar el contador 'i' a la coordenada X (x + i) avanza en línea recta a lo largo del eje X, colocando los 10 bloques de adoquín (4, 0)."
+      },
+      {
+        cat: "Ciclos Anidados en 2D",
+        q: "¿Cuántos bloques en total colocará el siguiente código para crear una plataforma en el suelo?",
+        code: `for dx in range(5):\n    for dz in range(4):\n        mc.setBlock(x + dx, y, z + dz, 41, 0)`,
+        options: [
+          "20 bloques de oro (41, 0)",
+          "9 bloques de oro (41, 0)",
+          "5 bloques de oro",
+          "4 bloques de oro"
+        ],
+        correct: 0,
+        explanation: "Un ciclo anidado multiplica el número de iteraciones: 5 pasos en X multiplicado por 4 pasos en Z da como resultado exactamente 5 * 4 = 20 bloques."
+      },
+      {
+        cat: "Construcción de Barandas",
+        q: "Para agregar una baranda de valla (ID: 85) un bloque más arriba (y + 1) en el lateral izquierdo (z - 1) del puente, ¿qué llamada a setBlock es la correcta?",
+        code: `# Bloque de baranda lateral`,
+        options: [
+          "mc.setBlock(x + i, y + 1, z - 1, 85, 0)",
+          "mc.setBlock(x + i, y - 1, z, 85, 0)",
+          "mc.setBlock(x, y + 1, z + i, 85, 0)",
+          "mc.setBlock(x + 1, y, z, 85, 0)"
+        ],
+        correct: 0,
+        explanation: "La elevación de un bloque sobre la superficie requiere sumar 1 al eje vertical (y + 1), y la posición lateral izquierda se logra restando 1 al eje Z (z - 1)."
+      }
+    ];
+
+    let curQ = 0;
+    let score = 0;
+    let answered = false;
+
+    function renderQuestion() {
+      const q = QUESTIONS[curQ];
+      answered = false;
+
+      document.getElementById('pBar').style.width = `${(curQ / QUESTIONS.length) * 100}%`;
+      document.getElementById('chCategory').textContent = q.cat;
+      document.getElementById('chQuestion').textContent = q.q;
+      document.getElementById('chCode').textContent = q.code;
+
+      const fb = document.getElementById('chFeedback');
+      fb.className = 'feedback-box';
+      fb.style.display = 'none';
+      document.getElementById('btnNext').style.display = 'none';
+
+      const optContainer = document.getElementById('chOptions');
+      optContainer.innerHTML = '';
+
+      q.options.forEach((optText, idx) => {
+        const btn = document.createElement('button');
+        btn.className = 'option-btn';
+        btn.innerHTML = `<span style="opacity:0.6;">${String.fromCharCode(65 + idx)}.</span> <span>${optText.replace(/\n/g, '<br>&nbsp;&nbsp;&nbsp;&nbsp;')}</span>`;
+        btn.onclick = () => selectOption(idx, btn);
+        optContainer.appendChild(btn);
+      });
+
+      document.getElementById('scoreText').textContent = `Pregunta ${curQ + 1} de ${QUESTIONS.length} | Puntaje: ${score}`;
+    }
+
+    function selectOption(userChoice, btnEl) {
+      if (answered) return;
+      answered = true;
+
+      const q = QUESTIONS[curQ];
+      const allBtns = document.querySelectorAll('.option-btn');
+      const fb = document.getElementById('chFeedback');
+
+      if (userChoice === q.correct) {
+        score += 20;
+        btnEl.classList.add('correct');
+        fb.className = 'feedback-box show-ok';
+        fb.innerHTML = `<strong>¡Correcto! (+20 pts).</strong><br>${q.explanation}`;
+      } else {
+        btnEl.classList.add('wrong');
+        allBtns[q.correct].classList.add('correct');
+        fb.className = 'feedback-box show-err';
+        fb.innerHTML = `<strong>Respuesta incorrecta.</strong><br>${q.explanation}`;
+      }
+
+      document.getElementById('scoreText').textContent = `Pregunta ${curQ + 1} de ${QUESTIONS.length} | Puntaje: ${score}`;
+      document.getElementById('btnNext').style.display = 'inline-block';
+    }
+
+    function nextQuestion() {
+      curQ++;
+      if (curQ < QUESTIONS.length) {
+        renderQuestion();
+      } else {
+        document.getElementById('pBar').style.width = '100%';
+        document.querySelector('.challenge-card').innerHTML = `
+          <div style="text-align:center; padding: 20px;">
+            <div style="font-size: 2.5rem; margin-bottom: 10px;">🏆</div>
+            <h4 style="font-size: 1.2rem; color: #4ade80; margin-bottom: 8px;">¡Retos de Minecraft Superados!</h4>
+            <p style="font-size: 0.9rem; color: var(--text); margin-bottom: 14px;">Puntaje final: <strong>${score} / 100 puntos</strong>.</p>
+            <p style="font-size: 0.78rem; color: var(--muted); max-width: 480px; margin: 0 auto 16px;">Has consolidado el uso de condicionales con bloques, coordenadas 3D y la construcción automatizada de puentes y plataformas con ciclos for.</p>
+            <button class="btn-next" style="display:inline-block;" onclick="location.reload()">Repetir Práctica</button>
+          </div>
+        `;
+      }
+    }
+
+    // Inicializar
+    renderQuestion();
+  </script>
+</body>
+</html>

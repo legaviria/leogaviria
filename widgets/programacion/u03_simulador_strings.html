@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simulador Interactivo de Cadenas (Strings) en Python</title>
+  <style>
+    :root {
+      --bg: #0e0e11;
+      --card: #141923;
+      --border: #232d42;
+      --text: #f3f4f6;
+      --muted: #94a3b8;
+      --sky: #38bdf8;
+      --purple: #a855f7;
+      --green: #10b981;
+      --amber: #f59e0b;
+      --rose: #f43f5e;
+      --card-inner: #080b10;
+    }
+    body.theme-light {
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --border: #e2e8f0;
+      --text: #0f172a;
+      --muted: #64748b;
+      --sky: #0284c7;
+      --purple: #9333ea;
+      --green: #059669;
+      --amber: #d97706;
+      --rose: #e11d48;
+      --card-inner: #f1f5f9;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { background: var(--bg); color: var(--text); padding: 14px; display: flex; justify-content: center; }
+    .container { width: 100%; max-width: 760px; background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 18px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+    
+    .header { text-align: center; margin-bottom: 14px; }
+    .header h3 { font-size: 1.15rem; color: var(--sky); margin-bottom: 4px; display: flex; align-items: center; justify-content: center; gap: 8px; }
+    .header p { font-size: 0.76rem; color: var(--muted); }
+
+    /* Input del String */
+    .input-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+    .input-row input {
+      flex: 1;
+      padding: 8px 12px;
+      background: var(--card-inner);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: #a5f3fc;
+      font-family: monospace;
+      font-size: 0.9rem;
+      outline: none;
+    }
+    .input-row input:focus { border-color: var(--sky); }
+
+    .presets-row {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+    }
+    .preset-chip {
+      font-size: 0.72rem;
+      font-family: monospace;
+      padding: 3px 8px;
+      border-radius: 4px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .preset-chip:hover { border-color: var(--sky); color: var(--sky); }
+
+    /* Visualización de caracteres e índices */
+    .char-map-panel {
+      background: var(--card-inner);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px;
+      margin-bottom: 14px;
+      overflow-x: auto;
+    }
+    .panel-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      font-size: 0.75rem;
+      color: var(--muted);
+      font-family: monospace;
+    }
+    .char-track {
+      display: flex;
+      gap: 5px;
+      min-width: 460px;
+      padding: 6px 2px;
+    }
+    .char-slot {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      min-width: 32px;
+    }
+    .idx-num {
+      font-family: monospace;
+      font-size: 0.68rem;
+      font-weight: 700;
+    }
+    .idx-pos { color: var(--sky); }
+    .idx-neg { color: var(--amber); }
+
+    .char-box {
+      width: 32px;
+      height: 38px;
+      background: rgba(56, 189, 248, 0.08);
+      border: 1.5px solid rgba(56, 189, 248, 0.3);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: monospace;
+      font-size: 0.95rem;
+      font-weight: bold;
+      color: #fff;
+      transition: all 0.2s;
+    }
+    .char-box.space-char {
+      color: rgba(255,255,255,0.25);
+      font-size: 0.65rem;
+    }
+    .char-box.highlight {
+      background: rgba(245, 158, 11, 0.3);
+      border-color: var(--amber);
+      color: #fef08a;
+      transform: translateY(-2px);
+    }
+
+    /* Consola */
+    .console-panel {
+      background: #05070a;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-family: monospace;
+      font-size: 0.78rem;
+      margin-bottom: 14px;
+    }
+    .code-executed { color: var(--sky); font-weight: bold; margin-bottom: 4px; }
+    .code-comment { color: var(--muted); font-size: 0.72rem; }
+    .code-result { color: #86efac; margin-top: 4px; word-break: break-all; }
+
+    /* Grid de Métodos */
+    .methods-title {
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 8px;
+      letter-spacing: 0.5px;
+    }
+    .methods-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 6px;
+      margin-bottom: 12px;
+    }
+    .m-btn {
+      padding: 7px 8px;
+      font-size: 0.72rem;
+      font-family: monospace;
+      font-weight: 600;
+      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border);
+      color: var(--text);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: all 0.2s;
+    }
+    .m-btn:hover {
+      background: rgba(56, 189, 248, 0.15);
+      border-color: var(--sky);
+      color: #7dd3fc;
+      transform: translateY(-1px);
+    }
+    .m-badge {
+      font-size: 0.6rem;
+      padding: 1px 4px;
+      border-radius: 3px;
+      background: rgba(255,255,255,0.08);
+      color: var(--muted);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h3>🔡 Laboratorio Visual de Cadenas (Strings)</h3>
+      <p>Inspecciona caracteres, índices positivos/negativos, slicing y métodos de manipulación de texto.</p>
+    </div>
+
+    <!-- Input interactivo -->
+    <div class="input-row">
+      <input type="text" id="strInput" value="Python 2026!" placeholder="Escribe cualquier texto..." oninput="updateDisplay()">
+    </div>
+
+    <div class="presets-row">
+      <span class="preset-chip" onclick="setPreset('Python 2026!')">&quot;Python 2026!&quot;</span>
+      <span class="preset-chip" onclick="setPreset('Ingenieria de Sistemas')">&quot;Ingenieria de Sistemas&quot;</span>
+      <span class="preset-chip" onclick="setPreset('  hola mundo con espacios  ')">&quot;  con espacios  &quot;</span>
+      <span class="preset-chip" onclick="setPreset('manzana,pera,uva')">&quot;manzana,pera,uva&quot;</span>
+      <span class="preset-chip" onclick="setPreset('radar')">&quot;radar&quot; (palíndromo)</span>
+    </div>
+
+    <!-- Mapa de caracteres e índices -->
+    <div class="char-map-panel">
+      <div class="panel-meta">
+        <div>Longitud: <span style="color:var(--green); font-weight:bold;" id="lenStat">len() = 12</span></div>
+        <div>Índices: <span class="idx-pos">Azul (+Positivo)</span> | <span class="idx-neg">Ámbar (-Negativo)</span></div>
+      </div>
+      <div class="char-track" id="charTrack">
+        <!-- Render dinámico -->
+      </div>
+    </div>
+
+    <!-- Consola explicativa -->
+    <div class="console-panel">
+      <div class="code-executed" id="consoleCode">&gt;&gt;&gt; s = "Python 2026!"</div>
+      <div class="code-comment" id="consoleComment">Secuencia inmutable de 12 caracteres.</div>
+      <div class="code-result" id="consoleResult">'Python 2026!'</div>
+    </div>
+
+    <!-- Arsenal de Métodos -->
+    <div class="methods-title">Arsenal de Métodos de Cadenas en Python:</div>
+    <div class="methods-grid">
+      <button class="m-btn" onclick="execStr('upper')">
+        <span>upper()</span>
+        <span class="m-badge">MAYÚSCULAS</span>
+      </button>
+      <button class="m-btn" onclick="execStr('lower')">
+        <span>lower()</span>
+        <span class="m-badge">minúsculas</span>
+      </button>
+      <button class="m-btn" onclick="execStr('capitalize')">
+        <span>capitalize()</span>
+        <span class="m-badge">1ra letra</span>
+      </button>
+      <button class="m-btn" onclick="execStr('title')">
+        <span>title()</span>
+        <span class="m-badge">Tipo Título</span>
+      </button>
+      <button class="m-btn" onclick="execStr('strip')">
+        <span>strip()</span>
+        <span class="m-badge">Limpia espacios</span>
+      </button>
+      <button class="m-btn" onclick="execStr('replace')">
+        <span>replace("2026", "3.12")</span>
+        <span class="m-badge">Sustituye</span>
+      </button>
+      <button class="m-btn" onclick="execStr('split')">
+        <span>split(" ")</span>
+        <span class="m-badge">➔ Lista</span>
+      </button>
+      <button class="m-btn" onclick="execStr('join')">
+        <span>"-".join(...)</span>
+        <span class="m-badge">Une lista</span>
+      </button>
+      <button class="m-btn" onclick="execStr('find')">
+        <span>find("th")</span>
+        <span class="m-badge">Busca idx</span>
+      </button>
+      <button class="m-btn" onclick="execStr('index')">
+        <span>index("P")</span>
+        <span class="m-badge">Idx estricto</span>
+      </button>
+      <button class="m-btn" onclick="execStr('count')">
+        <span>count("o")</span>
+        <span class="m-badge">Frecuencia</span>
+      </button>
+      <button class="m-btn" onclick="execStr('startswith')">
+        <span>startswith("Py")</span>
+        <span class="m-badge">Prefijo</span>
+      </button>
+      <button class="m-btn" onclick="execStr('endswith')">
+        <span>endswith("!")</span>
+        <span class="m-badge">Sufijo</span>
+      </button>
+      <button class="m-btn" onclick="execStr('slice_rev')">
+        <span>s[::-1]</span>
+        <span class="m-badge">Invertir</span>
+      </button>
+      <button class="m-btn" onclick="execStr('inCheck')">
+        <span>"on" in s</span>
+        <span class="m-badge">Pertenencia</span>
+      </button>
+      <button class="m-btn" onclick="execStr('repeat')">
+        <span>s * 2</span>
+        <span class="m-badge">Repetición</span>
+      </button>
+    </div>
+  </div>
+
+  <script>
+    function setPreset(txt) {
+      document.getElementById('strInput').value = txt;
+      updateDisplay();
+    }
+
+    function updateDisplay(highlightIndices = []) {
+      const text = document.getElementById('strInput').value;
+      const track = document.getElementById('charTrack');
+      track.innerHTML = '';
+
+      const n = text.length;
+      document.getElementById('lenStat').textContent = `len() = ${n}`;
+
+      if (n === 0) {
+        track.innerHTML = `<div style="color:var(--muted); font-size:0.8rem; font-style:italic; padding:10px;">Cadena vacía "" (longitud 0)</div>`;
+        return;
+      }
+
+      for (let i = 0; i < n; i++) {
+        const char = text[i];
+        const pos = i;
+        const neg = i - n;
+        const isHl = highlightIndices.includes(i);
+
+        const slot = document.createElement('div');
+        slot.className = 'char-slot';
+
+        const isSpace = char === ' ';
+        const displayChar = isSpace ? '␣' : char;
+
+        slot.innerHTML = `
+          <div class="idx-num idx-pos">${pos}</div>
+          <div class="char-box ${isSpace ? 'space-char' : ''} ${isHl ? 'highlight' : ''}">${displayChar}</div>
+          <div class="idx-num idx-neg">${neg}</div>
+        `;
+        track.appendChild(slot);
+      }
+    }
+
+    function logConsole(code, comment, result) {
+      document.getElementById('consoleCode').textContent = `>>> ${code}`;
+      document.getElementById('consoleComment').textContent = comment;
+      document.getElementById('consoleResult').textContent = `Resultado: ${result}`;
+    }
+
+    function execStr(method) {
+      const text = document.getElementById('strInput').value;
+      let code = "";
+      let comment = "";
+      let result = "";
+      let hl = [];
+
+      switch(method) {
+        case 'upper':
+          code = `s.upper()`;
+          comment = `Retorna una nueva cadena con todos los caracteres en mayúsculas (las cadenas son inmutables).`;
+          result = `"${text.toUpperCase()}"`;
+          break;
+
+        case 'lower':
+          code = `s.lower()`;
+          comment = `Retorna una nueva cadena con todos los caracteres en minúsculas.`;
+          result = `"${text.toLowerCase()}"`;
+          break;
+
+        case 'capitalize':
+          const cap = text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
+          code = `s.capitalize()`;
+          comment = `Convierte únicamente el primer carácter a mayúscula y el resto a minúsculas.`;
+          result = `"${cap}"`;
+          break;
+
+        case 'title':
+          const title = text.replace(/\b\w/g, c => c.toUpperCase());
+          code = `s.title()`;
+          comment = `Convierte a mayúscula la primera letra de cada palabra (formato título).`;
+          result = `"${title}"`;
+          break;
+
+        case 'strip':
+          code = `s.strip()`;
+          comment = `Elimina todos los espacios en blanco iniciales y finales de la cadena.`;
+          result = `"${text.trim()}"`;
+          break;
+
+        case 'replace':
+          code = `s.replace("2026", "3.12")`;
+          comment = `Reemplaza todas las apariciones de una subcadena por otra nueva cadena.`;
+          result = `"${text.replace(/2026/g, "3.12")}"`;
+          break;
+
+        case 'split':
+          const parts = text.split(" ");
+          code = `s.split(" ")`;
+          comment = `Divide la cadena utilizando el delimitador de espacio y retorna una lista de subcadenas.`;
+          result = JSON.stringify(parts);
+          break;
+
+        case 'join':
+          code = `"-".join(["Python", "es", "genial"])`;
+          comment = `Une los elementos de una colección iterable utilizando la cadena como separador.`;
+          result = `"Python-es-genial"`;
+          break;
+
+        case 'find':
+          const fIdx = text.indexOf("th");
+          code = `s.find("th")`;
+          if (fIdx !== -1) {
+            hl = [fIdx, fIdx + 1];
+            comment = `Retorna el índice donde inicia la primera aparición encontrada.`;
+            result = `${fIdx}`;
+          } else {
+            comment = `Si la subcadena no existe, .find() retorna -1 de forma segura.`;
+            result = `-1 (no encontrada)`;
+          }
+          break;
+
+        case 'index':
+          const iIdx = text.indexOf("P");
+          code = `s.index("P")`;
+          if (iIdx !== -1) {
+            hl = [iIdx];
+            comment = `Retorna el índice de la primera coincidencia (arroja ValueError si no existe).`;
+            result = `${iIdx}`;
+          } else {
+            comment = `ValueError: substring not found (a diferencia de find(), index() lanza error).`;
+            result = `ValueError`;
+          }
+          break;
+
+        case 'count':
+          const count = (text.match(/o/gi) || []).length;
+          code = `s.count("o")`;
+          comment = `Cuenta cuántas veces aparece la subcadena indicada en el texto.`;
+          result = `${count}`;
+          break;
+
+        case 'startswith':
+          const sw = text.startsWith("Py");
+          code = `s.startswith("Py")`;
+          comment = `Verifica con valor booleano si la cadena inicia con el prefijo dado.`;
+          result = `${sw ? 'True' : 'False'}`;
+          break;
+
+        case 'endswith':
+          const ew = text.endsWith("!");
+          code = `s.endswith("!")`;
+          comment = `Verifica con valor booleano si la cadena termina con el sufijo dado.`;
+          result = `${ew ? 'True' : 'False'}`;
+          break;
+
+        case 'slice_rev':
+          const rev = text.split("").reverse().join("");
+          code = `s[::-1]`;
+          comment = `Slicing con paso -1: técnica idiomática en Python para invertir cualquier secuencia de texto.`;
+          result = `"${rev}"`;
+          break;
+
+        case 'inCheck':
+          const hasOn = text.includes("on");
+          code = `"on" in s`;
+          comment = `Operador de pertenencia: retorna True si la subcadena reside dentro del texto.`;
+          result = `${hasOn ? 'True' : 'False'}`;
+          break;
+
+        case 'repeat':
+          code = `s * 2`;
+          comment = `Operador de repetición (*): concatena la cadena consigo misma n veces.`;
+          result = `"${text + text}"`;
+          break;
+      }
+
+      logConsole(code, comment, result);
+      updateDisplay(hl);
+    }
+
+    // Inicializar
+    updateDisplay();
+  </script>
+</body>
+</html>

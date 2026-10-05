@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simulador Interactivo de Listas en Python</title>
+  <style>
+    :root {
+      --bg: #0e0e11;
+      --card: #141923;
+      --border: #232d42;
+      --text: #f3f4f6;
+      --muted: #94a3b8;
+      --sky: #38bdf8;
+      --purple: #a855f7;
+      --green: #10b981;
+      --amber: #f59e0b;
+      --rose: #f43f5e;
+      --card-inner: #080b10;
+    }
+    body.theme-light {
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --border: #e2e8f0;
+      --text: #0f172a;
+      --muted: #64748b;
+      --sky: #0284c7;
+      --purple: #9333ea;
+      --green: #059669;
+      --amber: #d97706;
+      --rose: #e11d48;
+      --card-inner: #f1f5f9;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { background: var(--bg); color: var(--text); padding: 14px; display: flex; justify-content: center; }
+    .container { width: 100%; max-width: 760px; background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 18px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+    
+    .header { text-align: center; margin-bottom: 14px; }
+    .header h3 { font-size: 1.15rem; color: var(--green); margin-bottom: 4px; display: flex; align-items: center; justify-content: center; gap: 8px; }
+    .header p { font-size: 0.76rem; color: var(--muted); }
+
+    /* Estado de la lista en memoria */
+    .mem-section {
+      background: var(--card-inner);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px;
+      margin-bottom: 14px;
+    }
+    .mem-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      font-size: 0.75rem;
+      color: var(--muted);
+      font-family: monospace;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .stat-pill {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border);
+      padding: 3px 8px;
+      border-radius: 6px;
+      color: var(--sky);
+      font-weight: bold;
+    }
+
+    .list-display {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      overflow-x: auto;
+      padding: 10px 4px;
+      min-height: 80px;
+    }
+    .list-empty-msg {
+      width: 100%;
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.8rem;
+      font-style: italic;
+      padding: 16px;
+    }
+    .element-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      animation: popIn 0.25s ease-out;
+      flex-shrink: 0;
+    }
+    @keyframes popIn {
+      from { transform: scale(0.6); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+    .el-idx {
+      font-size: 0.68rem;
+      font-family: monospace;
+      color: var(--sky);
+      font-weight: 700;
+    }
+    .el-val-box {
+      min-width: 60px;
+      padding: 8px 12px;
+      background: rgba(16, 185, 129, 0.12);
+      border: 2px solid var(--green);
+      border-radius: 8px;
+      font-family: monospace;
+      font-size: 0.85rem;
+      font-weight: bold;
+      color: #86efac;
+      text-align: center;
+      transition: all 0.25s;
+    }
+    .el-val-box.highlight {
+      border-color: var(--amber);
+      background: rgba(245, 158, 11, 0.25);
+      color: #fde047;
+      transform: scale(1.08);
+    }
+    .el-type {
+      font-size: 0.62rem;
+      font-family: monospace;
+      color: var(--muted);
+    }
+
+    /* Consola y Explicación */
+    .console-panel {
+      background: #05070a;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-family: monospace;
+      font-size: 0.78rem;
+      margin-bottom: 14px;
+    }
+    .code-executed { color: var(--sky); font-weight: bold; margin-bottom: 4px; }
+    .code-comment { color: var(--muted); font-size: 0.72rem; }
+    .code-result { color: #86efac; margin-top: 4px; }
+
+    /* Barra de Operaciones y Métodos */
+    .tabs-title {
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 8px;
+      letter-spacing: 0.5px;
+    }
+    .actions-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 6px;
+      margin-bottom: 12px;
+    }
+    .action-btn {
+      padding: 7px 10px;
+      font-size: 0.72rem;
+      font-family: monospace;
+      font-weight: 600;
+      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border);
+      color: var(--text);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: all 0.2s;
+    }
+    .action-btn:hover {
+      background: rgba(16, 185, 129, 0.15);
+      border-color: var(--green);
+      color: #86efac;
+      transform: translateY(-1px);
+    }
+    .action-badge {
+      font-size: 0.6rem;
+      padding: 1px 4px;
+      border-radius: 3px;
+      background: rgba(255,255,255,0.08);
+      color: var(--muted);
+    }
+
+    /* Input personalizado */
+    .custom-row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      background: var(--card-inner);
+      padding: 8px 12px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      flex-wrap: wrap;
+    }
+    .custom-row input {
+      flex: 1;
+      min-width: 140px;
+      padding: 6px 10px;
+      background: rgba(0,0,0,0.3);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: #fff;
+      font-family: monospace;
+      font-size: 0.8rem;
+      outline: none;
+    }
+    .custom-row input:focus { border-color: var(--green); }
+    .btn-exec {
+      padding: 6px 14px;
+      background: var(--green);
+      color: #0b0e14;
+      font-weight: bold;
+      border: none;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+    .btn-exec:hover { opacity: 0.9; }
+    .btn-reset {
+      padding: 6px 12px;
+      background: rgba(244, 63, 94, 0.15);
+      border: 1px solid var(--rose);
+      color: #fda4af;
+      font-weight: bold;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      cursor: pointer;
+    }
+    .btn-reset:hover { background: var(--rose); color: #fff; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h3>📦 Simulador Interactivo de Listas en Python</h3>
+      <p>Modifica la lista en tiempo real y experimenta con métodos nativos y funciones integradas.</p>
+    </div>
+
+    <!-- Estado en memoria RAM -->
+    <div class="mem-section">
+      <div class="mem-header">
+        <div>Variable: <span class="stat-pill" id="varName">numeros</span></div>
+        <div>Longitud: <span class="stat-pill" id="statLen">len() = 5</span></div>
+        <div>Suma: <span class="stat-pill" id="statSum">sum() = 120</span></div>
+        <div>Min / Max: <span class="stat-pill" id="statMinMax">10 / 45</span></div>
+      </div>
+      <div class="list-display" id="listDisplay">
+        <!-- Elementos generados dinámicamente -->
+      </div>
+    </div>
+
+    <!-- Consola explicativa -->
+    <div class="console-panel">
+      <div class="code-executed" id="consoleCode">&gt;&gt;&gt; numeros = [10, 25, 45, 15, 25]</div>
+      <div class="code-comment" id="consoleComment">Lista inicial creada con 5 enteros.</div>
+      <div class="code-result" id="consoleResult">Estado: [10, 25, 45, 15, 25]</div>
+    </div>
+
+    <!-- Acciones con métodos -->
+    <div class="tabs-title">Métodos Mutadores y Operaciones de Listas:</div>
+    <div class="actions-grid">
+      <button class="action-btn" onclick="execMethod('append', 99)">
+        <span>append(99)</span>
+        <span class="action-badge">Agrega fin</span>
+      </button>
+      <button class="action-btn" onclick="execMethod('insert', 1, 77)">
+        <span>insert(1, 77)</span>
+        <span class="action-badge">Inserta idx</span>
+      </button>
+      <button class="action-btn" onclick="execMethod('pop')">
+        <span>pop()</span>
+        <span class="action-badge">Elimina fin</span>
+      </button>
+      <button class="action-btn" onclick="execMethod('popIdx', 0)">
+        <span>pop(0)</span>
+        <span class="action-badge">Elimina idx 0</span>
+      </button>
+      <button class="action-btn" onclick="execMethod('remove', 25)">
+        <span>remove(25)</span>
+        <span class="action-badge">Por valor</span>
+      </button>
+      <button class="action-btn" onclick="execMethod('sort')">
+        <span>sort()</span>
+        <span class="action-badge">In-place asc</span>
+      </button>
+      <button class="action-btn" onclick="execMethod('reverse')">
+        <span>reverse()</span>
+        <span class="action-badge">Invierte</span>
+      </button>
+      <button class="action-btn" onclick="execMethod('extend', [5, 8])">
+        <span>extend([5, 8])</span>
+        <span class="action-badge">Fusiona lista</span>
+      </button>
+      <button class="action-btn" onclick="execMethod('count', 25)">
+        <span>count(25)</span>
+        <span class="action-badge">Frecuencia</span>
+      </button>
+      <button class="action-btn" onclick="execMethod('index', 45)">
+        <span>index(45)</span>
+        <span class="action-badge">Buscar idx</span>
+      </button>
+      <button class="action-btn" onclick="execMethod('inCheck', 15)">
+        <span>15 in lista</span>
+        <span class="action-badge">Pertenencia</span>
+      </button>
+      <button class="action-btn" onclick="execMethod('copy')">
+        <span>copy()</span>
+        <span class="action-badge">Clon</span>
+      </button>
+    </div>
+
+    <!-- Entrada personalizada y reset -->
+    <div class="custom-row">
+      <input type="text" id="customInput" placeholder="Valor a agregar con append (ej: 50, 'Python', True)">
+      <button class="btn-exec" onclick="addCustom()">Ejecutar append()</button>
+      <button class="btn-reset" onclick="resetList()">Reiniciar Lista</button>
+    </div>
+  </div>
+
+  <script>
+    let listData = [10, 25, 45, 15, 25];
+
+    function getType(val) {
+      if (typeof val === 'number') return Number.isInteger(val) ? 'int' : 'float';
+      if (typeof val === 'string') return 'str';
+      if (typeof val === 'boolean') return 'bool';
+      return typeof val;
+    }
+
+    function updateStats() {
+      document.getElementById('statLen').textContent = `len() = ${listData.length}`;
+      
+      const numsOnly = listData.filter(x => typeof x === 'number');
+      if (numsOnly.length === listData.length && listData.length > 0) {
+        const sum = listData.reduce((a, b) => a + b, 0);
+        const min = Math.min(...listData);
+        const max = Math.max(...listData);
+        document.getElementById('statSum').textContent = `sum() = ${sum}`;
+        document.getElementById('statMinMax').textContent = `min=${min} / max=${max}`;
+      } else if (listData.length === 0) {
+        document.getElementById('statSum').textContent = `sum() = 0`;
+        document.getElementById('statMinMax').textContent = `vacía`;
+      } else {
+        document.getElementById('statSum').textContent = `sum() = N/A (tipos mixtos)`;
+        document.getElementById('statMinMax').textContent = `Heterogénea`;
+      }
+    }
+
+    function renderList(highlightIdx = -1) {
+      const container = document.getElementById('listDisplay');
+      container.innerHTML = '';
+
+      if (listData.length === 0) {
+        container.innerHTML = `<div class="list-empty-msg">La lista está vacía: [ ]</div>`;
+        updateStats();
+        return;
+      }
+
+      listData.forEach((val, idx) => {
+        const card = document.createElement('div');
+        card.className = 'element-card';
+        const isHl = idx === highlightIdx;
+        
+        let displayVal = typeof val === 'string' ? `"${val}"` : String(val);
+
+        card.innerHTML = `
+          <div class="el-idx">[${idx}]</div>
+          <div class="el-val-box ${isHl ? 'highlight' : ''}">${displayVal}</div>
+          <div class="el-type">${getType(val)}</div>
+        `;
+        container.appendChild(card);
+      });
+
+      updateStats();
+    }
+
+    function logConsole(code, comment, result) {
+      document.getElementById('consoleCode').textContent = `>>> ${code}`;
+      document.getElementById('consoleComment').textContent = comment;
+      document.getElementById('consoleResult').textContent = `Resultado: ${result}`;
+    }
+
+    function execMethod(method, arg1, arg2) {
+      let code = "";
+      let comment = "";
+      let result = "";
+      let hl = -1;
+
+      switch(method) {
+        case 'append':
+          listData.push(arg1);
+          hl = listData.length - 1;
+          code = `numeros.append(${arg1})`;
+          comment = `Agrega el elemento ${arg1} exactamente al final de la lista.`;
+          result = JSON.stringify(listData);
+          break;
+
+        case 'insert':
+          listData.splice(arg1, 0, arg2);
+          hl = arg1;
+          code = `numeros.insert(${arg1}, ${arg2})`;
+          comment = `Inserta ${arg2} en el índice ${arg1}, desplazando los elementos siguientes hacia la derecha.`;
+          result = JSON.stringify(listData);
+          break;
+
+        case 'pop':
+          if (listData.length === 0) {
+            code = `numeros.pop()`;
+            comment = `IndexError: pop from empty list. No se puede extraer de una lista sin elementos.`;
+            result = "Error";
+          } else {
+            const popped = listData.pop();
+            code = `numeros.pop()`;
+            comment = `Remueve y retorna el último elemento extraído (${popped}).`;
+            result = `Elemento eliminado: ${popped}. Nueva lista: ${JSON.stringify(listData)}`;
+          }
+          break;
+
+        case 'popIdx':
+          if (listData.length === 0) {
+            code = `numeros.pop(0)`;
+            comment = `IndexError: pop from empty list.`;
+            result = "Error";
+          } else {
+            const popped = listData.splice(arg1, 1)[0];
+            code = `numeros.pop(${arg1})`;
+            comment = `Remueve y retorna el elemento en la posición ${arg1} (${popped}).`;
+            result = `Elemento eliminado: ${popped}. Nueva lista: ${JSON.stringify(listData)}`;
+          }
+          break;
+
+        case 'remove':
+          const idx = listData.indexOf(arg1);
+          if (idx !== -1) {
+            listData.splice(idx, 1);
+            code = `numeros.remove(${arg1})`;
+            comment = `Busca y elimina la PRIMERA aparición del valor ${arg1}.`;
+            result = JSON.stringify(listData);
+          } else {
+            code = `numeros.remove(${arg1})`;
+            comment = `ValueError: ${arg1} not in list. El valor no existe en la lista.`;
+            result = "Error";
+          }
+          break;
+
+        case 'sort':
+          listData.sort((a, b) => {
+            if (typeof a === 'number' && typeof b === 'number') return a - b;
+            return String(a).localeCompare(String(b));
+          });
+          code = `numeros.sort()`;
+          comment = `Ordena la lista in-place de forma ascendente modificando el objeto original.`;
+          result = JSON.stringify(listData);
+          break;
+
+        case 'reverse':
+          listData.reverse();
+          code = `numeros.reverse()`;
+          comment = `Invierte in-place el orden de los elementos actuales de la lista.`;
+          result = JSON.stringify(listData);
+          break;
+
+        case 'extend':
+          listData = listData.concat(arg1);
+          code = `numeros.extend(${JSON.stringify(arg1)})`;
+          comment = `Desempaqueta y agrega cada elemento de la colección iterable al final.`;
+          result = JSON.stringify(listData);
+          break;
+
+        case 'count':
+          const count = listData.filter(x => x === arg1).length;
+          code = `numeros.count(${arg1})`;
+          comment = `Cuenta cuántas veces aparece el valor ${arg1} en toda la lista.`;
+          result = `Apariciones: ${count}`;
+          break;
+
+        case 'index':
+          const foundIdx = listData.indexOf(arg1);
+          if (foundIdx !== -1) {
+            hl = foundIdx;
+            code = `numeros.index(${arg1})`;
+            comment = `Retorna el índice de la primera coincidencia del valor ${arg1}.`;
+            result = `Índice encontrado: ${foundIdx}`;
+          } else {
+            code = `numeros.index(${arg1})`;
+            comment = `ValueError: ${arg1} is not in list.`;
+            result = "No encontrado";
+          }
+          break;
+
+        case 'inCheck':
+          const exists = listData.includes(arg1);
+          code = `${arg1} in numeros`;
+          comment = `Operador de pertenencia: retorna True si el elemento existe en la lista, False si no.`;
+          result = `${exists ? 'True' : 'False'}`;
+          break;
+
+        case 'copy':
+          code = `clon = numeros.copy()`;
+          comment = `Crea una copia superficial (shallow copy) independiente de la lista.`;
+          result = `Copia creada: ${JSON.stringify(listData)}`;
+          break;
+      }
+
+      logConsole(code, comment, result);
+      renderList(hl);
+    }
+
+    function addCustom() {
+      const input = document.getElementById('customInput');
+      const raw = input.value.trim();
+      if (!raw) return;
+
+      let val = raw;
+      if (raw === 'True') val = true;
+      else if (raw === 'False') val = false;
+      else if (!isNaN(Number(raw))) val = Number(raw);
+
+      input.value = '';
+      execMethod('append', val);
+    }
+
+    function resetList() {
+      listData = [10, 25, 45, 15, 25];
+      logConsole('numeros = [10, 25, 45, 15, 25]', 'Lista reiniciada a su estado original.', JSON.stringify(listData));
+      renderList();
+    }
+
+    // Inicializar
+    renderList();
+  </script>
+</body>
+</html>

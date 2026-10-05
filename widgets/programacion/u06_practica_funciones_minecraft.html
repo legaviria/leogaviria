@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Práctica: Funciones Modulares y Librería Pokémon en Minecraft</title>
+  <style>
+    :root {
+      --bg: #0e0e11;
+      --card: #141923;
+      --border: #232d42;
+      --text: #f3f4f6;
+      --muted: #94a3b8;
+      --sky: #38bdf8;
+      --purple: #a855f7;
+      --green: #10b981;
+      --amber: #f59e0b;
+      --rose: #f43f5e;
+      --card-inner: #080b10;
+    }
+    body.theme-light {
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --border: #e2e8f0;
+      --text: #0f172a;
+      --muted: #64748b;
+      --sky: #0284c7;
+      --purple: #9333ea;
+      --green: #059669;
+      --amber: #d97706;
+      --rose: #e11d48;
+      --card-inner: #f1f5f9;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { background: var(--bg); color: var(--text); padding: 14px; display: flex; justify-content: center; }
+    .container { width: 100%; max-width: 740px; background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 18px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+    
+    .header { text-align: center; margin-bottom: 14px; }
+    .header h3 { font-size: 1.15rem; color: #a855f7; margin-bottom: 4px; display: flex; align-items: center; justify-content: center; gap: 8px; }
+    .header p { font-size: 0.76rem; color: var(--muted); }
+
+    .progress-bar-wrap {
+      background: var(--card-inner);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      height: 8px;
+      overflow: hidden;
+      margin-bottom: 16px;
+    }
+    .progress-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--purple), var(--sky));
+      width: 0%;
+      transition: width 0.3s;
+    }
+
+    .challenge-card {
+      background: var(--card-inner);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px;
+      margin-bottom: 14px;
+    }
+    .challenge-badge {
+      font-size: 0.68rem;
+      font-family: monospace;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: #d8b4fe;
+      background: rgba(168, 85, 247, 0.15);
+      border: 1px solid rgba(168, 85, 247, 0.3);
+      padding: 2px 8px;
+      border-radius: 4px;
+      display: inline-block;
+      margin-bottom: 8px;
+    }
+    .challenge-title {
+      font-size: 0.95rem;
+      font-weight: bold;
+      color: #fff;
+      margin-bottom: 8px;
+      line-height: 1.4;
+    }
+    .code-snippet {
+      background: #05070a;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 12px;
+      font-family: Consolas, monospace;
+      font-size: 0.8rem;
+      color: var(--sky);
+      margin-bottom: 14px;
+      overflow-x: auto;
+      line-height: 1.5;
+    }
+
+    .options-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+    .option-btn {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 14px;
+      text-align: left;
+      color: var(--text);
+      font-size: 0.82rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transition: all 0.2s;
+    }
+    .option-btn:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+    .option-btn.selected {
+      border-color: var(--purple);
+      background: rgba(168, 85, 247, 0.12);
+    }
+    .option-btn.correct {
+      border-color: var(--green);
+      background: rgba(16, 185, 129, 0.2);
+      color: #4ade80;
+    }
+    .option-btn.wrong {
+      border-color: var(--rose);
+      background: rgba(244, 63, 94, 0.2);
+      color: #fb7185;
+    }
+    .option-letter {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.72rem;
+      font-weight: bold;
+      flex-shrink: 0;
+    }
+
+    .feedback-box {
+      border-radius: 8px;
+      padding: 10px 12px;
+      font-size: 0.78rem;
+      line-height: 1.4;
+      display: none;
+      margin-bottom: 12px;
+    }
+    .feedback-box.correct {
+      display: block;
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.4);
+      color: #86efac;
+    }
+    .feedback-box.wrong {
+      display: block;
+      background: rgba(244, 63, 94, 0.15);
+      border: 1px solid rgba(244, 63, 94, 0.4);
+      color: #fca5a5;
+    }
+
+    .footer-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .score-tag {
+      font-size: 0.76rem;
+      font-family: monospace;
+      color: var(--muted);
+    }
+    .action-btn {
+      padding: 8px 18px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      background: var(--purple);
+      color: #fff;
+      transition: all 0.2s;
+    }
+    .action-btn:hover {
+      background: #c084fc;
+    }
+    .action-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header">
+    <h3>📦 Práctica: Funciones Modulares y Librerías en Minecraft</h3>
+    <p>Evalúa tus competencias en diseño de funciones con parámetros, procedimientos con efectos colaterales y modularización con librerías externas.</p>
+  </div>
+
+  <div class="progress-bar-wrap">
+    <div class="progress-bar-fill" id="progressFill"></div>
+  </div>
+
+  <div class="challenge-card" id="challengeCard">
+    <span class="challenge-badge" id="cBadge">Desafío 1 de 4</span>
+    <div class="challenge-title" id="cTitle">Cargando pregunta...</div>
+    <div class="code-snippet" id="cCode">...</div>
+    <div class="options-grid" id="cOptions"></div>
+    <div class="feedback-box" id="cFeedback"></div>
+  </div>
+
+  <div class="footer-actions">
+    <span class="score-tag" id="scoreTag">Aciertos: 0 / 4</span>
+    <button class="action-btn" id="nextBtn" onclick="nextQuestion()" disabled>Siguiente Desafío ➔</button>
+  </div>
+</div>
+
+<script>
+  const CHALLENGES = [
+    {
+      badge: "Desafío 1: Función Pura vs Procedimiento con Efectos Colaterales",
+      title: "La función 'dibujar_pixelart(x, y, z, matriz)' no incluye ninguna sentencia 'return'. Desde la perspectiva de la arquitectura de software, ¿cómo se clasifica?",
+      code: "def dibujar_pixelart(x, y, z, matriz):\n    for i in range(len(matriz)):\n        for j in range(len(matriz[0])):\n            mc.setBlock(...)  # Envía comandos de red al servidor",
+      options: [
+        "Es un procedimiento: su propósito principal no es calcular un valor de retorno matemático, sino provocar un efecto colateral modificando el estado del mundo en Minecraft.",
+        "Es una función impura errónea porque en Python es obligatorio que def termine con return.",
+        "Es un bucle recursivo infinito.",
+        "Es una clase abstracta sin instanciar."
+      ],
+      correct: 0,
+      feedback: "¡Excelente! Los procedimientos son funciones diseñadas para ejecutar acciones externas (efectos colaterales, como llamadas de red, dibujar en pantalla o colocar bloques). Al terminar, retornan implícitamente None."
+    },
+    {
+      badge: "Desafío 2: Parámetros y Reutilización Espacial",
+      title: "Queremos construir a Pikachu (pk.PK_025) y al lado a Bulbasaur (pk.PK_001) separados por 30 bloques en el eje X. ¿Cuál es la forma más modular y limpia de lograrlo gracias a las funciones?",
+      code: "# ¿Cómo invocamos dibujar_pixelart para ambos Pokémon?",
+      options: [
+        "dibujar_pixelart(x, y, z, pk.PK_025)\ndibujar_pixelart(x + 30, y, z, pk.PK_001)",
+        "Copiar y pegar todo el código de los dos bucles for dos veces duplicando las líneas de código.",
+        "Modificar el archivo pokemon.py para fusionar ambas matrices en una sola.",
+        "Reiniciar el servidor de Minecraft para que aparezca el segundo Pokémon."
+      ],
+      correct: 0,
+      feedback: "¡Correcto! El principio DRY (Don't Repeat Yourself) se cumple a la perfección: llamamos la misma función dos veces pasando argumentos de coordenadas distintos (x y x + 30), reutilizando 100% de la lógica."
+    },
+    {
+      badge: "Desafío 3: Espacios de Nombres e 'import as'",
+      title: "En el script principal tenemos 'import pokemon as pk'. ¿Qué significa el alias 'pk' y por qué usamos la notación de punto 'pk.PALETA'?",
+      code: "import pokemon as pk\n\nif valor in pk.PALETA:\n    bloque, sub_id = pk.PALETA[valor]",
+      options: [
+        "pk es un alias corto para el módulo 'pokemon'. La notación de punto accede a la variable 'PALETA' dentro del espacio de nombres (namespace) de ese módulo, evitando colisiones de nombres con otras variables globales.",
+        "pk es una función incorporada que descarga Pokémon de internet.",
+        "pokemon as pk convierte el archivo a código binario C++ de alta velocidad.",
+        "Es un error de sintaxis; en Python solo se permite 'import pokemon'."
+      ],
+      correct: 0,
+      feedback: "¡Exacto! El alias 'pk' permite referenciar miembros del módulo de forma concisa y limpia (pk.PALETA, pk.PK_125), garantizando que las variables de la librería permanezcan encapsuladas en su propio espacio de nombres."
+    },
+    {
+      badge: "Desafío 4: Parámetros por Defecto y Flexibilidad",
+      title: "Deseamos que la función pueda orientar la pared hacia el eje X o hacia el eje Z. ¿Cómo definimos la función usando parámetros con valores por defecto?",
+      code: "def dibujar_pixelart(x, y, z, matriz, eje='X'):\n    # Si eje == 'X': mc.setBlock(x + j, y + (filas - i), z, ...)\n    # Si eje == 'Z': mc.setBlock(x, y + (filas - i), z + j, ...)",
+      options: [
+        "Permite invocar la función tanto con 4 argumentos como con 5: dibujar_pixelart(x, y, z, mat) usará 'X' por defecto, o podemos pasar dibujar_pixelart(x, y, z, mat, eje='Z').",
+        "Python no admite argumentos opcionales con valores por defecto.",
+        "Obliga a que el usuario siempre ingrese 'X' obligatoriamente.",
+        "Hace que la función solo funcione en modo de supervivencia."
+      ],
+      correct: 0,
+      feedback: "¡Perfecto! Los parámetros con valor por defecto (default arguments) como eje='X' otorgan flexibilidad al diseño de la función: conservan compatibilidad con el código anterior que pasa 4 argumentos, a la vez que permiten nuevas opciones avanzadas."
+    }
+  ];
+
+  let currentIndex = 0;
+  let score = 0;
+  let answered = false;
+
+  function renderQuestion() {
+    answered = false;
+    const c = CHALLENGES[currentIndex];
+    document.getElementById('cBadge').textContent = `Desafío ${currentIndex + 1} de ${CHALLENGES.length}`;
+    document.getElementById('cTitle').textContent = c.title;
+    document.getElementById('cCode').textContent = c.code;
+    document.getElementById('cFeedback').className = 'feedback-box';
+    document.getElementById('nextBtn').disabled = true;
+
+    const optContainer = document.getElementById('cOptions');
+    optContainer.innerHTML = '';
+    const letters = ['A', 'B', 'C', 'D'];
+
+    c.options.forEach((opt, idx) => {
+      const btn = document.createElement('button');
+      btn.className = 'option-btn';
+      btn.innerHTML = `<span class="option-letter">${letters[idx]}</span><span>${opt}</span>`;
+      btn.onclick = () => selectOption(idx);
+      optContainer.appendChild(btn);
+    });
+
+    const pct = (currentIndex / CHALLENGES.length) * 100;
+    document.getElementById('progressFill').style.width = `${pct}%`;
+  }
+
+  function selectOption(index) {
+    if (answered) return;
+    answered = true;
+    const c = CHALLENGES[currentIndex];
+    const buttons = document.querySelectorAll('.option-btn');
+
+    if (index === c.correct) {
+      buttons[index].classList.add('correct');
+      document.getElementById('cFeedback').className = 'feedback-box correct';
+      document.getElementById('cFeedback').textContent = c.feedback;
+      score++;
+    } else {
+      buttons[index].classList.add('wrong');
+      buttons[c.correct].classList.add('correct');
+      document.getElementById('cFeedback').className = 'feedback-box wrong';
+      document.getElementById('cFeedback').textContent = `Incorrecto. ${c.feedback}`;
+    }
+
+    document.getElementById('scoreTag').textContent = `Aciertos: ${score} / ${CHALLENGES.length}`;
+    document.getElementById('nextBtn').disabled = false;
+  }
+
+  function nextQuestion() {
+    if (currentIndex < CHALLENGES.length - 1) {
+      currentIndex++;
+      renderQuestion();
+    } else {
+      showSummary();
+    }
+  }
+
+  function showSummary() {
+    document.getElementById('progressFill').style.width = '100%';
+    const card = document.getElementById('challengeCard');
+    const pct = Math.round((score / CHALLENGES.length) * 100);
+    card.innerHTML = `
+      <div style="text-align:center; padding: 20px 10px;">
+        <div style="font-size:2.4rem; margin-bottom:10px;">🎓</div>
+        <h4 style="font-size:1.2rem; color:#a855f7; margin-bottom:8px;">¡Módulo de Funciones Completado!</h4>
+        <p style="font-size:0.85rem; color:#cbd5e1; margin-bottom:16px;">
+          Puntaje final: <strong>${score} de ${CHALLENGES.length}</strong> aciertos (${pct}% de dominio).
+        </p>
+        <div style="background:#05070a; border:1px solid var(--border); border-radius:8px; padding:12px; font-size:0.78rem; color:#94a3b8; text-align:left; line-height:1.6;">
+          ✓ Diseñas funciones con parámetros geométricos reutilizables (x, y, z, matriz).<br>
+          ✓ Distingues con precisión funciones puras con return de procedimientos con efectos colaterales.<br>
+          ✓ Estructuras proyectos separando datos (pokemon.py) de lógica de procesamiento (dibujar.py).<br>
+          ✓ Utilizas importaciones limpias con alias y espacios de nombres seguros.
+        </div>
+      </div>
+    `;
+    document.getElementById('nextBtn').style.display = 'none';
+  }
+
+  window.addEventListener('load', renderQuestion);
+</script>
+
+</body>
+</html>
