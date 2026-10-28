@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Plataforma educativa interactiva - Leo Gaviria | Programación en 14 unidades con animaciones interactivas.",
   "scripts": {
+    "build": "node scripts/build.js",
     "start": "npx serve .",
     "dev": "npx serve ."
   },

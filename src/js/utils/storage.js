@@ -4,7 +4,7 @@
  */
 
 const STORAGE_KEY_PROGRESS = "leogaviria_progress";
-const STORAGE_KEY_THEME = "leogaviria_theme";
+const STORAGE_KEY_THEME = "leogaviria_theme_pref";
 
 export function getCompletedTopics() {
   try {
@@ -45,31 +45,30 @@ export function getThemePreference() {
     const saved = localStorage.getItem(STORAGE_KEY_THEME);
     if (saved === 'light' || saved === 'dark') return saved;
   } catch (e) {}
-  if (typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
-    return 'light';
-  }
   return 'dark';
 }
 
-export function setThemePreference(theme) {
-  try {
-    localStorage.setItem(STORAGE_KEY_THEME, theme);
-  } catch (e) {}
+export function applyThemeToDOM(theme) {
   if (typeof document !== 'undefined') {
     document.documentElement.setAttribute('data-theme', theme);
-    // Broadcast tema a todos los iframes activos
     const iframes = document.querySelectorAll('iframe');
     iframes.forEach(iframe => {
       try {
         iframe.contentWindow.postMessage({ type: 'THEME_CHANGE', theme }, '*');
         if (iframe.contentDocument && iframe.contentDocument.documentElement) {
           iframe.contentDocument.documentElement.setAttribute('data-theme', theme);
+          if (iframe.contentDocument.body) {
+            iframe.contentDocument.body.classList.toggle('theme-light', theme === 'light');
+          }
         }
       } catch (e) {}
     });
   }
-} catch (e) {}
-  if (typeof document !== 'undefined') {
-    document.documentElement.setAttribute('data-theme', theme);
-  }
+}
+
+export function setThemePreference(theme) {
+  try {
+    localStorage.setItem(STORAGE_KEY_THEME, theme);
+  } catch (e) {}
+  applyThemeToDOM(theme);
 }

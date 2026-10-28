@@ -14052,7 +14052,7 @@ class MaratonUI {
   // =========================================================================
 
   const STORAGE_KEY_PROGRESS = "leogaviria_progress";
-  const STORAGE_KEY_THEME = "leogaviria_theme";
+  const STORAGE_KEY_THEME = "leogaviria_theme_pref";
   const STORAGE_KEY_COURSE = "leogaviria_current_course";
 
   function getCompletedTopics() {
@@ -14090,16 +14090,10 @@ class MaratonUI {
       const saved = localStorage.getItem(STORAGE_KEY_THEME);
       if (saved === 'light' || saved === 'dark') return saved;
     } catch (e) {}
-    if (typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
-      return 'light';
-    }
     return 'dark';
   }
 
-  function setThemePreference(theme) {
-    try {
-      localStorage.setItem(STORAGE_KEY_THEME, theme);
-    } catch (e) {}
+  function applyThemeToDOM(theme) {
     if (typeof document !== 'undefined') {
       document.documentElement.setAttribute("data-theme", theme);
       const iframes = document.querySelectorAll('iframe');
@@ -14108,10 +14102,20 @@ class MaratonUI {
           iframe.contentWindow.postMessage({ type: 'THEME_CHANGE', theme }, '*');
           if (iframe.contentDocument && iframe.contentDocument.documentElement) {
             iframe.contentDocument.documentElement.setAttribute('data-theme', theme);
+            if (iframe.contentDocument.body) {
+              iframe.contentDocument.body.classList.toggle('theme-light', theme === 'light');
+            }
           }
         } catch (e) {}
       });
     }
+  }
+
+  function setThemePreference(theme) {
+    try {
+      localStorage.setItem(STORAGE_KEY_THEME, theme);
+    } catch (e) {}
+    applyThemeToDOM(theme);
   }
 
   // =========================================================================
@@ -14252,7 +14256,7 @@ class MaratonUI {
 
     initTheme() {
       const savedTheme = getThemePreference();
-      setThemePreference(savedTheme);
+      applyThemeToDOM(savedTheme);
       this.updateThemeIcon(savedTheme);
     }
 
@@ -15894,8 +15898,16 @@ class MaratonUI {
     adjustIframeHeight(iframe) {
       if (!iframe) return;
       try {
+        const currentTheme = document.documentElement.getAttribute('data-theme') || 'dark';
+        if (iframe.contentWindow) {
+          iframe.contentWindow.postMessage({ type: 'THEME_CHANGE', theme: currentTheme }, '*');
+        }
         if (iframe.contentDocument && iframe.contentDocument.body) {
           const doc = iframe.contentDocument;
+          if (doc.documentElement) {
+            doc.documentElement.setAttribute('data-theme', currentTheme);
+          }
+          doc.body.classList.toggle('theme-light', currentTheme === 'light');
           const scrollH = Math.max(
             doc.body.scrollHeight || 0,
             doc.documentElement.scrollHeight || 0,

@@ -1736,3 +1736,155 @@ body.mobile-menu-open {
   font-weight: 600 !important;
 }
 
+/* ==========================================================================
+   MODO CLARO: MARATÓN DE PROGRAMACIÓN, BLOQUES DE CÓDIGO Y UNIDADES 02-06
+   ========================================================================== */
+
+/* Tarjetas de código en lecciones (Turtle, Minecraft, Condicionales, etc.) */
+[data-theme="light"] #content-area .code-block-card,
+[data-theme="light"] #content-area .bg-\[\#080b11\],
+[data-theme="light"] #content-area .bg-\[\#07090e\],
+[data-theme="light"] #content-area .bg-\[\#090d14\],
+[data-theme="light"] #content-area .bg-\[\#0e1017\] {
+  background-color: #ffffff !important;
+  border-color: #cbd5e1 !important;
+  color: #1e293b !important;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.04) !important;
+}
+
+[data-theme="light"] #content-area .code-block-card > div:first-child {
+  background-color: #f1f5f9 !important;
+  border-bottom-color: #cbd5e1 !important;
+}
+
+[data-theme="light"] #content-area .code-block-card button {
+  background-color: #ffffff !important;
+  border-color: #cbd5e1 !important;
+  color: #334155 !important;
+}
+
+[data-theme="light"] #content-area .code-block-card button:hover {
+  background-color: #e2e8f0 !important;
+  color: #0f172a !important;
+}
+
+[data-theme="light"] #content-area .code-block-card pre,
+[data-theme="light"] #content-area .code-block-card code {
+  background-color: #f8fafc !important;
+  color: #0f172a !important;
+}
+
+[data-theme="light"] #content-area .code-block-card .text-emerald-300,
+[data-theme="light"] #content-area .code-block-card .text-emerald-400 {
+  color: #047857 !important;
+}
+
+[data-theme="light"] #content-area .code-block-card .text-amber-300,
+[data-theme="light"] #content-area .code-block-card .text-yellow-300 {
+  color: #b45309 !important;
+}
+
+[data-theme="light"] #content-area .code-block-card .text-sky-300,
+[data-theme="light"] #content-area .code-block-card .text-sky-400,
+[data-theme="light"] #content-area .code-block-card .text-cyan-300 {
+  color: #0369a1 !important;
+}
+
+[data-theme="light"] #content-area .code-block-card .text-purple-300,
+[data-theme="light"] #content-area .code-block-card .text-purple-400 {
+  color: #6d28d9 !important;
+}
+
+[data-theme="light"] #content-area .code-block-card .text-pink-400,
+[data-theme="light"] #content-area .code-block-card .text-rose-400 {
+  color: #be123c !important;
+}
+
+/* Botones oscuros de acción (Copiar, Abrir en pestaña, Anterior/Siguiente, etc.) */
+[data-theme="light"] #content-area .bg-\[\#1e2638\],
+[data-theme="light"] #content-area .bg-\[\#192132\],
+[data-theme="light"] #content-area .bg-\[\#151c28\],
+[data-theme="light"] #content-area .bg-\[\#1a2232\],
+[data-theme="light"] #content-area .bg-\[\#131926\] {
+  background-color: #f1f5f9 !important;
+  border-color: #cbd5e1 !important;
+  color: #1e293b !important;
+}
+
+[data-theme="light"] #content-area .bg-\[\#1e2638\]:hover,
+[data-theme="light"] #content-area .bg-\[\#192132\]:hover,
+[data-theme="light"] #content-area .bg-\[\#151c28\]:hover {
+  background-color: #e2e8f0 !important;
+  color: #0f172a !important;
+}
+
+/* Maratón de Programación: Banner Principal y Caja de Progreso */
+[data-theme="light"] #content-area .from-\[\#0c1816\] {
+  background: linear-gradient(135deg, #ecfdf5 0%, #f0f9ff 55%, #ffffff 100%) !important;
+  border-color: #a7f3d0 !important;
+  box-shadow: 0 10px 25px -5px rgba(5, 150, 105, 0.08) !important;
+}
+
+[data-theme="light"] #content-area .bg-\[\#0b0e14\]\/90,
+[data-theme="light"] #content-area .bg-\[\#0b0e14\],
+[data-theme="light"] #content-area .bg-\[\#0b0e14\]\/80,
+[data-theme="light"] #content-area .bg-\[\#0a0d13\] {
+  background-color: #ffffff !important;
+  border-color: #cbd5e1 !important;
+  color: #0f172a !important;
+}
+
+/* Maratón: Filtros, Inputs, Selects y Tabla de Problemas */
+[data-theme="light"] #content-area input.bg-\[\#0b0e14\],
+[data-theme="light"] #content-area select.bg-\[\#0b0e14\] {
+  background-color: #f8fafc !important;
+  border-color: #cbd5e1 !important;
+  color: #0f172a !important;
+}
+
+[data-theme="light"] #content-area table thead tr.bg-\[\#0b0e14\] {
+  background-color: #f1f5f9 !important;
+  border-bottom-color: #cbd5e1 !important;
+}
+
+[data-theme="light"] #content-area table tbody tr:hover {
+  background-color: #f8fafc !important;
+}
+
+[data-theme="light"] #content-area table .bg-gray-900,
+[data-theme="light"] #content-area .bg-gray-800\/80,
+[data-theme="light"] #content-area .bg-gray-800\/70,
+[data-theme="light"] #content-area .bg-gray-800\/60 {
+  background-color: #f1f5f9 !important;
+  border-color: #cbd5e1 !important;
+  color: #334155 !important;
+}
+
+/* Maratón: Editor de Código y Consola en Modo Claro */
+[data-theme="light"] #content-area #maraton-code-editor {
+  background-color: #f8fafc !important;
+  color: #0f172a !important;
+}
+
+[data-theme="light"] #content-area #maraton-line-numbers {
+  background-color: #f1f5f9 !important;
+  border-right-color: #cbd5e1 !important;
+  color: #64748b !important;
+}
+
+/* Botón Maratón en Barra Lateral y Banner de Práctica en Lecciones */
+[data-theme="light"] #sidebar .from-emerald-950\/40 {
+  background: linear-gradient(90deg, #ecfdf5 0%, #f0fdfa 100%) !important;
+  border-color: #6ee7b7 !important;
+}
+
+[data-theme="light"] #sidebar .from-emerald-950\/40 .text-white {
+  color: #065f46 !important;
+}
+
+[data-theme="light"] #content-area .from-emerald-950\/50 {
+  background: linear-gradient(90deg, #ecfdf5 0%, #f0f9ff 100%) !important;
+  border-color: #6ee7b7 !important;
+}
+
+

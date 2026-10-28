@@ -6,7 +6,7 @@
 
 import { CURRICULUM, getTopicById, getSurroundingTopics } from './data/curriculum.js';
 import { getTopicData } from './data/topics/index.js';
-import { getCompletedTopics, isTopicCompleted, toggleTopicCompleted, getThemePreference, setThemePreference } from './utils/storage.js';
+import { getCompletedTopics, isTopicCompleted, toggleTopicCompleted, getThemePreference, setThemePreference, applyThemeToDOM } from './utils/storage.js';
 import { searchCurriculum } from './utils/search.js';
 import { MARATON_PROBLEMS, getProblemById } from './data/maraton/problems.js';
 import { getMaratonProgress, setProblemDraft, getProblemDraft, recordEvaluation, getMaratonStats } from './data/maraton/storage.js';
@@ -106,7 +106,7 @@ import { MaratonUI } from './data/maraton/ui.js';
 
   initTheme() {
     const savedTheme = getThemePreference();
-    setThemePreference(savedTheme);
+    applyThemeToDOM(savedTheme);
     this.updateThemeIcon(savedTheme);
   }
 
@@ -1167,8 +1167,16 @@ import { MaratonUI } from './data/maraton/ui.js';
   adjustIframeHeight(iframe) {
     if (!iframe) return;
     try {
+      const currentTheme = document.documentElement.getAttribute('data-theme') || 'dark';
+      if (iframe.contentWindow) {
+        iframe.contentWindow.postMessage({ type: 'THEME_CHANGE', theme: currentTheme }, '*');
+      }
       if (iframe.contentDocument && iframe.contentDocument.body) {
         const doc = iframe.contentDocument;
+        if (doc.documentElement) {
+          doc.documentElement.setAttribute('data-theme', currentTheme);
+        }
+        doc.body.classList.toggle('theme-light', currentTheme === 'light');
         const scrollH = Math.max(
           doc.body.scrollHeight || 0,
           doc.documentElement.scrollHeight || 0,
@@ -1340,7 +1348,7 @@ import { MaratonUI } from './data/maraton/ui.js';
   // Modal de Bienvenida con Animación de Código
   showWelcomeCodingModal() {
     const modal = document.getElementById('welcome-coding-modal');
-    const container = document.getElementById('coding-typewriter');
+    const container = document.getElementById('coding-typewriter-text') || document.getElementById('coding-typewriter');
     if (!modal || !container) return;
 
     modal.classList.remove('hidden');
