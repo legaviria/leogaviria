@@ -585,7 +585,7 @@ export const CURRICULUM = [
   {
     "id": "unidad-14",
     "number": 14,
-    "title": "Unidad 14: Fundamentos de Machine Learning",
+    "title": "Unidad 14: Machine Learning",
     "shortTitle": "U14: Machine Learning",
     "icon": "fa-brain",
     "description": "Conceptos esenciales de aprendizaje automático, flujo de construcción de modelos predictivos y métricas de evaluación.",
